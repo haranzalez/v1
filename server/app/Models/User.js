@@ -3,6 +3,7 @@
 const Model = use('Model')
 const Hash = use('Hash')
 
+
 class User extends Model {
   static boot () {
     super.boot()
@@ -33,7 +34,7 @@ class User extends Model {
   }
 
   roles() {
-    return this.belongsToMany('App/Models/Role')
+    return this.belongsToMany('App/Models/Role').pivotModel(use('App/Models/UserRole'));
   }
   
 }

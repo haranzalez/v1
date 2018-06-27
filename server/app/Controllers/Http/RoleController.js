@@ -1,5 +1,7 @@
 'use strict'
 
+const Role = use('App/Models/Role')
+
 /**
  * Resourceful controller for interacting with roles
  */
@@ -9,6 +11,11 @@ class RoleController {
    * GET roles
    */
   async index ({ request, response, view }) {
+    const roles = await Role.all();
+    for(var prop in roles.rows){
+      roles.rows[prop].users = await roles.rows[prop].users().fetch();
+    }
+    return roles;
   }
 
   /**
@@ -16,6 +23,12 @@ class RoleController {
    * GET roles/create
    */
   async create ({ request, response, view }) {
+    
+    const { role, description } = request.all();
+    return await Role.create({
+      role, 
+      description
+    }) 
   }
 
   /**

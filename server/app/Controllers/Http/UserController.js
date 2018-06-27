@@ -12,22 +12,41 @@ class UserController {
    * GET users
    */
   async index ({ request }) {
-    return await User.all()
+    const users =  await User.all()
+
+    for(var prop in users.rows){
+      users.rows[prop].roles = await users.rows[prop].roles().fetch();
+    }
+    
+    return users;
+  }
+
+  async login ({ request }) {
+    const { username, password } = request.all();
+    
   }
 
   /**
    * Render a form to be used for creating a new user.
    * GET users/create
    */
-  async create ({ request }) {
-    const { nombre, apellido, username, email, password } = request.all();
-    return await User.create({
+  async create ({auth, request }) {
+    const { nombre, apellido, username, email, password, roles } = request.all();
+    const user = await User.create({
       nombre,
       apellido,
       username,
       email,
       password
     }) 
+
+    if(roles && roles.length > 0){
+      await user.roles().attach(roles)
+      user.roles = await user.roles().fetch()
+    }
+
+    return user;
+
   }
 
   /**

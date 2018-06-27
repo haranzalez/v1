@@ -17,8 +17,10 @@ const Route = use('Route')
 
 
 Route.group(() => {
-  Route.get('users', 'UserController.index')
-  Route.post('users/create', 'UserController.create')
+  Route.get('users', 'UserController.index');
+  Route.post('users/create', 'UserController.create');
+  Route.get('roles', 'RoleController.index');
+  Route.post('roles/create', 'RoleController.create');
 }).prefix('api')
 
 

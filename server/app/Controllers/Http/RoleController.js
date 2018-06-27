@@ -31,39 +31,41 @@ class RoleController {
     }) 
   }
 
-  /**
-   * Create/save a new role.
-   * POST roles
-   */
-  async store ({ request, response }) {
-  }
-
-  /**
-   * Display a single role.
-   * GET roles/:id
-   */
-  async show ({ params, request, response, view }) {
-  }
-
-  /**
-   * Render a form to update an existing role.
-   * GET roles/:id/edit
-   */
-  async edit ({ params, request, response, view }) {
-  }
 
   /**
    * Update role details.
    * PUT or PATCH roles/:id
    */
-  async update ({ params, request, response }) {
+  async update ({ params, request }) {
+    const { id } = params;
+   
+    const role = await Role.find(id);
+    const old = await Role.find(id);
+    old.users = await old.users().fetch()
+    
+
+    role.merge(request.only(['role', 'description']))
+    role.save();
+    role.users = await role.users().fetch()
+    return {
+      message: 'Updated!',
+      old: old,
+      new: role
+    }
   }
 
   /**
    * Delete a role with id.
    * DELETE roles/:id
    */
-  async destroy ({ params, request, response }) {
+  async destroy ({ params }) {
+    const { id } = params;
+    const role = await Role.find(id)
+    role.delete();
+    return {
+      message: 'Destroyed!',
+      role
+    };
   }
 }
 

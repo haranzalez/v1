@@ -50,38 +50,42 @@ class UserController {
   }
 
   /**
-   * Create/save a new user.
-   * POST users
-   */
-  async store ({ request, response }) {
-  }
-
-  /**
-   * Display a single user.
-   * GET users/:id
-   */
-  async show ({ params, request, response, view }) {
-  }
-
-  /**
-   * Render a form to update an existing user.
-   * GET users/:id/edit
-   */
-  async edit ({ params, request, response, view }) {
-  }
-
-  /**
    * Update user details.
    * PUT or PATCH users/:id
    */
-  async update ({ params, request, response }) {
+  async update ({ params, request }) {
+    const { id } = params;
+    const { roles } = request.all();
+    const user = await User.find(id);
+    const old = await User.find(id);
+    old.roles = await old.roles().fetch()
+
+    if(roles && roles.length > 0){
+      await user.roles().attach(roles)
+      user.roles = await user.roles().fetch()
+    }
+    user.merge(request.only(['nombre', 'apellido', 'username', 'email', 'password']))
+    user.save();
+    return {
+      message: 'Updated!',
+      old: old,
+      new: user
+    }
+
   }
 
   /**
    * Delete a user with id.
    * DELETE users/:id
    */
-  async destroy ({ params, request, response }) {
+  async destroy ({ params }) {
+    const { id } = params;
+    const user = await User.find(id)
+    user.delete();
+    return {
+      message: 'Destroyed!',
+      user
+    };
   }
 }
 

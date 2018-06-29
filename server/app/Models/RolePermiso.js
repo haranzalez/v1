@@ -2,14 +2,12 @@
 
 const Model = use('Model')
 
-class RoleModulo extends Model {
-   
-
+class RolePermiso extends Model {
     roles(){
         return this.belongsTo('App/Models/Role', 'id', 'role_id')
     }
-    modulos(){
-        return this.belongsTo('App/Models/Modulo', 'id', 'module_id')
+    permisos(){
+        return this.belongsTo('App/Models/Permiso', 'id', 'permiso_id')
     }
 
     /**
@@ -38,4 +36,4 @@ class RoleModulo extends Model {
   }
 }
 
-module.exports = RoleModulo
+module.exports = RolePermiso

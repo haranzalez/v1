@@ -32,6 +32,7 @@ class UserController {
    * GET users/create
    */
   async create ({auth, request }) {
+    
     const { nombre, apellido, username, email, password, roles } = request.all();
     const user = await User.create({
       nombre,

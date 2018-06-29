@@ -12,6 +12,10 @@ class Role extends Model {
     modulos() {
         return this.belongsToMany('App/Models/Modulo').pivotModel(use('App/Models/RoleModulo'));
     }
+
+    permisos() {
+        return this.belongsToMany('App/Models/Permiso').pivotModel(use('App/Models/RolePermiso'));
+    }
     
 }
 

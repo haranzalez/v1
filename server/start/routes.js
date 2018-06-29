@@ -17,6 +17,7 @@ const Route = use('Route')
 
 
 Route.group(() => {
+
   Route.post('login', 'UserController.login');
 
   Route.get('users', 'UserController.index');
@@ -28,6 +29,7 @@ Route.group(() => {
   Route.post('roles/create', 'RoleController.create');
   Route.delete('roles/destroy/:id', 'RoleController.destroy');
   Route.patch('roles/update/:id', 'RoleController.update');
+  
 }).prefix('api')
 
 

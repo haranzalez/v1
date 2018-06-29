@@ -25,7 +25,7 @@ class RoleController {
    */
   async create ({ request }) {
     
-    const { nombre, description, modulos } = request.all();
+    const { nombre, description, modulos, permisos } = request.all();
     const role = await Role.create({
       nombre, 
       description
@@ -34,6 +34,10 @@ class RoleController {
     if(modulos && modulos.length > 0){
       await role.modulos().attach(modulos)
       role.modulos = await role.modulos().fetch()
+    }
+    if(permisos && permisos.length > 0){
+      await role.permisos().attach(permisos)
+      role.permisos = await role.permisos().fetch()
     }
 
     return role;
@@ -46,7 +50,7 @@ class RoleController {
    */
   async update ({ params, request }) {
     const { id } = params;
-    const { modulos } = request.all();
+    const { modulos, permisos } = request.all();
     const role = await Role.find(id);
     const old = await Role.find(id);
     old.users = await old.users().fetch()
@@ -55,8 +59,12 @@ class RoleController {
       await role.modulos().attach(modulos)
       role.modulos = await role.modulos().fetch()
     }
+    if(permisos && permisos.length > 0){
+      await role.permisos().attach(permisos)
+      role.permisos = await role.permisos().fetch()
+    }
 
-    role.merge(request.only(['role', 'description']))
+    role.merge(request.only(['nombre', 'description']))
     role.save();
     role.users = await role.users().fetch()
     return {

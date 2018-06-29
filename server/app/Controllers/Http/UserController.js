@@ -21,9 +21,10 @@ class UserController {
     return users;
   }
 
-  async login ({ request }) {
+  async login ({ auth, request }) {
     const { username, password } = request.all();
-    
+    const token = await auth.attempt(username,password);
+    return token;
   }
 
   /**

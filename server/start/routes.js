@@ -17,6 +17,8 @@ const Route = use('Route')
 
 
 Route.group(() => {
+  Route.post('login', 'UserController.login');
+
   Route.get('users', 'UserController.index');
   Route.post('users/create', 'UserController.create');
   Route.delete('users/destroy/:id', 'UserController.destroy');

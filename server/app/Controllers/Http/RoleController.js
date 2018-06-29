@@ -14,6 +14,7 @@ class RoleController {
     const roles = await Role.all();
     for(var prop in roles.rows){
       roles.rows[prop].users = await roles.rows[prop].users().fetch();
+      roles.rows[prop].modulos = await roles.rows[prop].modulos().fetch();
     }
     return roles;
   }
@@ -22,13 +23,20 @@ class RoleController {
    * Render a form to be used for creating a new role.
    * GET roles/create
    */
-  async create ({ request, response, view }) {
+  async create ({ request }) {
     
-    const { role, description } = request.all();
-    return await Role.create({
-      role, 
+    const { nombre, description, modulos } = request.all();
+    const role = await Role.create({
+      nombre, 
       description
     }) 
+
+    if(modulos && modulos.length > 0){
+      await role.modulos().attach(modulos)
+      role.modulos = await role.modulos().fetch()
+    }
+
+    return role;
   }
 
 
@@ -38,11 +46,15 @@ class RoleController {
    */
   async update ({ params, request }) {
     const { id } = params;
-   
+    const { modulos } = request.all();
     const role = await Role.find(id);
     const old = await Role.find(id);
     old.users = await old.users().fetch()
     
+    if(modulos && modulos.length > 0){
+      await role.modulos().attach(modulos)
+      role.modulos = await role.modulos().fetch()
+    }
 
     role.merge(request.only(['role', 'description']))
     role.save();

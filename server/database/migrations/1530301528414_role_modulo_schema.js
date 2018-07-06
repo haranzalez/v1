@@ -9,7 +9,6 @@ class RoleModuloSchema extends Schema {
       table.integer('modulo_id').unsigned()
       table.foreign('role_id').references('roles.id').onDelete('cascade')
       table.foreign('modulo_id').references('modulos.id').onDelete('cascade')
-      table.timestamps()
     })
   }
 

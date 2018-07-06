@@ -4,6 +4,7 @@
  * Resourceful controller for interacting with users
  */
 const User = use('App/Models/User');
+const Role = use('App/Models/Role');
 
 
 class UserController {
@@ -11,17 +12,20 @@ class UserController {
    * Show a list of all users.
    * GET users
    */
-  async index ({ request }) {
-    const users =  await User.all()
+  async index ({ auth, request }) {
+    return await User.all();
+  }
 
-    for(var prop in users.rows){
-      users.rows[prop].roles = await users.rows[prop].roles().fetch();
-    }
-    
-    return users;
+  async fetchOne ({ params }) {
+    const { id } = params;
+    const user = await User.query()
+    .with('roles')
+    .where('id', id).fetch();
+    return user;
   }
 
   async login ({ auth, request }) {
+   
     const { username, password } = request.all();
     const token = await auth.attempt(username,password);
     return token;
@@ -31,7 +35,7 @@ class UserController {
    * Render a form to be used for creating a new user.
    * GET users/create
    */
-  async create ({auth, request }) {
+  async create ({ request }) {
     
     const { nombre, apellido, username, email, password, roles } = request.all();
     const user = await User.create({

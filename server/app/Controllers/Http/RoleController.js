@@ -1,6 +1,7 @@
 'use strict'
 
 const Role = use('App/Models/Role')
+const Permiso = use('App/Models/Permiso')
 
 /**
  * Resourceful controller for interacting with roles
@@ -11,12 +12,16 @@ class RoleController {
    * GET roles
    */
   async index ({ request, response, view }) {
-    const roles = await Role.all();
-    for(var prop in roles.rows){
-      roles.rows[prop].users = await roles.rows[prop].users().fetch();
-      roles.rows[prop].modulos = await roles.rows[prop].modulos().fetch();
-    }
+    const roles = await Role.all()
     return roles;
+  }
+
+  async fetchOne ({ params }) {
+    const { id } = params;
+    const role = await Role.query().with('modulos.permisos', (builder) => {
+      builder.where('role_id', id)
+    }).where('id', id).fetch();
+    return role;
   }
 
   /**
@@ -25,21 +30,17 @@ class RoleController {
    */
   async create ({ request }) {
     
-    const { nombre, description, modulos, permisos } = request.all();
+    const { nombre, description, modulos } = request.all();
     const role = await Role.create({
       nombre, 
       description
     }) 
 
     if(modulos && modulos.length > 0){
-      await role.modulos().attach(modulos)
-      role.modulos = await role.modulos().fetch()
+      await role.modulos().attach(modulos);
+      role.modulos = role.modulos().fetch();
     }
-    if(permisos && permisos.length > 0){
-      await role.permisos().attach(permisos)
-      role.permisos = await role.permisos().fetch()
-    }
-
+   
     return role;
   }
 
@@ -58,10 +59,6 @@ class RoleController {
     if(modulos && modulos.length > 0){
       await role.modulos().attach(modulos)
       role.modulos = await role.modulos().fetch()
-    }
-    if(permisos && permisos.length > 0){
-      await role.permisos().attach(permisos)
-      role.permisos = await role.permisos().fetch()
     }
 
     role.merge(request.only(['nombre', 'description']))
@@ -86,6 +83,24 @@ class RoleController {
       message: 'Destroyed!',
       role
     };
+  }
+
+
+  async setPermisos({ params, request }) {
+    const { role_id, modulo_id } = params;
+    const { permisos } = request.all();
+    const role = await Role.find(role_id);
+    console.log(modulo_id)
+   
+    await role.permisos().attach(permisos,(row) => {
+      row.modulo_id = modulo_id;
+    });
+
+    return await Role.query().with('modulos.permisos', (builder) => {
+      builder.where('role_id', role_id)
+    }).where('id', role_id).fetch();
+   
+    
   }
 }
 

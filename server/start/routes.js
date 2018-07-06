@@ -20,15 +20,23 @@ Route.group(() => {
 
   Route.post('login', 'UserController.login');
 
-  Route.get('users', 'UserController.index');
-  Route.post('users/create', 'UserController.create');
-  Route.delete('users/destroy/:id', 'UserController.destroy');
-  Route.patch('users/update/:id', 'UserController.update');
+  Route.get('users', 'UserController.index').middleware('auth');
+  Route.get('users/:id', 'UserController.fetchOne').middleware('auth');
+  Route.post('users/create', 'UserController.create')
+  Route.delete('users/destroy/:id', 'UserController.destroy').middleware('auth');
+  Route.patch('users/update/:id', 'UserController.update').middleware('auth');
 
-  Route.get('roles', 'RoleController.index');
-  Route.post('roles/create', 'RoleController.create');
-  Route.delete('roles/destroy/:id', 'RoleController.destroy');
-  Route.patch('roles/update/:id', 'RoleController.update');
+  Route.get('roles', 'RoleController.index').middleware('auth');
+  Route.get('roles/:id', 'RoleController.fetchOne').middleware('auth');
+  Route.post('roles/create', 'RoleController.create').middleware('auth');
+  Route.delete('roles/destroy/:id', 'RoleController.destroy').middleware('auth');
+  Route.patch('roles/update/:id', 'RoleController.update').middleware('auth');
+  
+  Route.get('roles/:id/modulos', 'RoleController.modules').middleware('auth');
+  Route.get('roles/:id/permisos', 'RoleController.permisos').middleware('auth');
+  Route.post('roles/:role_id/modulos/:modulo_id/setPermisos', 'RoleController.setPermisos').middleware('auth');
+  Route.patch('roles/:id/modulos/updatePermisos', 'RoleController.updatePermisos').middleware('auth');
+
   
 }).prefix('api')
 

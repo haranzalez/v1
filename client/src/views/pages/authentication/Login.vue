@@ -5,10 +5,16 @@
 				<img class="image-logo" src="@/assets/images/logo.svg" alt="logo"/>
 				
 				<float-label class="styled">
-					<input type="text" placeholder="Username">
+					<v-text-field class="vtext"  
+					type="text" placeholder="Username" 
+					:value="username"
+					@input="setUsername"></v-text-field>
 				</float-label>
 				<float-label class="styled">
-					<input type="password" placeholder="Password">
+					<v-text-field class="vtext"  
+					type="password" placeholder="Password" 
+					:value="password"
+					@input="setPassword"></v-text-field>
 				</float-label>
 				
 				<div class="flex">
@@ -35,21 +41,26 @@
 </template>
 
 <script>
+import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
+
 export default {
 	name: 'Login',
-	data() {
-		return {
-			form: {
-				email: '',
-				password: '',
-			}
-		}
+	computed: {
+		...mapState('authentication', [
+			'username',
+			'password',
+			'warning',
+			'success',
+		]),
 	},
 	methods: {
-		login() {
-			this.$store.commit('setLogin')
-			this.$router.push('dashboard')
-		}
+		...mapMutations('authentication', [
+			'setUsername',
+			'setPassword',
+		]),
+		...mapActions('authentication', [
+			'login'
+		]),
 	}
 }
 </script>

@@ -13,31 +13,48 @@ export default {
         password: null,
         warning: null,
         success: null,
+        token: null,
     },
     getters: {
 		successMessage: state => {
 			if(state.success){
-                state.success = false
+                
 				Notification.success({
                     title: 'Exito!',
-                    message: 'Registro exitoso. Porfavor proceda a ingresar.',
+                    message: state.success,
                     position: 'bottom-right',
                 });
+                state.success = null;
                 
 			}
 		},
 		warningMessage: state => {
 			if(state.warning){
-                state.warning = false
+                
 				Notification.warning({
                     title: 'Atencion!',
-                    message: 'Informacion incorrecta o duplicada',
+                    message: state.warning,
                     position: 'bottom-right',
                 });
+                state.warning = null;
 			}
 		},
 	},
     actions: {
+        login({ commit, state }){
+            return HTTP().post('/api/login', {
+                username: state.username,
+                password: state.password,
+            })
+            .then(({ data }) => {
+                commit('setToken', data.token)
+                router.push('/dashboard')
+                
+            })
+            .catch(() => {
+                commit('setWarningMessage', 'Credenciales incorrectas.')
+            })
+        },
         register({ commit, state }){
             return HTTP().post('/api/users/create', {
                 nombre: state.nombre,
@@ -47,10 +64,10 @@ export default {
                 password: state.password,
             })
             .then(({ data }) => {
-                commit('setSuccessMessage', true)
+                commit('setSuccessMessage', 'Registro exitoso. Porfavor proceda a ingresar')
             })
             .catch(() => {
-                commit('setWarningMessage', true)
+                commit('setWarningMessage', 'Informacion incorrecta o duplicada.')
             })
         },
     },
@@ -76,5 +93,8 @@ export default {
         setPassword(state, password){
             state.password = password;
         },
+        setToken(state, token){
+            state.token = token;
+        }
     },
 };

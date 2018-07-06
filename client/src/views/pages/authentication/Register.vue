@@ -71,10 +71,6 @@ export default {
 			'success',
 			'warning',
 		]),
-		...mapGetters('index', [
-			'successMessage',
-			'warningMessage',
-		]),
 	},
 
 	methods: {

@@ -48,7 +48,7 @@
 				</div>
 
 				<div class="text-center login-box pt-10">
-					Ya se registro? <a>Ingresar</a>
+					Ya se registro? <router-link to="/login">Ingresar</router-link>
 				</div>
 			</div>
 		</div>
@@ -68,8 +68,6 @@ export default {
 			'email',
 			'username',
 			'password',
-			'success',
-			'warning',
 		]),
 	},
 

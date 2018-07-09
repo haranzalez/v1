@@ -19,6 +19,9 @@ const Route = use('Route')
 Route.group(() => {
 
   Route.post('login', 'UserController.login');
+  Route.post('password', 'UserController.sendPasswordChangeEmail');
+  Route.get('password/reset/:token', 'UserController.confirmPasswordChange');
+  Route.post('password/reset', 'UserController.resetPassword');
 
   Route.get('users', 'UserController.index').middleware('auth');
   Route.get('users/:id', 'UserController.fetchOne').middleware('auth');

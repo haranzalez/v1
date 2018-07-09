@@ -12,6 +12,7 @@ import Timeline from '../views/apps/Timeline.vue'
 import Login from '../views/pages/authentication/Login.vue'
 import Register from '../views/pages/authentication/Register.vue'
 import ForgotPassword from '../views/pages/authentication/ForgotPassword.vue'
+import ResetPassword from '../views/pages/authentication/ResetPassword.vue'
 import Profile from '../views/pages/Profile.vue'
 import NotFound from '../views/pages/NotFound.vue'
 import Invoice from '../views/pages/Invoice.vue'
@@ -225,6 +226,14 @@ const router = new Router({
 			path: '/forgot-password',
 			name: 'forgot-password',
 			component: ForgotPassword,
+			meta: {
+				layout: layouts.contenOnly
+			}
+		},
+		{
+			path: '/reset-password/:token',
+			name: 'reset-password',
+			component: ResetPassword,
 			meta: {
 				layout: layouts.contenOnly
 			}

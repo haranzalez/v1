@@ -2,7 +2,7 @@
 
 const Schema = use('Schema')
 
-class RolModuloPermisoSchema extends Schema {
+class RoleModuloPermisoSchema extends Schema {
   up () {
     this.create('role_modulo_permisos', (table) => {
       table.integer('role_id').unsigned()
@@ -15,8 +15,8 @@ class RolModuloPermisoSchema extends Schema {
   }
 
   down () {
-    this.drop('rol_modulo_permisos')
+    this.drop('role_modulo_permisos')
   }
 }
 
-module.exports = RolModuloPermisoSchema
+module.exports = RoleModuloPermisoSchema

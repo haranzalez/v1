@@ -6,14 +6,21 @@
 				
 				<float-label class="styled">
 					<v-text-field class="vtext"  
-					type="email" placeholder="E-mail" 
-					:value="email"
-					@input="setEmail"></v-text-field>
+					type="password" placeholder="Nuevo Password" 
+					:value="password"
+					@input="setPassword"></v-text-field>
+				</float-label>
+
+                <float-label class="styled">
+					<v-text-field class="vtext"  
+					type="password" placeholder="Confirmar Password" 
+					:value="passwordConfirm"
+					@input="setPasswordConfirm"></v-text-field>
 				</float-label>
 
 				<div class="flex text-center center pt-20 pb-10">			
-					<el-button plain size="small" @click="requestPasswordChange" class="send-btn tada animated">
-						ENVIAR LINK
+					<el-button plain size="small" @click="resetPassword" class="send-btn tada animated">
+						CAMBIAR CONTRASEÑA
 					</el-button>
 				</div>
 			</div>
@@ -26,19 +33,21 @@
 import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
 
 export default {
-	name: 'ForgotPassword',
+	name: 'ResetPassword',
 	computed: {
 		...mapState('authentication', [
-			'email',
-			'ip',
+            'password',
+            'passwordConfirm',
 		]),
 	},
 	methods: {
 		...mapMutations('authentication', [
-			'setEmail',
-		]),
-		...mapActions('authentication', [
-			'requestPasswordChange'
+            'setPassword',
+            'setPasswordConfirm',
+        ]),
+        ...mapActions('authentication', [
+            'requestPasswordChange',
+            'resetPassword',
 		]),
 	}
 }

@@ -37,6 +37,10 @@ class User extends Model {
     return this.belongsToMany('App/Models/Role').pivotModel(use('App/Models/UserRole'));
   }
 
+  passwordRequests() {
+    return this.hasMany('App/Models/PasswordRequest')
+  }
+
 
   
 }

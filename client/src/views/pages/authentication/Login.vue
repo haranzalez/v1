@@ -30,10 +30,8 @@
 
 				<div class="text-divider mv-10">o</div>
 
-				
-
 				<div class="text-center signin-box pt-20">
-					No se a registrado? <a>Registrarse</a>
+					No se a registrado? <router-link to="/register">Registrarse</router-link>
 				</div>
 			</div>
 		</div>
@@ -49,8 +47,6 @@ export default {
 		...mapState('authentication', [
 			'username',
 			'password',
-			'warning',
-			'success',
 		]),
 	},
 	methods: {

@@ -4,7 +4,9 @@
  * Resourceful controller for interacting with users
  */
 const User = use('App/Models/User');
-const Role = use('App/Models/Role');
+const EmailService = use('App/Services/EmailService');
+const Encryption = require('crypto');
+const PasswordRequest = use('App/Models/PasswordRequest')
 
 
 class UserController {
@@ -93,6 +95,95 @@ class UserController {
       user
     };
   }
+  async sendPasswordChangeEmail({ request }) {
+    const { email, ip } = request.all();
+    const user = await User.query().where('email', email).fetch();
+    
+    if(user.rows.length > 0){
+
+      const e = new EmailService()
+      const token = Encryption.randomBytes(20).toString('hex')
+      
+      e.sendPasswordResetEmail({
+        from: 'haranzalez@gmail.com',
+        to: email,
+        subject: 'Cambio de clave',
+        text: 'Esta recibiendo este email porque usted (o alguien) solicito '+
+        'cambiar el password de su cuenta.\n\n'+
+        'Porfavor haga click en el siguiente link para completar el proceso de cambio:\n\n'+
+        'http://localhost:3333/api/password/reset/' + token + '\n\n'+
+        'Si usted no ha solicitado cambiar su password, porfavor ignore este email y su password no cambiara.',
+        user_id: user.rows[0].id,
+        ip: ip,
+        token: token,
+        expires: Date.now() + 3600000,
+      })
+        
+      return {
+        type: 'success',
+        message: 'Un email se a enviado a su correo electronico. Porfavor revice su correo y siga las indicaciones.',
+        payload: email,
+      }
+
+    }else{
+      return {
+        type: 'warning',
+        message: 'El email no se encuentra registrado en la base de datos.',
+        payload: email,
+      }
+    }
+  }
+
+  async confirmPasswordChange({ params, response }){
+    const { token } = params;
+    const requests = await PasswordRequest.query().where({ token: token }).fetch()
+    const now = Date.now();
+    
+      if(requests.rows.length > 0 && requests.rows[0].expires >= now){
+        response.redirect('http://localhost:8080/reset-password/'+token)
+      }else {
+        return{
+          message: 'Solicitud expirada'
+        }
+      }
+    }
+    async resetPassword({ request }){
+      const { token, password } = request.all();
+      const preq = await PasswordRequest.query().where({ token: token }).fetch()
+      if(preq.rows.length > 0){
+        const id = preq.rows[0].user_id
+        const user = await User.find(id);
+        console.log(user.email)
+        user.merge({password: password})
+        user.save();
+        preq.rows[0].merge({token: null})
+       
+        preq.rows[0].save();
+        const em = new EmailService()
+        em.sendPasswordResetConfirmationEmail({
+          from: 'haranzalez@gmail.com',
+          to: user.email,
+          subject: 'Clave actualizada exitosamente!',
+          text: 'Este email es para confirmar su cambio de clave.',
+        })
+        return {
+          type: 'success',
+          message: 'Su clave fue actualizada.'
+        }
+      }else{
+        return {
+          type: 'warning',
+          message: 'Solicitud de cambio de contraseña expirado. Porfavor realize una nueva solicitud.'
+        }
+      }
+     
+     
+     
+    }
+  
+
+
+
 }
 
 module.exports = UserController

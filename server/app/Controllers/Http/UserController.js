@@ -30,7 +30,13 @@ class UserController {
    
     const { username, password } = request.all();
     const token = await auth.attempt(username,password);
-    return token;
+    const user = await User.findBy({username: username});
+    const roles = await user.roles().fetch();
+    return {
+      user,
+      roles,
+      token,
+    }
   }
 
   /**

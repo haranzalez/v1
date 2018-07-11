@@ -3,22 +3,33 @@ import router from '../router'
 import { Notification } from 'element-ui'
 
 export default {
-    root: true,
     namespaced: true,
     state: {
-        nombre: null,
-        apellido: null,
-        email: null,
-        username: null,
-        password: null,
-        passwordConfirm: null,
-        token: null,
-        ip: null,
+        usuario: {
+            nombre: null,
+            apellido: null,
+            email: null,
+            ip: null,
+        },
+        roles: [],
+        credenciales: {
+            username: null,
+            password: null,
+            passwordConfirm: null,
+            token: null,
+        },
+        logged: false,
+        isAdmin: false,
+    },
+    getters: {
+        isLogged(state, getters) {
+			return state.logged
+		},
     },
     actions: {
         resetPassword({ commit, state }){
            
-            if(state.password !== state.passwordConfirm){
+            if(state.credenciales.password !== state.credenciales.passwordConfirm){
                 Notification.warning({
                     title: 'Atencion!',
                     message: 'Las contraseñas no coinsiden.',
@@ -28,7 +39,7 @@ export default {
                 return;
             }
             return HTTP().local.post('/api/password/reset', {
-                password: state.password,
+                password: state.credenciales.password,
                 token: router.currentRoute.params.token,
             }).then(({ data }) => {
                 if(data.type == 'success'){
@@ -39,7 +50,6 @@ export default {
                         message: data.message,
                         position: 'bottom-right',
                     });
-                    
                 }
             }).catch(err => {
                 console.log(err)
@@ -47,30 +57,39 @@ export default {
         },
         login({ commit, state }){
             return HTTP().local.post('/api/login', {
-                username: state.username,
-                password: state.password,
+                username: state.credenciales.username,
+                password: state.credenciales.password,
             })
             .then(({ data }) => {
-                commit('setToken', data.token)
+                console.log(data)
+                if(data.roles.lenght > 0){
+                    console.log(data.roles)
+                    commit('setRoles', data.roles)
+                }
+                commit('setToken', data.token.token)
+                commit('setIsLogged')
                 router.push('/dashboard')
                 
             })
-            .catch(() => {
+            .catch(err => {
+                console.log(err)
                 Notification.warning({
                     title: 'Atencion!',
                     message: 'Credenciales incorrectas.',
                     position: 'bottom-right',
                 });
-                
             })
+        },
+        logout({ commit }){
+            commit('setLogout')
         },
         register({ state }){
             return HTTP().local.post('/api/users/create', {
-                nombre: state.nombre,
-                apellido: state.apellido,
-                email: state.email,
-                username: state.username,
-                password: state.password,
+                nombre: state.usuario.nombre,
+                apellido: state.usuario.apellido,
+                email: state.usuario.email,
+                username: state.credenciales.username,
+                password: state.credenciales.password,
             })
             .then(({ data }) => {
                 Notification.success({
@@ -104,8 +123,8 @@ export default {
            })
 
            HTTP().local.post('/api/password',{
-               email: state.email,
-               ip: state.ip,
+               email: state.usuario.email,
+               ip: state.usuario.ip,
            }).then(res => {
                if(res.data.type == 'success'){
                 Notification.success({
@@ -135,29 +154,40 @@ export default {
         },
     },
     mutations: {
+        setIsLogged(state){
+            state.logged = true;
+        },
+        setLogout(state, payload) {
+			state.layout.navPos = null
+			state.layout.toolbar = null
+			state.logged = false
+		},
         setNombre(state, nombre){
-            state.nombre = nombre;
+            state.usuario.nombre = nombre;
         },
         setApellido(state, apellido){
-            state.apellido = apellido;
+            state.usuario.apellido = apellido;
         },
         setEmail(state, email){
-            state.email = email;
+            state.usuario.email = email;
         },
         setUsername(state, username){
-            state.username = username;
+            state.credenciales.username = username;
         },
         setPassword(state, password){
-            state.password = password;
+            state.credenciales.password = password;
         },
         setToken(state, token){
-            state.token = token;
+            state.credenciales.token = token;
         },
         setIp(state, ip){
-            state.ip = ip;
+            state.usuario.ip = ip;
         },
         setPasswordConfirm(state, password){
-            state.passwordConfirm = password;
+            state.credenciales.passwordConfirm = password;
+        },
+        setRoles(state, roles){
+            state.roles = roles
         },
     },
 };

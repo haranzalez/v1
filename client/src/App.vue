@@ -104,12 +104,13 @@ export default {
 		viewAnimation() {
 			return this.$store.getters.viewAnimation || 'none'
 		},
-		isLogged() {
-			return this.$store.getters.isLogged
-		},
 		splashScreen() {
 			return this.$store.getters.splashScreen
+		},
+		isLogged() {
+			return this.$store.getters.isLogged
 		}
+	
 	},	
 	methods: {
 		resizeOpenNav() {

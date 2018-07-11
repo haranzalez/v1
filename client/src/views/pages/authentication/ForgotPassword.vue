@@ -16,6 +16,12 @@
 						ENVIAR LINK
 					</el-button>
 				</div>
+
+				<div class="text-divider mv-10">o</div>
+
+				<div class="text-center signin-box pt-20">
+					<router-link to="/login">Ingresar</router-link>
+				</div>
 			</div>
 		</div>
 	</vue-scroll>

@@ -19,7 +19,7 @@
 				
 				<div class="flex">
 					<div class="box grow"><el-checkbox>Recordarme </el-checkbox></div>
-					<div class="box grow text-right"><router-link to="/dashboard">Olvido contraseña?</router-link></div>
+					<div class="box grow text-right"><router-link to="/forgot-password">Olvido contraseña?</router-link></div>
 				</div>
 
 				<div class="flex text-center center pt-30 pb-10">			

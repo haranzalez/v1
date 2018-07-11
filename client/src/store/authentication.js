@@ -80,7 +80,10 @@ export default {
                 });
             })
         },
-        logout({ commit }){
+        logout({ commit,rootState }){
+            console.log(rootState)
+            rootState.layout.navPos = null
+			rootState.layout.toolbar = null
             commit('setLogout')
         },
         register({ state }){
@@ -158,8 +161,6 @@ export default {
             state.logged = true;
         },
         setLogout(state, payload) {
-			state.layout.navPos = null
-			state.layout.toolbar = null
 			state.logged = false
 		},
         setNombre(state, nombre){

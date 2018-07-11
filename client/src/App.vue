@@ -84,31 +84,32 @@ export default {
 	},
 	computed: {
 		navPos() {
-			if(this.innerWidth <= 768 && (this.$store.getters.navPos === 'top' || this.$store.getters.navPos === 'bottom')) {
+			if(this.innerWidth <= 768 && (this.$store.getters['layout/navPos'] === 'top' || this.$store.getters.navPos === 'bottom')) {
 				return 'left'	
 			}
-			return this.$store.getters.navPos
+			return this.$store.getters['layout/navPos']
 		},
 		toolbar() {
-			return this.$store.getters.toolbar
+			console.log(this.$store)
+			return this.$store.getters['layout/toolbar']
 		},
 		footer() {
-			return this.$store.getters.footer
+			return this.$store.getters['layout/footer']
 		},
 		boxed() {
-			return this.$store.getters.boxed
+			return this.$store.getters['layout/boxed']
 		},
 		roundedCorners() {
-			return this.$store.getters.roundedCorners
+			return this.$store.getters['layout/roundedCorners']
 		},
 		viewAnimation() {
-			return this.$store.getters.viewAnimation || 'none'
+			return this.$store.getters['layout/viewAnimation'] || 'none'
 		},
 		splashScreen() {
-			return this.$store.getters.splashScreen
+			return this.$store.getters['layout/splashScreen']
 		},
 		isLogged() {
-			return this.$store.getters.isLogged
+			return this.$store.getters['layout/isLogged']
 		}
 	
 	},	

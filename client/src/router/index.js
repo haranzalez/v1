@@ -1,3 +1,4 @@
+
 import Vue from 'vue'
 import Router from 'vue-router'
 
@@ -109,33 +110,34 @@ const router = new Router({
 
 const l = {
 	contenOnly(){
-		store.commit('setLayout', layouts.contenOnly)
+		store.commit('layout/setLayout', layouts.contenOnly)
 	},
 	navLeft(){
-		store.commit('setLayout', layouts.navLeft)
+		store.commit('layout/setLayout', layouts.navLeft)
 	},
 	navRight(){
-		store.commit('setLayout', layouts.navRight)
+		store.commit('layout/setLayout', layouts.navRight)
 	},
 	navTop(){
-		store.commit('setLayout', layouts.navTop)
+		store.commit('layout/setLayout', layouts.navTop)
 	},
 	navBottom(){
-		store.commit('setLayout', layouts.navBottom)
+		store.commit('layout/setLayout', layouts.navBottom)
 	},
 	set(layout){
-		store.commit('setLayout', layout)
+		store.commit('layout/setLayout', layout)
 	}
 }
 
 //insert here login logic
 const auth = {
 	loggedIn() {
+		console.log(store)
 		return store.getters['authentication/isLogged']
 	},
 	logout() {
-		store.commit('setLogout')
-	}
+		return store.dispatch('authentication/logout')
+	},
 }
 
 router.beforeEach((to, from, next) => {

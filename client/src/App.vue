@@ -84,13 +84,12 @@ export default {
 	},
 	computed: {
 		navPos() {
-			if(this.innerWidth <= 768 && (this.$store.getters['layout/navPos'] === 'top' || this.$store.getters.navPos === 'bottom')) {
+			if(this.innerWidth <= 768 && (this.$store.getters['layout/navPos'] === 'top' || this.$store.getters['layout/navPos'] === 'bottom')) {
 				return 'left'	
 			}
 			return this.$store.getters['layout/navPos']
 		},
 		toolbar() {
-			console.log(this.$store)
 			return this.$store.getters['layout/toolbar']
 		},
 		footer() {
@@ -111,7 +110,6 @@ export default {
 		isLogged() {
 			return this.$store.getters['layout/isLogged']
 		}
-	
 	},	
 	methods: {
 		resizeOpenNav() {

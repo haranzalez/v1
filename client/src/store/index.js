@@ -10,24 +10,16 @@ const debug = process.env.NODE_ENV !== 'production'
 
 export default new Vuex.Store({
 	state: {
-		splashScreen: true,
 	},
 	modules: {
 		authentication,
 		layout,
 	},
 	mutations: {
-		setSplashScreen(state, payload) {
-			state.splashScreen = payload
-		},
 	},
 	actions: {
-
 	},
 	getters: {
-		splashScreen(state, getters) {
-			return state.splashScreen
-		},
 	},
 	plugins: [createPersistedState()],
 	strict: debug

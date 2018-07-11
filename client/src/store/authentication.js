@@ -81,10 +81,11 @@ export default {
                 });
             })
         },
-        logout({ commit,rootState }){
-            console.log(rootState)
-            rootState.layout.navPos = null
-			rootState.layout.toolbar = null
+        logout({ commit, rootState }){
+            commit('layout/setLayout', {
+                navPos: null,
+                toolbar: null,
+            }, {root: true})
             commit('setLogout')
         },
         register({ state }){

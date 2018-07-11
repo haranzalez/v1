@@ -132,7 +132,6 @@ const l = {
 //insert here login logic
 const auth = {
 	loggedIn() {
-		console.log(store)
 		return store.getters['authentication/isLogged']
 	},
 	logout() {
@@ -145,7 +144,7 @@ router.beforeEach((to, from, next) => {
 	if(to && to.meta && to.meta.auth)
 		authrequired = true
 
-	console.log('authrequired', authrequired, to.name)
+	//console.log('authrequired', authrequired, to.name)
 
 	if(authrequired) {
 		if(auth.loggedIn()) {
@@ -178,7 +177,7 @@ router.beforeEach((to, from, next) => {
 
 router.afterEach((to, from) => {
 	setTimeout(()=>{
-		store.commit('setSplashScreen', false)
+		store.commit('layout/setSplashScreen', false)
 	}, 500)
 })
 

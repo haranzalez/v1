@@ -7,7 +7,8 @@ export default {
         footer: true, //above, below, false
         boxed: false, //true, false
         roundedCorners: false, //true, false
-        viewAnimation: 'fade-top', // fade-left, fade-right, fade-top, fade-top-in-out, fade-bottom, fade-bottom-in-out, fade, false
+		viewAnimation: 'fade-top', // fade-left, fade-right, fade-top, fade-top-in-out, fade-bottom, fade-bottom-in-out, fade, false
+		splashScreen: true,
 	},
     mutations: {
         setLayout(state, payload) {
@@ -28,6 +29,9 @@ export default {
 
 			if(payload && payload.viewAnimation !== undefined)
 				state.viewAnimation = payload.viewAnimation
+		},
+		setSplashScreen(state, payload) {
+			state.splashScreen = payload
 		},
     },
     getters: {
@@ -52,5 +56,10 @@ export default {
 		viewAnimation(state, getters) {
 			return state.viewAnimation
 		},
+		splashScreen(state, getters) {
+			return state.splashScreen
+		},
+		
+		
     },
 }

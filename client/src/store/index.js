@@ -29,6 +29,6 @@ export default new Vuex.Store({
 			return state.splashScreen
 		},
 	},
-	plugins: [createPersistedState({paths: ['layout']})],
+	plugins: [createPersistedState()],
 	strict: debug
 })

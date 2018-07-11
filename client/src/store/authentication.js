@@ -8,6 +8,7 @@ export default {
         usuario: {
             nombre: null,
             apellido: null,
+            nombreCompleto: null,
             email: null,
             ip: null,
         },
@@ -61,7 +62,7 @@ export default {
                 password: state.credenciales.password,
             })
             .then(({ data }) => {
-                console.log(data)
+                state.nombreCompleto = data.user.nombre + ' ' + data.user.apellido
                 if(data.roles.lenght > 0){
                     console.log(data.roles)
                     commit('setRoles', data.roles)

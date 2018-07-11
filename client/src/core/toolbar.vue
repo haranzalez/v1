@@ -33,7 +33,7 @@
 			<el-badge :is-dot="true" class="notification-icon-badge">
 				<el-button v-popover:popover icon="mdi mdi-bell" class="notification-icon"></el-button>
 			</el-badge>
-			<span class="username"><router-link to="/profile">Aurora Shenton</router-link></span>
+			<span class="username"><router-link to="/profile" :value="nombreCompleto">{{nombreCompleto}}</router-link></span>
 			<el-dropdown trigger="click" @command="onCommand">
 				<span class="el-dropdown-link">
 					<img src="../assets/images/avatar.jpg" class="avatar" alt="avatar">
@@ -54,6 +54,7 @@
 </template>
 
 <script>
+import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
 import NotificationBox from '@/components/NotificationBox'
 import Search from '@/components/Search'
 
@@ -66,6 +67,11 @@ export default {
 			fullscreen: false,
 			lang: 'us'
 		}
+	},
+	computed:{
+		...mapState('authentication', [
+			'nombreCompleto',
+		])
 	},
 	methods: {
 		onCommandLang(lang) {

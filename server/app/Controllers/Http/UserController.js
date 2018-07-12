@@ -32,6 +32,10 @@ class UserController {
     const token = await auth.attempt(username,password);
     const user = await User.findBy({username: username});
     const roles = await user.roles().fetch();
+    console.log(roles)
+    for(let prop in roles.rows){
+      
+    }
     return {
       user,
       roles,

@@ -16,8 +16,7 @@ class Role extends Model {
     }
 
     permisos() {
-        return this.belongsToMany('App/Models/Permiso')
-        .pivotModel(use('App/Models/RoleModuloPermiso'));
+        return this.hasMany('App/Models/RoleModuloPermiso')
     }
 
 

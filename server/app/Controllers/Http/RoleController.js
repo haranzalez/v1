@@ -1,7 +1,8 @@
 'use strict'
 
 const Role = use('App/Models/Role')
-const Permiso = use('App/Models/Permiso')
+const Permisos = use('App/Models/RoleModuloPermiso')
+const Database = use('Database')
 
 /**
  * Resourceful controller for interacting with roles
@@ -88,18 +89,27 @@ class RoleController {
 
   async setPermisos({ params, request }) {
     const { role_id, modulo_id } = params;
-    const { permisos } = request.all();
-    const role = await Role.find(role_id);
-    console.log(modulo_id)
-   
-    await role.permisos().attach(permisos,(row) => {
-      row.modulo_id = modulo_id;
-    });
+    const { editar, crear, eliminar } = request.all();
+    const payload = {
+      role_id: role_id,
+      modulo_id: modulo_id,
+      editar: editar,
+      crear: crear,
+      eliminar: eliminar,
+    }
+
+    const role = await Permisos.query().where('role_id', role_id).where('modulo_id', modulo_id).fetch()    
+    if(role.rows.length == 0){
+      await Permisos.query().insert(payload)
+    }
+    await Permisos.query()
+    .where('role_id', role_id)
+    .where('modulo_id', modulo_id)
+    .update(payload)
 
     return await Role.query().with('modulos.permisos', (builder) => {
       builder.where('role_id', role_id)
     }).where('id', role_id).fetch();
-   
     
   }
 }

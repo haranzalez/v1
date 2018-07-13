@@ -8,6 +8,7 @@ class ModuloSchema extends Schema {
       table.increments()
       table.string('nombre').notNullable().unique();
       table.string('descripcion');
+      table.string('icono')
     })
   }
 

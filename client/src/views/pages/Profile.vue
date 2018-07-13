@@ -6,7 +6,7 @@
 			<div class="username">
 				<div class="cover-small"></div>
 				<div class="avatar-small"><img src="@/assets/images/avatar.jpg" alt="avatar"></div>
-				<span>{{username}}</span>
+				<span :value="nombreCompleto">{{nombreCompleto}}</span>
 				<div class="colors-box">
 					<div v-for="i in 5" :key="i" :class="{'color':true, 'active':colorActive}" :style="{'background':color}"></div>
 				</div>
@@ -16,26 +16,22 @@
 		</div>
 		<div class="card-base card-shadow--medium info bg-white black-text">
 			<el-tabs v-model="activeTab">
-				<el-tab-pane label="Timeline" name="timeline">
-					<profile-timeline></profile-timeline>
-				</el-tab-pane>
+			
 				<el-tab-pane label="Info" name="info">
 					<profile-edit></profile-edit>
 				</el-tab-pane>
-				<el-tab-pane label="Photo" name="photo">
-					<profile-gallery></profile-gallery>
-				</el-tab-pane>
+				
 			</el-tabs>
 		</div>
 	</vue-scroll>
 </template>
 
 <script>
+import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
 import ColorThief from 'color-thief-browser'
 import Affix from '@/components/Affix'
 import ProfileEdit from '@/components/Profile/ProfileEdit'
-import ProfileGallery from '@/components/Profile/ProfileGallery'
-import ProfileTimeline from '@/components/Profile/ProfileTimeline'
+
 
 export default {
 	name: 'Profile',
@@ -44,9 +40,15 @@ export default {
 			username: 'Aurora Shenton',
 			colorActive: false,
 			color: 'white',
-			activeTab: 'timeline',
+			activeTab: 'info',
 			affixEnabled: true
 		}
+	},
+	computed: {
+		...mapState('authentication', [
+			'nombreCompleto',
+
+		])
 	},
 	methods: {
 		resizeAffixEnabled() {
@@ -75,8 +77,6 @@ export default {
 	components: {
 		Affix,
 		ProfileEdit,
-		ProfileGallery,
-		ProfileTimeline
 	}
 }
 </script>

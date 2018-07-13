@@ -21,6 +21,8 @@ export default new Vuex.Store({
 	},
 	getters: {
 	},
-	plugins: [createPersistedState()],
+	plugins: [createPersistedState({
+		paths: ['dashboar', 'login'],
+	  })],
 	strict: debug
 })

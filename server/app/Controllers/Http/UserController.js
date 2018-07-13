@@ -21,7 +21,7 @@ class UserController {
   async fetchOne ({ params }) {
     const { id } = params;
     const user = await User.query()
-    .with('roles')
+    .with('roles.modulos.permisos')
     .where('id', id).fetch();
     return user;
   }
@@ -30,15 +30,11 @@ class UserController {
    
     const { username, password } = request.all();
     const token = await auth.attempt(username,password);
-    const user = await User.findBy({username: username});
-    const roles = await user.roles().fetch();
-    console.log(roles)
-    for(let prop in roles.rows){
-      
-    }
+    const user = await User.query()
+    .with('roles.modulos.permisos')
+    .where('username', username).fetch();
     return {
       user,
-      roles,
       token,
     }
   }

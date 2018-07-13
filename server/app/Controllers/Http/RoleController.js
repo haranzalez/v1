@@ -39,7 +39,7 @@ class RoleController {
 
     if(modulos && modulos.length > 0){
       await role.modulos().attach(modulos);
-      role.modulos = role.modulos().fetch();
+      role.modulos = await role.modulos().fetch();
     }
    
     return role;

@@ -10,27 +10,18 @@
 		:class="{'nav-collapsed':isCollapse}"
 	>
 		<div class="el-menu-item-group__title" style="padding-top: 4px;"><span>Modulos</span></div>
-		<el-menu-item index="/dashboard">
-			<i class="mdi mdi-gauge"></i><span slot="title">Dashboard</span>
+
+		<el-menu-item v-for="item in menu" :key="item.id" :index="'/'+item.nombre">
+			<i :class="'mdi '+item.icono"></i><span slot="title">{{item.nombre}}</span>
 		</el-menu-item>
-		<el-menu-item index="/calendar">
-			<i class="mdi mdi-calendar"></i><span slot="title">Calendar</span>
-		</el-menu-item>
-		<el-menu-item index="/contacts">
-			<i class="mdi mdi-account-multiple-outline"></i><span slot="title">Contacts</span>
-		</el-menu-item>
-		<el-menu-item index="/gallery">
-			<i class="mdi mdi-image-multiple"></i><span slot="title">Gallery</span>
-		</el-menu-item>
-		<el-menu-item index="/timeline">
-			<i class="mdi mdi-source-commit-local"></i><span slot="title">Timeline</span>
-		</el-menu-item>
+		
 
 	</el-menu>	
 </template>
 
 
 <script>
+import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
 import { detect } from 'detect-browser'
 const browser = detect()
 
@@ -43,6 +34,11 @@ export default {
 			isEdge: true,
 			activeLink: null
 		}
+	},
+	computed: {
+		...mapState('authentication', [
+			'menu',
+		]),
 	},
 	methods: {
 		goto(index, indexPath) {
@@ -68,6 +64,7 @@ export default {
 		//console.log('this.$router.currentRoute.path', this.$router.currentRoute.path)
 	},
 	mounted() {
+
 		//console.log('nav component mounted')				
 	}
 }

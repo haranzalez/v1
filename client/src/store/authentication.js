@@ -12,7 +12,6 @@ export default {
             email: null,
             ip: null,
         },
-        roles: [],
         credenciales: {
             username: null,
             password: null,
@@ -21,6 +20,7 @@ export default {
         },
         logged: false,
         isAdmin: false,
+        menu: null,
     },
     getters: {
         isLogged(state, getters) {
@@ -28,6 +28,9 @@ export default {
 		},
     },
     actions: {
+        setup(){
+
+        },
         resetPassword({ commit, state }){
            
             if(state.credenciales.password !== state.credenciales.passwordConfirm){
@@ -62,15 +65,19 @@ export default {
                 password: state.credenciales.password,
             })
             .then(({ data }) => {
-                state.nombreCompleto = data.user.nombre + ' ' + data.user.apellido
-                if(data.roles.lenght > 0){
-                    console.log(data.roles)
-                    commit('setRoles', data.roles)
-                }
+                console.log(data)
+                commit('setUsuario', data.user[0])
+                commit('setNombreCompleto', data.user[0].nombre + ' ' + data.user[0].apellido)
                 commit('setToken', data.token.token)
+                const menu = []
+                for(let prop in data.user[0].roles){
+                    for(let pro in data.user[0].roles[prop].modulos){
+                        menu.push(data.user[0].roles[prop].modulos[pro])
+                    }
+                }
+                commit('setMenu', menu)
                 commit('setIsLogged')
                 router.push('/dashboard')
-                
             })
             .catch(err => {
                 console.log(err)
@@ -159,17 +166,23 @@ export default {
         },
     },
     mutations: {
+        setUsuario(state, usuario){
+            state.usuario = usuario;
+        },
         setIsLogged(state){
             state.logged = true;
         },
         setLogout(state, payload) {
-			state.logged = false
+            state.logged = false
 		},
         setNombre(state, nombre){
             state.usuario.nombre = nombre;
         },
         setApellido(state, apellido){
             state.usuario.apellido = apellido;
+        },
+        setNombreCompleto(state, nombre){
+            state.nombreCompleto = nombre;
         },
         setEmail(state, email){
             state.usuario.email = email;
@@ -192,5 +205,8 @@ export default {
         setRoles(state, roles){
             state.roles = roles
         },
+        setMenu(state, menu){
+            state.menu = menu
+        }
     },
 };

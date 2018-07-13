@@ -1,11 +1,11 @@
 <template>
 	<div class="page-profile-edit">
 		<div class="label-switch-box">
-			<span>label: </span>
+			<span>Etiquetas: </span>
 			<el-radio-group v-model="labelPosition" size="small">
-				<el-radio-button label="left">Left</el-radio-button>
-				<el-radio-button label="right">Right</el-radio-button>
-				<el-radio-button label="top">Top</el-radio-button>
+				<el-radio-button label="left">Izquierda</el-radio-button>
+				<el-radio-button label="right">Derecha</el-radio-button>
+				<el-radio-button label="top">Arriba</el-radio-button>
 			</el-radio-group>
 		</div>
 
@@ -13,24 +13,24 @@
 			<el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Username">
-						<el-input v-model="form.username"/>
+						<el-input :value="usuario.username"/>
 					</el-form-item>
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Email">
-						<el-input v-model="form.email" type="email"/>
+						<el-input :value="usuario.email" type="email"/>
 					</el-form-item>
 				</el-col>
 			</el-col>
 			<el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-					<el-form-item label="First name">
-						<el-input v-model="form.firstName"/>
+					<el-form-item label="Nombre">
+						<el-input v-model="usuario.nombre"/>
 					</el-form-item>
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-					<el-form-item label="Last name">
-						<el-input v-model="form.lastName"/>
+					<el-form-item label="Apellido">
+						<el-input v-model="usuario.apellido"/>
 					</el-form-item>
 				</el-col>
 			</el-col>
@@ -51,13 +51,13 @@
 			</el-col>
 			<el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-					<el-form-item label="Phone">
-						<el-input v-model="form.phone" placeholder="+xx xxx xxx xxxx"/>
+					<el-form-item label="Telefono">
+						<el-input v-model="usuario.email" placeholder="+xx xxx xxx xxxx"/>
 					</el-form-item>
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-					<el-form-item label="Website">
-						<el-input v-model="form.website" placeholder="https://"/>
+					<el-form-item label="Celular">
+						<el-input v-model="usuario.email" placeholder="https://"/>
 					</el-form-item>
 				</el-col>
 			</el-col>
@@ -86,55 +86,31 @@
 				</el-col>
 			</el-col>
 			<el-col>
+				
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-					<el-form-item label="Hobbies">
+					<el-form-item label="Roles">
 						<el-select
 							class="select-wide"
-							v-model="form.hobbies"
-							multiple
-							filterable
-							allow-create
-							default-first-option
-							placeholder="Choose tags for your hobbies">
-							<el-option
-							v-for="item in hobbies"
-							:key="item.value"
-							:label="item.label"
-							:value="item.value">
-							</el-option>
-						</el-select>
-					</el-form-item>
-				</el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-					<el-form-item label="Skills">
-						<el-select
-							class="select-wide"
-							v-model="form.skills"
+							:value="usuario.roles"
 							multiple
 							filterable
 							allow-create
 							default-first-option
 							placeholder="Choose tags for your skills">
 							<el-option
-							v-for="item in skills"
-							:key="item.value"
-							:label="item.label"
-							:value="item.value">
+							v-for="item in usuario.roles"
+							:key="item.id"
+							:label="item.nombre"
+							:value="item.nombre">
 							</el-option>
 						</el-select>
 					</el-form-item>
 				</el-col>
 			</el-col>
 						
-			<el-col class="col-p">
-				<el-form-item label="About me">
-					<el-input type="textarea" v-model="form.aboutMe" autosize></el-input>
-				</el-form-item>
-			</el-col>
-			<el-col class="col-p">
+			<el-col class="col-p pull-right">
 				<el-form-item>
-					<el-button type="primary" @click="onSubmit">Save</el-button>
-					<el-button>Cancel</el-button>
+					<el-button type="primary" @click="onSubmit">Guardar</el-button>
 				</el-form-item>
 			</el-col>
 		</el-form>
@@ -142,6 +118,7 @@
 </template>
 
 <script>
+import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
 
 export default {
 	name: 'ProfileEdit',
@@ -191,6 +168,11 @@ export default {
 			labelPosition: 'right'
 		}
 	},
+	computed:{
+		...mapState('authentication', [
+			'usuario',
+		]),
+	},
 	methods: {
 		onSubmit() {
 			console.log('submit!');
@@ -228,6 +210,9 @@ export default {
 	}
 	.select-wide {
 		width: 100%;
+	}
+	.pull-right {
+		text-align: right;
 	}
 }
 </style>

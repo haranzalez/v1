@@ -44,15 +44,20 @@ class UserController {
    * GET users/create
    */
   async create ({ request }) {
-    
-    const { nombre, apellido, username, email, password, roles } = request.all();
-    const user = await User.create({
-      nombre,
-      apellido,
-      username,
-      email,
-      password
-    }) 
+    const { roles } = request.all();
+    const user = await User.create(request.only([
+      'nombre', 
+      'apellido',
+      'cedula', 
+      'tel_fijo',
+      'tel_mobil',
+      'direccion',
+      'ciudad',
+      'departamento',
+      'username', 
+      'email', 
+      'password', 
+    ])) 
 
     if(roles && roles.length > 0){
       await user.roles().attach(roles)
@@ -78,8 +83,23 @@ class UserController {
       await user.roles().attach(roles)
       user.roles = await user.roles().fetch()
     }
-    user.merge(request.only(['nombre', 'apellido', 'username', 'email', 'password']))
+
+    user.merge(request.only([
+      'nombre', 
+      'apellido',
+      'cedula', 
+      'tel_fijo',
+      'tel_mobil',
+      'direccion',
+      'ciudad',
+      'departamento',
+      'username', 
+      'email', 
+      'password', 
+      'estado',
+    ]))
     user.save();
+
     return {
       message: 'Updated!',
       old: old,

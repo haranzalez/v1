@@ -36,7 +36,7 @@
 			<span class="username"><router-link to="/profile" :value="nombreCompleto">{{nombreCompleto}}</router-link></span>
 			<el-dropdown trigger="click" @command="onCommand">
 				<span class="el-dropdown-link">
-					<img src="../assets/images/avatar.jpg" class="avatar" alt="avatar">
+					<img src="../assets/images/avatar-default.svg" class="avatar" alt="avatar">
 				</span>
 				<el-dropdown-menu slot="dropdown">
 					<el-dropdown-item command="/profile"><i class="mdi mdi-account mr-10"></i> Profile</el-dropdown-item>

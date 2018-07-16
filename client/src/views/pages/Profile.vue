@@ -5,14 +5,14 @@
 			<!--<div class="username" v-affix="{parentid: 'affix-container', boundaryid: '', delay:600, offset:0, enable:() => affixEnabled}">-->
 			<div class="username">
 				<div class="cover-small"></div>
-				<div class="avatar-small"><img src="@/assets/images/avatar.jpg" alt="avatar"></div>
+				<div class="avatar-small"><img src="@/assets/images/avatar-default.svg" alt="avatar"></div>
 				<span :value="nombreCompleto">{{nombreCompleto}}</span>
 				<div class="colors-box">
 					<div v-for="i in 5" :key="i" :class="{'color':true, 'active':colorActive}" :style="{'background':color}"></div>
 				</div>
 			</div>
-			<div class="avatar"><img src="@/assets/images/avatar.jpg" alt="avatar"></div>
-			<img src="@/assets/images/cover-2.jpg" id="color-thief" class="color-thief" alt="profile cover">
+			<div class="avatar"><i class="mdi mdi-account"></i></div>
+			<img src="@/assets/images/cubierta-1.jpg" id="color-thief" class="color-thief" alt="profile cover">
 		</div>
 		<div class="card-base card-shadow--medium info bg-white black-text">
 			<el-tabs v-model="activeTab">
@@ -47,7 +47,6 @@ export default {
 	computed: {
 		...mapState('authentication', [
 			'nombreCompleto',
-
 		])
 	},
 	methods: {
@@ -99,7 +98,7 @@ export default {
 			left: 0;
 			right: 0;
 			bottom: 0;
-			background-image: url('../../assets/images/cover-2.jpg');
+			background-image: url('../../assets/images/cubierta-1.jpg');
 			background-position: 50%;
 			background-size: cover;
 			background-repeat: no-repeat;
@@ -162,9 +161,11 @@ export default {
 				top: 0px;
 				transform: rotate(-50deg);
 				transition: all .5s;
+				background-color: red !important;
 			}
 			.avatar-small img {
 				width: 100%;
+				
 			}
 
 			&.affix {
@@ -221,9 +222,20 @@ export default {
 			border-radius: 50%;
 			box-sizing: border-box;
 			box-shadow: 0px 20px 15px -15px rgba(0, 0, 0, 0.15);
-
+			background-color: #EC205F !important;
 			img {
 				width: 100%;
+			}
+			i{
+				position: absolute;
+				margin: auto;
+				display: block;
+				color: black;
+				top: 50%;
+				left: 50%;
+				font-size: 197px;
+				transform: translate(-50%, -42%);
+				color: white;
 			}
 		}
 

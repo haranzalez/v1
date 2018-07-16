@@ -9,7 +9,13 @@ export default {
             nombre: null,
             apellido: null,
             nombreCompleto: null,
+            cedula: null,
             email: null,
+            tel_fijo: null,
+            tel_mobil: null,
+            direccion: null,
+            ciudad: null,
+            departamento: null,
             ip: null,
         },
         credenciales: {
@@ -66,18 +72,27 @@ export default {
             })
             .then(({ data }) => {
                 console.log(data)
-                commit('setUsuario', data.user[0])
-                commit('setNombreCompleto', data.user[0].nombre + ' ' + data.user[0].apellido)
-                commit('setToken', data.token.token)
-                const menu = []
-                for(let prop in data.user[0].roles){
-                    for(let pro in data.user[0].roles[prop].modulos){
-                        menu.push(data.user[0].roles[prop].modulos[pro])
+                if(data.user[0].estado !== 'inactivo'){
+                    commit('setUsuario', data.user[0])
+                    commit('setNombreCompleto', data.user[0].nombre + ' ' + data.user[0].apellido)
+                    commit('setToken', data.token.token)
+                    const menu = []
+                    for(let prop in data.user[0].roles){
+                        for(let pro in data.user[0].roles[prop].modulos){
+                            menu.push(data.user[0].roles[prop].modulos[pro])
+                        }
                     }
+                    commit('setMenu', menu)
+                    commit('setIsLogged')
+                    router.push('/dashboard')
+                    return;
                 }
-                commit('setMenu', menu)
-                commit('setIsLogged')
-                router.push('/dashboard')
+                Notification.warning({
+                    title: 'Atencion!',
+                    message: 'Su cuenta se encuentra actualmente inactiva. Porfavor comuniquese con el administrador.',
+                    position: 'bottom-right',
+                });
+                
             })
             .catch(err => {
                 console.log(err)
@@ -99,17 +114,23 @@ export default {
             return HTTP().local.post('/api/users/create', {
                 nombre: state.usuario.nombre,
                 apellido: state.usuario.apellido,
+                cedula: state.usuario.cedula,
                 email: state.usuario.email,
+                tel_fijo: state.usuario.tel_fijo,
+                tel_mobil: state.usuario.tel_mobil,
+                direccion: state.usuario.direccion,
+                ciudad: state.usuario.ciudad,
+                departamento: state.usuario.departamento,
                 username: state.credenciales.username,
                 password: state.credenciales.password,
             })
             .then(({ data }) => {
+                console.log(data)
                 Notification.success({
                     title: 'Exito!',
                     message: 'Registro exitoso. Porfavor proceda a ingresar',
                     position: 'bottom-right',
                 });
-               
             })
             .catch(() => {
                 Notification.warning({
@@ -181,6 +202,9 @@ export default {
         setApellido(state, apellido){
             state.usuario.apellido = apellido;
         },
+        setCedula(state, cedula){
+            state.usuario.cedula = cedula
+        },
         setNombreCompleto(state, nombre){
             state.nombreCompleto = nombre;
         },
@@ -207,6 +231,22 @@ export default {
         },
         setMenu(state, menu){
             state.menu = menu
-        }
+        },
+        setTelFijo(state, fijo){
+            state.usuario.tel_fijo = fijo
+        },
+        setTelMobil(state, mobil){
+            state.usuario.tel_mobil = mobil
+        },
+        setDireccion(state, direccion){
+            state.usuario.direccion = direccion
+        },
+        setCiudad(state, ciudad){
+            state.usuario.ciudad = ciudad
+        },
+        setDepartamento(state, departamento){
+            state.usuario.departamento = departamento
+        },
+        
     },
 };

@@ -13,83 +13,50 @@
 			<el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Username">
-						<el-input :value="usuario.username"/>
+						<el-input :disabled="usuario.roles[0].nombre !== 'Admin'" :value="usuario.username"/>
 					</el-form-item>
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Email">
-						<el-input :value="usuario.email" type="email"/>
+						<el-input :disabled="usuario.roles[0].nombre !== 'Admin'" :value="usuario.email" type="email"/>
 					</el-form-item>
 				</el-col>
 			</el-col>
 			<el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Nombre">
-						<el-input v-model="usuario.nombre"/>
+						<el-input :disabled="usuario.roles[0].nombre !== 'Admin'" v-model="usuario.nombre"/>
 					</el-form-item>
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Apellido">
-						<el-input v-model="usuario.apellido"/>
+						<el-input :disabled="usuario.roles[0].nombre !== 'Admin'" v-model="usuario.apellido"/>
 					</el-form-item>
 				</el-col>
 			</el-col>
+			
 			<el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-					<el-form-item label="Birthday">
-						<el-date-picker type="date" placeholder="Pick a date" v-model="form.birthday" style="width: 100%;"></el-date-picker>
-					</el-form-item>
-				</el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-					<el-form-item label="Gender">
-						<el-radio-group v-model="form.gender">
-							<el-radio label="Male" border></el-radio>
-							<el-radio label="Female" border></el-radio>
-						</el-radio-group>
-					</el-form-item>
-				</el-col>
-			</el-col>
-			<el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-					<el-form-item label="Telefono">
-						<el-input v-model="usuario.email" placeholder="+xx xxx xxx xxxx"/>
+					<el-form-item label="Telefono Fijo">
+						<el-input :disabled="usuario.roles[0].nombre !== 'Admin'" v-model="usuario.tel_fijo" placeholder="xxx xxxx"/>
 					</el-form-item>
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Celular">
-						<el-input v-model="usuario.email" placeholder="https://"/>
+						<el-input :disabled="usuario.roles[0].nombre !== 'Admin'" v-model="usuario.tel_mobil" placeholder="https://"/>
 					</el-form-item>
 				</el-col>
 			</el-col>
 			<el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-					<el-form-item label="Address">
-						<el-input v-model="form.address"/>
+					<el-form-item label="Direccion">
+						<el-input :disabled="usuario.roles[0].nombre !== 'Admin'" v-model="usuario.direccion"/>
 					</el-form-item>
 				</el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-					<el-form-item label="Postal code">
-						<el-input v-model="form.postalCode"/>
-					</el-form-item>
-				</el-col>
-			</el-col>
-			<el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-					<el-form-item label="City">
-						<el-input v-model="form.city"/>
-					</el-form-item>
-				</el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-					<el-form-item label="Country">
-						<el-input v-model="form.country"/>
-					</el-form-item>
-				</el-col>
-			</el-col>
-			<el-col>
-				
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Roles">
 						<el-select
+						    :disabled="usuario.roles[0].nombre !== 'Admin'"
 							class="select-wide"
 							:value="usuario.roles"
 							multiple
@@ -106,11 +73,25 @@
 						</el-select>
 					</el-form-item>
 				</el-col>
+				
 			</el-col>
-						
+			<el-col>
+				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+					<el-form-item label="Ciudad">
+						<el-input :disabled="usuario.roles[0].nombre !== 'Admin'" v-model="usuario.ciudad"/>
+					</el-form-item>
+				</el-col>
+			</el-col>
+			
+			<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+				<el-form-item label="Departamento">
+					<el-input :disabled="usuario.roles[0].nombre !== 'Admin'" v-model="usuario.departamento"/>
+				</el-form-item>
+			</el-col>
+				
 			<el-col class="col-p pull-right">
 				<el-form-item>
-					<el-button type="primary" @click="onSubmit">Guardar</el-button>
+					<el-button :disabled="usuario.roles[0].nombre !== 'Admin'" type="primary" @click="onSubmit">Guardar</el-button>
 				</el-form-item>
 			</el-col>
 		</el-form>
@@ -124,47 +105,6 @@ export default {
 	name: 'ProfileEdit',
 	data() {
 		return {
-			form: {
-				username: 'aShenton',
-				email: 'ashenton@mail.com',
-				firstName: 'Aurora',
-				lastName: 'Shenton',
-				birthday: '1991-02-13T23:00:00.000Z',
-				phone: '',
-				website: '',
-				hobbies: [],
-				skills: ['JavaScript', 'HTML', 'CSS', 'Vue.js'],
-				gender: 'Female',
-				address: '',
-				city: '',
-				country: '',
-				postalCode: '',
-				aboutMe: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec dapibus posuere libero, nec convallis arcu ullamcorper a. Vestibulum diam neque, egestas scelerisque arcu a, fermentum ornare mauris. Ut venenatis vulputate maximus. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Curabitur scelerisque quis turpis ac tempus. Quisque dolor dolor, fermentum nec magna eget, fringilla auctor lacus. Aenean sagittis est ac ligula pharetra, quis imperdiet ante dignissim. Ut vehicula nec nisl a pretium. Quisque faucibus auctor viverra. Sed ultricies convallis magna. In blandit eros id efficitur vulputate. Duis efficitur sollicitudin dui non vehicula. Nullam ut eros fermentum, dapibus metus non, accumsan neque. Mauris sed pellentesque felis. Suspendisse viverra risus sit amet congue consectetur.'
-			},
-			hobbies: [
-				{
-					value: 'Model building',
-					label: 'Model building'
-				}, {
-					value: 'Drawing',
-					label: 'Drawing'
-				}, {
-					value: 'Snowboarding',
-					label: 'Snowboarding'
-				}
-			],
-			skills: [
-				{
-					value: 'HTML',
-					label: 'HTML'
-				}, {
-					value: 'CSS',
-					label: 'CSS'
-				}, {
-					value: 'JavaScript',
-					label: 'JavaScript'
-				}
-			],
 			labelPosition: 'right'
 		}
 	},
@@ -181,7 +121,7 @@ export default {
 			if(window.innerWidth <= 768) {
 				this.labelPosition = 'top'	
 			}
-		}
+		},
 	},
 	mounted() {
 		this.resizeLabelPosition();

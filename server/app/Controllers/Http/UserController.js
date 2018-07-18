@@ -15,7 +15,8 @@ class UserController {
    * GET users
    */
   async index ({ auth, request }) {
-    return await User.all();
+    return await User.query()
+    .with('roles.modulos.permisos').fetch();
   }
 
   async fetchOne ({ params }) {

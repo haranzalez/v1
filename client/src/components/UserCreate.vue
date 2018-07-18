@@ -9,13 +9,12 @@
 			</el-radio-group>
 		</div>
 
-		<el-form ref="form" label-width="120px" :label-position="labelPosition">
+		<el-form ref="form" :model="form" label-width="120px" :label-position="labelPosition">
 			<el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Username">
 						<el-input  
-                        :value="usuario.username"
-						v-model="usuario.username"
+                        :value="username"
 					    @input="setUsername"
                         placeholder="Username"/>
 					</el-form-item>
@@ -23,8 +22,7 @@
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Email">
 						<el-input  
-                        :value="usuario.email"
-						v-model="usuario.email"
+                        :value="email"
 					    @input="setEmail"
                         placeholder="Email"/>
 					</el-form-item>
@@ -34,8 +32,7 @@
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Nombre">
 						<el-input  
-                        :value="usuario.nombre"
-						v-model="usuario.nombre"
+                        :value="nombre"
 					    @input="setNombre"
                         placeholder="Nombre"/>
 					</el-form-item>
@@ -43,8 +40,7 @@
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Apellido">
 						<el-input  
-                        :value="usuario.apellido"
-						v-model="usuario.apellido"
+                        :value="apellido"
 					    @input="setApellido"
                         placeholder="Apellido"/>
 					</el-form-item>
@@ -55,8 +51,7 @@
                 <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Cedula">
 						<el-input  
-                        :value="usuario.cedula"
-						v-model="usuario.cedula"
+                        :value="cedula"
 					    @input="setCedula"
                         placeholder="Cedula"/>
 					</el-form-item>
@@ -64,8 +59,7 @@
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Fijo">
 						<el-input  
-                        :value="usuario.tel_fijo"
-						v-model="usuario.tel_fijo"
+                        :value="tel_fijo"
 					    @input="setTelFijo"
                         placeholder="Fijo"/>
 					</el-form-item>
@@ -76,17 +70,15 @@
                 <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Mobil">
 						<el-input  
-                        :value="usuario.tel_mobil"
+                        :value="tel_mobil"
 					    @input="setTelMobil"
-						v-model="usuario.tel_mobil"
                         placeholder="Mobil"/>
 					</el-form-item>
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Direccion">
 						<el-input  
-                        :value="usuario.direccion"
-						v-model="usuario.direccion"
+                        :value="direccion"
 					    @input="setDireccion"
                         placeholder="Direccion"/>
 					</el-form-item>
@@ -103,8 +95,7 @@
                             allow-create
 							multiple
                             no-match-text
-                            :value="usuario.roles"
-							v-model="usuario.roles"
+                            :value="roles"
 							placeholder="Roles...">
 							<el-option
 							v-for="item in roles"
@@ -117,11 +108,10 @@
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Ciudad">
-						<el-input 
-						v-model="usuario.ciudad" 
-                        :value="usuario.ciudad"
+						<el-input  
+                        :value="ciudad"
 					    @input="setCiudad"
-                        placeholder="Ciudad"/>
+                        placeholder="ciudad"/>
 					</el-form-item>
 				</el-col>
 			</el-col>
@@ -129,16 +119,15 @@
 			<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 				<el-form-item label="Departamento">
 					<el-input  
-                        :value="usuario.departamento"
-						v-model="usuario.departamento"
+                        :value="ciudad"
 					    @input="setCiudad"
-                        placeholder="Departamento"/>
+                        placeholder="ciudad"/>
 				</el-form-item>
 			</el-col>
 				
 			<el-col class="col-p pull-right">
 				<el-form-item>
-					<el-button  type="primary" @click="onSubmit">Guardar</el-button>
+					<el-button  type="primary" @click="onSubmit">Crear</el-button>
 				</el-form-item>
 			</el-col>
 		</el-form>
@@ -173,7 +162,7 @@ export default {
 		]),
 	},
 	methods: {
-		 ...mapMutations('users', [
+        ...mapMutations('users', [
             'setNombre',
             'setApellido',
             'setCedula',
@@ -188,10 +177,10 @@ export default {
         ]),
          ...mapActions('users', [
             'fetchRolesList',
-            'editUser',
+            'createUser',
         ]),
 		onSubmit() {
-			this.editUser()
+			this.createUser()
 		},
 		resizeLabelPosition() {
 			if(window.innerWidth <= 768) {
@@ -205,7 +194,10 @@ export default {
 	},
 	beforeDestroy() {
 		window.removeEventListener('resize', this.resizeLabelPosition);
-	}
+    },
+    created() {
+        this.fetchRolesList()
+    }
 }
 </script>
 

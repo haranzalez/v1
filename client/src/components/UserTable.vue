@@ -23,8 +23,9 @@
 				</div>
 				<div class="label">/page</div>
 			</div>
-			<div class="csv-box animated fadeInRight" v-if="dataReady">
-				<button @click="downloadCSV">download csv ({{total}})</button>
+			<div class="animated fadeInRight" v-if="dataReady">
+				<button @click="downloadCSV"><i class="mdi mdi-file-excel"></i></button>
+				<button @click="pushToCreateUser"><i class="mdi mdi-account-plus"></i></button>
 			</div>
 		
 		</div>
@@ -51,6 +52,11 @@
 					:show-summary="showSummary"
 					:shown-pagination="shownPagination">
 					<v2-table-column type="selection" width="45"></v2-table-column>
+					<v2-table-column label="ID" prop="id" sortable width="50" align="left" :fixed="isMobile?'':'left'">
+						<template slot-scope="row">
+							<span class="sel-string" v-html="$options.filters.selected(row.id, search)"></span>
+						</template>
+					</v2-table-column>
 					<v2-table-column label="Nombre" prop="nombre" sortable width="200" align="left" :fixed="isMobile?'':'left'">
 						<template slot-scope="row">
 							<span class="sel-string" v-html="$options.filters.selected(row.nombre+' '+row.apellido, search)"></span>
@@ -97,7 +103,7 @@
 					<v2-table-column label="Acciones" width="70" :fixed="isMobile?'':'right'">
 						<template slot-scope="row">
 							<div class="custom-action-row">
-								<el-button @click="pushToEdit(row)"><i class="mdi mdi-eye"></i></el-button>
+								<el-button @click="pushToEditUser(row)"><i class="mdi mdi-eye"></i></el-button>
 							</div> 
 						</template>
 					</v2-table-column>
@@ -120,7 +126,7 @@ import * as FS from 'file-saver'
 
 
 export default {
-	name: 'V2TablePage',
+	name: 'UserTable',
 	data () {
       	return {
 			isMobile: false,
@@ -138,7 +144,7 @@ export default {
 				nextPageText: '›',
 				prevPageText: '‹' 
 			},
-			sortingProp: "birth_day", 
+			sortingProp: "id", 
             sortingOrder: "descending",
             list: null,
             dataReady: false,
@@ -216,7 +222,8 @@ export default {
    
     methods: {
 		...mapActions('users',[
-			'pushToEdit'
+			'pushToEditUser',
+			'pushToCreateUser',
 		]),
 		
         fetchUsers() {

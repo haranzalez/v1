@@ -23,6 +23,8 @@ export default new Vuex.Store({
 	},
 	getters: {
 	},
-	plugins: [createPersistedState()],
+	plugins: [createPersistedState({
+		paths: ['login']
+	})],
 	strict: debug
 })

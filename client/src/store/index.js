@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
 import authentication from './authentication'
 import layout from './layout'
+import users from './users'
 
 Vue.use(Vuex)
 
@@ -14,6 +15,7 @@ export default new Vuex.Store({
 	modules: {
 		authentication,
 		layout,
+		users,
 	},
 	mutations: {
 	},
@@ -21,8 +23,6 @@ export default new Vuex.Store({
 	},
 	getters: {
 	},
-	plugins: [createPersistedState({
-		paths: ['dashboar', 'login'],
-	  })],
+	plugins: [createPersistedState()],
 	strict: debug
 })

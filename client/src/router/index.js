@@ -4,6 +4,8 @@ import Router from 'vue-router'
 
 //apps
 import Dashboard from '../views/apps/Dashboard.vue'
+import Usuarios from '../views/Usuarios/Usuarios.vue'
+import UserEdit from '../views/Usuarios/EditarUsuario.vue'
 import layouts from '../layout'
 
 //pages
@@ -54,6 +56,28 @@ const router = new Router({
 				auth: true,
 				layout: layouts.navLeft,
 				searchable: true,
+				tags: ['pages']
+			}
+		},
+		{
+			path: '/Usuarios',
+			name: 'usuarios',
+			component: Usuarios,
+			meta: {
+				auth: true,
+				layout: layouts.navLeft,
+				searchable: true,
+				tags: ['pages']
+			}
+		},
+		{
+			path: '/editando-usuario',
+			name: 'userEdit',
+			component: UserEdit,
+			meta: {
+				auth: true,
+				layout: layouts.navLeft,
+				searchable: false,
 				tags: ['pages']
 			}
 		},

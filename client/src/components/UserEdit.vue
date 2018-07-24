@@ -98,19 +98,18 @@
                 <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Roles">
 						<el-select
-							class="select-wide"
-                            filterable
-                            allow-create
-							multiple
-                            no-match-text
-                            :value="usuario.roles"
-							v-model="usuario.roles"
-							placeholder="Roles...">
+						class="select-wide"
+						filterable
+						multiple
+						no-match-text
+						v-model="selectedRoles"
+						placeholder="Roles...">
 							<el-option
+							v-if="roles"
 							v-for="item in roles"
 							:key="item.id"
 							:label="item.nombre"
-							:value="item.nombre">
+							:value="item.id">
 							</el-option>
 						</el-select>
 					</el-form-item>
@@ -152,24 +151,15 @@ export default {
 	name: 'UserEdit',
 	data() {
 		return {
-			labelPosition: 'right'
+			labelPosition: 'right',
+			selectedRoles: [],
 		}
 	},
 	computed:{
 		...mapState('users', [
             'usuario',
-            'nombre',
-            'apellido',
-            'cedula',
-            'email',
-            'tel_fijo',
-            'tel_mobil',
-            'direccion',
-            'ciudad',
-            'departamento',
-            'username',
-            'password',
-            'roles',
+			'roles',
+			'selected',
 		]),
 	},
 	methods: {
@@ -191,7 +181,7 @@ export default {
             'editUser',
         ]),
 		onSubmit() {
-			this.editUser()
+			this.editUser(this.selectedRoles)
 		},
 		resizeLabelPosition() {
 			if(window.innerWidth <= 768) {
@@ -202,6 +192,9 @@ export default {
 	mounted() {
 		this.resizeLabelPosition();
 		window.addEventListener('resize', this.resizeLabelPosition);
+	},
+	created(){
+		this.selectedRoles = this.selected;
 	},
 	beforeDestroy() {
 		window.removeEventListener('resize', this.resizeLabelPosition);

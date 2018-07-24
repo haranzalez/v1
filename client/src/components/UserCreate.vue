@@ -9,12 +9,11 @@
 			</el-radio-group>
 		</div>
 
-		<el-form ref="form" :model="form" label-width="120px" :label-position="labelPosition">
+		<el-form ref="form" label-width="120px" :label-position="labelPosition">
 			<el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Username">
 						<el-input  
-                        :value="username"
 					    @input="setUsername"
                         placeholder="Username"/>
 					</el-form-item>
@@ -22,7 +21,6 @@
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Email">
 						<el-input  
-                        :value="email"
 					    @input="setEmail"
                         placeholder="Email"/>
 					</el-form-item>
@@ -32,7 +30,6 @@
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Nombre">
 						<el-input  
-                        :value="nombre"
 					    @input="setNombre"
                         placeholder="Nombre"/>
 					</el-form-item>
@@ -40,7 +37,6 @@
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Apellido">
 						<el-input  
-                        :value="apellido"
 					    @input="setApellido"
                         placeholder="Apellido"/>
 					</el-form-item>
@@ -51,7 +47,6 @@
                 <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Cedula">
 						<el-input  
-                        :value="cedula"
 					    @input="setCedula"
                         placeholder="Cedula"/>
 					</el-form-item>
@@ -59,7 +54,6 @@
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Fijo">
 						<el-input  
-                        :value="tel_fijo"
 					    @input="setTelFijo"
                         placeholder="Fijo"/>
 					</el-form-item>
@@ -70,7 +64,6 @@
                 <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Mobil">
 						<el-input  
-                        :value="tel_mobil"
 					    @input="setTelMobil"
                         placeholder="Mobil"/>
 					</el-form-item>
@@ -78,7 +71,6 @@
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Direccion">
 						<el-input  
-                        :value="direccion"
 					    @input="setDireccion"
                         placeholder="Direccion"/>
 					</el-form-item>
@@ -90,18 +82,18 @@
                 <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Roles">
 						<el-select
+							v-model="selectedRoles"
 							class="select-wide"
                             filterable
                             allow-create
 							multiple
                             no-match-text
-                            :value="roles"
 							placeholder="Roles...">
 							<el-option
 							v-for="item in roles"
 							:key="item.id"
 							:label="item.nombre"
-							:value="item.nombre">
+							:value="item.id">
 							</el-option>
 						</el-select>
 					</el-form-item>
@@ -109,7 +101,6 @@
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Ciudad">
 						<el-input  
-                        :value="ciudad"
 					    @input="setCiudad"
                         placeholder="ciudad"/>
 					</el-form-item>
@@ -119,9 +110,8 @@
 			<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 				<el-form-item label="Departamento">
 					<el-input  
-                        :value="ciudad"
-					    @input="setCiudad"
-                        placeholder="ciudad"/>
+					    @input="setDepartamento"
+                        placeholder="Departamento"/>
 				</el-form-item>
 			</el-col>
 				
@@ -141,24 +131,14 @@ export default {
 	name: 'UserEdit',
 	data() {
 		return {
-			labelPosition: 'right'
+			labelPosition: 'right',
+			selectedRoles: [],
 		}
 	},
 	computed:{
 		...mapState('users', [
-            'usuario',
-            'nombre',
-            'apellido',
-            'cedula',
-            'email',
-            'tel_fijo',
-            'tel_mobil',
-            'direccion',
-            'ciudad',
-            'departamento',
-            'username',
-            'password',
-            'roles',
+			'usuario',
+			'roles',
 		]),
 	},
 	methods: {
@@ -173,14 +153,15 @@ export default {
             'setCiudad',
             'setDepartamento',
             'setUsername',
-            'setPassword',
+			'setPassword',
+			'setRoles',
         ]),
          ...mapActions('users', [
             'fetchRolesList',
             'createUser',
         ]),
 		onSubmit() {
-			this.createUser()
+			this.createUser(this.selectedRoles)
 		},
 		resizeLabelPosition() {
 			if(window.innerWidth <= 768) {

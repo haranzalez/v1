@@ -4,6 +4,7 @@ import createPersistedState from 'vuex-persistedstate'
 import authentication from './authentication'
 import layout from './layout'
 import users from './users'
+import roles from './roles'
 
 Vue.use(Vuex)
 
@@ -16,6 +17,7 @@ export default new Vuex.Store({
 		authentication,
 		layout,
 		users,
+		roles,
 	},
 	mutations: {
 	},

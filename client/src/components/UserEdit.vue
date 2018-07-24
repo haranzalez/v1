@@ -1,13 +1,7 @@
 <template>
 	<div class="page-profile-edit">
-		<div class="label-switch-box">
-			<span>Etiquetas: </span>
-			<el-radio-group v-model="labelPosition" size="small">
-				<el-radio-button label="left">Izquierda</el-radio-button>
-				<el-radio-button label="right">Derecha</el-radio-button>
-				<el-radio-button label="top">Arriba</el-radio-button>
-			</el-radio-group>
-		</div>
+		<h2 class="mv-0 animated fadeInDown" :value="usuario">{{ usuario.nombre + ' ' + usuario.apellido }}</h2>
+		<el-button class="text-up-15p mb-0 animated slideInUp" type="text" @click="back"><i class="mdi mdi-keyboard-backspace"></i></el-button>
 
 		<el-form ref="form" label-width="120px" :label-position="labelPosition">
 			<el-col>
@@ -137,6 +131,7 @@
 				
 			<el-col class="col-p pull-right">
 				<el-form-item>
+					<el-button  type="text" @click="del(usuario.id)">Eliminar</el-button>
 					<el-button  type="primary" @click="onSubmit">Guardar</el-button>
 				</el-form-item>
 			</el-col>
@@ -146,6 +141,7 @@
 
 <script>
 import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
+import router from '../router';
 
 export default {
 	name: 'UserEdit',
@@ -163,6 +159,22 @@ export default {
 		]),
 	},
 	methods: {
+		del(id) {
+			this.$confirm('Esta accion eliminara permanentemente el registro. Continuar?', 'Atencion', {
+				confirmButtonText: 'OK',
+				cancelButtonText: 'Cancelar',
+				type: 'warning',
+				center: true
+			}).then(() => {
+				this.deleteUser(id)
+				router.push('/Usuarios')
+			}).catch(() => {
+				this.$message({
+					type: 'info',
+					message: 'Eliminacion cancelada'
+				});
+			});
+      	},
 		 ...mapMutations('users', [
             'setNombre',
             'setApellido',
@@ -178,10 +190,14 @@ export default {
         ]),
          ...mapActions('users', [
             'fetchRolesList',
-            'editUser',
+			'editUser',
+			'deleteUser',
         ]),
 		onSubmit() {
 			this.editUser(this.selectedRoles)
+		},
+		back() {
+			router.push('/Usuarios')
 		},
 		resizeLabelPosition() {
 			if(window.innerWidth <= 768) {
@@ -222,6 +238,9 @@ export default {
 	}
 	.pull-right {
 		text-align: right;
+	}
+	.text-up-15p{
+		font-size: 15pt;
 	}
 }
 </style>

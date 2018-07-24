@@ -1,6 +1,7 @@
 import HTTP from '../http';
 import router from '../router'
 import UserServices from '../services/UserServices'
+import { Notification } from 'element-ui'
 
 export default {
     namespaced: true,
@@ -44,9 +45,20 @@ export default {
                 username: state.usuario.username,
                 roles: roles,
             }).then(d => {
-                console.log(d)
+                if(d.request.status == 200){
+                    Notification.success({
+                        title: 'Exito!',
+                        message: 'Usuario actualizado.',
+                        position: 'bottom-right',
+                    });
+                }
+               
             }).catch(err => {
-                console.log(err)
+                Notification.warning({
+                    title: 'Atencion!',
+                    message: 'Se a producido un error tratando de guardar la informacion. Porfavor notifique al administrador',
+                    position: 'bottom-right',
+                });
             })
         },
         pushToCreateUser({state,commit}){
@@ -69,9 +81,38 @@ export default {
                 roles: roles,
             })
             .then(d => {
-                console.log(d)
+                if(d.request.status == 200){
+                    Notification.success({
+                        title: 'Exito!',
+                        message: 'Usuario creado.',
+                        position: 'bottom-right',
+                    });
+                }
+            }).catch(err => {
+                Notification.warning({
+                    title: 'Atencion!',
+                    message: 'Se a producido un error tratando de crear el registro. Porfavor notifique al administrador',
+                    position: 'bottom-right',
+                });
+            })
+        },
+        deleteUser({state, commit}, id){
+            HTTP().local.delete('api/users/destroy/'+id)
+            .then(d => {
+                if(d.request.status == 200){
+                    Notification.success({
+                        title: 'Exito!',
+                        message: 'Usuario eliminado.',
+                        position: 'bottom-right',
+                    });
+                }
             }).catch(err => {
                 console.log(err)
+                Notification.warning({
+                    title: 'Atencion!',
+                    message: 'Se produjo un problema. Porfavor contactarse con el administrador',
+                    position: 'bottom-right',
+                });
             })
         },
         fetchRolesList({state, commit}, op){

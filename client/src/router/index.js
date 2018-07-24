@@ -7,6 +7,7 @@ import Dashboard from '../views/apps/Dashboard.vue'
 import Usuarios from '../views/Usuarios/Usuarios.vue'
 import UserEdit from '../views/Usuarios/EditarUsuario.vue'
 import UserCreate from '../views/Usuarios/CrearUsuario.vue'
+import Roles from '../views/Usuarios/Roles/index.vue'
 import layouts from '../layout'
 
 //pages
@@ -90,6 +91,17 @@ const router = new Router({
 				auth: true,
 				layout: layouts.navLeft,
 				searchable: false,
+				tags: ['pages']
+			}
+		},
+		{
+			path: '/Roles',
+			name: 'roles',
+			component: Roles,
+			meta: {
+				auth: true,
+				layout: layouts.navLeft,
+				searchable: true,
 				tags: ['pages']
 			}
 		},

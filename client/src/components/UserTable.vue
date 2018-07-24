@@ -40,7 +40,7 @@
 					:height="height"
 					:border="false"
 					:total="total"
-					:lazy-load="false"
+					:lazy-load="true"
 					:loading="loading"
 					class="styled"
 					:class="{'mobile':isMobile}"
@@ -49,9 +49,7 @@
 					:default-sort="{prop:sortingProp, order:sortingOrder}"
 					@sort-change="handleSortChange"
 					@select-change="handleSelectChange"
-					:show-summary="showSummary"
 					:shown-pagination="shownPagination">
-					<v2-table-column type="selection" width="45"></v2-table-column>
 					<v2-table-column label="ID" prop="id" sortable width="50" align="left" :fixed="isMobile?'':'left'">
 						<template slot-scope="row">
 							<span class="sel-string" v-html="$options.filters.selected(row.id, search)"></span>
@@ -73,8 +71,16 @@
 							<span class="sel-string" v-html="$options.filters.selected(row.cedula, search)"></span>
 						</template>
                     </v2-table-column>
-					<v2-table-column label="Tel Fijo" prop="tel_fijo" sortable width="200"></v2-table-column>
-					<v2-table-column label="Tel Mobil" prop="tel+mobil" sortable width="120"></v2-table-column>
+					<v2-table-column label="Tel Fijo" prop="tel_fijo" sortable width="200">
+						 <template slot-scope="row">
+							<span class="sel-string" v-html="$options.filters.selected(row.tel_fijo, search)"></span>
+						</template>
+					</v2-table-column>
+					<v2-table-column label="Tel Mobil" prop="tel+mobil" sortable width="120">
+						<template slot-scope="row">
+							<span class="sel-string" v-html="$options.filters.selected(row.tel_mobil, search)"></span>
+						</template>
+					</v2-table-column>
                     <v2-table-column label="Direccion" prop="direccion" sortable width="200">
                         <template slot-scope="row">
 							<span class="sel-string" v-html="$options.filters.selected(row.direccion, search)"></span>
@@ -104,6 +110,7 @@
 						<template slot-scope="row">
 							<div class="custom-action-row">
 								<el-button @click="pushToEditUser(row)"><i class="mdi mdi-eye"></i></el-button>
+								<el-button @click="del(row.nombre,row.apellido,row.id)"><i class="mdi mdi-account-minus"></i></el-button>
 							</div> 
 						</template>
 					</v2-table-column>
@@ -149,7 +156,7 @@ export default {
             list: null,
             dataReady: false,
 		}
-    },
+	},
 	computed: {
 		listFiltered() {
 			return this.list.filter((obj) => {
@@ -224,8 +231,25 @@ export default {
 		...mapActions('users',[
 			'pushToEditUser',
 			'pushToCreateUser',
+			'deleteUser',
 		]),
-		
+		del(nombre,apellido,id) {
+			this.$confirm(nombre+' '+apellido+' sera permanentemente eliminado de los registros. Continuar?', 'Atencion', {
+				confirmButtonText: 'OK',
+				cancelButtonText: 'Cancelar',
+				type: 'warning',
+				center: true
+			}).then(() => {
+				this.deleteUser(id)
+				this.fetchUsers();
+				this.$refs.table.refresh();
+			}).catch(() => {
+				this.$message({
+					type: 'info',
+					message: 'Eliminacion cancelada'
+				});
+			});
+		  },
         fetchUsers() {
             HTTP().local.get('api/users')
             .then(d => {
@@ -237,7 +261,7 @@ export default {
             })
         },
 		updatePaginationText() {
-			this.paginationInfo.text = `<span>Total of <strong>${this.total}</strong>, <strong>${this.paginationInfo.pageSize}</strong> per page</span>`
+			this.paginationInfo.text = `<span>Total de <strong>${this.total}</strong>, <strong>${this.paginationInfo.pageSize}</strong> por pagina</span>`
 		},
 		handlePageChange(page) {
 			this.currentPage = page
@@ -314,6 +338,7 @@ export default {
 <style lang="scss">
 @import '../assets/scss/_variables';
 .page-table {
+	
 	.custom-action-row {
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -424,6 +449,9 @@ export default {
 			border-radius: 5px;
 			text-transform: uppercase;
 		}
+	}
+	.white-bg{
+		background-color: #ccc;
 	}
 }
 

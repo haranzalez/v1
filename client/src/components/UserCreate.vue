@@ -1,13 +1,7 @@
 <template>
 	<div class="page-profile-edit">
-		<div class="label-switch-box">
-			<span>Etiquetas: </span>
-			<el-radio-group v-model="labelPosition" size="small">
-				<el-radio-button label="left">Izquierda</el-radio-button>
-				<el-radio-button label="right">Derecha</el-radio-button>
-				<el-radio-button label="top">Arriba</el-radio-button>
-			</el-radio-group>
-		</div>
+		<h2 class="mv-0 animated fadeInDown">Crear Usuario</h2>
+		<el-button class="text-up-15p mb-0 animated slideInUp" type="text" @click="back"><i class="mdi mdi-keyboard-backspace"></i></el-button>
 
 		<el-form ref="form" label-width="120px" :label-position="labelPosition">
 			<el-col>
@@ -126,6 +120,7 @@
 
 <script>
 import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
+import router from '../router';
 
 export default {
 	name: 'UserEdit',
@@ -142,6 +137,9 @@ export default {
 		]),
 	},
 	methods: {
+		back() {
+			router.push('/Usuarios')
+		},
         ...mapMutations('users', [
             'setNombre',
             'setApellido',
@@ -158,7 +156,7 @@ export default {
         ]),
          ...mapActions('users', [
             'fetchRolesList',
-            'createUser',
+			'createUser',
         ]),
 		onSubmit() {
 			this.createUser(this.selectedRoles)
@@ -202,6 +200,9 @@ export default {
 	}
 	.pull-right {
 		text-align: right;
+	}
+	.text-up-15p{
+		font-size: 15pt;
 	}
 }
 </style>

@@ -7,7 +7,7 @@ import Dashboard from '../views/apps/Dashboard.vue'
 import Usuarios from '../views/Usuarios/Usuarios.vue'
 import UserEdit from '../views/Usuarios/EditarUsuario.vue'
 import UserCreate from '../views/Usuarios/CrearUsuario.vue'
-import Roles from '../views/Usuarios/Roles/index.vue'
+import Roles from '../views/Usuarios/Roles/RolesTable.vue'
 import layouts from '../layout'
 
 //pages
@@ -101,7 +101,7 @@ const router = new Router({
 			meta: {
 				auth: true,
 				layout: layouts.navLeft,
-				searchable: true,
+				searchable: false,
 				tags: ['pages']
 			}
 		},

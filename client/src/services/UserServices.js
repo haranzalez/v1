@@ -1,10 +1,9 @@
 
 export default {
-    getRoleIds(obj){
-        let pkg = []
-        obj.forEach(r => {
-            pkg.push(r.id);
-        })
-        return pkg;
+    removeDuplicatesFromObj(a){
+        var obj = {};
+        for ( var i=0, len=a.length; i < len; i++ )
+            obj[a[i]['id']] = a[i];
+        return obj
     },
 }

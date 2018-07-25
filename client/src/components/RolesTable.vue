@@ -53,8 +53,8 @@ import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
     },
     methods: {
         ...mapActions('roles',[
-            'fetchRoles'
-        ])
+            'fetchRoles',
+        ]),
     },
     created(){
         this.fetchRoles()

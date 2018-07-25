@@ -8,9 +8,6 @@ import UserTable from '@/components/UserTable'
 
 export default {
     namespaced: true,
-    data(){
-        view: 'user'
-    },
     components: {
         UserTable,
 	}

@@ -9,11 +9,16 @@
 		class="main-navigation-menu"
 		:class="{'nav-collapsed':isCollapse}"
 	>
-		<div class="el-menu-item-group__title" style="padding-top: 4px;"><span>Modulos</span></div>
+		<div v-for="mod in menu">
+			<div class="el-menu-item-group__title" style="padding-top: 4px;">
+			<span>{{mod.nombre}}</span>
+			</div>
 
-		<el-menu-item v-for="item in menu" :key="item.id" :index="'/'+item.nombre">
-			<i :class="'mdi '+item.icono"></i><span slot="title">{{item.nombre}}</span>
-		</el-menu-item>
+			<el-menu-item v-for="item in mod.children" :key="item.id" :index="'/'+item.nombre">
+				<i :class="'mdi '+item.icono"></i><span slot="title">{{item.nombre}}</span>
+			</el-menu-item>
+		</div>
+		
 		
 
 	</el-menu>	

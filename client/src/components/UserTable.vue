@@ -109,12 +109,13 @@
 					<v2-table-column label="Acciones" width="70" :fixed="isMobile?'':'right'">
 						<template slot-scope="row">
 							<div class="custom-action-row">
-								<el-button @click="pushToEditUser(row)"><i class="mdi mdi-eye"></i></el-button>
 								<el-button @click="del(row.nombre,row.apellido,row.id)"><i class="mdi mdi-account-minus"></i></el-button>
+								<el-button @click="pushToEditUser(row)"><i class="mdi mdi-eye"></i></el-button>
 							</div> 
 						</template>
 					</v2-table-column>
 				</component><!-- v2-table -->
+				
 
 			</div>
         </div>
@@ -226,7 +227,6 @@ export default {
 			this.$refs.table.curPage = val
 		}
     },
-   
     methods: {
 		...mapActions('users',[
 			'pushToEditUser',

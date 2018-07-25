@@ -12,6 +12,9 @@ class Modulo extends Model {
     permisos() {
         return this.hasMany('App/Models/RoleModuloPermiso')
     }
+    children(){
+        return this.hasMany('App/Models/ModuloChild')
+    }
 
 }
 

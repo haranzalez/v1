@@ -1,6 +1,7 @@
 import HTTP from '../http'
 import router from '../router'
 import { Notification } from 'element-ui'
+import UserServices from '../services/UserServices'
 
 export default {
     namespaced: true,
@@ -82,7 +83,9 @@ export default {
                             menu.push(data.user[0].roles[prop].modulos[pro])
                         }
                     }
-                    commit('setMenu', menu)
+                    let final = UserServices.removeDuplicatesFromObj(menu, 'id')
+                    console.log(final)
+                    commit('setMenu', final)
                     commit('setIsLogged')
                     router.push('/dashboard')
                     return;

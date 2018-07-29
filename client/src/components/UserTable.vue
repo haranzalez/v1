@@ -1,10 +1,5 @@
 <template>
 	<div class="page-table column scrollable only-y" :class="{'flex':!isMobile, 'overflow':isMobile}">
-		<div class="page-header">
-			<h1>Usuarios</h1>
-			<h4>Lista de usuarios</h4>
-		</div>
-
 		<div class="toolbar-box flex">
 			<div class="search-box box grow">
 				<div><i class="mdi mdi-magnify"></i></div>
@@ -98,7 +93,7 @@
                     </v2-table-column>
 					<v2-table-column label="Username" prop="username" sortable>
 						<template slot-scope="row">
-							<span class="sel-string" v-html="$options.filters.selected(row.usrname, search)"></span>
+							<span class="sel-string" v-html="$options.filters.selected(row.username, search)"></span>
 						</template>
 					</v2-table-column>
 					<v2-table-column label="Estado" prop="estado" sortable width="150">

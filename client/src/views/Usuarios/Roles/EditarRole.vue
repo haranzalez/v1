@@ -1,20 +1,16 @@
 <template>
-
-   <div>
-       <tabla></tabla>
-   </div>
-    
+    <formulario></formulario>
 </template>
 
 <script>
-import Tabla from '@/components/RolesTable'
-
+import Formulario from '@/components/RoleEdit'
 
 export default {
     namespaced: true,
     components: {
-	    Tabla,
+	    Formulario,
 	}
+
 }
 </script>
 

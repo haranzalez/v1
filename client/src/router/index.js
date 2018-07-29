@@ -7,6 +7,7 @@ import Dashboard from '../views/apps/Dashboard.vue'
 import Usuarios from '../views/Usuarios/Usuarios.vue'
 import UserEdit from '../views/Usuarios/EditarUsuario.vue'
 import UserCreate from '../views/Usuarios/CrearUsuario.vue'
+import RoleEdit from '../views/Usuarios/Roles/EditarRole.vue'
 import Roles from '../views/Usuarios/Roles/RolesTable.vue'
 import layouts from '../layout'
 
@@ -76,6 +77,17 @@ const router = new Router({
 			path: '/editando-usuario',
 			name: 'userEdit',
 			component: UserEdit,
+			meta: {
+				auth: true,
+				layout: layouts.navLeft,
+				searchable: false,
+				tags: ['pages']
+			}
+		},
+		{
+			path: '/editando-role',
+			name: 'roleEdit',
+			component: RoleEdit,
 			meta: {
 				auth: true,
 				layout: layouts.navLeft,

@@ -1,9 +1,5 @@
 <template>
 	<div class="page-table column scrollable only-y" :class="{'flex':!isMobile, 'overflow':isMobile}">
-		<div class="page-header">
-			<h1>Roles</h1>
-		</div>
-
 		<div class="toolbar-box flex">
 			<div class="search-box box grow">
 				<div><i class="mdi mdi-magnify"></i></div>
@@ -32,14 +28,14 @@
 		<resize-observer @notify="handleResize" />
 		
 		<div class="table-box card-base card-shadow--medium box grow" id="table-wrapper" v-loading="!asyncComponent">
-			<div :style="{ 'width': width + 'px' }">
+			<div>
 				<!-- v2-table -->
-				<component :is="asyncComponent" ref="table"
-				 	:data="rolesList"
-					:height="height"
-					:border="false"
+				<v2-table 
+					:data="rolesList" 
+					border
+				    :height="height"
 					:total="total"
-					:lazy-load="true"
+					:lazy-load="false"
 					:loading="loading"
 					class="styled"
 					:class="{'mobile':isMobile}"
@@ -49,34 +45,36 @@
 					@sort-change="handleSortChange"
 					@select-change="handleSelectChange"
 					:shown-pagination="shownPagination">
-					<v2-table-column label="ID" prop="id" sortable width="50" align="left" :fixed="isMobile?'':'left'">
+
+					<v2-table-column label="ID" prop="id" sortable align="left">
 						<template slot-scope="row">
 							<span class="sel-string" v-html="$options.filters.selected(row.id, search)"></span>
 						</template>
 					</v2-table-column>
-					<v2-table-column label="Nombre" prop="nombre" sortable width="200" align="left" :fixed="isMobile?'':'left'">
+
+					<v2-table-column label="Nombre" prop="nombre" sortable align="left">
 						<template slot-scope="row">
 							<span class="sel-string" v-html="$options.filters.selected(row.nombre, search)"></span>
 						</template>
 					</v2-table-column>
-				
-					<v2-table-column label="Descripcion" prop="description" sortable width="250">
+
+					<v2-table-column label="Descripcion" align="left" prop="description" sortable>
 						<template slot-scope="row">
 							<span class="sel-string" v-html="$options.filters.selected(row.description, search)"></span>
 						</template>
 					</v2-table-column>
-				
-					<v2-table-column label="Acciones" width="70" :fixed="isMobile?'':'right'">
+
+					<v2-table-column label="Acciones" :fixed="isMobile?'':'right'">
 						<template slot-scope="row">
 							<div class="custom-action-row">
-								<el-button @click=""><i class="mdi mdi-account-minus"></i></el-button>
-								<el-button @click=""><i class="mdi mdi-eye"></i></el-button>
+								<el-button @click="del(row.nombre,row.id)"><i class="mdi mdi-account-minus"></i></el-button>
+								<el-button @click="pushToEditRole(row.id)"><i class="mdi mdi-eye"></i></el-button>
 							</div> 
 						</template>
 					</v2-table-column>
-				</component><!-- v2-table -->
-				
-
+					
+				</v2-table><!-- v2-table -->
+					
 			</div>
         </div>
 	</div>
@@ -86,6 +84,7 @@
 import HTTP from '../http';
 import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
 import moment from 'moment-timezone'
+import rounter from '../router'
 import Papa from 'papaparse'
 import * as FS from 'file-saver'
 
@@ -193,16 +192,17 @@ export default {
     methods: {
 		...mapActions('roles',[
 			'fetchRoles',
+			'pushToEditRole',
 		]),
-		del(nombre,apellido,id) {
-			this.$confirm(nombre+' '+apellido+' sera permanentemente eliminado de los registros. Continuar?', 'Atencion', {
+		del(nombre,id) {
+			this.$confirm('El role '+nombre+' sera permanentemente eliminado de los registros. Continuar?', 'Atencion', {
 				confirmButtonText: 'OK',
 				cancelButtonText: 'Cancelar',
 				type: 'warning',
 				center: true
 			}).then(() => {
-				this.deleteUser(id)
-				this.fetchUsers();
+				this.deleteRole(id)
+				this.fetchRoles();
 				this.$refs.table.refresh();
 			}).catch(() => {
 				this.$message({
@@ -211,16 +211,6 @@ export default {
 				});
 			});
 		  },
-        fetchUsers() {
-            HTTP().local.get('api/users')
-            .then(d => {
-                this.list = d.data;
-                this.dataReady = true
-            })
-            .catch(err => {
-                console.log(err)
-            })
-        },
 		updatePaginationText() {
 			this.paginationInfo.text = `<span>Total de <strong>${this.total}</strong>, <strong>${this.paginationInfo.pageSize}</strong> por pagina</span>`
 		},

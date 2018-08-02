@@ -13,7 +13,7 @@ class ModuloSchema extends Schema {
   }
 
   down () {
-    this.drop('modulos')
+    this.dropIfExists('modulos')
   }
 }
 

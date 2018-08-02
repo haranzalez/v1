@@ -9,7 +9,7 @@ export default {
             nombre: null,
             description: null,
         },
-        modulesList: null,
+        modules: null,
         rolesList: null,
         rolesListEdit: null,
 
@@ -32,12 +32,6 @@ export default {
             dispatch('fetchRole', id)
             router.push('/editando-role')
         },
-        fetchRole({commit},id){
-            HTTP().local.get('api/roles/'+id)
-            .then(d => {
-                commit('setRole', d.data[0])
-            })
-        },
         edit({state}){
             console.log(state.role)
             HTTP().local.patch('api/roles/update/'+state.role.id, state.role)
@@ -47,6 +41,23 @@ export default {
                 console.error(err)
             })
         },
+        fetchRole({state, commit},id){
+            HTTP().local.get('api/roles/'+id)
+            .then(d => {
+                commit('setRole', d.data[0])
+                commit('setModules', d.data[0].modulos)
+            })
+        },
+        fetchAllModules({commit}){
+            HTTP().local.get('api/modulos')
+            .then(d => {
+                console.log(d)
+                commit('setModules', d.data)
+            }).catch(err => {
+                console.log(err)
+            })
+        }
+        
     },
     mutations: {
         setRolesList(state, roles){
@@ -54,6 +65,9 @@ export default {
         },
         setRole(state, role){
             state.role = role
+        },
+        setModules(state, modules){
+            state.modules = modules
         },
         setRoleNombre(state, nombre){
             state.role.nombre = nombre

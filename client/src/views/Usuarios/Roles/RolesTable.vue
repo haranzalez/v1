@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import Tabla from '@/components/RolesTable'
+import Tabla from '@/components/Usuarios/Roles/RolesTable'
 
 
 export default {

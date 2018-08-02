@@ -35,9 +35,10 @@ Route.group(() => {
   Route.delete('roles/destroy/:id', 'RoleController.destroy').middleware('auth');
   Route.patch('roles/update/:id', 'RoleController.update').middleware('auth');
   
+  Route.get('modulos', 'RoleController.fetchAllModules').middleware('auth');
   Route.get('roles/:id/modulos', 'RoleController.modules').middleware('auth');
   Route.get('roles/:id/permisos', 'RoleController.permisos').middleware('auth');
-  Route.post('roles/:role_id/modulos/:modulo_id/setPermisos', 'RoleController.setPermisos').middleware('auth');
+  Route.post('roles/:role_id/subModulo/:sub_modulo_id/setPermisos', 'RoleController.setPermisos').middleware('auth');
   Route.patch('roles/:id/modulos/updatePermisos', 'RoleController.updatePermisos').middleware('auth');
 
   

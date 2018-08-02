@@ -13,7 +13,7 @@ class RoleModuloSchema extends Schema {
   }
 
   down () {
-    this.drop('role_modulos')
+    this.dropIfExists('role_modulos')
   }
 }
 

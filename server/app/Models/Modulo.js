@@ -8,14 +8,9 @@ class Modulo extends Model {
         return this.belongsToMany('App/Models/Role')
         .pivotModel(use('App/Models/RoleModulo'));
     }
-
-    permisos() {
-        return this.hasMany('App/Models/RoleModuloPermiso')
+    subModulo(){
+        return this.hasMany('App/Models/SubModulo')
     }
-    children(){
-        return this.hasMany('App/Models/ModuloChild')
-    }
-
 }
 
 module.exports = Modulo

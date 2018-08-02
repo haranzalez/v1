@@ -4,7 +4,7 @@
 
 <script>
 
-import Formulario from '@/components/UserCreate'
+import Formulario from '@/components/Usuarios/UserCreate'
 
 export default {
     namespaced: true,

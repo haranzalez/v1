@@ -16,27 +16,23 @@ class UserController {
    */
   async index ({ auth, request }) {
     return await User.query()
-    .with('roles.modulos.permisos')
-    .with('roles.modulos.children')
+    .with('roles.modulos.subModulo.permisos')
     .fetch();
   }
 
   async fetchOne ({ params }) {
     const { id } = params;
     const user = await User.query()
-    .with('roles.modulos.permisos')
-    .with('roles.modulos.children')
+    .with('roles.modulos.subModulo.permisos')
     .where('id', id).fetch();
     return user;
   }
 
   async login ({ auth, request }) {
-   
     const { username, password } = request.all();
     const token = await auth.attempt(username,password);
     const user = await User.query()
-    .with('roles.modulos.permisos')
-    .with('roles.modulos.children')
+    .with('roles.modulos.subModulo.permisos')
     .where('username', username).fetch();
     return {
       user,

@@ -1,7 +1,8 @@
 'use strict'
 
 const Role = use('App/Models/Role')
-const Permisos = use('App/Models/RoleModuloPermiso')
+const Modulo = use('App/Models/Modulo')
+const Permisos = use('App/Models/RoleSubModuloPermiso')
 const Database = use('Database')
 
 /**
@@ -12,16 +13,18 @@ class RoleController {
    * Show a list of all roles.
    * GET roles
    */
-  async index ({ request, response, view }) {
+  async index () {
     const roles = await Role.all()
     return roles;
   }
 
+  async fetchAllModules(){
+    return Modulo.query().with('subModulo').fetch();
+  }
+
   async fetchOne ({ params }) {
     const { id } = params;
-    const role = await Role.query().with('modulos.permisos', (builder) => {
-      builder.where('role_id', id)
-    }).where('id', id).fetch();
+    const role = await Role.query().with('modulos.subModulo.permisos').where('id', id).fetch();
     return role;
   }
 
@@ -88,26 +91,26 @@ class RoleController {
 
 
   async setPermisos({ params, request }) {
-    const { role_id, modulo_id } = params;
+    const { role_id, sub_modulo_id } = params;
     const { editar, crear, eliminar } = request.all();
     const payload = {
       role_id: role_id,
-      modulo_id: modulo_id,
+      sub_modulo_id: sub_modulo_id,
       editar: editar,
       crear: crear,
       eliminar: eliminar,
     }
 
-    const role = await Permisos.query().where('role_id', role_id).where('modulo_id', modulo_id).fetch()    
+    const role = await Permisos.query().where('role_id', role_id).where('sub_modulo_id', sub_modulo_id).fetch()    
     if(role.rows.length == 0){
       await Permisos.query().insert(payload)
     }
     await Permisos.query()
     .where('role_id', role_id)
-    .where('modulo_id', modulo_id)
+    .where('sub_modulo_id', sub_modulo_id)
     .update(payload)
 
-    return await Role.query().with('modulos.permisos', (builder) => {
+    return await Role.query().with('modulos.subModulo.permisos', (builder) => {
       builder.where('role_id', role_id)
     }).where('id', role_id).fetch();
     

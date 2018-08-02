@@ -16,7 +16,7 @@ class Role extends Model {
     }
 
     permisos() {
-        return this.hasMany('App/Models/RoleModuloPermiso')
+        return this.hasMany('App/Models/RoleSubModuloPermiso')
     }
 
 

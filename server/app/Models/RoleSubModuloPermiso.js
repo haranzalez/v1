@@ -2,7 +2,16 @@
 
 const Model = use('Model')
 
-class RoleModuloPermiso extends Model {
+class RoleSubModuloPermiso extends Model {
+
+    roles(){
+        this.belongsTo('App/Models/Role');
+    }
+    subModulos(){
+        this.belongTo('App/Models/SubModulo');
+    }
+
+
      /**
    * Override this method or it will try to return id on save.
    */
@@ -29,4 +38,4 @@ class RoleModuloPermiso extends Model {
   }
 }
 
-module.exports = RoleModuloPermiso
+module.exports = RoleSubModuloPermiso

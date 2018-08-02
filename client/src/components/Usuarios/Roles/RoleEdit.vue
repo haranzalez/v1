@@ -7,14 +7,9 @@
     <el-input @input="setRoleDescription" :value="role.description"></el-input>
   </el-form-item>
   
-  
-  <el-form-item label="Modulos">
-    <el-checkbox-group >
-      <el-checkbox  name="modulo"></el-checkbox>
-
-    </el-checkbox-group>
+  <el-form-item>
+      <role-modulo-edit></role-modulo-edit>
   </el-form-item>
-  
   
   <el-form-item>
     <el-button type="primary" @click="edit">Actualizar</el-button>
@@ -25,12 +20,17 @@
 
 <script>
 import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
+import RoleModuloEdit from './Modulos/RoleModuloEdit'
 export default {
     name: 'RoleEdit',
     computed: {
         ...mapState('roles', [
             'role',
+            'modules',
         ]),
+    },
+    components: {
+        RoleModuloEdit,
     },
     methods: {
         ...mapMutations('roles',[
@@ -39,8 +39,12 @@ export default {
         ]),
         ...mapActions('roles', [
             'edit',
+            'fetchAllModules'
         ]),
     },
+    created(){
+        this.fetchAllModules()
+    }
 }
 </script>
 

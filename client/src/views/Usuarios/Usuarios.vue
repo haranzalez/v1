@@ -9,14 +9,13 @@
 
 <script>
 
-import UserTable from '@/components/UserTable'
-import RolesTable from '@/components/RolesTable'
+import UserTable from '@/components/Usuarios/UserTable'
+
 
 export default {
     namespaced: true,
     components: {
         UserTable,
-        RolesTable
 	}
 }
 </script>

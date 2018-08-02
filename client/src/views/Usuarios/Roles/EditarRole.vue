@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import Formulario from '@/components/RoleEdit'
+import Formulario from '@/components/Usuarios/Roles/RoleEdit'
 
 export default {
     namespaced: true,

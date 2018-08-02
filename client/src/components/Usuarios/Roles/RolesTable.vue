@@ -20,7 +20,7 @@
 			</div>
 			<div class="animated fadeInRight" v-if="dataReady">
 				<button @click="downloadCSV"><i class="mdi mdi-file-excel"></i></button>
-				<button @click="pushToCreateUser"><i class="mdi mdi-account-plus"></i></button>
+				<button @click=""><i class="mdi mdi-account-plus"></i></button>
 			</div>
 		
 		</div>
@@ -28,14 +28,14 @@
 		<resize-observer @notify="handleResize" />
 		
 		<div class="table-box card-base card-shadow--medium box grow" id="table-wrapper" v-loading="!asyncComponent">
-			<div :style="{ 'width': width + 'px' }">
+			<div>
 				<!-- v2-table -->
-				<component :is="asyncComponent" ref="table"
-				 	:data="listInPage"
-					:height="height"
-					:border="false"
+				<v2-table 
+					:data="rolesList" 
+					border
+				    :height="height"
 					:total="total"
-					:lazy-load="true"
+					:lazy-load="false"
 					:loading="loading"
 					class="styled"
 					:class="{'mobile':isMobile}"
@@ -45,82 +45,46 @@
 					@sort-change="handleSortChange"
 					@select-change="handleSelectChange"
 					:shown-pagination="shownPagination">
-					<v2-table-column label="ID" prop="id" sortable width="50" align="left" :fixed="isMobile?'':'left'">
+
+					<v2-table-column label="ID" prop="id" sortable align="left">
 						<template slot-scope="row">
 							<span class="sel-string" v-html="$options.filters.selected(row.id, search)"></span>
 						</template>
 					</v2-table-column>
-					<v2-table-column label="Nombre" prop="nombre" sortable width="200" align="left" :fixed="isMobile?'':'left'">
+
+					<v2-table-column label="Nombre" prop="nombre" sortable align="left">
 						<template slot-scope="row">
-							<span class="sel-string" v-html="$options.filters.selected(row.nombre+' '+row.apellido, search)"></span>
+							<span class="sel-string" v-html="$options.filters.selected(row.nombre, search)"></span>
 						</template>
 					</v2-table-column>
-				
-					<v2-table-column label="Email" prop="email" sortable width="250">
+
+					<v2-table-column label="Descripcion" align="left" prop="description" sortable>
 						<template slot-scope="row">
-							<span class="sel-string" v-html="$options.filters.selected(row.email, search)"></span>
+							<span class="sel-string" v-html="$options.filters.selected(row.description, search)"></span>
 						</template>
 					</v2-table-column>
-					<v2-table-column label="Cedula" prop="cedula" sortable>
-                        <template slot-scope="row">
-							<span class="sel-string" v-html="$options.filters.selected(row.cedula, search)"></span>
-						</template>
-                    </v2-table-column>
-					<v2-table-column label="Tel Fijo" prop="tel_fijo" sortable width="200">
-						 <template slot-scope="row">
-							<span class="sel-string" v-html="$options.filters.selected(row.tel_fijo, search)"></span>
-						</template>
-					</v2-table-column>
-					<v2-table-column label="Tel Mobil" prop="tel+mobil" sortable width="120">
-						<template slot-scope="row">
-							<span class="sel-string" v-html="$options.filters.selected(row.tel_mobil, search)"></span>
-						</template>
-					</v2-table-column>
-                    <v2-table-column label="Direccion" prop="direccion" sortable width="200">
-                        <template slot-scope="row">
-							<span class="sel-string" v-html="$options.filters.selected(row.direccion, search)"></span>
-						</template>
-                    </v2-table-column>
-					<v2-table-column label="Ciudad" prop="ciudad" sortable width="200">
-                        <template slot-scope="row">
-							<span class="sel-string" v-html="$options.filters.selected(row.ciudad, search)"></span>
-						</template>
-                    </v2-table-column>
-					<v2-table-column label="Departamento" prop="departamento" sortable>
-                        <template slot-scope="row">
-							<span class="sel-string" v-html="$options.filters.selected(row.departamento, search)"></span>
-						</template>
-                    </v2-table-column>
-					<v2-table-column label="Username" prop="username" sortable>
-						<template slot-scope="row">
-							<span class="sel-string" v-html="$options.filters.selected(row.username, search)"></span>
-						</template>
-					</v2-table-column>
-					<v2-table-column label="Estado" prop="estado" sortable width="150">
-                        <template slot-scope="row">
-							<span class="sel-string" v-html="$options.filters.selected(row.estado, search)"></span>
-						</template>
-                    </v2-table-column>
-					<v2-table-column label="Acciones" width="70" :fixed="isMobile?'':'right'">
+
+					<v2-table-column label="Acciones" :fixed="isMobile?'':'right'">
 						<template slot-scope="row">
 							<div class="custom-action-row">
-								<el-button @click="del(row.nombre,row.apellido,row.id)"><i class="mdi mdi-account-minus"></i></el-button>
-								<el-button @click="pushToEditUser(row)"><i class="mdi mdi-eye"></i></el-button>
+								<el-button @click="del(row.nombre,row.id)"><i class="mdi mdi-account-minus"></i></el-button>
+								<el-button @click="pushToEditRole(row.id)"><i class="mdi mdi-eye"></i></el-button>
 							</div> 
 						</template>
 					</v2-table-column>
-				</component><!-- v2-table -->
-				
-
+					
+				</v2-table><!-- v2-table -->
+					
 			</div>
         </div>
 	</div>
 </template>
 
 <script>
-import HTTP from '../http';
+import HTTP from '../../../http';
 import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
 import moment from 'moment-timezone'
+import rounter from '../../../router'
 import Papa from 'papaparse'
 import * as FS from 'file-saver'
 
@@ -129,7 +93,7 @@ import * as FS from 'file-saver'
 
 
 export default {
-	name: 'UserTable',
+	name: 'RolesTable',
 	data () {
       	return {
 			isMobile: false,
@@ -154,8 +118,11 @@ export default {
 		}
 	},
 	computed: {
+    ...mapState('roles',[
+      'rolesList',
+    ]),
 		listFiltered() {
-			return this.list.filter((obj) => {
+			return this.rolesList.filter((obj) => {
 				let ctrl = false
 				for(let k in obj) {
 					if(obj[k] && obj[k].toString().toLowerCase().indexOf(this.search.toLowerCase()) !== -1) ctrl = true
@@ -223,20 +190,19 @@ export default {
 		}
     },
     methods: {
-		...mapActions('users',[
-			'pushToEditUser',
-			'pushToCreateUser',
-			'deleteUser',
+		...mapActions('roles',[
+			'fetchRoles',
+			'pushToEditRole',
 		]),
-		del(nombre,apellido,id) {
-			this.$confirm(nombre+' '+apellido+' sera permanentemente eliminado de los registros. Continuar?', 'Atencion', {
+		del(nombre,id) {
+			this.$confirm('El role '+nombre+' sera permanentemente eliminado de los registros. Continuar?', 'Atencion', {
 				confirmButtonText: 'OK',
 				cancelButtonText: 'Cancelar',
 				type: 'warning',
 				center: true
 			}).then(() => {
-				this.deleteUser(id)
-				this.fetchUsers();
+				this.deleteRole(id)
+				this.fetchRoles();
 				this.$refs.table.refresh();
 			}).catch(() => {
 				this.$message({
@@ -245,16 +211,6 @@ export default {
 				});
 			});
 		  },
-        fetchUsers() {
-            HTTP().local.get('api/users')
-            .then(d => {
-                this.list = d.data;
-                this.dataReady = true
-            })
-            .catch(err => {
-                console.log(err)
-            })
-        },
 		updatePaginationText() {
 			this.paginationInfo.text = `<span>Total de <strong>${this.total}</strong>, <strong>${this.paginationInfo.pageSize}</strong> por pagina</span>`
 		},
@@ -300,7 +256,7 @@ export default {
 		}
 	},
 	created() {
-        this.fetchUsers()
+    this.fetchRoles()
 		if(window.innerWidth <= 768) 
 			this.isMobile = true	
 
@@ -319,7 +275,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../assets/scss/_variables';
+@import '../../../assets/scss/_variables';
 .page-table {
 	&.overflow {
 		overflow: auto;
@@ -331,7 +287,7 @@ export default {
 }
 </style>
 <style lang="scss">
-@import '../assets/scss/_variables';
+@import '../../../assets/scss/_variables';
 .page-table {
 	
 	.custom-action-row {

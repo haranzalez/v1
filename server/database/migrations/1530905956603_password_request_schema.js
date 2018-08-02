@@ -15,7 +15,7 @@ class PasswordRequestSchema extends Schema {
   }
 
   down () {
-    this.drop('password_requests')
+    this.dropIfExists('password_requests')
   }
 }
 

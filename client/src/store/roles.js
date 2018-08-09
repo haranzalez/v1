@@ -10,8 +10,11 @@ export default {
             description: null,
         },
         modules: null,
+        allModules: null,
         rolesList: null,
-        rolesListEdit: null,
+        selectedPermisos: null,
+        selectedModulos: null,
+        moduleListDialogeVisible: false,
 
     },
     actions: {
@@ -34,11 +37,28 @@ export default {
         },
         edit({state}){
             console.log(state.role)
-            HTTP().local.patch('api/roles/update/'+state.role.id, state.role)
+            
+            let pkg = {
+               nombre: state.role.nombre,
+               description: state.role.description,
+               modulos: state.selectedModulos,
+            }
+            HTTP().local.patch('api/roles/update/'+state.role.id, pkg)
             .then(d => {
                 console.log(d)
             }).catch(err => {
                 console.error(err)
+            })
+        },
+        setPermisos({state}, subId){
+            console.log(state.selectedPermisos)
+            HTTP().local.post('api/roles/'+
+            state.role.id+'/subModulo/'+
+            subId+'/setPermisos', state.selectedPermisos)
+            .then(d => {
+                console.log(d)
+            }).catch(err => {
+                console.log(err)
             })
         },
         fetchRole({state, commit},id){
@@ -52,11 +72,17 @@ export default {
             HTTP().local.get('api/modulos')
             .then(d => {
                 console.log(d)
-                commit('setModules', d.data)
+                commit('setAllModules', d.data)
             }).catch(err => {
                 console.log(err)
             })
-        }
+        },
+        addModule({state},id){
+            HTTP().local.patch('api/roles/update/'+id,state.selectedPermisos)
+            .then(res => {
+                console.log(res)
+            })
+        },
         
     },
     mutations: {
@@ -74,6 +100,19 @@ export default {
         },
         setRoleDescription(state, description){
             state.role.description = description
+        },
+        setAllModules(state, modules){
+            state.allModules = modules
+        },
+        setModuleListDialogeVisible(state, value){
+            state.moduleListDialogeVisible = value
+        },
+        setSelectedModules(state, modulos){
+            state.selectedModulos = modulos
+            state.moduleListDialogeVisible = false
+        },
+        setSelectedPermisos(state, permisos){
+            state.selectedPermisos = permisos
         },
        
     },

@@ -1,18 +1,32 @@
 <template>
-<el-collapse v-model="activo" @change="handleChange">
- <el-collapse-item v-for="item in modules" :key="item.id" :title="item.nombre" :name="item.id">
+<el-collapse>
+ <el-collapse-item v-for="item in modules" :key="item.id" :title="item.nombre">
   <!-- <el-collapse-item title="Prueba" name="1"> -->
-    <el-tabs :tab-position="tabPosition">
-        <el-tab-pane v-for="sub in item.subModulo" :key="sub.id" :label="sub.nombre" :value="sub.nombre" :name="sub.nombre">
-            <el-checkbox @change="handleCheckAllChange($event, sub.nombre)" :indeterminate="isIndeterminate[sub.nombre]" v-model="checkAll[sub.nombre]">Seleccionar todos</el-checkbox>
+    <el-tabs    v-model="activeName" :tab-position="tabPosition">
+        <el-tab-pane 
+        v-for="sub in item.subModulo" 
+        :key="sub.id" 
+        :label="sub.nombre" 
+        :value="sub.nombre" 
+        :name="sub.nombre">
+            <p>Porfavor elija los permisos deseados de manipulacion a <b>{{sub.nombre}}</b> para <b>{{role}}</b></p>
+            <p>{{sub.descripcion}}</p>
             <div style="margin: 15px 0;"></div>
-            <el-checkbox-group v-model="checkedPermisos[sub.nombre]" @change="handleCheckedPermisoChange($event, sub.nombre)">
-                <el-checkbox v-for="per in permisos" :label="per" :key="per">{{per}}</el-checkbox>
-            </el-checkbox-group>
+            <el-checkbox border
+            :checked="permisosSeleccionados[sub.nombre][per]" 
+            v-for="per in permisosDisponibles" 
+            :label="per" 
+            :key="per" 
+            @input="handleCheckedPermisoChange($event, sub.nombre, per)">
+            {{per}}
+            </el-checkbox>
+            <el-button type="primary" @click="actualizarPermisos(sub.nombre, sub.id)" size="mini" round plain>Actualizar permisos</el-button>
         </el-tab-pane>
     </el-tabs>
+    
   </el-collapse-item>
 </el-collapse>
+
 </template>
 
 <script>
@@ -24,68 +38,65 @@ import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
       return {
         activo: ['1'],
         checkAll: {},
-        checkedPermisos: {},
-        permisos: ['editar', 'crear', 'eliminar'],
+        activeName: '',
+        permisosSeleccionados: {},
+        permisosDisponibles: ['editar', 'crear', 'eliminar'],
         isIndeterminate: {},
-        tabPosition: 'right',
+        tabPosition: 'top',
       };
     },
+    props: ['role'],
     computed: {
         ...mapState('roles', [
             'modules',
         ]),
+        
     },
     methods: {
-      handleChange(val) {
-        console.log(val);
+        ...mapMutations('roles', [
+            'setSelectedPermisos',
+        ]),
+        ...mapActions('roles', [
+            'edit',
+            'setPermisos',
+        ]),
+      actualizarPermisos(subName, subId) {
+        this.setSelectedPermisos(this.permisosSeleccionados[subName])
+        this.setPermisos(subId)
       },
       handleCheckAllChange(event, subName) {
-        this.checkedPermisos[subName] = event ? this.permisos[subName] : [];
+        for(let prop in this.permisosSeleccionados[subName]){
+            this.permisosSeleccionados[subName][prop] = event
+        }
+        console.log(this.permisosSeleccionados[subName])
         this.isIndeterminate[subName] = false;
       },
-      handleCheckedPermisoChange(event, subName) {
-          console.log(event)
-          
-        event.forEach(element => {
-            console.log(element)
-            let index = this.checkedPermisos[subName].indexOf(element)
-            if(index === -1){
-                this.checkedPermisos[subName].push(element)
-            } 
-            else{
-                this.checkedPermisos[subName].splice(index, 1)
-            }
-                
-        });
-       console.log(this.checkedPermisos[subName])
-        let checkedCount = event.length;
-        
-        this.checkAll[subName] = checkedCount === this.permisos.length;
-        this.isIndeterminate[subName] = checkedCount > 0 && checkedCount < this.permisos.length;
+      handleCheckedPermisoChange(event, subName, op) {
+        this.permisosSeleccionados[subName][op] = event;
       },
      
     },
     created(){
-        console.log(this.modules)
+        
         for(let prop in this.modules){
-                for(let prop3 in this.modules[prop].subModulo){
-                    let name = this.modules[prop].subModulo[prop3]['nombre'].toString()
-                    this.checkedPermisos[name] = []
-                    
-                    for(let prop4 in this.modules[prop].subModulo[prop3]['permisos'])
-                    {
-                        delete this.modules[prop].subModulo[prop3]['permisos'][prop4]['created_at']
-                        delete this.modules[prop].subModulo[prop3]['permisos'][prop4]['updated_at']
-                        delete this.modules[prop].subModulo[prop3]['permisos'][prop4]['role_id']
-                        delete this.modules[prop].subModulo[prop3]['permisos'][prop4]['id']
-                        delete this.modules[prop].subModulo[prop3]['permisos'][prop4]['sub_modulo_id']
-                        for(var prop5 in this.modules[prop].subModulo[prop3]['permisos'][prop4]){
-                            if(this.modules[prop].subModulo[prop3]['permisos'][prop4][prop5])
-                                this.checkedPermisos[name].push(prop5)
-                        }
-
+            this.activeName = this.modules[prop].subModulo[0]['nombre']
+            for(let prop3 in this.modules[prop].subModulo){
+                
+                let name = this.modules[prop].subModulo[prop3]['nombre'].toString()
+                this.permisosSeleccionados[name] = {}
+                for(let prop4 in this.modules[prop].subModulo[prop3]['permisos'])
+                {
+                    delete this.modules[prop].subModulo[prop3]['permisos'][prop4]['created_at']
+                    delete this.modules[prop].subModulo[prop3]['permisos'][prop4]['updated_at']
+                    delete this.modules[prop].subModulo[prop3]['permisos'][prop4]['role_id']
+                    delete this.modules[prop].subModulo[prop3]['permisos'][prop4]['id']
+                    delete this.modules[prop].subModulo[prop3]['permisos'][prop4]['sub_modulo_id']
+                    for(var prop5 in this.modules[prop].subModulo[prop3]['permisos'][prop4]){
+                        this.permisosSeleccionados[name][prop5] = this.modules[prop].subModulo[prop3]['permisos'][prop4][prop5]
                     }
+
                 }
+            }
         }
     }
   }

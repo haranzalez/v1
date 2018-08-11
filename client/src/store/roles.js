@@ -37,7 +37,7 @@ export default {
         },
         edit({state}){
             console.log(state.role)
-            
+            console.log(state.selectedModulos)
             let pkg = {
                nombre: state.role.nombre,
                description: state.role.description,
@@ -47,7 +47,7 @@ export default {
             .then(d => {
                 console.log(d)
             }).catch(err => {
-                console.error(err)
+                console.log(err)
             })
         },
         setPermisos({state}, subId){
@@ -66,6 +66,8 @@ export default {
             .then(d => {
                 commit('setRole', d.data[0])
                 commit('setModules', d.data[0].modulos)
+            }).catch(err => {
+                console.log(err)
             })
         },
         fetchAllModules({commit}){

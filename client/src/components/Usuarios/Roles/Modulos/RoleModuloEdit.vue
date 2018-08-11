@@ -79,6 +79,7 @@ import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
     created(){
         
         for(let prop in this.modules){
+            
             this.activeName = this.modules[prop].subModulo[0]['nombre']
             for(let prop3 in this.modules[prop].subModulo){
                 

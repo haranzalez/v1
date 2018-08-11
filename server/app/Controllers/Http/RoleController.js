@@ -33,13 +33,11 @@ class RoleController {
    * GET roles/create
    */
   async create ({ request }) {
-    
     const { nombre, description, modulos } = request.all();
     const role = await Role.create({
       nombre, 
       description
     }) 
-
     if(modulos && modulos.length > 0){
       await role.modulos().attach(modulos);
       role.modulos = await role.modulos().fetch();
@@ -55,23 +53,27 @@ class RoleController {
    */
   async update ({ params, request }) {
     const { id } = params;
-    const { modulos, permisos } = request.all();
+    const { modulos } = request.all();
     const role = await Role.find(id);
-    const old = await Role.find(id);
-    old.users = await old.users().fetch()
     
     if(modulos && modulos.length > 0){
-      await role.modulos().attach(modulos)
+      const allMods =  await role.modulos().fetch()
+      for(let prop in allMods.rows){
+        if(modulos.indexOf(allMods.rows[prop]['id']) === -1){
+          await role.modulos().detach(allMods.rows[prop]['id'])
+        }else{
+          await role.modulos().attach(modulos)
+        }
+        console.log(modulos.indexOf(allMods.rows[prop]['id']))
+      }
       role.modulos = await role.modulos().fetch()
     }
 
     role.merge(request.only(['nombre', 'description']))
     role.save();
-    role.users = await role.users().fetch()
     return {
       message: 'Updated!',
-      old: old,
-      new: role
+      role,
     }
   }
 

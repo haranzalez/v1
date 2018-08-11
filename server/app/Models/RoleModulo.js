@@ -9,7 +9,7 @@ class RoleModulo extends Model {
         return this.belongsTo('App/Models/Role', 'id', 'role_id')
     }
     modulos(){
-        return this.belongsTo('App/Models/Modulo', 'id', 'module_id')
+        return this.belongsTo('App/Models/Modulo', 'id', 'modulo_id')
     }
 
     /**

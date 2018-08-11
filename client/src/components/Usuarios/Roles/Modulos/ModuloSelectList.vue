@@ -1,15 +1,14 @@
 <template>
-<el-dialog title="Modulos" :visible.sync="moduleListDialogeVisible">
-  <el-transfer
-    v-model="selected"
-    :data="allModules">
-  </el-transfer>
-  <span slot="footer" class="dialog-footer">
-    <el-button @click="setModuleListDialogeVisible(false)">Cancel</el-button>
-    <el-button type="primary" @click="setSelectedModules(selected)">Confirm</el-button>
-  </span>
-</el-dialog>
- 
+    <el-dialog title="Modulos" :visible.sync="moduleListDialogeVisible">
+    <el-transfer
+        v-model="selected"
+        :data="allModules">
+    </el-transfer>
+    <span slot="footer" class="dialog-footer">
+        <el-button @click="setModuleListDialogeVisible(false)">Cancel</el-button>
+        <el-button type="primary" @click="setSelectedModules(selected)">Confirm</el-button>
+    </span>
+    </el-dialog>
 </template>
 
 <script>

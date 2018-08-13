@@ -53,24 +53,24 @@ class RoleController {
    */
   async update ({ params, request }) {
     const { id } = params;
-    const { modulos } = request.all();
+    const { modulos, nombre, description } = request.all();
+    const allMods =  await Modulo.all()
     const role = await Role.find(id);
     
     if(modulos && modulos.length > 0){
-      const allMods =  await role.modulos().fetch()
-      for(let prop in allMods.rows){
-        if(modulos.indexOf(allMods.rows[prop]['id']) === -1){
-          await role.modulos().detach(allMods.rows[prop]['id'])
-        }else{
-          await role.modulos().attach(modulos)
+        for(let prop in allMods.rows){
+            if(modulos.indexOf(allMods.rows[prop]['id']) === -1){
+              await role.modulos().detach(allMods.rows[prop]['id'])
+            }else{
+              await role.modulos().attach(modulos)
+            }
+          
         }
-        console.log(modulos.indexOf(allMods.rows[prop]['id']))
-      }
-      role.modulos = await role.modulos().fetch()
     }
-
-    role.merge(request.only(['nombre', 'description']))
-    role.save();
+    role.nombre = nombre
+    role.description = description
+    await role.save();
+    role.modulos = await role.modulos().fetch()
     return {
       message: 'Updated!',
       role,

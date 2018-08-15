@@ -1,13 +1,26 @@
 <template>
-    <el-dialog title="Modulos" :visible.sync="moduleListDialogeVisible">
-    <el-transfer
-        v-model="selected"
-        :data="allModules">
-    </el-transfer>
-    <span slot="footer" class="dialog-footer">
-        <el-button @click="setModuleListDialogeVisible(false)">Cancel</el-button>
-        <el-button type="primary" @click="setSelectedModules(selected)">Confirm</el-button>
-    </span>
+    <el-dialog  :visible.sync="moduleListDialogeVisible">
+   
+        <span slot="title" style="display:block;text-align:center;"><b>Modulos</b></span>
+        <span style="margin-bottom: 10px !important;display: block;text-align:center;">
+            Seleccione los modulos deseados y transfiera deacuerdo a lo seleccionado
+        </span>
+  
+   
+        <el-transfer
+            v-model="selected"
+            :data="allModules"
+            :titles="['Todos', roleToEdit.nombre]"
+            >
+        </el-transfer>
+  
+ 
+        <span slot="footer" class="dialog-footer" style="text-align:center;">
+            <el-button @click="setModuleListDialogeVisible(false)">Cancel</el-button>
+            <el-button type="primary" @click="setModulos">Confirm</el-button>
+        </span>
+ 
+    
     </el-dialog>
 </template>
 
@@ -25,7 +38,7 @@ import HTTP from '../../../../http';
     computed: {
         ...mapState('roles', [
             'moduleListDialogeVisible',
-            'role',
+            'roleToEdit',
         ]),
     },
     methods: {
@@ -33,6 +46,9 @@ import HTTP from '../../../../http';
             'setModuleListDialogeVisible',
             'setSelectedModules',
         ]),
+        setModulos(){
+            this.setSelectedModules(this.selected)
+        }
        
     },
     beforeCreate() {
@@ -40,9 +56,9 @@ import HTTP from '../../../../http';
         HTTP().local.get('api/modulos')
         .then(d => {
             let data = []
-            console.log(this.role)
-            for(let prop in this.role.modulos){
-                this.selected.push(this.role.modulos[prop]['id'])
+            console.log(this.roleToEdit)
+            for(let prop in this.roleToEdit.modulos){
+                this.selected.push(this.roleToEdit.modulos[prop]['id'])
             }
             for (let prop in d.data) {
                 data.push({
@@ -58,3 +74,6 @@ import HTTP from '../../../../http';
     }
   };
 </script>
+<style lang="scss" scoped>
+    
+</style>

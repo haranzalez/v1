@@ -18,13 +18,12 @@
 				</div>
 				<div class="label">/page</div>
 			</div>
-			<div class="animated fadeInRight" v-if="dataReady">
-				<button @click="downloadCSV"><i class="mdi mdi-file-excel"></i></button>
-				<button @click=""><i class="mdi mdi-account-plus"></i></button>
+			<div class="animated fadeInRight" >
+				<button><i class="mdi mdi-file-excel"></i></button>
+				<button @click="pushToCreateRole"><i class="mdi mdi-account-plus"></i></button>
 			</div>
 		
 		</div>
-
 		<resize-observer @notify="handleResize" />
 		
 		<div class="table-box card-base card-shadow--medium box grow" id="table-wrapper" v-loading="!asyncComponent">
@@ -193,6 +192,7 @@ export default {
 		...mapActions('roles',[
 			'fetchRoles',
 			'pushToEditRole',
+			'pushToCreateRole',
 		]),
 		del(nombre,id) {
 			this.$confirm('El role '+nombre+' sera permanentemente eliminado de los registros. Continuar?', 'Atencion', {

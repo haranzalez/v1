@@ -1,11 +1,15 @@
 import HTTP from '../http';
 import router from '../router'
-import { Notification } from 'element-ui'
+import { Notification, Message } from 'element-ui'
 
 export default {
     namespaced: true,
     state: {
-        role: {
+        roleToCreate: {
+            nombre: null,
+            description: null,
+        },
+        roleToEdit: {
             nombre: null,
             description: null,
         },
@@ -15,7 +19,8 @@ export default {
         selectedPermisos: null,
         selectedModulos: null,
         moduleListDialogeVisible: false,
-
+        roleModuleDialogeVisible: false,
+        modulesAvailable: false,
     },
     actions: {
         fetchRoles({commit}){
@@ -35,28 +40,61 @@ export default {
             dispatch('fetchRole', id)
             router.push('/editando-role')
         },
-        edit({state}){
-            console.log(state.role)
-            console.log(state.selectedModulos)
+        pushToCreateRole({state, commit}){
+            commit('setSelectedModules', null)
+            router.push('/creando-role')
+        },
+        create({state}){
             let pkg = {
-               nombre: state.role.nombre,
-               description: state.role.description,
+            nombre: state.role.nombre,
+            description: state.role.description,
+            modulos: state.selectedModulos,
+            }
+            HTTP().local.post('api/roles/create', pkg)
+            .then(d => {
+                if(d.status == 200){
+                    Message({
+                        showClose: true,
+                        message: 'Role '+state.role.nombre+' creado exitosamente.',
+                        type: 'success'
+                    })
+                }
+            }).catch(err => {
+                console.log(err)
+            })
+        },
+        edit({state}){
+            let pkg = {
+               nombre: state.roleToEdit.nombre,
+               description: state.roleToEdit.description,
                modulos: state.selectedModulos,
             }
-            HTTP().local.patch('api/roles/update/'+state.role.id, pkg)
+            console.log(pkg)
+            HTTP().local.patch('api/roles/update/'+state.roleToEdit.id, pkg)
             .then(d => {
-                console.log(d)
+                if(d.status == 200){
+                    Message({
+                        showClose: true,
+                        message: 'Role actualizado correctamente.',
+                        type: 'success'
+                    })
+                }
             }).catch(err => {
                 console.log(err)
             })
         },
         setPermisos({state}, subId){
-            console.log(state.selectedPermisos)
             HTTP().local.post('api/roles/'+
             state.role.id+'/subModulo/'+
             subId+'/setPermisos', state.selectedPermisos)
             .then(d => {
-                console.log(d)
+                if(d.status == 200){
+                    Message({
+                        showClose: true,
+                        message: 'Permisos actualizados.',
+                        type: 'success'
+                    })
+                }
             }).catch(err => {
                 console.log(err)
             })
@@ -64,8 +102,14 @@ export default {
         fetchRole({state, commit},id){
             HTTP().local.get('api/roles/'+id)
             .then(d => {
-                commit('setRole', d.data[0])
-                commit('setModules', d.data[0].modulos)
+                commit('setRoleToEdit', d.data[0])
+                if(d.data[0].modulos.length > 0){
+                    commit('setModules', d.data[0].modulos)
+                    commit('setModulesAvailable', true)
+                }else{
+                    commit('setModulesAvailable', false)
+                }
+                
             }).catch(err => {
                 console.log(err)
             })
@@ -73,7 +117,6 @@ export default {
         fetchAllModules({commit}){
             HTTP().local.get('api/modulos')
             .then(d => {
-                console.log(d)
                 commit('setAllModules', d.data)
             }).catch(err => {
                 console.log(err)
@@ -91,17 +134,23 @@ export default {
         setRolesList(state, roles){
             state.rolesList = roles
         },
-        setRole(state, role){
-            state.role = role
+        setRoleToEdit(state, role){
+            state.roleToEdit = role
         },
         setModules(state, modules){
             state.modules = modules
         },
-        setRoleNombre(state, nombre){
-            state.role.nombre = nombre
+        setRoleToEditNombre(state, nombre){
+            state.roleToEdit.nombre = nombre
         },
-        setRoleDescription(state, description){
-            state.role.description = description
+        setRoleToEditDescription(state, description){
+            state.roleToEdit.description = description
+        },
+        setRoleToCreateNombre(state, nombre){
+            state.roleToCreate.nombre = nombre
+        },
+        setRoleTocreateDescription(state, description){
+            state.roleToCreate.description = description
         },
         setAllModules(state, modules){
             state.allModules = modules
@@ -116,6 +165,12 @@ export default {
         setSelectedPermisos(state, permisos){
             state.selectedPermisos = permisos
         },
+        setRoleModuleDialogeVisible(state, value){
+            state.roleModuleDialogeVisible = value
+        },
+        setModulesAvailable(state, value){
+            state.modulesAvailable = value
+        }
        
     },
 }

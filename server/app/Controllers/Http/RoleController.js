@@ -58,15 +58,19 @@ class RoleController {
     const role = await Role.find(id);
     
     if(modulos && modulos.length > 0){
-        for(let prop in allMods.rows){
-            if(modulos.indexOf(allMods.rows[prop]['id']) === -1){
-              await role.modulos().detach(allMods.rows[prop]['id'])
-            }else{
-              await role.modulos().attach(modulos)
-            }
-          
+      for(let prop in allMods.rows){
+        if(modulos.indexOf(allMods.rows[prop]['id']) === -1){
+          await role.modulos().detach(allMods.rows[prop]['id'])
+        }else{
+          await role.modulos().attach(modulos)
         }
+      }
+    }else{
+      for(let prop in allMods.rows){
+        await role.modulos().detach(allMods.rows[prop]['id'])
+      }
     }
+    
     role.nombre = nombre
     role.description = description
     await role.save();
@@ -112,7 +116,7 @@ class RoleController {
     .where('sub_modulo_id', sub_modulo_id)
     .update(payload)
 
-    return await Role.query().with('modulos.subModulo.permisos', (builder) => {
+    return await Role.query().with('permisos', (builder) => {
       builder.where('role_id', role_id)
     }).where('id', role_id).fetch();
     

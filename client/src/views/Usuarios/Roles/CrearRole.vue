@@ -1,5 +1,8 @@
 <template>
+<vue-scroll>
     <formulario></formulario>
+</vue-scroll>
+    
 </template>
 
 <script>

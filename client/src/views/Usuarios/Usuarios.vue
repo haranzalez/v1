@@ -1,9 +1,9 @@
 <template>
 
    
-    <div>
+    <vue-scroll>
     <user-table></user-table>
-    </div>
+    </vue-scroll>
     
 </template>
 

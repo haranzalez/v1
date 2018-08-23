@@ -124,3 +124,7 @@ new Vue({
 	store,
 	render: h => h(App)
 }).$mount('#app')
+
+//DATA TABLES
+
+$('#users_table').DataTable();

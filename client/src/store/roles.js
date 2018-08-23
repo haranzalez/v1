@@ -13,21 +13,25 @@ export default {
             nombre: null,
             description: null,
         },
+        usuario: null,
+        rolePermisos: null,
         modules: null,
         allModules: null,
         rolesList: null,
+        dataReady: false,
         selectedPermisos: null,
         selectedModulos: null,
         moduleListDialogeVisible: false,
         roleModuleDialogeVisible: false,
         modulesAvailable: false,
+        
     },
     actions: {
         fetchRoles({commit}){
             HTTP().local.get('api/roles')
             .then(r => {
-                console.log(r)
                 commit('setRolesList', r.data)
+                commit('setDataReady', true)
             }).catch(err => {
                 Notification.warning({
                     title: 'Atencion!',
@@ -45,9 +49,10 @@ export default {
             router.push('/creando-role')
         },
         create({state}){
+            console.log(state.roleToCreate)
             let pkg = {
-            nombre: state.role.nombre,
-            description: state.role.description,
+            nombre: state.roleToCreate.nombre,
+            description: state.roleToCreate.description,
             modulos: state.selectedModulos,
             }
             HTTP().local.post('api/roles/create', pkg)
@@ -63,7 +68,7 @@ export default {
                 console.log(err)
             })
         },
-        edit({state}){
+        edit({state, dispatch}){
             let pkg = {
                nombre: state.roleToEdit.nombre,
                description: state.roleToEdit.description,
@@ -73,6 +78,7 @@ export default {
             HTTP().local.patch('api/roles/update/'+state.roleToEdit.id, pkg)
             .then(d => {
                 if(d.status == 200){
+                    dispatch('fetchRole',state.roleToEdit.id)
                     Message({
                         showClose: true,
                         message: 'Role actualizado correctamente.',
@@ -84,8 +90,9 @@ export default {
             })
         },
         setPermisos({state}, subId){
+            console.log(subId,state.selectedPermisos)
             HTTP().local.post('api/roles/'+
-            state.role.id+'/subModulo/'+
+            state.roleToEdit.id+'/subModulo/'+
             subId+'/setPermisos', state.selectedPermisos)
             .then(d => {
                 if(d.status == 200){
@@ -128,6 +135,36 @@ export default {
                 console.log(res)
             })
         },
+        delRole({state}, id){
+            HTTP().local.delete('api/roles/destroy/'+id)
+            .then(res => {
+                console.log(res)
+                Message({
+                    showClose: true,
+                    message: 'Role eliminado.',
+                    type: 'success'
+                })
+            }).catch(err => {
+                console.log(err)
+            })
+        },
+        extractPermisos({state,commit}){
+			for(let prop in state.usuario.roles){
+				for(let prop2 in state.usuario.roles[prop]['modulos']){
+					for(let prop3 in state.usuario.roles[prop]['modulos'][prop2]){
+						for(let prop4 in state.usuario.roles[prop]['modulos'][prop2]['subModulo']){
+							if(state.usuario.roles[prop]['modulos'][prop2]['subModulo'][prop4]['nombre'] == 'Roles'){
+                                commit('setExtractedPermisos', state.usuario.roles[prop]['modulos'][prop2]['subModulo'][prop4]['permisos'][0])
+							}
+							
+						}
+						
+					}
+					
+				}
+			}
+			
+		},
         
     },
     mutations: {
@@ -135,7 +172,9 @@ export default {
             state.rolesList = roles
         },
         setRoleToEdit(state, role){
+            
             state.roleToEdit = role
+            console.log(state.roleToEdit)
         },
         setModules(state, modules){
             state.modules = modules
@@ -170,7 +209,16 @@ export default {
         },
         setModulesAvailable(state, value){
             state.modulesAvailable = value
-        }
-       
+        },
+        setDataReady(state, bool){
+            state.dataReady = bool
+        },
+        setUsuario(state, usuario){
+            state.usuario = usuario
+        },
+        setExtractedPermisos(state, permisos){
+            state.rolePermisos = permisos
+        },
+        
     },
 }

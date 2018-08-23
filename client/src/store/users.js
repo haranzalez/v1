@@ -2,6 +2,7 @@ import HTTP from '../http';
 import router from '../router'
 import UserServices from '../services/UserServices'
 import { Notification } from 'element-ui'
+import { mapGetters } from 'vuex';
 
 export default {
     namespaced: true,
@@ -22,9 +23,39 @@ export default {
         },
         roles: null,
         selected: [],
+        usersList: null,
+        dataReady: false,
+        headings: [],
         
     },
+
     actions: {
+        fetchUsersList({commit, dispatch}){
+            HTTP().local.get('api/users')
+            .then(d => {
+                commit('setUsersList', d.data)
+                commit('setDataReady', true)
+                dispatch('renderTableHeadings')
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
+        renderTableHeadings({state, commit}){
+            let pkg = []
+           
+            for(let prop2 in state.usersList[0]){
+                console.log(prop2)
+                if(prop2 !== 'created_at' || prop2 !== 'updated_at'){
+                    prop2 = prop2.split('_').join(' ')
+                    prop2 = prop2.charAt(0).toUpperCase() + prop2.slice(1)
+                    pkg.push(prop2)
+                }
+                
+            }
+            
+            commit('setTableHeadings', pkg)
+        },
         pushToEditUser({state,commit, dispatch}, row){
             commit('setUser', row)
             dispatch('fetchRolesList', 'edit')
@@ -87,6 +118,7 @@ export default {
                         message: 'Usuario creado.',
                         position: 'bottom-right',
                     });
+                    router.push('/Usuarios')
                 }
             }).catch(err => {
                 Notification.warning({
@@ -190,6 +222,17 @@ export default {
         },
         setSelectedRoles(state, roles){
             state.selected = roles
+        },
+        setUsersList(state, list){
+            state.usersList = list
+        },
+        setDataReady(state, bool){
+            state.dataReady = bool
+        },
+        setTableHeadings(state, headings){
+            state.headings = headings;
         }
+        
     },
+
 };

@@ -1,5 +1,11 @@
 <template>
-    <formulario></formulario>
+    <vue-scroll>
+        <div class="ctn">
+            <formulario></formulario>
+        </div>
+    </vue-scroll>
+    
+    
 </template>
 
 <script>

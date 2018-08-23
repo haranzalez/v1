@@ -1,6 +1,18 @@
 <template>
   <div>
-    <el-col :span="12">
+      <h1>Actualizando {{roleToEdit.nombre}}</h1>
+    <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+        <el-card class="box-card">
+            <div slot="header" class="clearfix">
+                <span>Modulos</span>
+                <el-button v-if="modulesAvailable" @click="setModuleListDialogeVisible(true)" style="float: right; padding: 3px 0" type="text">Manejar modulos</el-button>
+            </div>
+            <role-modulo-edit :role-name="roleToEdit.nombre" :op="true"></role-modulo-edit>
+        </el-card>
+       
+    </el-col>
+
+    <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
         <div class="form">
             <el-form ref="form" :model="roleToEdit" label-width="120px">
                 <el-form-item label="Nombre">
@@ -9,27 +21,18 @@
                 <el-form-item label="Descripcion">
                     <el-input type="textarea" @input="setRoleToEditDescription" :value="roleToEdit.description"></el-input>
                 </el-form-item>
-                
                 <el-form-item>
-                    <el-button type="primary" @click="edit">Actualizar</el-button>
+                
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" :disabled="rolePermisos.editar" @click="actualizar">Actualizar</el-button>
                     <el-button @click="pushToRoleTable">Cancelar</el-button>
                 </el-form-item>
             </el-form>
         </div>
-        
-    </el-col>
-
-    <el-col :span="12">
-        <el-card class="box-card">
-             <div slot="header" class="clearfix">
-                <span>Modulos</span>
-                <el-button v-if="modulesAvailable" @click="setModuleListDialogeVisible(true)" style="float: right; padding: 3px 0" type="text">Manejar modulos</el-button>
-            </div>
-            <role-modulo-edit :role-name="roleToEdit.nombre" :op="true"></role-modulo-edit>
-        </el-card>
     </el-col>
     
-    <modulo-select-list></modulo-select-list>
+     <modulo-select-list op="edit"></modulo-select-list>
   </div>
   
 </template>
@@ -43,6 +46,7 @@ export default {
     name: 'RoleEdit',
     computed: {
         ...mapState('roles', [
+            'rolePermisos',
             'roleToEdit',
             'modules',
             'modulesAvailable',
@@ -58,13 +62,16 @@ export default {
             'setRoleToEditDescription',
             'setModuleListDialogeVisible',
             'setRoleModuleDialogeVisible',
+            'setSelectedModules',
         ]),
         ...mapActions('roles', [
             'edit',
-            'fetchAllModules'
+            'fetchAllModules',
+            'fetchRole',
         ]),
-        addModule(){
-            return
+        actualizar(){
+            this.edit()
+            this.$forceUpdate()
         },
         pushToRoleTable(){
             router.push('/Roles')
@@ -73,6 +80,11 @@ export default {
     },
     created(){
         this.fetchAllModules()
+        let selected = []
+        for(let prop in this.roleToEdit.modulos){
+            selected.push(this.roleToEdit.modulos[prop]['id'])
+        }
+        this.setSelectedModules(selected)
     }
 }
 </script>
@@ -81,4 +93,5 @@ export default {
 .form{
     padding:5px 30px;
 }
+
 </style>

@@ -1,82 +1,53 @@
 <template>
-	<div class="page-table column scrollable only-y" :class="{'flex':!isMobile, 'overflow':isMobile}">
-		<div class="toolbar-box flex">
-			<div class="search-box box grow">
-				<div><i class="mdi mdi-magnify"></i></div>
-				<input v-model="search" placeholder="Search..."/>
-			</div>
-			<div class="pagination-box animated fadeInRight">
-				<div class="select-box">
-					<el-select v-model="paginationInfo.pageSize" placeholder="Rows per page" size="mini">
-						<el-option value="10" label="10"></el-option>
-						<el-option value="15" label="15"></el-option>
-						<el-option value="20" label="20"></el-option>
-						<el-option value="30" label="30"></el-option>
-						<el-option value="50" label="50"></el-option>
-						<el-option value="100" label="100"></el-option>
-					</el-select>
-				</div>
-				<div class="label">/page</div>
-			</div>
-			<div class="animated fadeInRight" >
-				<button><i class="mdi mdi-file-excel"></i></button>
-				<button @click="pushToCreateRole"><i class="mdi mdi-account-plus"></i></button>
-			</div>
-		
+<div>
+	<el-col :xs="24" :sm="24" :md="18" :lg="18" :xl="18">
+	<h1>Roles</h1>
+	<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+		<div class="serachBar-ctn">
+			<el-input placeholder="Buscar" v-model="filter" class="input-with-select"></el-input>
 		</div>
-		<resize-observer @notify="handleResize" />
-		
-		<div class="table-box card-base card-shadow--medium box grow" id="table-wrapper" v-loading="!asyncComponent">
-			<div>
-				<!-- v2-table -->
-				<v2-table 
-					:data="rolesList" 
-					border
-				    :height="height"
-					:total="total"
-					:lazy-load="false"
-					:loading="loading"
-					class="styled"
-					:class="{'mobile':isMobile}"
-					@page-change="handlePageChange"
-					:pagination-info="paginationInfo"
-					:default-sort="{prop:sortingProp, order:sortingOrder}"
-					@sort-change="handleSortChange"
-					@select-change="handleSelectChange"
-					:shown-pagination="shownPagination">
+	</el-col>
+	<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+		<div style="text-align:right;">
+			<el-button @click="pushToCreateRole" :disabled="rolePermisos.crear">Crear</el-button>
+		</div>
+	</el-col>
 
-					<v2-table-column label="ID" prop="id" sortable align="left">
-						<template slot-scope="row">
-							<span class="sel-string" v-html="$options.filters.selected(row.id, search)"></span>
-						</template>
-					</v2-table-column>
-
-					<v2-table-column label="Nombre" prop="nombre" sortable align="left">
-						<template slot-scope="row">
-							<span class="sel-string" v-html="$options.filters.selected(row.nombre, search)"></span>
-						</template>
-					</v2-table-column>
-
-					<v2-table-column label="Descripcion" align="left" prop="description" sortable>
-						<template slot-scope="row">
-							<span class="sel-string" v-html="$options.filters.selected(row.description, search)"></span>
-						</template>
-					</v2-table-column>
-
-					<v2-table-column label="Acciones" :fixed="isMobile?'':'right'">
-						<template slot-scope="row">
-							<div class="custom-action-row">
-								<el-button @click="del(row.nombre,row.id)"><i class="mdi mdi-account-minus"></i></el-button>
-								<el-button @click="pushToEditRole(row.id)"><i class="mdi mdi-eye"></i></el-button>
-							</div> 
-						</template>
-					</v2-table-column>
-					
-				</v2-table><!-- v2-table -->
-					
-			</div>
-        </div>
-	</div>
+	<el-table
+    :data="filtered"
+	:default-sort = "{prop: 'id', order: 'descending'}"
+    style="width: 100%">
+    <el-table-column
+	  sortable
+      fixed
+      prop="id"
+      label="ID"
+      width="50">
+    </el-table-column>
+    <el-table-column
+	  sortable
+      prop="nombre"
+      label="Nombre"
+      width="120">
+    </el-table-column>
+    <el-table-column
+	  sortable
+      prop="description"
+      label="Descripcion"
+      width="220">
+    </el-table-column>
+    <el-table-column
+      fixed="right"
+      label="Acciones"
+      width="120">
+      <template slot-scope="scope">
+        <el-button @click="pushToEditRole(scope.row.id)" type="text" size="small">Detalles</el-button>
+      </template>
+    </el-table-column>
+  </el-table>
+	</el-col>
+</div>
+	
 </template>
 
 <script>
@@ -95,104 +66,40 @@ export default {
 	name: 'RolesTable',
 	data () {
       	return {
-			isMobile: false,
-			asyncComponent: null,
-			width: 0,
-			height: 'auto',
-			currentPage: 1,
-			loading: false,
-			shownPagination: true,
-			showSummary: false,
-			search: '',
-			paginationInfo: {
-				//text: `<span><strong>20</strong> per page</span>`,
-				pageSize: 20,
-				nextPageText: '›',
-				prevPageText: '‹' 
-			},
-			sortingProp: "id", 
-            sortingOrder: "descending",
-            list: null,
-            dataReady: false,
+			filter: '',
+			list: null,
 		}
 	},
 	computed: {
-    ...mapState('roles',[
-      'rolesList',
-    ]),
-		listFiltered() {
-			return this.rolesList.filter((obj) => {
-				let ctrl = false
-				for(let k in obj) {
-					if(obj[k] && obj[k].toString().toLowerCase().indexOf(this.search.toLowerCase()) !== -1) ctrl = true
+		filtered(){
+			if(this.dataReady){
+				if(this.filter !== ''){
+					return this.rolesList.filter(role => {
+						return role['nombre'].toLowerCase().includes(this.filter.toLowerCase())
+					})
 				}
-				return ctrl
-			})
+				return this.rolesList
+			}
 		},
-		listSortered() {
-			let prop = this.sortingProp
-			let order = this.sortingOrder
-			return [].concat(this.listFiltered.sort((item1, item2) => {
-				let val1 = '';
-				let val2 = '';
-
-				/*if (prop === 'formatted_date') {
-					val1 = parseInt(moment(item1[prop], 'DD/MM/YYYY').format('x'))
-					val2 = parseInt(moment(item2[prop], 'DD/MM/YYYY').format('x'))
-					if (order === 'descending') {
-						return val2 < val1 ? -1 : 1
-					}
-					return val1 < val2 ? -1 : 1
-				}*/
-
-				val1 = item1[prop];
-				val2 = item2[prop]
-				if (order === 'descending') {
-					return val2 < val1 ? -1 : 1
-				}
-				return val1 < val2 ? -1 : 1
-			}))
-		},
-		listInPage() {
-			let from = (this.currentPage - 1) * this.pageSize
-			let to = from + (this.pageSize*1)
-			return this.listSortered.slice(from, to)
-		},
-		total() {
-            console.log(this.list)
-			return this.listFiltered.length
-		},
-		pageSize() {
-			return this.paginationInfo.pageSize
-		}
+		...mapState('roles',[
+		'rolesList',
+		'dataReady',
+		'rolePermisos',
+		]),
+		...mapState('authentication', [
+			'usuario',
+		])
 	},
-	watch: {
-		total(val) {
-			this.updatePaginationText()
-		},
-		asyncComponent(val) {
-			this.updatePaginationText()
-		},
-		pageSize(val) {
-			this.asyncComponent = null
-			this.currentPage = 1
-
-			setTimeout(() => {
-				this.asyncComponent = 'v2-table'
-			}, 500);
-		},
-		search(val) {
-			this.currentPage = 1
-		},
-		currentPage(val) {
-			this.$refs.table.curPage = val
-		}
-    },
     methods: {
+		...mapMutations('roles', [
+			'setUsuario',
+		]),
 		...mapActions('roles',[
 			'fetchRoles',
 			'pushToEditRole',
 			'pushToCreateRole',
+			'delRole',
+			'extractPermisos',
 		]),
 		del(nombre,id) {
 			this.$confirm('El role '+nombre+' sera permanentemente eliminado de los registros. Continuar?', 'Atencion', {
@@ -201,7 +108,7 @@ export default {
 				type: 'warning',
 				center: true
 			}).then(() => {
-				this.deleteRole(id)
+				this.delRole(id)
 				this.fetchRoles();
 				this.$refs.table.refresh();
 			}).catch(() => {
@@ -211,65 +118,13 @@ export default {
 				});
 			});
 		  },
-		updatePaginationText() {
-			this.paginationInfo.text = `<span>Total de <strong>${this.total}</strong>, <strong>${this.paginationInfo.pageSize}</strong> por pagina</span>`
-		},
-		handlePageChange(page) {
-			this.currentPage = page
-		},
-		handleSortChange( {prop, order} ) {
-			this.sortingProp = prop
-			this.sortingOrder = order
-		},
-		handleSelectChange (rows) {
-			console.log('handleSelectChange', rows);
-		},
-		downloadCSV() {
-			var dataCSV = Papa.unparse(this.listFiltered, {header: true});
-			const blob = new Blob([dataCSV], {type: 'text/csv;charset=utf-8'})
-			FS.saveAs(blob, 'list.csv')
-		},
-		
-		calcDims() {
-			this.width = document.getElementById('table-wrapper').clientWidth
-
-			if(!this.isMobile) {
-				this.height = document.getElementById('table-wrapper').clientHeight - 40
-				if(this.showSummary) this.height -= 40
-				if(this.shownPagination) this.height -= 40
-			}
-
-			this.asyncComponent = 'v2-table'
-		},
-		handleResize: _.throttle(function (e) {
-			this.asyncComponent = null
-			this.width = 0
-			this.currentPage = 1
-			setTimeout(this.calcDims,1000)
-		}, 500)
-	},
-	filters: {
-		selected: function (value, sel) {
-			if (!value) return ''
-			if (!sel) return value
-			return value.toString().replace(new RegExp(sel,"gim"), `<span class="sel">${sel}</span>`)
-		}
 	},
 	created() {
-    this.fetchRoles()
-		if(window.innerWidth <= 768) 
-			this.isMobile = true	
-
-        this.updatePaginationText()
-	},
-	mounted() {
-        
-		//ie fix
-		if(!window.Number.parseInt) window.Number.parseInt = parseInt
+		this.setUsuario(this.usuario)
+		this.extractPermisos()
 		
-        this.calcDims()
-        
-    },
+    	this.fetchRoles()
+	},
    
 }
 </script>

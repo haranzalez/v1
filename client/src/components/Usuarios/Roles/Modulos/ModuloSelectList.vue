@@ -1,27 +1,55 @@
 <template>
-    <el-dialog  :visible.sync="moduleListDialogeVisible">
-   
-        <span slot="title" style="display:block;text-align:center;"><b>Modulos</b></span>
-        <span style="margin-bottom: 10px !important;display: block;text-align:center;">
-            Seleccione los modulos deseados y transfiera deacuerdo a lo seleccionado
-        </span>
-  
-   
-        <el-transfer
-            v-model="selected"
-            :data="allModules"
-            :titles="['Todos', roleToEdit.nombre]"
-            >
-        </el-transfer>
-  
- 
-        <span slot="footer" class="dialog-footer" style="text-align:center;">
-            <el-button @click="setModuleListDialogeVisible(false)">Cancel</el-button>
-            <el-button type="primary" @click="setModulos">Confirm</el-button>
-        </span>
- 
+    <div v-if="op == 'edit'">
+        <el-dialog  :visible.sync="moduleListDialogeVisible">
     
-    </el-dialog>
+            <span slot="title" style="display:block;text-align:center;"><b>Modulos</b></span>
+            <span style="margin-bottom: 10px !important;display: block;text-align:center;">
+                Seleccione los modulos deseados y transfiera deacuerdo a lo seleccionado
+            </span>
+    
+    
+            <el-transfer
+                v-model="selected"
+                :data="allModules"
+                :titles="['Todos', roleToEdit.nombre]"
+                >
+            </el-transfer>
+    
+    
+            <span slot="footer" class="dialog-footer" style="text-align:center;">
+                <el-button @click="setModuleListDialogeVisible(false)">Cancel</el-button>
+                <el-button type="primary" @click="setModulos">Confirm</el-button>
+            </span>
+    
+        
+        </el-dialog>
+    </div>
+    <div v-else>
+         <el-dialog  :visible.sync="moduleListDialogeVisible">
+    
+            <span slot="title" style="display:block;text-align:center;"><b>Modulos</b></span>
+            <span style="margin-bottom: 10px !important;display: block;text-align:center;">
+                Seleccione los modulos deseados y transfiera deacuerdo a lo seleccionado
+            </span>
+    
+    
+            <el-transfer
+                v-model="selected"
+                :data="allModules"
+                :titles="['Todos', 'Nuevo Role']"
+                >
+            </el-transfer>
+    
+    
+            <span slot="footer" class="dialog-footer" style="text-align:center;">
+                <el-button @click="setModuleListDialogeVisible(false)">Cancel</el-button>
+                <el-button :disabled="rolePermisos.editar" type="primary" @click="setModulos">Confirm</el-button>
+            </span>
+    
+        
+        </el-dialog>
+    </div>
+   
 </template>
 
 <script>
@@ -35,9 +63,12 @@ import HTTP from '../../../../http';
         allModules: null,
       };
     },
+    props: ['op'],
     computed: {
         ...mapState('roles', [
+            'rolePermisos',
             'moduleListDialogeVisible',
+            'roleToCreate',
             'roleToEdit',
         ]),
     },
@@ -51,15 +82,19 @@ import HTTP from '../../../../http';
         }
        
     },
+
     beforeCreate() {
-        console.log('fetching')
         HTTP().local.get('api/modulos')
         .then(d => {
             let data = []
-            console.log(this.roleToEdit)
-            for(let prop in this.roleToEdit.modulos){
-                this.selected.push(this.roleToEdit.modulos[prop]['id'])
+            if(this.op == 'edit'){
+                for(let prop in this.roleToEdit.modulos){
+                    this.selected.push(this.roleToEdit.modulos[prop]['id'])
+                }
+            }else{
+                this.selected = []
             }
+            
             for (let prop in d.data) {
                 data.push({
                     key:d.data[prop]['id'],
@@ -71,6 +106,8 @@ import HTTP from '../../../../http';
         }).catch(err => {
             console.log(err)
         })
+       
+        
     }
   };
 </script>

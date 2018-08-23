@@ -1,30 +1,23 @@
 <template>
 <div v-if="op">
         <el-collapse v-if="modulesAvailable">
-        <el-collapse-item  v-for="item in roleToEdit.modulos" :key="item.id" :title="item.nombre">
+        <el-collapse-item  v-for="mod in roleToEdit.modulos" :key="mod.id" :title="mod.nombre">
        
-            <el-tabs v-model="activeName[item.nombre]" :tab-position="tabPosition">
+            <el-tabs v-model="activeName[roleName][mod.nombre]"  :tab-position="tabPosition">
                 <el-tab-pane 
-                    v-for="sub in item.subModulo" 
+                    v-for="sub in mod.subModulo" 
                     :key="sub.id" 
                     :label="sub.nombre" 
                     :value="sub.nombre" 
                     :name="sub.nombre"
                 >
-                    <p>Porfavor elija los permisos deseados de manipulacion a <b>{{sub.nombre}}</b> para <b>{{roleName}}</b></p>
-                    <p>{{sub.descripcion}}</p>
+                    <p><b>Permisos {{sub.nombre}}</b></p>
                     <div style="margin: 15px 0;"></div>
-                    <el-checkbox 
-                    border
-                    :checked="permisosSeleccionados[sub.nombre][per]" 
-                    v-for="per in permisosDisponibles" 
-                    :label="per" 
-                    :key="per" 
-                    @input="handleCheckedPermisoChange($event, sub.nombre, per)">
-                    {{per}}
-                    </el-checkbox>
+                    
+                   <permisos-checkboxes :checked="permisosSeleccionados[roleName][mod.nombre][sub.nombre]" :roleName="roleName" :subName="sub.nombre"></permisos-checkboxes>
+                   
                     <div class="btn-ctn">
-                        <el-button type="primary" @click="actualizarPermisos(sub.nombre, sub.id)" size="mini" round plain>Actualizar permisos</el-button>
+                        <el-button type="primary" :disabled="rolePermisos.editar" @click="actualizarPermisos(mod.nombre, sub.nombre, sub.id)" size="mini" round plain>Actualizar permisos</el-button>
                     </div>
                     
                 </el-tab-pane>
@@ -34,7 +27,7 @@
         </el-collapse>
 
         <div class="btn-ctn" v-else>
-            <el-button type="primary" @click="setModuleListDialogeVisible(true)" size="mini" round plain>Agregar Modulos</el-button>
+            <el-button type="primary" :disabled="rolePermisos.editar" @click="setModuleListDialogeVisible(true)" size="mini" round plain>Agregar Modulos</el-button>
         </div>
 
     </div>
@@ -50,6 +43,7 @@
 <script>
 
 import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
+import PermisosCheckboxes from './PermisosCheckBoxes'
 
  export default {
     data() {
@@ -58,14 +52,17 @@ import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
         checkAll: {},
         activeName: {},
         permisosSeleccionados: {},
-        permisosDisponibles: ['editar', 'crear', 'eliminar'],
         isIndeterminate: {},
         tabPosition: 'top',
       };
     },
+    components:{
+        PermisosCheckboxes,
+    },
     props: ['role-name', 'op'],
     computed: {
         ...mapState('roles', [
+            'rolePermisos',
             'modules',
             'roleToEdit',
             'roleModuleDialogeVisible',
@@ -82,28 +79,34 @@ import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
             'edit',
             'setPermisos',
         ]),
-      actualizarPermisos(subName, subId) {
-        this.setSelectedPermisos(this.permisosSeleccionados[subName])
+      actualizarPermisos(modName,subName, subId) {
         this.setPermisos(subId)
       },
       handleCheckAllChange(event, subName) {
         for(let prop in this.permisosSeleccionados[subName]){
             this.permisosSeleccionados[subName][prop] = event
         }
-        console.log(this.permisosSeleccionados[subName])
+        
         this.isIndeterminate[subName] = false;
       },
-      handleCheckedPermisoChange(event, subName, op) {
-        this.permisosSeleccionados[subName][op] = event;
+      handleCheckedPermisoChange(event, subName,modName, op) {
+        
+        this.permisosSeleccionados[this.roleName][modName][subName][op] = event;
+         console.log(this.permisosSeleccionados)
       },
      
     },
     created(){
+       
+        this.permisosSeleccionados[this.roleName] = {}
+        this.activeName[this.roleName] = {}
         for(let prop in this.roleToEdit.modulos){
-            this.activeName[this.roleToEdit.modulos[prop]['nombre']] = this.roleToEdit.modulos[prop].subModulo[0]['nombre']
+            let modName = this.roleToEdit.modulos[prop]['nombre']
+            this.permisosSeleccionados[this.roleName][modName] = {}
+            this.activeName[this.roleName][modName] = this.roleToEdit.modulos[prop].subModulo[0]['nombre']
             for(let prop3 in this.roleToEdit.modulos[prop].subModulo){
-                let name = this.roleToEdit.modulos[prop].subModulo[prop3]['nombre'].toString()
-                this.permisosSeleccionados[name] = {}
+                let subName = this.roleToEdit.modulos[prop].subModulo[prop3]['nombre'].toString()
+                this.permisosSeleccionados[this.roleName][modName][subName] = {}
                 for(let prop4 in this.roleToEdit.modulos[prop].subModulo[prop3]['permisos'])
                 {
                     delete this.roleToEdit.modulos[prop].subModulo[prop3]['permisos'][prop4]['created_at']
@@ -112,7 +115,7 @@ import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
                     delete this.roleToEdit.modulos[prop].subModulo[prop3]['permisos'][prop4]['id']
                     delete this.roleToEdit.modulos[prop].subModulo[prop3]['permisos'][prop4]['sub_modulo_id']
                     for(var prop5 in this.roleToEdit.modulos[prop].subModulo[prop3]['permisos'][prop4]){
-                        this.permisosSeleccionados[name][prop5] = this.roleToEdit.modulos[prop].subModulo[prop3]['permisos'][prop4][prop5]
+                        this.permisosSeleccionados[this.roleName][modName][subName][prop5] = this.roleToEdit.modulos[prop].subModulo[prop3]['permisos'][prop4][prop5]
                     }
 
                 }
@@ -126,6 +129,7 @@ import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
 .btn-ctn{
     padding-top: 20px;
     padding-bottom: 10px;
+    text-align:center !important;
 }
 
 </style>

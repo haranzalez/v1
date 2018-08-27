@@ -13,8 +13,7 @@ export default {
             nombre: null,
             description: null,
         },
-        usuario: null,
-        rolePermisos: null,
+      
         modules: null,
         allModules: null,
         rolesList: null,
@@ -60,7 +59,7 @@ export default {
                 if(d.status == 200){
                     Message({
                         showClose: true,
-                        message: 'Role '+state.role.nombre+' creado exitosamente.',
+                        message: 'Role '+state.roleToCreate.nombre+' creado exitosamente.',
                         type: 'success'
                     })
                 }
@@ -136,35 +135,21 @@ export default {
             })
         },
         delRole({state}, id){
-            HTTP().local.delete('api/roles/destroy/'+id)
-            .then(res => {
-                console.log(res)
-                Message({
-                    showClose: true,
-                    message: 'Role eliminado.',
-                    type: 'success'
+           
+				HTTP().local.delete('api/roles/destroy/'+id)
+                .then(res => {
+                    Message({
+                        showClose: true,
+                        message: 'Role eliminado.',
+                        type: 'success'
+                    })
+                }).catch(err => {
+                    console.log(err)
                 })
-            }).catch(err => {
-                console.log(err)
-            })
-        },
-        extractPermisos({state,commit}){
-			for(let prop in state.usuario.roles){
-				for(let prop2 in state.usuario.roles[prop]['modulos']){
-					for(let prop3 in state.usuario.roles[prop]['modulos'][prop2]){
-						for(let prop4 in state.usuario.roles[prop]['modulos'][prop2]['subModulo']){
-							if(state.usuario.roles[prop]['modulos'][prop2]['subModulo'][prop4]['nombre'] == 'Roles'){
-                                commit('setExtractedPermisos', state.usuario.roles[prop]['modulos'][prop2]['subModulo'][prop4]['permisos'][0])
-							}
-							
-						}
-						
-					}
-					
-				}
-			}
 			
-		},
+            
+        },
+       
         
     },
     mutations: {
@@ -213,12 +198,8 @@ export default {
         setDataReady(state, bool){
             state.dataReady = bool
         },
-        setUsuario(state, usuario){
-            state.usuario = usuario
-        },
-        setExtractedPermisos(state, permisos){
-            state.rolePermisos = permisos
-        },
+       
+       
         
     },
 }

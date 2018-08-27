@@ -2,7 +2,7 @@
     <div>
         <div v-for="(per, key) in permisosDisponibles" :key="per" class="inputGroup">
             <input 
-            :disabled="rolePermisos.editar"
+            :disabled="(permisos['Roles'].editar)? false:true"
             :checked="permisosSeleccionados[per]"
             type="checkbox" 
             @change="handleCheck($event)"
@@ -28,7 +28,10 @@ export default {
     computed: {
         ...mapState('roles',[
             'rolePermisos',
-        ])
+        ]),
+         ...mapState('authentication', [
+			'permisos',
+		]),
     },
     props: ['checked', 'subName', 'roleName'],
     methods: {

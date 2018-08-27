@@ -22,7 +22,7 @@
                     </el-form-item>
                     
                     <el-form-item>
-                        <el-button type="primary" :disabled="rolePermisos.crear" @click="create">Crear</el-button>
+                        <el-button type="primary" :disabled="(permisos['Roles'].crear)? false:true" @click="create">Crear</el-button>
                         <el-button>Cancelar</el-button>
                     </el-form-item>
                 </el-form>
@@ -41,9 +41,11 @@ export default {
     name: 'RoleCreate',
     computed: {
         ...mapState('roles', [
-            'rolePermisos',
             'roleToCreate',
             'modules',
+        ]),
+          ...mapState('authentication', [
+            'permisos'
         ]),
     },
     components: {

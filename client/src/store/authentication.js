@@ -28,6 +28,7 @@ export default {
         logged: false,
         isAdmin: false,
         menu: null,
+        permisos: null,
     },
     getters: {
         isLogged(state, getters) {
@@ -35,9 +36,23 @@ export default {
 		},
     },
     actions: {
-        setup(){
-
-        },
+        extractPermisos({state,commit}){
+          
+            let pkg = {}
+			for(let prop in state.usuario.roles){
+				for(let prop2 in state.usuario.roles[prop]['modulos']){
+					for(let prop3 in state.usuario.roles[prop]['modulos'][prop2]){
+						for(let prop4 in state.usuario.roles[prop]['modulos'][prop2]['subModulo']){
+                            pkg[state.usuario.roles[prop]['modulos'][prop2]['subModulo'][prop4]['nombre']] = state.usuario.roles[prop]['modulos'][prop2]['subModulo'][prop4]['permisos'][0]
+						}
+						
+					}
+					
+				}
+            }
+            console.log(pkg)
+            commit('setExtractedPermisos', pkg)
+		},
         resetPassword({ commit, state }){
            
             if(state.credenciales.password !== state.credenciales.passwordConfirm){
@@ -66,17 +81,18 @@ export default {
                 console.log(err)
             })
         },
-        login({ commit, state }){
+        login({ commit, dispatch, state }){
             return HTTP().local.post('/api/login', {
                 username: state.credenciales.username,
                 password: state.credenciales.password,
             })
             .then(({ data }) => {
-                console.log(data)
                 if(data.user[0].estado !== 'inactivo'){
                     commit('setUsuario', data.user[0])
                     commit('setNombreCompleto', data.user[0].nombre + ' ' + data.user[0].apellido)
                     commit('setToken', data.token.token)
+                    dispatch('extractPermisos')
+                    console.log(state.permisos)
                     const menu = []
                     for(let prop in data.user[0].roles){
                         for(let pro in data.user[0].roles[prop].modulos){
@@ -249,6 +265,10 @@ export default {
         },
         setDepartamento(state, departamento){
             state.usuario.departamento = departamento
+        },
+        setExtractedPermisos(state, permisos){
+
+            state.permisos = permisos
         },
         
     },

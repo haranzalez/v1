@@ -17,7 +17,7 @@
                    <permisos-checkboxes :checked="permisosSeleccionados[roleName][mod.nombre][sub.nombre]" :roleName="roleName" :subName="sub.nombre"></permisos-checkboxes>
                    
                     <div class="btn-ctn">
-                        <el-button type="primary" :disabled="rolePermisos.editar" @click="actualizarPermisos(mod.nombre, sub.nombre, sub.id)" size="mini" round plain>Actualizar permisos</el-button>
+                        <el-button type="primary" :disabled="(permisos['Roles'].editar)? false:true" @click="actualizarPermisos(mod.nombre, sub.nombre, sub.id)" size="mini" round plain>Actualizar permisos</el-button>
                     </div>
                     
                 </el-tab-pane>
@@ -27,7 +27,7 @@
         </el-collapse>
 
         <div class="btn-ctn" v-else>
-            <el-button type="primary" :disabled="rolePermisos.editar" @click="setModuleListDialogeVisible(true)" size="mini" round plain>Agregar Modulos</el-button>
+            <el-button type="primary" :disabled="(permisos['Roles'].editar)? false:true" @click="setModuleListDialogeVisible(true)" size="mini" round plain>Agregar Modulos</el-button>
         </div>
 
     </div>
@@ -62,12 +62,14 @@ import PermisosCheckboxes from './PermisosCheckBoxes'
     props: ['role-name', 'op'],
     computed: {
         ...mapState('roles', [
-            'rolePermisos',
             'modules',
             'roleToEdit',
             'roleModuleDialogeVisible',
             'modulesAvailable',
         ]),
+        ...mapState('authentication', [
+			'permisos',
+		]),
         
     },
     methods: {

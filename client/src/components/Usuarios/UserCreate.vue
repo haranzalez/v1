@@ -7,16 +7,13 @@
 				<div class="cover-small"></div>
 				<div class="avatar-small"><img src="@/assets/images/avatar-default.svg" alt="avatar"></div>
 				<span :value="usuario.nombre+' '+usuario.apellido">{{usuario.nombre+' '+usuario.apellido}}</span>
-				<div class="colors-box">
-					<div v-for="i in 5" :key="i" :class="{'color':true, 'active':colorActive}" :style="{'background':color}"></div>
-				</div>
 			</div>
 			<div class="avatar"><i class="mdi mdi-account"></i></div>
 			<img src="@/assets/images/cubierta-1.jpg" id="color-thief" class="color-thief" alt="profile cover">
 	</div>
 		<div class="page-profile-edit">
 		<h2 class="mv-0 animated fadeInDown">Crear Usuario</h2>
-		<el-button class="text-up-15p mb-0 animated slideInUp" type="text" @click="back"><i class="mdi mdi-keyboard-backspace"></i></el-button>
+		
 
 		<el-form ref="form" label-width="120px" :label-position="labelPosition">
 			<el-col>
@@ -126,7 +123,8 @@
 				
 			<el-col class="col-p pull-right">
 				<el-form-item>
-					<el-button  type="primary" @click="onSubmit">Crear</el-button>
+					<el-button class="animated slideInUp" plain @click="back">Cancelar</el-button>
+					<el-button class="animated slideInDown" :disabled="(permisos['Usuarios'].crear)?false:true"  type="primary" @click="onSubmit">Crear</el-button>
 				</el-form-item>
 			</el-col>
 		</el-form>
@@ -151,6 +149,9 @@ export default {
 		...mapState('users', [
 			'usuario',
 			'roles',
+		]),
+		...mapState('authentication', [
+			'permisos',
 		]),
 	},
 	methods: {

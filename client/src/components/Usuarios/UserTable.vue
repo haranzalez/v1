@@ -13,7 +13,7 @@
 		</el-col>
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
 			<div style="text-align:right;">
-				<el-button @click="pushToCreateUser">Crear</el-button>
+				<el-button :disabled="(permisos['Usuarios'].crear)? false:true" @click="pushToCreateUser">Crear</el-button>
 			</div>
 		</el-col>
 		
@@ -143,6 +143,9 @@ export default {
 			'dataReady',
 			'headings',
 		]),
+		...mapState('authentication', [
+			'permisos',
+		])
 	},
 	components: {
 		RolesTable,
@@ -154,6 +157,7 @@ export default {
 			'deleteUser',
 			'fetchUsersList',
 		]),
+	
 		del(nombre,apellido,id) {
 			this.$confirm(nombre+' '+apellido+' sera permanentemente eliminado de los registros. Continuar?', 'Atencion', {
 				confirmButtonText: 'OK',

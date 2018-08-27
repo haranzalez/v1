@@ -13,7 +13,6 @@
 		<img src="@/assets/images/cubierta-1.jpg" id="color-thief" class="color-thief" alt="profile cover">
 	</div>
 	<div class="page-profile-edit">
-		<el-button class="text-up-15p mb-0 animated slideInUp" type="text" @click="back"><i class="mdi mdi-keyboard-backspace"></i></el-button>
 
 		<el-form ref="form" label-width="120px" :label-position="labelPosition">
 			<el-col>
@@ -143,8 +142,9 @@
 				
 			<el-col class="col-p pull-right">
 				<el-form-item>
-					<el-button  type="text" @click="del(usuario.id)">Eliminar</el-button>
-					<el-button  type="primary" @click="onSubmit">Guardar</el-button>
+					<el-button :disabled="(permisos['Usuarios'].eliminar)? false:true"  type="text" @click="del(usuario.id)">Eliminar</el-button>
+					<el-button @click="back">Cancelar</el-button>
+					<el-button :disabled="(permisos['Usuarios'].editar)? false:true"  type="primary" @click="onSubmit">Guardar</el-button>
 				</el-form-item>
 			</el-col>
 		</el-form>
@@ -170,6 +170,9 @@ export default {
             'usuario',
 			'roles',
 			'selected',
+		]),
+		...mapState('authentication', [
+			'permisos',
 		]),
 	},
 	methods: {

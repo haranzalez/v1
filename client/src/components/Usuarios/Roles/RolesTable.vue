@@ -1,6 +1,6 @@
 <template>
 <div>
-	<el-col :xs="24" :sm="24" :md="18" :lg="18" :xl="18">
+	<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
 	<h1>Roles</h1>
 	<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
 		<div class="serachBar-ctn">
@@ -9,7 +9,7 @@
 	</el-col>
 	<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
 		<div style="text-align:right;">
-			<el-button @click="pushToCreateRole" :disabled="rolePermisos.crear">Crear</el-button>
+			<el-button @click="pushToCreateRole" :disabled="(permisos['Roles'].crear)? false:true">Crear</el-button>
 		</div>
 	</el-col>
 
@@ -84,16 +84,12 @@ export default {
 		...mapState('roles',[
 		'rolesList',
 		'dataReady',
-		'rolePermisos',
 		]),
 		...mapState('authentication', [
-			'usuario',
+			'permisos',
 		])
 	},
     methods: {
-		...mapMutations('roles', [
-			'setUsuario',
-		]),
 		...mapActions('roles',[
 			'fetchRoles',
 			'pushToEditRole',
@@ -120,9 +116,6 @@ export default {
 		  },
 	},
 	created() {
-		this.setUsuario(this.usuario)
-		this.extractPermisos()
-		
     	this.fetchRoles()
 	},
    

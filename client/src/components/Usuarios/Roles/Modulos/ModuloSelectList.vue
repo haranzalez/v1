@@ -34,6 +34,7 @@
     
     
             <el-transfer
+                :disabled="(permisos['Roles'].editar)? false:true"
                 v-model="selected"
                 :data="allModules"
                 :titles="['Todos', 'Nuevo Role']"
@@ -43,7 +44,7 @@
     
             <span slot="footer" class="dialog-footer" style="text-align:center;">
                 <el-button @click="setModuleListDialogeVisible(false)">Cancel</el-button>
-                <el-button :disabled="rolePermisos.editar" type="primary" @click="setModulos">Confirm</el-button>
+                <el-button :disabled="(permisos['Roles'].editar)? false:true" type="primary" @click="setModulos">Confirm</el-button>
             </span>
     
         
@@ -66,11 +67,13 @@ import HTTP from '../../../../http';
     props: ['op'],
     computed: {
         ...mapState('roles', [
-            'rolePermisos',
             'moduleListDialogeVisible',
             'roleToCreate',
             'roleToEdit',
         ]),
+         ...mapState('authentication', [
+			'permisos',
+		]),
     },
     methods: {
         ...mapMutations('roles', [
@@ -79,7 +82,7 @@ import HTTP from '../../../../http';
         ]),
         setModulos(){
             this.setSelectedModules(this.selected)
-        }
+        },
        
     },
 

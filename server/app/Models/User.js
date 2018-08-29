@@ -43,6 +43,17 @@ class User extends Model {
     return this.hasMany('App/Models/PasswordRequest')
   }
 
+  logs() {
+    return this.hasMany('App/Models/UserLog')
+  }
+
+  static formatDates (field, value) {
+    if (field === 'salida') {
+      return value.format('YYYY-MM-DD')
+    }
+    return super.formatDates(field, value)
+  }
+
 
   
 }

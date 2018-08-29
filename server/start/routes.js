@@ -19,13 +19,14 @@ const Route = use('Route')
 Route.group(() => {
 
   Route.post('login', 'UserController.login');
+  Route.get('logout', 'UserController.logout');
   Route.post('password', 'UserController.sendPasswordChangeEmail');
   Route.get('password/reset/:token', 'UserController.confirmPasswordChange');
   Route.post('password/reset', 'UserController.resetPassword');
 
   Route.get('users', 'UserController.index').middleware('auth');
   Route.get('users/:id', 'UserController.fetchOne').middleware('auth');
-  Route.post('users/create', 'UserController.create')
+  Route.post('users/create', 'UserController.create').middleware('auth');
   Route.delete('users/destroy/:id', 'UserController.destroy').middleware('auth');
   Route.patch('users/update/:id', 'UserController.update').middleware('auth');
 

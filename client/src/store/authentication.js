@@ -127,7 +127,12 @@ export default {
                 navPos: null,
                 toolbar: null,
             }, {root: true})
-            commit('setLogout')
+            HTTP().local.get('/api/logout')
+            .then(res => {
+                console.log(res)
+            }).catch(err => {
+                console.log(err)
+            })
         },
         register({ state }){
             return HTTP().local.post('/api/users/create', {

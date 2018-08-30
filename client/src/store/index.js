@@ -1,9 +1,11 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+
 import createPersistedState from 'vuex-persistedstate'
 import authentication from './authentication'
 import layout from './layout'
 import users from './users'
+import logs from './userLogs'
 import roles from './roles'
 
 Vue.use(Vuex)
@@ -13,11 +15,13 @@ const debug = process.env.NODE_ENV !== 'production'
 export default new Vuex.Store({
 	state: {
 	},
+	
 	modules: {
 		authentication,
 		layout,
 		users,
 		roles,
+		logs,
 	},
 	mutations: {
 	},
@@ -30,3 +34,4 @@ export default new Vuex.Store({
 	})],
 	strict: debug
 })
+

@@ -58,12 +58,13 @@ import '../node_modules/mdi/scss/materialdesignicons.scss'
 import Affix from './directives/affix'
 import App from './App.vue'
 import router from './router/' 
+import IdleVue from 'idle-vue'
 import store from './store/index' 
 import i18n_messages from './i18n.json' 
 
 Vue.config.productionTip = false
 
-
+Vue.use(IdleVue, { idleTime: 5000, store })
 Vue.component('StatusIndicator', StatusIndicator)
 Vue.use(VueChartkick, {adapter: Chart})
 Vue.use(Trend)
@@ -127,4 +128,3 @@ new Vue({
 
 //DATA TABLES
 
-$('#users_table').DataTable();

@@ -1,7 +1,8 @@
 <template>
-<div>
-	<el-col :xs="24" :sm="24" :md="15" :lg="15" :xl="15">
-	<h1>Roles</h1>
+<vue-scroll>
+<el-row>
+	<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+	<h1>Historial de entradas y salidad</h1>
 	<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
 		<div class="serachBar-ctn">
 			<el-input placeholder="Buscar" v-model="filter" class="input-with-select"></el-input>
@@ -9,7 +10,7 @@
 	</el-col>
 	<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
 		<div style="text-align:right;">
-			<el-button @click="pushToCreateRole" :disabled="(permisos['Roles'].crear)? false:true">Crear</el-button>
+			<el-button :disabled="(permisos['Roles'].crear)? false:true">Crear</el-button>
 		</div>
 	</el-col>
 
@@ -26,28 +27,38 @@
     </el-table-column>
     <el-table-column
 	  sortable
-      prop="nombre"
-      label="Nombre"
+      prop="ip"
+      label="IP"
       width="120">
     </el-table-column>
     <el-table-column
 	  sortable
-      prop="description"
-      label="Descripcion"
-      width="220">
-    </el-table-column>
-    <el-table-column
-      fixed="right"
-      label="Acciones"
+      prop="user"
+      label="Usuario"
       width="120">
-      <template slot-scope="scope">
-        <el-button @click="pushToEditRole(scope.row.id)" type="text" size="small">Detalles</el-button>
-      </template>
+    </el-table-column>
+	 <el-table-column
+	  sortable
+      prop="token"
+      label="Token"
+      width="320">
+    </el-table-column>
+	 <el-table-column
+	  sortable
+      prop="entrada"
+      label="Entrada"
+      width="120">
+    </el-table-column>
+	<el-table-column
+	  sortable
+      prop="salida"
+      label="Salida"
+      width="120">
     </el-table-column>
   </el-table>
 	</el-col>
-</div>
-	
+</el-row>
+</vue-scroll>
 </template>
 
 <script>
@@ -66,58 +77,39 @@ export default {
 	name: 'RolesTable',
 	data () {
       	return {
-			filter: '',
+            filter: '',
+            dataReady: false,
 			list: null,
 		}
 	},
 	computed: {
-		filtered(){
+        filtered(){
 			if(this.dataReady){
 				if(this.filter !== ''){
-					return this.rolesList.filter(role => {
-						return role['nombre'].toLowerCase().includes(this.filter.toLowerCase())
+					return this.logsList.filter(log => {
+						console.log(Log)
+						return log['ip'].toLowerCase().includes(this.filter.toLowerCase())
 					})
 				}
-				return this.rolesList
+				return this.logsList
 			}
 		},
-		...mapState('roles',[
-		'rolesList',
-		'dataReady',
-		]),
 		...mapState('authentication', [
 			'permisos',
+        ]),
+        ...mapState('logs', [
+			'logsList',
 		])
-	},
+    },	
     methods: {
-		...mapActions('roles',[
-			'fetchRoles',
-			'pushToEditRole',
-			'pushToCreateRole',
-			'delRole',
-			'extractPermisos',
-		]),
-		del(nombre,id) {
-			this.$confirm('El role '+nombre+' sera permanentemente eliminado de los registros. Continuar?', 'Atencion', {
-				confirmButtonText: 'OK',
-				cancelButtonText: 'Cancelar',
-				type: 'warning',
-				center: true
-			}).then(() => {
-				this.delRole(id)
-				this.fetchRoles();
-				this.$refs.table.refresh();
-			}).catch(() => {
-				this.$message({
-					type: 'info',
-					message: 'Eliminacion cancelada'
-				});
-			});
-		  },
-	},
-	created() {
-    	this.fetchRoles()
-	},
+        ...mapActions('logs', [
+            'fetchLogs',
+        ]),
+    },
+    created(){
+        this.fetchLogs()
+        this.dataReady = true
+    }
    
 }
 </script>

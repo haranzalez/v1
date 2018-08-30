@@ -46,7 +46,7 @@ class UserController {
       }
     }else{
       return {
-        mess: 'Usted tiene una session abierta con IP: '+logResult.ip+' que fue abierta: '+logResult.entrada
+        mess: 'Usted o alguien ya tiene una session abierta con IP: '+logResult.ip+' usando sus credenciales. Si usted no inicio esta session, porfavor notifique al administrador. Delo contrario, debe cerrar la session abierta para empezar otra.'
       }
     }
     
@@ -55,6 +55,10 @@ class UserController {
   async logout({request}){
     var log = new UserLogService()
     return log.logout(request)
+  }
+
+  async userLogs({request}){
+    return await User.query().with('logs').fetch()
   }
 
   /**

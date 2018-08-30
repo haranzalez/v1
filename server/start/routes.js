@@ -25,6 +25,7 @@ Route.group(() => {
   Route.post('password/reset', 'UserController.resetPassword');
 
   Route.get('users', 'UserController.index').middleware('auth');
+  Route.get('userLogs', 'UserController.userLogs').middleware('auth');
   Route.get('users/:id', 'UserController.fetchOne').middleware('auth');
   Route.post('users/create', 'UserController.create').middleware('auth');
   Route.delete('users/destroy/:id', 'UserController.destroy').middleware('auth');

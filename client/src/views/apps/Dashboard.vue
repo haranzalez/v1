@@ -2,7 +2,6 @@
 	<vue-scroll class="page-dashboard">
 		
 		<resize-observer @notify="__resizeHanlder" />
-
 		<el-row class="mt-0" :gutter="30">
 			<el-col :xs="24" :sm="12" :md="12" :lg="6" :xl="6">
 				<div class="card-base card-shadow--medium mb-30 widget small-widget" v-loading="!asyncComponent">
@@ -276,6 +275,7 @@
 <script>
 import echarts from 'echarts'
 import { Timeline, TimelineItem, TimelineTitle } from 'vue-cute-timeline'
+import { mapActions, mapMutations, mapState } from 'vuex';
 
 export default {
 	name: 'Dashboard',
@@ -360,9 +360,13 @@ export default {
 	computed: {
 		smallWidget() {
 			return this.dashboardWidth >= 970 && this.dashboardWidth <= 1412 && this.windowWidth >= 1200
-		}
+		},
+		
 	},
 	methods: {
+		...mapActions('authentication', [
+			'setTimer',
+		]),
 		__resizeHanlder: _.throttle(function (e) {
 			if(this.resized) {			
 
@@ -772,7 +776,9 @@ export default {
 			}
 		}
 	},
+
 	mounted() {
+		
 		this.initChart1()
 		this.initChart2()
 	},

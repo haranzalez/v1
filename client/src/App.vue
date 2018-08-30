@@ -205,6 +205,7 @@ import VerticalNav from '@/core/vertical-nav.vue'
 import Toolbar from '@/core/toolbar.vue'
 import Footer from '@/core/footer.vue'
 import LayoutPicker from '@/components/layout-picker.vue'
+import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
 
 export default {
 	name: 'App',
@@ -216,6 +217,13 @@ export default {
 		}
 	},
 	computed: {
+		messageStr() {
+			if(this.isAppIdle){
+				this.$alert('Session por terminar', 'session terminando', {
+					dangerouslyUseHTMLString: true
+				});
+			}
+		},
 		navPos() {
 			if(this.innerWidth <= 768 && (this.$store.getters['layout/navPos'] === 'top' || this.$store.getters['layout/navPos'] === 'bottom')) {
 				return 'left'	
@@ -245,6 +253,9 @@ export default {
 		}
 	},	
 	methods: {
+		...mapActions('authentication', [
+			'logout',
+		]),
 		resizeOpenNav() {
 			this.innerWidth = window.innerWidth
 			if(window.innerWidth <= 768) {
@@ -262,6 +273,7 @@ export default {
 		LayoutPicker
 	},
 	created() {
+		window.addEventListener('beforeunload', this.logout)
 		if(browser.name)
 			document.getElementsByTagName("html")[0].classList.add(browser.name)
 	},
@@ -271,6 +283,9 @@ export default {
 	},
 	beforeDestroy() {
 		window.removeEventListener('resize', this.resizeOpenNav);
+	},
+	destroyed(){
+		this.logout()
 	}
 }
 </script>

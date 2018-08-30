@@ -1,11 +1,12 @@
 import HTTP from '../http'
 import router from '../router'
-import { Notification } from 'element-ui'
+import { Notification, MessageBox } from 'element-ui'
 import UserServices from '../services/UserServices'
 
 export default {
     namespaced: true,
     state: {
+
         usuario: {
             nombre: null,
             apellido: null,
@@ -52,7 +53,12 @@ export default {
             }
             console.log(pkg)
             commit('setExtractedPermisos', pkg)
-		},
+        },
+        setTimer({dispatch}){
+            setTimeout(() => {
+                dispatch('logout')
+            }, 5000)
+        },
         resetPassword({ commit, state }){
            
             if(state.credenciales.password !== state.credenciales.passwordConfirm){
@@ -87,33 +93,39 @@ export default {
                 password: state.credenciales.password,
             })
             .then(({ data }) => {
-                if(data.user[0].estado !== 'inactivo'){
-                    commit('setUsuario', data.user[0])
-                    commit('setNombreCompleto', data.user[0].nombre + ' ' + data.user[0].apellido)
-                    commit('setToken', data.token.token)
-                    dispatch('extractPermisos')
-                    console.log(state.permisos)
-                    const menu = []
-                    for(let prop in data.user[0].roles){
-                        for(let pro in data.user[0].roles[prop].modulos){
-                            menu.push(data.user[0].roles[prop].modulos[pro])
+                console.log(data)
+                if(!data.mess){
+                    if(data.user[0].estado !== 'inactivo'){
+                        commit('setUsuario', data.user[0])
+                        commit('setNombreCompleto', data.user[0].nombre + ' ' + data.user[0].apellido)
+                        commit('setToken', data.token.token)
+                        dispatch('extractPermisos')
+                        const menu = []
+                        for(let prop in data.user[0].roles){
+                            for(let pro in data.user[0].roles[prop].modulos){
+                                menu.push(data.user[0].roles[prop].modulos[pro])
+                            }
                         }
+                        let final = UserServices.removeDuplicatesFromObj(menu, 'id')
+                        console.log(final)
+                        commit('setMenu', final)
+                        commit('setIsLogged')
+                        
+                        router.push('/dashboard')
+                        return;
                     }
-                    let final = UserServices.removeDuplicatesFromObj(menu, 'id')
-                    console.log(final)
-                    commit('setMenu', final)
-                    commit('setIsLogged')
-                    router.push('/dashboard')
-                    return;
+                    Notification.warning({
+                        title: 'Atencion!',
+                        message: 'Su cuenta se encuentra actualmente inactiva. Porfavor comuniquese con el administrador.',
+                        position: 'bottom-right',
+                    });
+                }else{
+                    MessageBox.alert(data.mess, 'Atencion!', {
+                        confirmButtonText: 'OK',
+                    })
                 }
-                Notification.warning({
-                    title: 'Atencion!',
-                    message: 'Su cuenta se encuentra actualmente inactiva. Porfavor comuniquese con el administrador.',
-                    position: 'bottom-right',
-                });
                 
-            })
-            .catch(err => {
+            }).catch(err => {
                 console.log(err)
                 Notification.warning({
                     title: 'Atencion!',
@@ -128,8 +140,8 @@ export default {
                 toolbar: null,
             }, {root: true})
             HTTP().local.get('/api/logout')
-            .then(res => {
-                console.log(res)
+            .then(({data}) => {
+                console.log(data)
             }).catch(err => {
                 console.log(err)
             })
@@ -275,6 +287,7 @@ export default {
 
             state.permisos = permisos
         },
+   
         
     },
 };

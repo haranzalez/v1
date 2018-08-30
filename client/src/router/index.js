@@ -10,6 +10,7 @@ import UserCreate from '../views/Usuarios/CrearUsuario.vue'
 import RoleCreate from '../views/Usuarios/Roles/CrearRole.vue'
 import RoleEdit from '../views/Usuarios/Roles/EditarRole.vue'
 import Roles from '../views/Usuarios/Roles/RolesTable.vue'
+import UsersLogs from '../views/Usuarios/Logs/LogsTable.vue'
 import layouts from '../layout'
 
 //pages
@@ -62,6 +63,17 @@ const router = new Router({
 				searchable: true,
 				tags: ['pages']
 			}
+		},
+		{
+			path: '/Logs',
+			name: 'userLogs',
+			component: UsersLogs,
+			meta: {
+				auth: true,
+				layout: layouts.navLeft,
+				searchable: true,
+			},
+			tags: ['pages']
 		},
 		{
 			path: '/Usuarios',
@@ -125,10 +137,11 @@ const router = new Router({
 			meta: {
 				auth: true,
 				layout: layouts.navLeft,
-				searchable: false,
+				searchable: true,
 				tags: ['pages']
 			}
 		},
+		
 		{
 			path: '/login',
 			name: 'login',
@@ -216,7 +229,7 @@ router.beforeEach((to, from, next) => {
 	if(to && to.meta && to.meta.auth)
 		authrequired = true
 
-	//console.log('authrequired', authrequired, to.name)
+	console.log('authrequired', authrequired, to.name)
 
 	if(authrequired) {
 		if(auth.loggedIn()) {

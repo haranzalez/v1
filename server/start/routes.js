@@ -43,7 +43,22 @@ Route.group(() => {
   Route.post('roles/:role_id/subModulo/:sub_modulo_id/setPermisos', 'RoleController.setPermisos').middleware('auth');
   Route.patch('roles/:id/modulos/updatePermisos', 'RoleController.updatePermisos').middleware('auth');
 
-  
+  //CUADRO DE VIAJES
+  //Clientes
+  Route.get('clientes', 'ClienteController.todos').middleware('auth')
+  Route.post('clientes/crear', 'ClienteController.crearCliente').middleware('auth')
+  //Producto
+  Route.get('cuadre-producto', 'CuadroProductoController.todos').middleware('auth')
+  Route.post('cuadre-producto/crear', 'CuadroProductoController.crearCuadre').middleware('auth')
+  //Viaje
+  Route.get('cuadre-viaje', 'CuadroViajeController.todos').middleware('auth')
+  Route.post('cuadre-viaje/crear', 'CuadroViajeController.crearCuadre').middleware('auth')
+  //Servicio
+  Route.get('cuadre-servicio', 'CuadroServicioController.todos').middleware('auth')
+  Route.post('cuadre-servicio/crear', 'CuadroServicioController.crearCuadre').middleware('auth')
+  //Cuadre final
+  Route.get('cuadre-final', 'CuadroFinalController.todos').middleware('auth')
+  Route.post('cuadre-final/crear', 'CuadroFinalController.crearCuadre').middleware('auth')
 }).prefix('api')
 
 

@@ -5,7 +5,11 @@ const CuadreFinal = use('App/Models/CuadreFinal')
 class CuadroFinalController {
 
     async todos(){
-        return await CuadreFinal.all()
+        return await CuadreFinal.query()
+        .with('cliente')
+        .with('cuadre_producto')
+        .with('cuadre_viaje')
+        .with('cuadre_servicios').fetch()
     }
 
     async porCliente({request}){
@@ -14,24 +18,27 @@ class CuadroFinalController {
     }
 
     async crearCuadre({ request }){
-    const { 
-    cliente_id,
-	cuadre_producto_id,
-	cuadre_viaje_id,
-	cuadre_servicio_id,
-	precio,
-	descuento,
-	estado } = request.all()
+    const { cliente_id } = request.all()
 
         return await CuadreFinal.create({
         cliente_id,
-        cuadre_producto_id,
-        cuadre_viaje_id,
-        cuadre_servicio_id,
-        precio,
-        descuento,
-        estado
+        estado: 'activo'
         })
+    }
+
+    async alterarCuadre({ request } id){
+        const { 
+            precio, 
+            descuento, 
+            estado 
+        } = request.all()
+
+        const cuadre = await CuadreFinal.find(id)
+        cuadre.precio = precio
+        cuadre.descuento = descuento
+        cuadre.estado = estado
+        cuadre.save()
+        return cuadre
     }
 
 

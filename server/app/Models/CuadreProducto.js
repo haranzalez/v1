@@ -3,12 +3,15 @@
 const Model = use('Model')
 
 class CuadreProducto extends Model {
-    cuadre_final(){
+
+    cuadreFinal(){
         return this.belongsTo('App/Models/CuadreFinal')
     }
-    producto(){
-        return this.hasOne('App/Models/Producto')
+    producto() {
+        return this.belongsToMany('App/Models/Producto')
+        .pivotModel(use('App/Models/CuadreProductoProductos'));
     }
+
 }
 
 module.exports = CuadreProducto

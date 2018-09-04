@@ -42,7 +42,6 @@ class RoleController {
       await role.modulos().attach(modulos);
       role.modulos = await role.modulos().fetch();
     }
-   
     return role;
   }
 

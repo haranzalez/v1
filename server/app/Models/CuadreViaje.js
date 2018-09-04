@@ -3,11 +3,12 @@
 const Model = use('Model')
 
 class CuadreViaje extends Model {
-    cuadre_final(){
+    cuadreFinal(){
         return this.belongsTo('App/Models/CuadreFinal')
     }
-    destino(){
-        return this.hasOne('App/Models/Destino')
+    destino() {
+        return this.belongsToMany('App/Models/Destino')
+        .pivotModel(use('App/Models/CuadreViajeDestino'));
     }
 }
 

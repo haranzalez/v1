@@ -6,13 +6,16 @@ class CuadroViajeController {
     }
     async crearCuadre({ request }){
         const {
+            cuadre_final_id,
             destino_id,
             precio,
         } = request.all()
-        return await CuadreViaje.create({
-            destino_id,
+        const cuadre = await CuadreViaje.create({
+            cuadre_final_id,
             precio,
         })
+        await cuadre.destino().attach(destino_id)
+        return cuadre
     }
 }
 

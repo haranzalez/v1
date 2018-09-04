@@ -6,14 +6,14 @@ class CuadreFinal extends Model {
     cliente(){
         return this.belongsTo('App/Models/Cliente')
     }
-    cuadre_producto(){
-        return this.hasMany('App/Models/CuadreProducto')
+    cuadreProducto(){
+        return this.hasOne('App/Models/CuadreProducto')
     }
-    cuadre_viaje(){
-        return this.hasMany('App/Models/CuadreViaje')
+    cuadreViaje(){
+        return this.hasOne('App/Models/CuadreViaje')
     }
-    cuadre_servicios(){
-        return this.hasMany('App/Models/CuadreServicio')
+    cuadreServicios(){
+        return this.hasOne('App/Models/CuadreServicio')
     }
 }
 

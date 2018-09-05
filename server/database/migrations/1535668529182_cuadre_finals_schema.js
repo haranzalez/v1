@@ -4,7 +4,7 @@ const Schema = use('Schema')
 
 class CuadreFinalSchema extends Schema {
   up () {
-    this.create('cuadre_final', (table) => {
+    this.create('cuadre_finals', (table) => {
       table.increments()
       table.integer('cliente_id').unsigned()
       table.foreign('cliente_id').references('clientes.id').onDelete('cascade')
@@ -16,7 +16,7 @@ class CuadreFinalSchema extends Schema {
   }
 
   down () {
-    this.drop('cuadre_final')
+    this.drop('cuadre_finals')
   }
 }
 

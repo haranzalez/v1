@@ -59,6 +59,7 @@ Route.group(() => {
   //Cuadre final
   Route.get('cuadre-final', 'CuadroFinalController.todos').middleware('auth')
   Route.post('cuadre-final/crear', 'CuadroFinalController.crearCuadre').middleware('auth')
+  Route.put('cuadre-final/:id/editar', 'CuadroFinalController.alterarCuadre').middleware('auth')
 }).prefix('api')
 
 

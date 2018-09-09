@@ -3,13 +3,15 @@
 const Model = use('Model')
 
 class CuadreViaje extends Model {
-    cuadreFinal(){
-        return this.belongsTo('App/Models/CuadreFinal')
+    ruta() {
+        return this.belongsTo('App/Models/Rutas')
+        .pivotModel(use('App/Models/PivotCuadreViajeRuta'));
     }
-    destino() {
-        return this.belongsToMany('App/Models/Destino')
-        .pivotModel(use('App/Models/CuadreViajeDestino'));
+    vehiculo() {
+        return this.belongsTo('App/Models/Vehiculo')
+        .pivotModel(use('App/Models/PivotCuadreViajeVehiculo'));
     }
+
 }
 
 module.exports = CuadreViaje

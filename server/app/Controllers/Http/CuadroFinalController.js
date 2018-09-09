@@ -1,6 +1,7 @@
 'use strict'
 
 const CuadreFinal = use('App/Models/CuadreFinal')
+const CuadreProducto = use('App/Models/CuadreProducto')
 
 class CuadroFinalController {
 
@@ -36,13 +37,19 @@ class CuadroFinalController {
         const { id } = params
 
         const cuadre = await CuadreFinal.query().where('id', id).fetch(id)
-        cuadre.precio = precio
+        const cuadreProducto = await CuadreProducto.query().where('cuadre_final_id', id)
+        console.log(cuadreProducto)
+        var precioProducto = await cuadreProducto.producto().fetch()
+        
+        precioProducto = precioProducto.precio
+       /* cuadre.precio = precio
         cuadre.descuento = descuento
         cuadre.estado = estado
-        cuadre.save()
-        return cuadre
+        cuadre.save()*/
+        return {
+            res: precioProducto
+        }
     }
-
 
 
 }

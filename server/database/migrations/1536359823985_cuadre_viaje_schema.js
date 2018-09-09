@@ -6,9 +6,9 @@ class CuadreViajeSchema extends Schema {
   up () {
     this.create('cuadre_viajes', (table) => {
       table.increments()
-      table.integer('destino_id')
-      table.foreign('destino_id').references('destinos.id').onDelete('cascade')
-      table.float('precio')
+      table.integer('consolidacion_id')
+      table.foreign('consolidacion_id').references('consolidacions.id').onDelete('cascade')
+      table.float('flete')
       table.timestamps()
     })
   }

@@ -42,9 +42,55 @@ Route.group(() => {
   Route.get('roles/:id/permisos', 'RoleController.permisos').middleware('auth');
   Route.post('roles/:role_id/subModulo/:sub_modulo_id/setPermisos', 'RoleController.setPermisos').middleware('auth');
   Route.patch('roles/:id/modulos/updatePermisos', 'RoleController.updatePermisos').middleware('auth');
-
-  //CUADRO DE VIAJES
+   //======================================================================================================================================
+  //Vehiculos
+  //======================================================================================================================================
+  //GET
+  Route.get('vehiculos', 'VehiculoController.get_all_vehicles').middleware('auth')
+  Route.get('vehiculos/:id', 'VehiculoController.get_vehicle').middleware('auth')
+  Route.get('vehiculos/:vehiculo_id/assign/trailer/:trailer_id', 'VehiculoController.assign_trailer').middleware('auth')
+  Route.get('vehiculos/:vehiculo_id/assign/conductor/:conductor_id', 'VehiculoController.assign_conductor').middleware('auth')
+  //POST
+  Route.post('vehiculos/crear', 'VehiculoController.create_vehicle').middleware('auth')
+  //PUT
+  Route.put('vehiculos/:id/update', 'VehiculoController.update_vehicle').middleware('auth')
+  //DELETE
+  Route.delete('vehiculos/:id/delete', 'VehiculoController.delete_vehicle').middleware('auth')
+  //======================================================================================================================================
+  //Trailers
+  //======================================================================================================================================
+  //GET
+  Route.get('trailers', 'TrailerController.get_all_trailers').middleware('auth')
+  Route.get('trailers/:id', 'TrailerController.get_trailer').middleware('auth')
+  Route.get('trailers/:trailer_id/assign/:vehicle_id', 'TrailerController.assign_vehicle').middleware('auth')
+  //POST
+  Route.post('trailers/crear', 'TrailerController.create_trailer').middleware('auth')
+  //PUT
+  Route.put('trailers/:id/update', 'TrailerController.update_trailer').middleware('auth')
+  //DELETE
+  Route.delete('trailers/:id/delete', 'TrailerController.delete_trailer').middleware('auth')
+  //======================================================================================================================================
+  //Conductores
+  //======================================================================================================================================
+  //GET
+  Route.get('conductores', 'ConductorController.get_all_conductores').middleware('auth')
+  Route.get('conductores/:id', 'ConductorController.get_conductor').middleware('auth')
+  Route.get('conductores/:conductor_id/assign/:vehicle_id', 'ConductorController.assign_vehicle').middleware('auth')
+  //POST
+  Route.post('conductores/crear', 'ConductorController.create_conductor').middleware('auth')
+  Route.post('conductores/:id/licencia/crear', 'ConductorController.create_licence').middleware('auth')
+  Route.post('conductores/:id/datos-bancarios/crear', 'ConductorController.create_bank_account').middleware('auth')
+  //PUT
+  Route.put('conductores/:id/update', 'ConductorController.update_conductor').middleware('auth')
+  Route.put('conductores/:id/licencia/update', 'ConductorController.update_conductor_licence').middleware('auth')
+  Route.put('conductores/:id/datos-bancarios/update', 'ConductorController.update_conductor_bank_account').middleware('auth')
+  //DELETE
+  Route.delete('conductores/:id/delete', 'ConductorController.delete_conductor').middleware('auth')
+  Route.delete('conductores/datos-bancarios/:id/delete', 'ConductorController.delete_conductor_bank_account').middleware('auth')
+  Route.delete('conductores/licencia/:id/delete', 'ConductorController.delete_conductor_licence').middleware('auth')
+  //======================================================================================================================================
   //Clientes
+  //======================================================================================================================================
   Route.get('clientes', 'ClienteController.todos').middleware('auth')
   Route.post('clientes/crear', 'ClienteController.crearCliente').middleware('auth')
   //Producto

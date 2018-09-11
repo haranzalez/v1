@@ -7,7 +7,7 @@ class Conductore extends Model {
         return this.hasMany('App/Models/DatosBancariosConductore')
     }
     licencias(){
-        return this.hasMany('App/Models/LicenciasConductores')
+        return this.hasMany('App/Models/LicenciasConductore')
     }
     vehiculo() {
         return this.belongsTo('App/Models/Vehiculos')

@@ -13,8 +13,8 @@ class DatosBancariosConductoresSchema extends Schema {
       table.string('numero_cuenta')
       table.string('tipo_cuenta')
       table.string('banco')
-      table.string('cuenta_propia')
-      table.string('radica_rndc')
+      table.boolean('cuenta_propia')
+      table.boolean('radica_rndc')
       table.timestamps()
     })
   }

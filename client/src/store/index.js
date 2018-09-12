@@ -8,6 +8,8 @@ import users from './users'
 import logs from './userLogs'
 import roles from './roles'
 
+import conductores from './conductores'
+
 Vue.use(Vuex)
 
 const debug = process.env.NODE_ENV !== 'production'
@@ -22,6 +24,7 @@ export default new Vuex.Store({
 		users,
 		roles,
 		logs,
+		conductores,
 	},
 	mutations: {
 	},

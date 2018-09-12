@@ -13,6 +13,9 @@ import Roles from '../views/Usuarios/Roles/RolesTable.vue'
 import UsersLogs from '../views/Usuarios/Logs/LogsTable.vue'
 import layouts from '../layout'
 
+//conductores
+import ConductoresTable from '../views/Conductores/Conductores.vue'
+
 //pages
 import Login from '../views/pages/authentication/Login.vue'
 import Register from '../views/pages/authentication/Register.vue'
@@ -30,6 +33,9 @@ Vue.use(Router)
 const router = new Router({
 	mode: 'history',
 	routes: [
+		//=========================================================================
+		//Dashboard
+		//=========================================================================
 		{
 			path: '/',
 			alias: '/dashboard',
@@ -42,6 +48,23 @@ const router = new Router({
 				tags: ['app']
 			}
 		},
+		//=========================================================================
+		//Conductores
+		//=========================================================================
+		{
+			path: '/Conductores',
+			name: 'conductores',
+			component: ConductoresTable,
+			meta: {
+				auth: true,
+				layout: layouts.navLeft,
+				searchable: true,
+				tags: ['pages']
+			}
+		},
+		//=========================================================================
+		//Usuarios
+		//=========================================================================
 		{
 			path: '/profile',
 			name: 'profile',
@@ -54,13 +77,35 @@ const router = new Router({
 			}
 		},
 		{
-			path: '/invoice',
-			name: 'invoice',
-			component: Invoice,
+			path: '/Usuarios',
+			name: 'usuarios',
+			component: Usuarios,
 			meta: {
 				auth: true,
 				layout: layouts.navLeft,
 				searchable: true,
+				tags: ['pages']
+			}
+		},
+		{
+			path: '/creando-usuario',
+			name: 'userCreate',
+			component: UserCreate,
+			meta: {
+				auth: true,
+				layout: layouts.navLeft,
+				searchable: false,
+				tags: ['pages']
+			}
+		},
+		{
+			path: '/editando-usuario',
+			name: 'userEdit',
+			component: UserEdit,
+			meta: {
+				auth: true,
+				layout: layouts.navLeft,
+				searchable: false,
 				tags: ['pages']
 			}
 		},
@@ -75,10 +120,13 @@ const router = new Router({
 			},
 			tags: ['pages']
 		},
+		//=========================================================================
+		//Roles
+		//=========================================================================
 		{
-			path: '/Usuarios',
-			name: 'usuarios',
-			component: Usuarios,
+			path: '/Roles',
+			name: 'roles',
+			component: Roles,
 			meta: {
 				auth: true,
 				layout: layouts.navLeft,
@@ -87,9 +135,9 @@ const router = new Router({
 			}
 		},
 		{
-			path: '/editando-usuario',
-			name: 'userEdit',
-			component: UserEdit,
+			path: '/creando-role',
+			name: 'roleCreate',
+			component: RoleCreate,
 			meta: {
 				auth: true,
 				layout: layouts.navLeft,
@@ -108,40 +156,9 @@ const router = new Router({
 				tags: ['pages']
 			}
 		},
-		{
-			path: '/creando-role',
-			name: 'roleCreate',
-			component: RoleCreate,
-			meta: {
-				auth: true,
-				layout: layouts.navLeft,
-				searchable: false,
-				tags: ['pages']
-			}
-		},
-		{
-			path: '/creando-usuario',
-			name: 'userCreate',
-			component: UserCreate,
-			meta: {
-				auth: true,
-				layout: layouts.navLeft,
-				searchable: false,
-				tags: ['pages']
-			}
-		},
-		{
-			path: '/Roles',
-			name: 'roles',
-			component: Roles,
-			meta: {
-				auth: true,
-				layout: layouts.navLeft,
-				searchable: true,
-				tags: ['pages']
-			}
-		},
-		
+		//=========================================================================
+		//Authentication
+		//=========================================================================
 		{
 			path: '/login',
 			name: 'login',
@@ -181,6 +198,9 @@ const router = new Router({
 				next({path:'/login'})
 			}
 		},
+		//=========================================================================
+		//404
+		//=========================================================================
 		{
 			path: '*',
 			name: 'not-found',
@@ -188,7 +208,7 @@ const router = new Router({
 			meta: {
 				layout: layouts.contenOnly
 			}
-		}
+		},
 	]
 })
 

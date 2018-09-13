@@ -9,6 +9,13 @@ class VehiculoController {
 
     async assign_conductor({ params }){
         const { conductor_id, vehiculo_id } = params
+        const check = await Conductor.query().where('vehiculo_id', vehiculo_id).fetch()
+
+        if(check !== null){
+            await Conductor.query().where('vehiculo_id', vehiculo_id).update({
+                vehiculo_id: null
+            })
+        }
         const conductor = await Conductor.find(conductor_id)
         conductor.vehiculo_id = vehiculo_id
         conductor.save()
@@ -17,6 +24,13 @@ class VehiculoController {
 
     async assign_trailer({ params }){
         const { trailer_id, vehiculo_id } = params
+        const check = await Trailer.query().where('vehiculo_id', vehiculo_id).fetch()
+
+        if(check !== null){
+            await Trailer.query().where('vehiculo_id', vehiculo_id).update({
+                vehiculo_id: null
+            })
+        }
         const trailer = await Trailer.find(trailer_id)
         trailer.vehiculo_id = vehiculo_id
         trailer.save()
@@ -25,7 +39,10 @@ class VehiculoController {
 
     //READ
     async get_all_vehicles({ params }){
-        return await Vehiculo.all()
+        return await Vehiculo.query()
+        .with('conductor')
+        .with('trailer')
+        .fetch()
     }
 
     async get_vehicle({ params }){

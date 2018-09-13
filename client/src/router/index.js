@@ -15,6 +15,9 @@ import layouts from '../layout'
 
 //conductores
 import ConductoresTable from '../views/Conductores/Conductores.vue'
+//vehiculos
+import VehiculosTable from '../views/Vehiculos/Vehiculos.vue'
+import VehiculosCreateForm from '../views/Vehiculos/CreateForm.vue'
 
 //pages
 import Login from '../views/pages/authentication/Login.vue'
@@ -62,6 +65,32 @@ const router = new Router({
 				tags: ['pages']
 			}
 		},
+		//=========================================================================
+		//Vehiculos
+		//=========================================================================
+		{
+			path: '/Vehiculos',
+			name: 'vehiculos',
+			component: VehiculosTable,
+			meta: {
+				auth: true,
+				layout: layouts.navLeft,
+				searchable: true,
+				tags: ['pages']
+			}
+		},
+		{
+			path: '/vehiculos-crear',
+			name: 'vehiculos - crear',
+			component: VehiculosCreateForm,
+			meta: {
+				auth: true,
+				layout: layouts.navLeft,
+				searchable: true,
+				tags: ['pages']
+			}
+		},
+		
 		//=========================================================================
 		//Usuarios
 		//=========================================================================

@@ -38,24 +38,6 @@
     </el-table-column>
     <el-table-column
 	  sortable
-      prop="tipo_de_identificacion"
-      label="Tipo de identificacion"
-      width="120">
-    </el-table-column>
-    <el-table-column
-	  sortable
-      prop="cedula"
-      label="Cedula"
-      width="120">
-    </el-table-column>
-    <el-table-column
-	  sortable
-      prop="municipio_documento"
-      label="Municipio Documento"
-      width="120">
-    </el-table-column>
-    <el-table-column
-	  sortable
       prop="nombres"
       label="Nombres"
       width="120">
@@ -63,31 +45,19 @@
 	<el-table-column
 	  sortable
       prop="primer_apellido"
-      label="Primer Apellido"
-      width="220">
+      label="Apellido 1"
+      width="120">
     </el-table-column>
 	<el-table-column
 	  sortable
       prop="segundo_apellido"
-      label="segundo_apellido"
+      label="Apellido 2"
       width="120">
     </el-table-column>
 	<el-table-column
 	  sortable
       prop="tipo_de_conductor"
-      label="Tipo de conductor"
-      width="120">
-    </el-table-column>
-	<el-table-column
-	  sortable
-      prop="direccion"
-      label="Direccion"
-      width="120">
-    </el-table-column>
-    <el-table-column
-	  sortable
-      prop="municipio"
-      label="Municipio"
+      label="Tipo"
       width="120">
     </el-table-column>
     <el-table-column
@@ -112,7 +82,7 @@
 	  sortable
       prop="transportadora"
       label="Transportadora"
-      width="120">
+      width="150">
     </el-table-column>
     <el-table-column
       fixed="right"

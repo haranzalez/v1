@@ -47,6 +47,7 @@
 					</el-form-item>
 				</el-col>
 			</el-col>
+
 			<el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Direccion">
@@ -75,6 +76,7 @@
 				</el-col>
 				
 			</el-col>
+			
 			<el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Ciudad">

@@ -9,6 +9,8 @@ import logs from './userLogs'
 import roles from './roles'
 
 import conductores from './conductores'
+import vehiculos from './vehiculos'
+import trailers from './trailers'
 
 Vue.use(Vuex)
 
@@ -25,6 +27,8 @@ export default new Vuex.Store({
 		roles,
 		logs,
 		conductores,
+		vehiculos,
+		trailers,
 	},
 	mutations: {
 	},

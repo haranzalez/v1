@@ -62,7 +62,6 @@ export default {
             router.push('/editando-usuario')
         },
         editUser({state, commit}, roles){
-            console.log(state.selectedRoles)
             HTTP().local.patch('api/users/update/'+state.usuario.id,{
                 nombre: state.usuario.nombre,
                 apellido: state.usuario.apellido,

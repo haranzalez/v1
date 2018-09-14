@@ -13,7 +13,7 @@
 		</el-col>
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
 			<div style="text-align:right;">
-				<el-button :disabled="(permisos['Usuarios'].crear)? false:true" @click="pushToCreateVehicle">Crear</el-button>
+				<el-button :disabled="(permisos['Vehiculos'].crear)? false:true" @click="pushToCreateVehicle">Crear</el-button>
 			</div>
 		</el-col>
 		
@@ -144,7 +144,7 @@
       label="Acciones"
       width="120">
       <template slot-scope="scope">
-        <el-button @click="pushToEditVehicle(scope.row)" type="text" size="small">Detalles</el-button>
+        <el-button @click="pushToEditVehicle(scope.row)" type="text" size="small">Detalles/editar</el-button>
       </template>
     </el-table-column>
 
@@ -190,6 +190,7 @@ export default {
             'conductoresList',
             'conductoresDataReady',
 		]),
+		
         filtered(){
 			if(this.dataReady){
 				if(this.filter !== ''){
@@ -217,8 +218,10 @@ export default {
         	return row.estado === value;
       	},
         ...mapMutations('vehiculos', [
-            'setVehicleId',
-        ]),
+			'setVehicleId',
+			'setFullVehicle',
+		]),
+		
         title(field){
             field = field.split('_').join(' ')
             field = field.charAt(0).toUpperCase() + field.slice(1)
@@ -239,9 +242,11 @@ export default {
         pushToCreateVehicle({state,commit}){
             router.push('/vehiculos-crear')
 		},
-		pushToEditVehicle(){
-			router.push('/vehiculos-actualizar')
+		pushToEditVehicle(row){
+			this.setFullVehicle(row)
+			router.push('/vehiculos-editar')
 		},
+		
         assignConductorToVehicle(e,id){
             this.setVehicleId(id)
             this.assignConductor(e)

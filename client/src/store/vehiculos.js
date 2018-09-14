@@ -1,6 +1,6 @@
 import HTTP from '../http';
 import router from '../router'
-import { Notification, Message } from 'element-ui'
+import { Notification, Message, Confirm } from 'element-ui'
 
 
 export default {
@@ -58,6 +58,54 @@ export default {
             .catch(err => {
                 console.log(err)
             })
+        },
+        editVehiculo({state}){
+            
+            HTTP().local.put('api/vehiculos/'+state.vehiculo.id+'/update', {
+                placa: state.vehiculo.placa,
+                numero_chasis: state.vehiculo.numero_chasis,
+                tipo_de_vehiculo: state.vehiculo.tipo_de_vehiculo,
+                tipo_configuracion: state.vehiculo.tipo_configuracion,
+                modelo: state.vehiculo.modelo,
+                numero_motor: state.vehiculo.numero_motor,
+                tipo_de_flota: state.vehiculo.tipo_de_flota,
+                marca_cabezote: state.vehiculo.marca_cabezote,
+                linea_cabezote: state.vehiculo.linea_cabezote,
+                tipo_de_combustible: state.vehiculo.tipo_de_combustible,
+                color: state.vehiculo.color,
+                peso: state.vehiculo.peso,
+                capasidad_carga: state.vehiculo.capasidad_carga,
+            })
+            .then(d => {
+                console.log(d)
+                Message({
+                    showClose: true,
+                    message: 'Actualizacion Exitosa.'
+                })
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
+        delVehiculo({state}){
+            
+                HTTP().local.delete('api/vehiculos/'+state.vehiculo.id+'/delete')
+                .then(d => {
+                    if(d){
+                        Message({
+                            type: 'success',
+                            showClose: true,
+                            message: 'Vehiculo eliminado exitosamente'
+                        })
+                        router.push('/Vehiculos')
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+                
+            
+            
         },
         assignConductor({state, dispatch},e){
             console.log(state.assignVehicleId)
@@ -134,6 +182,9 @@ export default {
 
     },
     mutations: {
+        setFullVehicle(state, value){
+            state.vehiculo = value
+        },
         setVehiculosList(state, list){
             state.vehiculosList = list
         },

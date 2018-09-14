@@ -123,7 +123,7 @@
 
             <el-col class="col-p pull-right">
                 <el-form-item>
-                    <el-button type="primary" @click="createVehiculo">Crear</el-button>
+                    <el-button  type="primary" @click="createVehiculo">Crear</el-button>
                     <el-button  @click="back">Cancelar</el-button>
                 </el-form-item>
             </el-col>

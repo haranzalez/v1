@@ -1,7 +1,7 @@
 <template>
    <vue-scroll class="page-vehiculos-create">
        <h1>Vehiculos - Detalles/Editar</h1>
-       <el-form label-position="top" ref="form" :model="form" label-width="120px">
+       <el-form label-position="top" ref="form" label-width="120px">
         <el-row>
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
@@ -147,8 +147,8 @@
                     <el-col :span="12" :md="12" :sm="24" :xs="24">
                         <el-form-item label="Capasidad de carga (Toneladas)">
                         <el-input-number 
-                        :value="vehiculo.peso"
-                        v-model="vehiculo.peso" 
+                        :value="vehiculo.capasidad_de_carga"
+                        v-model="vehiculo.capasidad_de_carga" 
                         controls-position="right" 
                         @change="setCapasidadCarga" 
                         :min="1" 
@@ -161,8 +161,9 @@
 
             <el-col class="col-p pull-right">
                 <el-form-item>
-                    <el-button type="primary" @click="editVehiculo">Actualizar</el-button>
+                    <el-button :disabled="(permisos['Vehiculos'].editar)? false:true" type="primary" @click="editVehiculo">Actualizar</el-button>
                     <el-button  @click="back">Cancelar</el-button>
+                    <el-button :disabled="(permisos['Vehiculos'].eliminar)? false:true" type="text" @click="del">Eliminar</el-button>
                 </el-form-item>
             </el-col>
 
@@ -227,17 +228,24 @@ export default {
             return field
         },
         ...mapActions('vehiculos',[
-            'fetchVehiculosList',
-            'assignConductor',
-            'assignTrailer',
-            'createVehiculo',
+            'editVehiculo',
+            'delVehiculo',
         ]),
+        del(){
+            this.$confirm('Esta operacion eliminara permanentemente este registro. Continuar?', 'Atencion!', {
+                confirmButtonText: 'OK',
+                cancelButtonText: 'Cancelar',
+                type: 'warning'
+            }).then(() => {
+                this.delVehiculo()
+            }).catch(() => {
+                this.$message({
+                    type: 'info',
+                    message: 'Cancelado'
+                });          
+            });
+        }
     },
-    created: function(){
-        this.fetchVehiculosList()
-        this.fetchConductoresList()
-        this.fetchTrailersList()
-	}
 
 }
 </script>

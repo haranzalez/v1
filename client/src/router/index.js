@@ -18,6 +18,7 @@ import ConductoresTable from '../views/Conductores/Conductores.vue'
 //vehiculos
 import VehiculosTable from '../views/Vehiculos/Vehiculos.vue'
 import VehiculosCreateForm from '../views/Vehiculos/CreateForm.vue'
+import VehiculosEditForm from '../views/Vehiculos/EditForm.vue'
 
 //pages
 import Login from '../views/pages/authentication/Login.vue'
@@ -83,6 +84,17 @@ const router = new Router({
 			path: '/vehiculos-crear',
 			name: 'vehiculos - crear',
 			component: VehiculosCreateForm,
+			meta: {
+				auth: true,
+				layout: layouts.navLeft,
+				searchable: true,
+				tags: ['pages']
+			}
+		},
+		{
+			path: '/vehiculos-editar',
+			name: 'vehiculos - editar',
+			component: VehiculosEditForm,
 			meta: {
 				auth: true,
 				layout: layouts.navLeft,

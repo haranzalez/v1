@@ -55,7 +55,7 @@ Route.group(() => {
   //PUT
   Route.put('vehiculos/:id/update', 'VehiculoController.update_vehicle').middleware('auth')
   //DELETE
-  Route.delete('vehiculos/:id/delete', 'VehiculoController.delete_vehicle').middleware('auth')
+  Route.delete('vehiculos/:id/delete', 'VehiculoController.delete_vehiculo').middleware('auth')
   //======================================================================================================================================
   //Trailers
   //======================================================================================================================================

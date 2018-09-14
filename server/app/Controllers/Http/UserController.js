@@ -39,15 +39,9 @@ class UserController {
     .where('username', username).fetch();
     const userId = user.rows[0].id
     const logResult = await log.login(request.ip(),token.token, userId)
-    if(logResult === true){
-      return {
-        user,
-        token,
-      }
-    }else{
-      return {
-        mess: 'Usted o alguien ya tiene una session abierta con IP: '+logResult.ip+' usando sus credenciales. Si usted no inicio esta session, porfavor notifique al administrador. Delo contrario, debe cerrar la session abierta para empezar otra.'
-      }
+    return {
+      user,
+      token,
     }
     
   }

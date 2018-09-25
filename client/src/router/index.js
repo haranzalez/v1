@@ -15,6 +15,12 @@ import layouts from '../layout'
 
 //conductores
 import ConductoresTable from '../views/Conductores/Conductores.vue'
+import ConductoresCreateForm from '../views/Conductores/CreateForm.vue'
+import ConductoresEditForm from '../views/Conductores/EditForm.vue'
+//trailers
+import TrailersTable from '../views/Trailers/Trailers.vue'
+import TrailersCreateForm from '../views/Trailers/CreateForm.vue'
+import TrailersEditForm from '../views/Trailers/EditForm.vue'
 //vehiculos
 import VehiculosTable from '../views/Vehiculos/Vehiculos.vue'
 import VehiculosCreateForm from '../views/Vehiculos/CreateForm.vue'
@@ -63,7 +69,65 @@ const router = new Router({
 				auth: true,
 				layout: layouts.navLeft,
 				searchable: true,
-				tags: ['pages']
+				tags: ['Logistica']
+			}
+		},
+		{
+			path: '/conductores-crear',
+			name: 'conductores - crear',
+			component: ConductoresCreateForm,
+			meta: {
+				auth: true,
+				layout: layouts.navLeft,
+				searchable: true,
+				tags: ['Logistica']
+			}
+		},
+		{
+			path: '/conductores-editar',
+			name: 'conductores - editar',
+			component: ConductoresEditForm,
+			meta: {
+				auth: true,
+				layout: layouts.navLeft,
+				searchable: true,
+				tags: ['Logistica']
+			}
+		},
+		//=========================================================================
+		//Trailers
+		//=========================================================================
+		{
+			path: '/Trailers',
+			name: 'trailers',
+			component: TrailersTable,
+			meta: {
+				auth: true,
+				layout: layouts.navLeft,
+				searchable: true,
+				tags: ['Logistica']
+			}
+		},
+		{
+			path: '/trailers-crear',
+			name: 'trailers - crear',
+			component: TrailersCreateForm,
+			meta: {
+				auth: true,
+				layout: layouts.navLeft,
+				searchable: true,
+				tags: ['Logistica']
+			}
+		},
+		{
+			path: '/trailers-editar',
+			name: 'trailers - editar',
+			component: TrailersEditForm,
+			meta: {
+				auth: true,
+				layout: layouts.navLeft,
+				searchable: true,
+				tags: ['Logistica']
 			}
 		},
 		//=========================================================================

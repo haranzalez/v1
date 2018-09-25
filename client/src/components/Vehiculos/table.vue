@@ -13,12 +13,11 @@
 		</el-col>
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
 			<div style="text-align:right;">
-				<el-button :disabled="(permisos['Vehiculos'].crear)? false:true" @click="pushToCreateVehicle">Crear</el-button>
+				<el-button class="trailerBtn animated fadeInRight" type="text" @click="pushTo('Trailers')"><i class="mdi mdi-truck-trailer"></i> Trailers</el-button>
+				<el-button class="conductorBtn animated fadeInRight" type="text" @click="pushTo('Conductores')"><i class="mdi mdi-account-circle"></i> Conductores</el-button>
+				<el-button class="animated fadeInRight" @click="pushToCreateVehicle">Crear</el-button>
 			</div>
 		</el-col>
-		
-		
-	
 	<el-table
     :data="filtered"
 	:default-sort = "{prop: 'id', order: 'descending'}"
@@ -129,12 +128,12 @@
       prop="estado"
       label="Estado"
       width="100"
-      :filters="[{ text: 'sin trailer', value: 'sin trailer' }, { text: 'disponible', value: 'disponible' }]"
+      :filters="[{ text: 'en espera', value: 'en espera' },{ text: 'disponible', value: 'disponible' }]"
       :filter-method="filterTag"
       filter-placement="bottom-end">
       <template slot-scope="scope">
         <el-tag
-          :type="scope.row.estado === 'disponible' ? 'success' : 'warning'"
+          :type="determineEstado(scope.row.estado)"
           disable-transitions>{{scope.row.estado}}</el-tag>
       </template>
     </el-table-column>
@@ -214,6 +213,19 @@ export default {
 	components: {
 	},
     methods: {
+		pushTo(resource){
+			router.push('/'+resource)
+		},
+		determineEstado(row){
+			
+			if(row == 'ocupado'){
+				return 'danger'
+			}
+			if(row == 'disponible'){
+				return 'success'
+			}
+			return 'warning'
+		},
 		filterTag(value, row) {
         	return row.estado === value;
       	},
@@ -279,9 +291,11 @@ export default {
 <style lang="scss">
 @import '../../assets/scss/_variables';
 
-.serachBar-ctn{
-
+.trailerBtn, .conductorBtn{
+	color:black;
 }
+
+
 .page-table {
 	
 	.custom-action-row {

@@ -1,25 +1,25 @@
 <template>
-   <vue-scroll class="page-conductores-create">
-       <h1>Conductores - Crear</h1>
-       <el-form label-position="top" ref="form" :model="form" label-width="120px">
+   <vue-scroll class="page-trailers-create">
+       <h1>Trailers - Crear</h1>
+       <el-form label-position="top" ref="form" label-width="120px">
         <el-row>
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Codigo">
+                    <el-form-item label="Placa">
                         <el-input 
-                        @input="setCodigo"
+                        @input="setPlaca"
                         placeholder="">
                         </el-input>
                     </el-form-item>
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Tipo de identificacion">
+                    <el-form-item label="Tipo de vehiculo">
                         <el-select 
-                        v-model="conductor.tipo_de_identificacion" 
+                        v-model="trailer.tipo_de_vehiculo" 
                         placeholder="Select"
-                        @change="setTipoDeiIdentificacion">
+                        @change="setTipoDeVehiculo">
                             <el-option
-                            v-for="item in tipoIdentificacionOptions"
+                            v-for="item in tipoVehiculoOptions"
                             :key="item.value"
                             :label="item.label"
                             :value="item.value">
@@ -31,36 +31,17 @@
 
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Cedula">
+                    <el-form-item label="Tipo de configuracion">
                         <el-input 
-                        @input="setCedula"
+                        @input="setTipoDeConfiguracion"
                         placeholder="">
                         </el-input>
                     </el-form-item>
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Municipio documento">
+                    <el-form-item label="Tenedor">
                         <el-input 
-                        @input="setMunicipioDocumento"
-                        placeholder="">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
-			</el-col>
-
-            <el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Nombres">
-                        <el-input 
-                        @input="setNombres"
-                        placeholder="">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Primer apellido">
-                        <el-input 
-                        @input="setPrimerApellido"
+                        @input="setTenedor"
                         placeholder="">
                         </el-input>
                     </el-form-item>
@@ -69,36 +50,17 @@
 
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Segundo apellido">
+                    <el-form-item label="Modelo">
                         <el-input 
-                        @input="setSegundoApellido"
+                        @input="setModelo"
                         placeholder="">
                         </el-input>
                     </el-form-item>
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Tipo de conductor">
+                    <el-form-item label="Propietario">
                         <el-input 
-                        @input="setTipoDeConductor"
-                        placeholder="">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
-			</el-col>
-
-            <el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Direccion">
-                        <el-input 
-                        @input="setDireccion"
-                        placeholder="">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Municipio">
-                        <el-input 
-                        @input="setMunicipio"
+                        @input="setPropietario"
                         placeholder="">
                         </el-input>
                     </el-form-item>
@@ -107,17 +69,55 @@
 
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Telefono 1">
+                    <el-form-item label="Tipo de flota">
                         <el-input 
-                        @input="setTelefono1"
+                        @input="setTipoDeFlota"
+                        placeholder="">
+                        </el-input>
+                    </el-form-item>
+				</el-col>
+				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Poseedor">
+                        <el-input 
+                        @input="setPoseedor"
+                        placeholder="">
+                        </el-input>
+                    </el-form-item>
+				</el-col>
+			</el-col>
+
+            <el-col>
+                <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Carroceria">
+                        <el-input 
+                        @input="setTipoCarroceria"
+                        placeholder="">
+                        </el-input>
+                    </el-form-item>
+				</el-col>
+				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Color">
+                        <el-input 
+                        @input="setColor"
+                        placeholder="">
+                        </el-input>
+                    </el-form-item>
+				</el-col>
+			</el-col>
+
+            <el-col>
+				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Marca">
+                        <el-input 
+                        @input="setMarcaTrailer"
                         placeholder="">
                         </el-input>
                     </el-form-item>
 				</el-col>
                 <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Telefono 2">
+                    <el-form-item label="Peso">
                         <el-input 
-                        @input="setTelefono2"
+                        @input="setPeso"
                         placeholder="">
                         </el-input>
                     </el-form-item>
@@ -125,27 +125,30 @@
 			</el-col>
 
             <el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Celular">
-                        <el-input 
-                        @input="setCelular"
-                        placeholder="">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
+				
                 <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Transportadora">
+                    <el-form-item label="Estado">
                         <el-input 
-                        @input="setTransportadora"
+                        @input="setEstado"
                         placeholder="">
                         </el-input>
                     </el-form-item>
 				</el-col>
+
+                <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Radica RNDC">
+                         <el-checkbox @change="radicaChange" v-model="radicaRn"></el-checkbox>
+                    </el-form-item>
+				</el-col>
+			</el-col>
+             <el-col>
+				
+                
 			</el-col>
 
             <el-col class="col-p pull-right">
                 <el-form-item>
-                    <el-button  type="primary" @click="createConductor">Crear</el-button>
+                    <el-button  type="primary" @click="createTrailer">Crear</el-button>
                     <el-button  @click="back">Cancelar</el-button>
                 </el-form-item>
             </el-col>
@@ -168,16 +171,17 @@ export default {
 	name: 'VehiculoCreateForm',
 	data () {
       	return {
+              radicaRn: false,
               capacidadNum: 1,
               pesoNum: 1,
-              tipoIdentificacionOptions: [
+              tipoVehiculoOptions: [
                 {
-                    value: 'cedula',
-                    label: 'Cedula',
+                    value: '10 pies',
+                    label: '10 Pies',
                 },
                 {
-                    value: 'pasaporte',
-                    label: 'Pasaporte',
+                    value: '20 pies',
+                    label: '20 Pies',
                 },
               ]
 		}
@@ -187,41 +191,44 @@ export default {
         ...mapState('authentication', [
 			'permisos',
         ]),
-        ...mapState('conductores', [
-			'conductor',
+        ...mapState('trailers', [
+			'trailer',
         ]),
 
 	},
 	components: {
 	},
     methods: {
+        radicaChange(e){
+            this.setRadicaRndc(e)
+            this.radicaRn = e
+        },
         back() {
-			router.push('/COnductores')
+			router.push('/Trailers')
 		},
-        ...mapMutations('conductores', [
-            'setSelectedTipoIdentificacion',
-            'setCodigo',
-            'setTipoDeiIdentificacion',
-            'setCedula',
-            'setMunicipioDocumento',
-            'setNombres',
-            'setPrimerApellido',
-            'setSegundoApellido',
-            'setTipoDeConductor',
-            'setDireccion',
-            'setMunicipio',
-            'setTelefono1',
-            'setTelefono2',
-            'setCelular',
-            'setTransportadora',
+        ...mapMutations('trailers', [
+            'setPlaca',
+            'setTipoDeVehiculo',
+            'setTipoDeConfiguracion',
+            'setTenedor',
+            'setModelo',
+            'setPropietario',
+            'setTipoDeFlota',
+            'setPoseedor',
+            'setColor',
+            'setMarcaTrailer',
+            'setPeso',
+            'setTipoCarroceria',
+            'setEstado',
+            'setRadicaRndc',
         ]),
         title(field){
             field = field.split('_').join(' ')
             field = field.charAt(0).toUpperCase() + field.slice(1)
             return field
         },
-        ...mapActions('conductores',[
-            'createConductor',
+        ...mapActions('trailers',[
+            'createTrailer',
         ]),
     },
     created: function(){
@@ -233,7 +240,7 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../assets/scss/_variables';
-.page-conductores-create {
+.page-trailers-create {
 	.label-switch-box {
 		display: block;
 		clear: both;

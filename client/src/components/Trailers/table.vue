@@ -1,7 +1,7 @@
 <template>
 <div>
 	<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
-		<h1>Conductores</h1>
+		<h1>Trailers</h1>
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
 			<div class="serachBar-ctn">
 				<el-input placeholder="Buscar" v-model="filter" class="input-with-select">
@@ -14,7 +14,7 @@
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
 			<div style="text-align:right;">
 				<el-button type="text" @click="back">Volver</el-button>
-				<el-button :disabled="(permisos['Usuarios'].crear)? false:true" @click="pushToCreateConductor">Crear</el-button>
+				<el-button :disabled="(permisos['Usuarios'].crear)? false:true" @click="pushToCreateTrailer">Crear</el-button>
 			</div>
 		</el-col>
 		
@@ -33,57 +33,92 @@
     </el-table-column>
     <el-table-column
 	  sortable
-      prop="codigo"
-      label="Codigo"
+      prop="placa"
+      label="Placa"
       width="120">
     </el-table-column>
     <el-table-column
 	  sortable
-      prop="nombres"
-      label="Nombres"
-      width="120">
-    </el-table-column>
-	<el-table-column
-	  sortable
-      prop="primer_apellido"
-      label="Apellido 1"
-      width="120">
-    </el-table-column>
-	<el-table-column
-	  sortable
-      prop="segundo_apellido"
-      label="Apellido 2"
-      width="120">
-    </el-table-column>
-	<el-table-column
-	  sortable
-      prop="tipo_de_conductor"
-      label="Tipo"
-      width="120">
-    </el-table-column>
-    <el-table-column
-	  sortable
-      prop="telefono_1"
-      label="Telefono 1"
-      width="120">
-    </el-table-column>
-    <el-table-column
-	  sortable
-      prop="telefono_2"
-      label="Telefono 2"
-      width="120">
-    </el-table-column>
-     <el-table-column
-	  sortable
-      prop="celular"
-      label="Celular"
-      width="120">
-    </el-table-column>
-     <el-table-column
-	  sortable
-      prop="transportadora"
-      label="Transportadora"
+      prop="tipo_de_vehiculo"
+      label="Tipo de vehiculo"
       width="150">
+    </el-table-column>
+	<el-table-column
+	  sortable
+      prop="tipo_de_configuracion"
+      label="Tipo de configuracion"
+      width="190">
+    </el-table-column>
+	<el-table-column
+	  sortable
+      prop="tenedor"
+      label="Tenedor"
+      width="120">
+    </el-table-column>
+	<el-table-column
+	  sortable
+      prop="modelo"
+      label="Modelo"
+      width="120">
+    </el-table-column>
+    <el-table-column
+	  sortable
+      prop="propietario"
+      label="Propietario"
+      width="170">
+    </el-table-column>
+    <el-table-column
+	  sortable
+      prop="tipo_de_flota"
+      label="Tipo de flota"
+      width="150">
+    </el-table-column>
+     <el-table-column
+	  sortable
+      prop="poseedor"
+      label="Poseedor"
+      width="120">
+    </el-table-column>
+     <el-table-column
+	  sortable
+      prop="color"
+      label="Color"
+      width="150">
+    </el-table-column>
+     <el-table-column
+	  sortable
+      prop="marca_trailer"
+      label="Marca"
+      width="150">
+    </el-table-column>
+     <el-table-column
+	  sortable
+      prop="peso"
+      label="Peso"
+      width="150">
+    </el-table-column>
+    <el-table-column
+	  sortable
+      prop="tipo_carroceria"
+      label="Tipo carroceria"
+      width="150">
+    </el-table-column>
+    <el-table-column
+	  sortable
+      prop="estado"
+      label="Estado"
+      width="150">
+    </el-table-column>
+    <el-table-column
+	  sortable
+      label="Radica RNDC"
+      width="150"
+	  align="center">
+	  <template slot-scope="scope">
+		  <el-tag
+          :type="(scope.row.radica_rndc)?'success':'danger'"
+          disable-transitions>{{(scope.row.radica_rndc)?'Si':'No'}}</el-tag>
+	  </template>
     </el-table-column>
     <el-table-column
       fixed="right"
@@ -108,10 +143,10 @@ import moment from 'moment-timezone'
 import router from '../../router'
 
 export default {
-	name: 'ConductorTable',
+	name: 'TrailerTable',
 	data () {
       	return {
-            selectTypeOfSearch: 'Nombre',
+            selectTypeOfSearch: 'Placa',
             filter: '',
 		}
 	},
@@ -119,23 +154,23 @@ export default {
         ...mapState('authentication', [
 			'permisos',
         ]),
-        ...mapState('conductores', [
-            'headings',
-            'conductoresList',
-            'dataReady',
+        ...mapState('trailers', [
+			'trailersList',
+			'headings',
+			'dataReady',
 		]),
         filtered(){
 			if(this.dataReady){
 				if(this.filter !== ''){
 					let type = this.selectTypeOfSearch.toLowerCase()
-					return this.conductoresList.filter(conductor => {
+					return this.trailersList.filter(conductor => {
 						if(isNaN(conductor[type])){
 							return conductor[type].toLowerCase().includes(this.filter.toLowerCase())
 						}
 						return conductor[type].toString().includes(this.filter.toString())
 					})
 				}
-				return this.conductoresList
+				return this.trailersList
 			}
 		},
 	},
@@ -145,22 +180,22 @@ export default {
 		back(){
 			router.push('/Vehiculos')
 		},
-		...mapMutations('conductores', [
-			'setFullConductor',
+		...mapMutations('trailers', [
+			'setFullTrailer',
 		]),
-        ...mapActions('conductores',[
-			'fetchConductoresList',
+        ...mapActions('trailers',[
+			'fetchTrailersList',
 		]),
-         pushToCreateConductor(){
-            router.push('/conductores-crear')
+         pushToCreateTrailer(){
+            router.push('/trailers-crear')
 		},
 		pushToEdit(row){
-			this.setFullConductor(row)
-			router.push('/conductores-editar')
+			this.setFullTrailer(row)
+			router.push('/trailers-editar')
 		},
     },
     created: function(){
-		this.fetchConductoresList()
+		this.fetchTrailersList()
 	}
 }
 </script>
@@ -174,6 +209,9 @@ export default {
 	
 	.table-box {
 		overflow: hidden;
+	}
+	.center{
+		text-align: center;
 	}
 }
 </style>

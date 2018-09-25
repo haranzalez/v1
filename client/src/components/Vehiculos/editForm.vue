@@ -147,8 +147,8 @@
                     <el-col :span="12" :md="12" :sm="24" :xs="24">
                         <el-form-item label="Capasidad de carga (Toneladas)">
                         <el-input-number 
-                        :value="vehiculo.capasidad_de_carga"
-                        v-model="vehiculo.capasidad_de_carga" 
+                        :value="vehiculo.capasidad_carga"
+                        v-model="vehiculo.capasidad_carga" 
                         controls-position="right" 
                         @change="setCapasidadCarga" 
                         :min="1" 

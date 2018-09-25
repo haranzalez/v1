@@ -1,28 +1,28 @@
 <template>
-   <vue-scroll class="page-conductores-edit">
-       <h1>Conductores - Actualizar</h1>
+   <vue-scroll class="page-trailers-create">
+       <h1>Trailers - Crear</h1>
        <el-form label-position="top" ref="form" label-width="120px">
         <el-row>
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Codigo">
+                    <el-form-item label="Placa">
                         <el-input 
-                        :value="conductor.codigo"
-                        v-model="conductor.codigo"
-                        @input="setCodigo"
+                        :value="trailer.placa"
+                        v-model="trailer.placa"
+                        @input="setPlaca"
                         placeholder="">
                         </el-input>
                     </el-form-item>
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Tipo de identificacion">
+                    <el-form-item label="Tipo de vehiculo">
                         <el-select 
-                        :value="conductor.tipo_de_identificacion"
-                        v-model="conductor.tipo_de_identificacion" 
+                        :value="trailer.tipo_de_vehiculo"
+                        v-model="trailer.tipo_de_vehiculo" 
                         placeholder="Select"
-                        @change="setTipoDeiIdentificacion">
+                        @change="setTipoDeVehiculo">
                             <el-option
-                            v-for="item in tipoIdentificacionOptions"
+                            v-for="item in tipoVehiculoOptions"
                             :key="item.value"
                             :label="item.label"
                             :value="item.value">
@@ -34,44 +34,21 @@
 
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Cedula">
+                    <el-form-item label="Tipo de configuracion">
                         <el-input 
-                        :value="conductor.cedula"
-                        v-model="conductor.cedula"
-                        @input="setCedula"
+                        :value="trailer.tipo_de_configuracion"
+                        v-model="trailer.tipo_de_configuracion"
+                        @input="setTipoDeConfiguracion"
                         placeholder="">
                         </el-input>
                     </el-form-item>
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Municipio documento">
+                    <el-form-item label="Tenedor">
                         <el-input 
-                        :value="conductor.municipio_documento"
-                        v-model="conductor.municipio_documento"
-                        @input="setMunicipioDocumento"
-                        placeholder="">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
-			</el-col>
-
-            <el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Nombres">
-                        <el-input 
-                        :value="conductor.nombres"
-                        v-model="conductor.nombres"
-                        @input="setNombres"
-                        placeholder="">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Primer apellido">
-                        <el-input 
-                        :value="conductor.primer_apellido"
-                        v-model="conductor.primer_apellido"
-                        @input="setPrimerApellido"
+                        :value="trailer.tenedor"
+                        v-model="trailer.tenedor"
+                        @input="setTenedor"
                         placeholder="">
                         </el-input>
                     </el-form-item>
@@ -80,44 +57,21 @@
 
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Segundo apellido">
+                    <el-form-item label="Modelo">
                         <el-input 
-                        :value="conductor.segundo_apelliod"
-                        v-model="conductor.segundo_apellido"
-                        @input="setSegundoApellido"
+                        :value="trailer.modelo"
+                        v-model="trailer.modelo"
+                        @input="setModelo"
                         placeholder="">
                         </el-input>
                     </el-form-item>
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Tipo de conductor">
+                    <el-form-item label="Propietario">
                         <el-input 
-                        :value="conductor.tipo_de_conductor"
-                        v-model="conductor.tipo_de_conductor"
-                        @input="setTipoDeConductor"
-                        placeholder="">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
-			</el-col>
-
-            <el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Direccion">
-                        <el-input 
-                        :value="conductor.direccion"
-                        v-model="conductor.direccion"
-                        @input="setDireccion"
-                        placeholder="">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Municipio">
-                        <el-input 
-                        :value="conductor.municipio"
-                        v-model="conductor.municipio"
-                        @input="setMunicipio"
+                        :value="trailer.propietario"
+                        v-model="trailer.propietario"
+                        @input="setPropietario"
                         placeholder="">
                         </el-input>
                     </el-form-item>
@@ -126,21 +80,67 @@
 
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Telefono 1">
+                    <el-form-item label="Tipo de flota">
                         <el-input 
-                        :value="conductor.telefono_1"
-                        v-model="conductor.telefono_1"
-                        @input="setTelefono1"
+                        :value="trailer.tipo_de_flota"
+                        v-model="trailer.tipo_de_flota"
+                        @input="setTipoDeFlota"
+                        placeholder="">
+                        </el-input>
+                    </el-form-item>
+				</el-col>
+				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Poseedor">
+                        <el-input 
+                        :value="trailer.poseedor"
+                        v-model="trailer.poseedor"
+                        @input="setPoseedor"
+                        placeholder="">
+                        </el-input>
+                    </el-form-item>
+				</el-col>
+			</el-col>
+
+            <el-col>
+                <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Carroceria">
+                        <el-input 
+                        :value="trailer.tipo_carroceria"
+                        v-model="trailer.tipo_carroceria"
+                        @input="setTipoCarroceria"
+                        placeholder="">
+                        </el-input>
+                    </el-form-item>
+				</el-col>
+				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Color">
+                        <el-input 
+                        :value="trailer.color"
+                        v-model="trailer.color"
+                        @input="setColor"
+                        placeholder="">
+                        </el-input>
+                    </el-form-item>
+				</el-col>
+			</el-col>
+
+            <el-col>
+				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Marca">
+                        <el-input 
+                        :value="trailer.marca_trailer"
+                        v-model="trailer.marca_trailer"
+                        @input="setMarcaTrailer"
                         placeholder="">
                         </el-input>
                     </el-form-item>
 				</el-col>
                 <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Telefono 2">
+                    <el-form-item label="Peso">
                         <el-input 
-                        :value="conductor.telefono_2"
-                        v-model="conductor.telefono_2"
-                        @input="setTelefono2"
+                        :value="trailer.peso"
+                        v-model="trailer.peso"
+                        @input="setPeso"
                         placeholder="">
                         </el-input>
                     </el-form-item>
@@ -148,31 +148,32 @@
 			</el-col>
 
             <el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Celular">
-                        <el-input 
-                        :value="conductor.celular"
-                        v-model="conductor.celular"
-                        @input="setCelular"
-                        placeholder="">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
+				
                 <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Transportadora">
+                    <el-form-item label="Estado">
                         <el-input 
-                        :value="conductor.transportadora"
-                        v-model="conductor.transportadora"
-                        @input="setTransportadora"
+                        :value="trailer.estado"
+                        v-model="trailer.estado"
+                        @input="setEstado"
                         placeholder="">
                         </el-input>
                     </el-form-item>
 				</el-col>
+
+                <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Radica RNDC">
+                         <el-checkbox @change="setRadicaRndc" v-model="trailer.radica_rndc"></el-checkbox>
+                    </el-form-item>
+				</el-col>
+			</el-col>
+             <el-col>
+				
+                
 			</el-col>
 
             <el-col class="col-p pull-right">
                 <el-form-item>
-                    <el-button :disabled="(permisos['Conductores'].editar)? false:true" type="primary" @click="editConductor">Actualizar</el-button>
+                    <el-button  type="primary" @click="editTrailer">Actualizar</el-button>
                     <el-button  @click="back">Cancelar</el-button>
                     <el-button :disabled="(permisos['Conductores'].eliminar)? false:true" type="text" @click="del">Eliminar</el-button>
                 </el-form-item>
@@ -193,21 +194,22 @@ import moment from 'moment-timezone'
 import router from '../../router'
 
 export default {
-	name: 'ConductoresEditForm',
+	name: 'TrailersEditForm',
 	data () {
       	return {
+              radicaRn: false,
               capacidadNum: 1,
               pesoNum: 1,
-              tipoIdentificacionOptions: [
+              tipoVehiculoOptions: [
                 {
-                    value: 'cedula',
-                    label: 'Cedula',
+                    value: '10 pies',
+                    label: '10 Pies',
                 },
                 {
-                    value: 'pasaporte',
-                    label: 'Pasaporte',
+                    value: '20 pies',
+                    label: '20 Pies',
                 },
-              ],
+              ]
 		}
 	},
 	computed: {
@@ -215,65 +217,72 @@ export default {
         ...mapState('authentication', [
 			'permisos',
         ]),
-        ...mapState('conductores', [
-            'conductor',
+        ...mapState('trailers', [
+			'trailer',
         ]),
 
 	},
 	components: {
 	},
     methods: {
-        back() {
-			router.push('/Conductores')
-		},
-        ...mapMutations('conductores', [
-            'setSelectedTipoIdentificacion',
-            'setCodigo',
-            'setTipoDeiIdentificacion',
-            'setCedula',
-            'setMunicipioDocumento',
-            'setNombres',
-            'setPrimerApellido',
-            'setSegundoApellido',
-            'setTipoDeConductor',
-            'setDireccion',
-            'setMunicipio',
-            'setTelefono1',
-            'setTelefono2',
-            'setCelular',
-            'setTransportadora',
-        ]),
-        title(field){
-            field = field.split('_').join(' ')
-            field = field.charAt(0).toUpperCase() + field.slice(1)
-            return field
+        radicaChange(e){
+            this.setRadicaRndc(e)
+            this.radicaRn = e
         },
-        ...mapActions('conductores',[
-            'editConductor',
-            'delConductor',
-        ]),
+        back() {
+			router.push('/Trailers')
+        },
         del(){
             this.$confirm('Esta operacion eliminara permanentemente este registro. Continuar?', 'Atencion!', {
                 confirmButtonText: 'OK',
                 cancelButtonText: 'Cancelar',
                 type: 'warning'
             }).then(() => {
-                this.delConductor()
+                this.delTrailer()
             }).catch(() => {
                 this.$message({
-                    type: 'info',
+                    type: 'success',
                     message: 'Cancelado'
                 });          
             });
-        }
+        },
+        ...mapActions('trailers',[
+            'editTrailer',
+            'delTrailer',
+        ]),
+        ...mapMutations('trailers', [
+            'setPlaca',
+            'setTipoDeVehiculo',
+            'setTipoDeConfiguracion',
+            'setTenedor',
+            'setModelo',
+            'setPropietario',
+            'setTipoDeFlota',
+            'setPoseedor',
+            'setColor',
+            'setMarcaTrailer',
+            'setPeso',
+            'setTipoCarroceria',
+            'setEstado',
+            'setRadicaRndc',
+        ]),
+        title(field){
+            field = field.split('_').join(' ')
+            field = field.charAt(0).toUpperCase() + field.slice(1)
+            return field
+        },
+        
     },
+    created: function(){
+       
+	}
 
 }
 </script>
 
 <style lang="scss" scoped>
 @import '../../assets/scss/_variables';
-.page-conductores-edit {
+.page-trailers-create {
 	.label-switch-box {
 		display: block;
 		clear: both;

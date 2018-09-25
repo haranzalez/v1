@@ -1,7 +1,7 @@
 import HTTP from '../http';
 import router from '../router'
 import UserServices from '../services/UserServices'
-import { Notification } from 'element-ui'
+import { Notification, Message, Confirm } from 'element-ui'
 import { mapGetters } from 'vuex';
 
 export default {
@@ -29,6 +29,78 @@ export default {
     },
 
     actions: {
+        createTrailer({state}){
+            HTTP().local.post('api/trailers/crear', {
+                placa: state.trailer.placa,
+                tipo_de_vehiculo: state.trailer.tipo_de_vehiculo,
+                tipo_de_configuracion: state.trailer.tipo_de_configuracion,
+                tenedor: state.trailer.tenedor,
+                modelo: state.trailer.modelo,
+                propietario: state.trailer.propietario,
+                tipo_de_flota: state.trailer.tipo_de_flota,
+                poseedor: state.trailer.poseedor,
+                color: state.trailer.color,
+                marca_trailer: state.trailer.marca_trailer,
+                peso: state.trailer.peso,
+                tipo_carroceria: state.trailer.tipo_carroceria,
+                estado: state.trailer.estado,
+                radica_rndc: state.trailer.radica_rndc,
+                
+            })
+            .then(d => {
+                Message({
+                    showClose: true,
+                    message: 'Trailer creado.'
+                })
+                router.push('/Trailers')
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
+        editTrailer({state}){
+            HTTP().local.put('api/trailers/'+state.trailer.id+'/update', {
+                placa: state.trailer.placa,
+                tipo_de_vehiculo: state.trailer.tipo_de_vehiculo,
+                tipo_de_configuracion: state.trailer.tipo_de_configuracion,
+                tenedor: state.trailer.tenedor,
+                modelo: state.trailer.modelo,
+                propietario: state.trailer.propietario,
+                tipo_de_flota: state.trailer.tipo_de_flota,
+                poseedor: state.trailer.poseedor,
+                color: state.trailer.color,
+                marca_trailer: state.trailer.marca_trailer,
+                peso: state.trailer.peso,
+                tipo_carroceria: state.trailer.tipo_carroceria,
+                estado: state.trailer.estado,
+                radica_rndc: state.trailer.radica_rndc,
+            })
+            .then(d => {
+                Message({
+                    showClose: true,
+                    message: 'Actualizacion exitosa.'
+                })
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
+        delTrailer({state}){
+            HTTP().local.delete('api/trailers/'+state.trailer.id+'/delete')
+            .then(d => {
+                if(d){
+                    Message({
+                        type: 'success',
+                        showClose: true,
+                        message: 'Trailer eliminado exitosamente'
+                    })
+                    router.push('/Trailers')
+                }
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
         fetchTrailersList({commit, dispatch}){
             HTTP().local.get('api/trailers')
             .then(d => {
@@ -57,6 +129,9 @@ export default {
 
     },
     mutations: {
+        setFullTrailer(state, value){
+            state.trailer = value
+        },
         setTrailerList(state, list){
             state.trailersList = list
         },
@@ -65,6 +140,48 @@ export default {
         },
         setDataReady(state, ready){
             state.dataReady = ready
+        },
+        setPlaca(state, value){
+            state.trailer.placa = value
+        },
+        setTipoDeVehiculo(state, value){
+            state.trailer.tipo_de_vehiculo = value
+        },
+        setTipoDeConfiguracion(state, value){
+            state.trailer.tipo_de_configuracion = value
+        },
+        setTenedor(state, value){
+            state.trailer.tenedor = value
+        },
+        setModelo(state, value){
+            state.trailer.modelo = value
+        },
+        setPropietario(state, value){
+            state.trailer.propietario = value
+        },
+        setTipoDeFlota(state, value){
+            state.trailer.tipo_de_flota = value
+        },
+        setPoseedor(state, value){
+            state.trailer.poseedor = value
+        },
+        setColor(state, value){
+            state.trailer.color = value
+        },
+        setMarcaTrailer(state, value){
+            state.trailer.marca_trailer = value
+        },
+        setPeso(state, value){
+            state.trailer.peso = value
+        },
+        setTipoCarroceria(state, value){
+            state.trailer.tipo_carroceria = value
+        },
+        setEstado(state, value){
+            state.trailer.estado = value
+        },
+        setRadicaRndc(state, value){
+            state.trailer.radica_rndc = value
         },
         
         

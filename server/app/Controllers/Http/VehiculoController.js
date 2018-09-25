@@ -10,6 +10,10 @@ class VehiculoController {
     async assign_conductor({ params }){
         const { conductor_id, vehiculo_id } = params
         const check = await Conductor.query().where('vehiculo_id', vehiculo_id).fetch()
+        const vehicleCheck = await Vehiculo.query()
+        .with('trailer')
+        .with('conductor')
+        .where('id', vehiculo_id).fetch()
 
         if(check !== null){
             await Conductor.query().where('vehiculo_id', vehiculo_id).update({
@@ -17,23 +21,45 @@ class VehiculoController {
             })
         }
         const conductor = await Conductor.find(conductor_id)
+        if(conductor.vehiculo_id !== null){
+            await Vehiculo.query().where('id', conductor.vehiculo_id).update({
+                estado: 'en espera'
+            })
+        }
+        
         conductor.vehiculo_id = vehiculo_id
         conductor.save()
+        let estado = (vehicleCheck.rows[0].$relations.trailer !== null) ? 'disponible' : 'en espera'
+        await Vehiculo.query().where('id', vehiculo_id).update({
+            estado: estado
+        })
         return conductor
     }
 
     async assign_trailer({ params }){
         const { trailer_id, vehiculo_id } = params
         const check = await Trailer.query().where('vehiculo_id', vehiculo_id).fetch()
-
+        const vehicleCheck = await Vehiculo.query()
+        .with('trailer')
+        .with('conductor')
+        .where('id', vehiculo_id).fetch()
         if(check !== null){
             await Trailer.query().where('vehiculo_id', vehiculo_id).update({
                 vehiculo_id: null
             })
         }
         const trailer = await Trailer.find(trailer_id)
+        if(trailer.vehiculo_id !== null){
+            await Vehiculo.query().where('id', trailer.vehiculo_id).update({
+                estado: 'en espera'
+            })
+        }
         trailer.vehiculo_id = vehiculo_id
         trailer.save()
+        let estado = (vehicleCheck.rows[0].$relations.conductor !== null) ? 'disponible' : 'en espera'
+        await Vehiculo.query().where('id', vehiculo_id).update({
+            estado: estado
+        })
         return trailer
     }
 
@@ -84,7 +110,8 @@ class VehiculoController {
             tipo_de_combustible,
             color,
             peso,
-            capasidad_carga
+            capasidad_carga,
+            estado: 'en espera'
         })
 
     }

@@ -28,10 +28,8 @@ export default {
         headings: [], 
         assignVehicleId: null,  
     },
-
     actions: {
         createVehiculo({state}){
-            
             HTTP().local.post('api/vehiculos/crear', {
                 placa: state.vehiculo.placa,
                 numero_chasis: state.vehiculo.numero_chasis,
@@ -48,7 +46,6 @@ export default {
                 capasidad_carga: state.vehiculo.capasidad_carga,
             })
             .then(d => {
-                console.log(d)
                 Message({
                     showClose: true,
                     message: 'Vehiculo creado.'
@@ -60,7 +57,6 @@ export default {
             })
         },
         editVehiculo({state}){
-            
             HTTP().local.put('api/vehiculos/'+state.vehiculo.id+'/update', {
                 placa: state.vehiculo.placa,
                 numero_chasis: state.vehiculo.numero_chasis,
@@ -88,27 +84,22 @@ export default {
             })
         },
         delVehiculo({state}){
-            
-                HTTP().local.delete('api/vehiculos/'+state.vehiculo.id+'/delete')
-                .then(d => {
-                    if(d){
-                        Message({
-                            type: 'success',
-                            showClose: true,
-                            message: 'Vehiculo eliminado exitosamente'
-                        })
-                        router.push('/Vehiculos')
-                    }
-                })
-                .catch(err => {
-                    console.log(err)
-                })
-                
-            
-            
+            HTTP().local.delete('api/vehiculos/'+state.vehiculo.id+'/delete')
+            .then(d => {
+                if(d){
+                    Message({
+                        type: 'success',
+                        showClose: true,
+                        message: 'Vehiculo eliminado exitosamente'
+                    })
+                    router.push('/Vehiculos')
+                }
+            })
+            .catch(err => {
+                console.log(err)
+            })
         },
         assignConductor({state, dispatch},e){
-            console.log(state.assignVehicleId)
             HTTP().local.get('api/vehiculos/'+state.assignVehicleId+'/assign/conductor/'+e)
             .then(d => {
                 console.log(d)
@@ -170,16 +161,12 @@ export default {
             commit('setSelectedConductorList', obj)
         },
         renderSelectedTrailers({ state, commit }){
-            console.log(state.vehiculosList)
             let obj = {}
             for(let prop in state.vehiculosList){
                 obj[state.vehiculosList[prop]['placa']] = (state.vehiculosList[prop]['trailer'] !== null)?state.vehiculosList[prop]['trailer']['placa'] : ''
             }
-            console.log(obj)
-            commit('setSelectedTrailersList', obj)
-            
+            commit('setSelectedTrailersList', obj) 
         },
-
     },
     mutations: {
         setFullVehicle(state, value){

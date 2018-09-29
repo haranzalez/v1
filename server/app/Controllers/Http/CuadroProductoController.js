@@ -2,26 +2,54 @@
 const CuadreProducto = use('App/Models/CuadreProducto')
 class CuadroProductoController {
 
-    async todos(){
+    async get_all_cuadres(){
         return await CuadreProducto.all()
     }
-    async crearCuadre({ request }){
+    async get_cuadre({ params }){
+        const { id } = params;
+        return await CuadreProducto.query()
+        .where('id', id).fetch()
+    }
+    async create_cuadre({ request }){
         const {
-            cuadre_final_id,
+            consolidacion_id,
             producto_id,
             precio,
-            tn,//toneladas
-            kg,//kilogramos
         } = request.all()
         
         const cuadre = await CuadreProducto.create({
-            cuadre_final_id,
+            consolidacion_id,
             precio,
-            toneladas: tn,
-            kilogramos: kg,
         })
-        await cuadre.producto().attach(producto_id)
+        if(producto_id){
+            await cuadre.producto().attach(producto_id)
+            cuadre.producto = await cuadre.producto().fetch()
+        }
         return cuadre
+    }
+    async update_cuadre({ params, request }){
+        const { id } = params;
+        const cuadre = await CuadreProducto.find(id)
+        const {
+            consolidacion_id,
+            producto_id,
+            precio,
+        } = request.all()
+        
+        cuadre.consolidacion_id = consolidacion_id
+        cuadre.precio = consolidacion_id
+        cuadre.save()
+        if(producto_id){
+            await cuadre.producto().attach(producto_id)
+            cuadre.producto = await cuadre.producto().fetch()
+        }
+        return cuadre
+    }
+    //DELETE
+    async delete_cuadre({ params }){
+        const { id } = params
+        const cuadre = await CuadreProducto.find(id)
+        return cuadre.delete()
     }
 }
 

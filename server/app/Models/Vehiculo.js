@@ -10,7 +10,7 @@ class Vehiculo extends Model {
         return this.hasOne('App/Models/Trailer')
     }
     cuadre_viaje() {
-        return this.belongsTo('App/Models/CuadreViaje')
+        return this.belongsToMany('App/Models/CuadreViaje')
         .pivotModel(use('App/Models/PivotCuadreViajeVehiculo'));
     }
 }

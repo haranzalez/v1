@@ -3,9 +3,16 @@
 const Model = use('Model')
 
 class Cliente extends Model {
-    cuadre_Final(){
-        return this.hasMany('App/Models/CuadreFinal')
+    consolidacion(){
+        return this.hasMany('App/Models/Consolidacion')
     }
+    deposito(){
+        return this.hasMany('App/Models/DepositoCliente')
+    }
+    tipo_negociacion(){
+        return this.hasOne('App/Models/ClienteTipoNegociacion')
+    }
+
 }
 
 module.exports = Cliente

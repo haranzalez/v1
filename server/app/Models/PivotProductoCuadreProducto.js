@@ -2,12 +2,12 @@
 
 const Model = use('Model')
 
-class PivotRutasMunicipio extends Model {
-    rutas(){
-        return this.belongsTo('App/Models/Ruta')
+class PivotProductoCuadreProducto extends Model {
+    producto(){
+        return this.belongsTo('App/Models/Producto')
     }
-    municipios(){
-        return this.belongsTo('App/Models/Municipio')
+    cuadre(){
+        return this.belongsTo('App/Models/CuadreProducto')
     }
      /**
    * Override this method or it will try to return id on save.
@@ -35,4 +35,4 @@ class PivotRutasMunicipio extends Model {
   }
 }
 
-module.exports = PivotRutasMunicipio
+module.exports = PivotProductoCuadreProducto

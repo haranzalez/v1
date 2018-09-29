@@ -42,7 +42,55 @@ Route.group(() => {
   Route.get('roles/:id/permisos', 'RoleController.permisos').middleware('auth');
   Route.post('roles/:role_id/subModulo/:sub_modulo_id/setPermisos', 'RoleController.setPermisos').middleware('auth');
   Route.patch('roles/:id/modulos/updatePermisos', 'RoleController.updatePermisos').middleware('auth');
-   //======================================================================================================================================
+  //======================================================================================================================================
+  //Productos
+  //======================================================================================================================================
+  //GET
+  Route.get('productos', 'ProductoController.get_all_productos').middleware('auth')
+  Route.get('productos/:id', 'ProductoController.get_producto').middleware('auth')
+  //POST
+  Route.post('productos/crear', 'ProductoController.create_producto').middleware('auth')
+  //PUT
+  Route.put('productos/:id/update', 'ProductoController.update_producto').middleware('auth')
+  //DELETE
+  Route.delete('productos/:id/delete', 'ProductoController.delete_producto').middleware('auth')
+  //======================================================================================================================================
+  //Cuadre Productos
+  //======================================================================================================================================
+  //GET
+  Route.get('cuadre-productos', 'CuadroProductoController.get_all_cuadres').middleware('auth')
+  Route.get('cuadre-productos/:id', 'CuadroProductoController.get_cuadre').middleware('auth')
+  //POST
+  Route.post('cuadre-productos/crear', 'CuadroProductoController.create_cuadre').middleware('auth')
+  //PUT
+  Route.put('cuadre-productos/:id/update', 'CuadroProductoController.update_cuadre').middleware('auth')
+  //DELETE
+  Route.delete('cuadre-productos/:id/delete', 'CuadroProductoController.delete_cuadre').middleware('auth')
+  //======================================================================================================================================
+  //Rutas
+  //======================================================================================================================================
+  //GET
+  Route.get('rutas', 'RutaController.get_all_rutas').middleware('auth')
+  Route.get('rutas/:id', 'RutaController.get_ruta').middleware('auth')
+  //POST
+  Route.post('rutas/crear', 'RutaController.create_ruta').middleware('auth')
+  //PUT
+  Route.put('rutas/:id/update', 'RutaController.update_ruta').middleware('auth')
+  //DELETE
+  Route.delete('rutas/:id/delete', 'RutaController.delete_ruta').middleware('auth')
+  //======================================================================================================================================
+  //Municipios
+  //======================================================================================================================================
+  //GET
+  Route.get('municipios', 'MunicipioController.get_all_municipios').middleware('auth')
+  Route.get('municipios/:id', 'MunicipioController.get_municipio').middleware('auth')
+  //POST
+  Route.post('municipios/crear', 'MunicipioController.create_municipio').middleware('auth')
+  //PUT
+  Route.put('municipios/:id/update', 'MunicipioController.update_municipio').middleware('auth')
+  //DELETE
+  Route.delete('municipios/:id/delete', 'MunicipioController.delete_municipio').middleware('auth')
+  //======================================================================================================================================
   //Vehiculos
   //======================================================================================================================================
   //GET
@@ -91,11 +139,43 @@ Route.group(() => {
   //======================================================================================================================================
   //Clientes
   //======================================================================================================================================
-  Route.get('clientes', 'ClienteController.todos').middleware('auth')
-  Route.post('clientes/crear', 'ClienteController.crearCliente').middleware('auth')
-  //Producto
-  Route.get('cuadre-producto', 'CuadroProductoController.todos').middleware('auth')
-  Route.post('cuadre-producto/crear', 'CuadroProductoController.crearCuadre').middleware('auth')
+  //GET
+  Route.get('clientes', 'ClienteController.get_all_clientes').middleware('auth')
+  Route.get('clientes/:id', 'ClienteController.get_cliente').middleware('auth')
+  //POST
+  Route.post('clientes/crear', 'ClienteController.create_cliente').middleware('auth')
+  //PUT
+  Route.put('clientes/:id/update', 'ClienteController.update_cliente').middleware('auth')
+  //DELETE
+  Route.delete('clientes/:id/delete', 'ClienteController.delete_cliente').middleware('auth')
+  //======================================================================================================================================
+  //Consolidaciones
+  //======================================================================================================================================
+  //GET
+  Route.get('consolidaciones', 'ConsolidacionController.get_all_consolidaciones').middleware('auth')
+  Route.get('consolidaciones/:id', 'ConsolidacionController.get_consolidacion').middleware('auth')
+  Route.get('consolidaciones/:consolidacion_id/add-viaje/cuadre_viaje_id', 'ConsolidacionController.add_viaje').middleware('auth')
+  Route.get('consolidaciones/:consolidacion_id/add-cuadre-producto/:cuadre_producto_id', 'ConsolidacionController.add_producto').middleware('auth')
+  
+  //PUT
+  Route.put('consolidaciones/:id/update', 'ConsolidacionController.update_consolidacion').middleware('auth')
+  //DELETE
+  Route.delete('consolidaciones/:id/delete', 'ConsolidacionController.delete_consolidacion').middleware('auth')
+  //======================================================================================================================================
+  //Cuadre viaje
+  //======================================================================================================================================
+  //GET
+  Route.get('cuadre-viajes', 'CuadroViajeController.get_all_cuadres').middleware('auth')
+  Route.get('cuadre-viajes/:id', 'CuadroViajeController.get_cuadre').middleware('auth')
+  //POST
+  Route.post('cuadre-viajes/crear', 'CuadroViajeController.create_cuadre').middleware('auth')
+  //PUT
+  Route.put('cuadre-viajes/:id/update', 'CuadroViajeController.update_cuadre').middleware('auth')
+  //DELETE
+  Route.delete('cuadre-viajes/:id/delete', 'CuadroViajeController.delete_cuadre').middleware('auth')
+  //======================================================================================================================================
+  //
+  //======================================================================================================================================
   //Viaje
   Route.get('cuadre-viaje', 'CuadroViajeController.todos').middleware('auth')
   Route.post('cuadre-viaje/crear', 'CuadroViajeController.crearCuadre').middleware('auth')

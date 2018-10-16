@@ -1,6 +1,7 @@
 'use strict'
 const CuadreViaje = use('App/Models/CuadreViaje')
 const Consolidacion = use('App/Models/Consolidacion')
+const Ruta = use('App/Models/Ruta')
 class CuadroViajeController {
     async get_all_cuadres(){
         return await CuadreViaje.all()
@@ -11,46 +12,101 @@ class CuadroViajeController {
         .where('id', id).fetch()
     }
     async create_cuadre({ request }){
-        const consolidacion = await consolidacion.find(consolidacion_id)
-        const {
+        let {
             consolidacion_id,
             flete,
             ruta_id,
+            anticipo,
             vehiculo_id,
         } = request.all()
         const consolidacion = await Consolidacion.find(consolidacion_id)
+        const existing_cuadre = await consolidacion.cuadre_viaje().fetch()
         
+        if(existing_cuadre !== null){
+            return {
+                message: 'Ya existe un cuadre para esta consolidacion'
+            }
+        }
+
+        const ruta = await Ruta.find(ruta_id)
+        //descuento
+        const porcentaje_descuento =  flete / ruta.valor_flete
+        const descuento = (flete < ruta.valor_flete) ? ruta.valor_flete - (porcentaje_descuento * ruta.valor_flete) : 0
+        //ganancia
+        const ganancia = (flete > ruta.valor_flete) ? flete - ruta.valor_flete : 0
+        //debito
+        const debe = flete - anticipo
+
+
         const cuadre = await CuadreViaje.create({
             consolidacion_id,
             flete,
+            anticipo,
+            ganancia,
+            descuento,
+            debe
         })
         if(vehiculo_id){
             await cuadre.vehiculo().attach(vehiculo_id)
-            cuadre.vehiculo = await cuadre.vehiculo().fetch()
         }
         if(ruta_id){
             await cuadre.ruta().attach(ruta_id)
-            cuadre.ruta = await cuadre.ruta().fetch()
         }
-        return cuadre
+
+        return await Consolidacion.query()
+        .with('cuadre_viaje.ruta')
+        .fetch()
     }
     async update_cuadre({ params, request }){
         const { id } = params;
-        const cuadre = await CuadreViaje.find(id)
-        const {
+        //Get request variables
+        let {
             consolidacion_id,
-            producto_id,
-            precio,
+            flete,
+            anticipo,
+            ruta_id,
+            vehiculo_id,
         } = request.all()
-        
-        cuadre.consolidacion_id = consolidacion_id
-        cuadre.precio = consolidacion_id
-        cuadre.save()
-        if(producto_id){
-            await cuadre.producto().attach(producto_id)
-            cuadre.producto = await cuadre.producto().fetch()
+        //find cuadre to update
+        const cuadre = await CuadreViaje.find(id)//returns Object
+        if(cuadre === null){
+            return {
+                message: 'No se pudo encontrar este cuadre en los registros'
+            }
         }
-        return cuadre
+        cuadre.consolidacion_id = consolidacion_id
+        cuadre.flete = flete
+        cuadre.anticipo = anticipo
+        if(ruta_id){
+            await cuadre.ruta().attach(ruta_id)
+        }
+        if(vehiculo_id){
+            await cuadre.vehiculo().attach(vehiculo_id)
+        }
+        if(cuadre == null){
+            return {
+                message: "No se pudo encontrar este cuadre de viaje en la base de datos."
+            }
+        }
+
+        const ruta = await Ruta.find(ruta_id)
+        //descuento
+        const porcentaje_descuento =  flete / ruta.valor_flete
+        const descuento = (flete < ruta.valor_flete) ? ruta.valor_flete - (porcentaje_descuento * ruta.valor_flete) : 0
+        //ganancia
+        const ganancia = (flete > ruta.valor_flete) ? flete - ruta.valor_flete : 0
+        
+        cuadre.debe = flete - anticipo
+        cuadre.ganancia = ganancia
+        cuadre.descuento = descuento
+        cuadre.save()
+
+        //consolidacion
+        const consolidacion = await Consolidacion.find(consolidacion_id)
+        
+        return await Consolidacion.query()
+        .with('cuadre_viaje.ruta')
+        .fetch()  
     }
     //DELETE
     async delete_cuadre({ params }){

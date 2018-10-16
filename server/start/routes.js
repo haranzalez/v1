@@ -154,6 +154,7 @@ Route.group(() => {
   //GET
   Route.get('consolidaciones', 'ConsolidacionController.get_all_consolidaciones').middleware('auth')
   Route.get('consolidaciones/:id', 'ConsolidacionController.get_consolidacion').middleware('auth')
+  Route.get('consolidaciones/:cliente_id/crear', 'ConsolidacionController.create_consolidacion').middleware('auth')
   Route.get('consolidaciones/:consolidacion_id/add-viaje/cuadre_viaje_id', 'ConsolidacionController.add_viaje').middleware('auth')
   Route.get('consolidaciones/:consolidacion_id/add-cuadre-producto/:cuadre_producto_id', 'ConsolidacionController.add_producto').middleware('auth')
   
@@ -176,9 +177,7 @@ Route.group(() => {
   //======================================================================================================================================
   //
   //======================================================================================================================================
-  //Viaje
-  Route.get('cuadre-viaje', 'CuadroViajeController.todos').middleware('auth')
-  Route.post('cuadre-viaje/crear', 'CuadroViajeController.crearCuadre').middleware('auth')
+ 
   //Servicio
   Route.get('cuadre-servicio', 'CuadroServicioController.todos').middleware('auth')
   Route.post('cuadre-servicio/crear', 'CuadroServicioController.crearCuadre').middleware('auth')

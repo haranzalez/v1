@@ -13,7 +13,10 @@ class ConsolidacionController {
     async get_consolidacion({ params }){
         const { id } = params;
         return await Consolidacion.query()
-        .where('id', id).fetch()
+        .where('id', id)
+        .with('cuadre_viaje.ruta')
+        .with('cuadre_producto.producto')
+        .fetch()
     }
 
     async create_consolidacion({ params }){

@@ -72,8 +72,10 @@ Route.group(() => {
   //GET
   Route.get('rutas', 'RutaController.get_all_rutas').middleware('auth')
   Route.get('rutas/:id', 'RutaController.get_ruta').middleware('auth')
+  Route.get('rutas/comentario/:ruta_id', 'RutaController.get_comments').middleware('auth')
   //POST
   Route.post('rutas/crear', 'RutaController.create_ruta').middleware('auth')
+  Route.post('rutas/comentario', 'RutaController.create_comment').middleware('auth')
   //PUT
   Route.put('rutas/:id/update', 'RutaController.update_ruta').middleware('auth')
   //DELETE

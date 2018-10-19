@@ -19,10 +19,14 @@ class MunicipioController {
             nombre_municipio,
         } = request.all()
 
-        return await Municipio.create({
+        await Municipio.create({
             codigo_municipio,
             nombre_municipio
         })
+
+        return {
+            message: 'success'
+        }
 
     }
 

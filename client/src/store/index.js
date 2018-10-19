@@ -11,6 +11,7 @@ import roles from './roles'
 import conductores from './conductores'
 import vehiculos from './vehiculos'
 import trailers from './trailers'
+import rutas from './rutas'
 
 Vue.use(Vuex)
 
@@ -29,6 +30,7 @@ export default new Vuex.Store({
 		conductores,
 		vehiculos,
 		trailers,
+		rutas,
 	},
 	mutations: {
 	},

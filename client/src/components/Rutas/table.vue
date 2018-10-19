@@ -1,0 +1,402 @@
+<template>
+<div>
+	<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+		<h1>Rutas</h1>
+		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+			<div class="serachBar-ctn">
+				<el-input placeholder="Buscar" v-model="filter" class="input-with-select">
+					<el-select v-model="selectTypeOfSearch" slot="prepend" placeholder="Seleccione">
+					<el-option v-for="col in headings" :key="col" :label="col" :value="col"></el-option>
+					</el-select>
+				</el-input>
+			</div>
+		</el-col>
+		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+			<div style="text-align:right;">
+				<el-button type="text" @click="back">Volver</el-button>
+				<el-button :disabled="(permisos['Usuarios'].crear)? false:true" @click="dialogFormVisible = true; rutaReset()">Crear ruta</el-button>
+				<el-button :disabled="(permisos['Usuarios'].crear)? false:true" @click="dialogFormMunicipioVisible = true; rutaReset()">Crear municipio</el-button>
+				<el-dialog 
+				title="Nuevo Municipio" 
+				:visible.sync="dialogFormMunicipioVisible"
+				:close-on-press-escape="true"
+				center>
+				<el-form label-position="top">
+					<el-form-item label="Nombre municipio" :label-width="formLabelWidth">
+					<el-input @input="setMunicipioName" autocomplete="off"></el-input>
+					</el-form-item>
+					<el-form-item label="Codigo" :label-width="formLabelWidth">
+					<el-input @input="setCodigoMunicipio" autocomplete="off"></el-input>
+					</el-form-item>
+				</el-form>
+				<span slot="footer" class="dialog-footer">
+					<el-button @click="dialogFormMunicipioVisible = false">Cerrar</el-button>
+					<el-button type="primary" @click="createMunicipio">Crear</el-button>
+				</span>
+				</el-dialog>
+
+
+				<el-dialog 
+				title="Nueva ruta" 
+				:visible.sync="dialogFormVisible"
+				:close-on-press-escape="true"
+				center>
+					<el-form label-position="top">
+						<el-form-item label="Kilometros" :label-width="formLabelWidth">
+						<el-input v-model="ruta.kilometros" auto-complete="off"></el-input>
+						</el-form-item>
+						<el-form-item label="Municipio" :label-width="formLabelWidth">
+						<el-select @change="setMunicipioId" :value="ruta.municipio_id" placeholder="Select">
+                            <el-option
+                            v-for="item in municipios_list"
+                            :key="item.id"
+                            :label="item.nombre_municipio"
+                            :value="item.id">
+                            </el-option>
+                        </el-select>
+						</el-form-item>
+						<el-form-item label="Valor flete">
+							<el-input 
+							@input="setValorflete"
+							placeholder="">
+							</el-input>
+                    	</el-form-item>
+						<el-form-item label="Anticipo sugerido">
+							<el-input 
+							@input="setAnticipoSugerido"
+							placeholder="">
+							</el-input>
+                    	</el-form-item>
+					</el-form>
+					<span slot="footer" class="dialog-footer">
+						<el-button @click="dialogFormVisible = false">Cancelar</el-button>
+						<el-button type="primary" @click="create_ruta">Crear</el-button>
+					</span>
+				</el-dialog>
+			</div>
+		</el-col>
+	<el-table
+    :data="filtered"
+	:default-sort = "{prop: 'id', order: 'descending'}"
+    style="width: 100%">
+    <el-table-column
+	  sortable
+      fixed
+      prop="id"
+      label="ID"
+      width="50">
+    </el-table-column>
+    <el-table-column
+	  sortable
+      prop="nombre_municipio"
+      label="Municipio"
+      width="120">
+    </el-table-column>
+    <el-table-column
+	  sortable
+      prop="kilometros"
+      label="Kilometros"
+      width="150">
+    </el-table-column>
+	<el-table-column
+	  sortable
+      prop="valor_flete"
+      label="Valor flete"
+      width="190">
+    </el-table-column>
+	<el-table-column
+	  sortable
+      prop="anticipo_sugerido"
+      label="Anticipo Sugerido"
+      width="200">
+    </el-table-column>
+    <el-table-column
+      label="Comentarios"
+      width="180"
+	  align="center">
+	  <template slot-scope="scope">
+		    <el-popover
+			:ref="scope.row.id"
+			placement="left"
+			width="450"
+			trigger="hover">
+			<el-table :data="scope.row.comentario">
+				<el-table-column width="150" property="fecha" label="Fecha"></el-table-column>
+				<el-table-column width="100" property="usuario" label="Usuario"></el-table-column>
+				<el-table-column width="300" property="comentario" label="Comentario"></el-table-column>
+			</el-table>
+			</el-popover>
+
+			<el-button v-popover="scope.row.id">Ver comentarios</el-button>
+	  </template>
+    </el-table-column>
+    <el-table-column
+      fixed="right"
+      label="Acciones"
+      width="120">
+      <template slot-scope="scope">
+        <el-button @click="pushToEdit(scope.row)" type="text" size="small">Editar</el-button>
+      </template>
+    </el-table-column>
+  </el-table>
+
+  </el-col>
+
+</div>
+	
+</template>
+
+<script>
+import HTTP from '../../http';
+import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
+import moment from 'moment-timezone'
+import router from '../../router'
+
+export default {
+	name: 'RutasTable',
+	data () {
+      	return {
+            selectTypeOfSearch: 'Municipios',
+			filter: '',
+			dialogTableVisible: false,
+			dialogFormVisible: false,
+			dialogFormMunicipioVisible: false,
+			formLabelWidth: '120px',
+		}
+	},
+	computed: {
+        ...mapState('authentication', [
+			'permisos',
+        ]),
+        ...mapState('rutas', [
+			'rutasList',
+			'headings',
+			'dataReady',
+			'ruta',
+			'municipios_list'
+		]),
+        filtered(){
+			if(this.dataReady){
+				if(this.filter !== ''){
+					let type = this.selectTypeOfSearch.toLowerCase()
+					return this.rutasList.filter(ruta => {
+						if(isNaN(ruta[type])){
+							return ruta[type].toLowerCase().includes(this.filter.toLowerCase())
+						}
+						return ruta[type].toString().includes(this.filter.toString())
+					})
+				}
+				console.log(this.rutasList)
+				return this.rutasList
+			}
+		},
+	},
+	components: {
+	},
+    methods: {
+		back(){
+			router.push('/cuadre-viaje')
+		},
+		...mapMutations('rutas', [
+			'setFullRuta',
+			'setKilometros',
+            'setAnticipoSugerido',
+            'setValorflete',
+            'setComentario',
+			'setMunicipioId',
+			'rutaReset',
+			'setMunicipioName',
+			'setCodigoMunicipio',
+		]),
+        ...mapActions('rutas',[
+			'fetchRutasList',
+			'fetchMunicipios',
+			'createRuta',
+			'create_municipio',
+		]),
+         pushToCreateRuta(){
+            router.push('/rutas-crear')
+		},
+		pushToEdit(row){
+			console.log(row)
+			this.setFullRuta(row)
+			router.push('/rutas-editar')
+		},
+		create_ruta(){
+			if(this.createRuta()){
+				this.fetchRutasList()
+				this.dialogFormVisible = false
+			}
+		},
+		createMunicipio(){
+			if(this.create_municipio()){
+				this.dialogFormMunicipioVisible = false
+			}
+		}
+    },
+    created: function(){
+		this.fetchRutasList()
+		this.fetchMunicipios()
+	}
+}
+</script>
+
+<style lang="scss" scoped>
+@import '../../assets/scss/_variables';
+.page-table {
+	&.overflow {
+		overflow: auto;
+	}
+	
+	.table-box {
+		overflow: hidden;
+	}
+	.center{
+		text-align: center;
+	}
+}
+</style>
+<style lang="scss">
+@import '../../assets/scss/_variables';
+
+.serachBar-ctn{
+
+}
+.page-table {
+	
+	.custom-action-row {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+
+		.el-button {
+			padding: 1px 5px;
+		}
+	}
+
+	.toolbar-box {
+		margin-top: 20px;
+
+		.search-box {
+			& > div {
+				width: 20px;
+				display: inline-block;
+			}
+
+			margin-bottom: 10px;
+
+			i {
+				display: inline-block;
+				width: 22px;
+			}
+
+			input {
+				outline: none;
+				background: transparent;
+				border: none;
+				font-size: 15px;
+				position: relative;
+				padding: 0;
+				margin-left: -20px;
+				display: inline-block;
+				padding-left: 20px;
+				box-sizing: border-box;
+				top: -1px;
+				width: 100%;
+				color: $text-color;
+			}
+
+			.icons-tot {
+				margin-right: 20px;
+			}
+		}
+
+		.pagination-box {
+			width: 120px;
+			margin: 0 15px;
+
+			.select-box {
+				width: 70px;
+				display: inline-block;
+			}
+
+			.label {
+				width: 50px;
+				display: inline-block;
+			}
+
+			.el-input__inner {
+				height: 22px;
+				border: none;
+				background: transparent;
+				font-size: 16px;
+				text-align: right;
+				font-family: inherit;
+				padding-right: 20px;
+				color: $text-color;
+			}
+
+			.el-input__suffix {
+				right: -3px;
+
+				.el-select__caret {
+					color: transparentize($text-color, 0.7);
+				}
+			}
+		}
+
+		a, button {
+			padding: 0;
+			margin: 0 15px;
+			background: transparent;
+			border: none;
+			outline: none;
+			font-family: inherit;
+			font-size: inherit;
+			cursor: pointer;
+
+			border-bottom: 1px solid;
+			text-decoration: none;
+			color: $text-color;
+			&:hover {
+				opacity: .6;
+			}
+		}
+
+		a {
+			margin-right: 0;
+		}
+	}
+
+	.sel-string {
+		.sel {
+			background: transparentize($text-color, 0.8);
+			border-radius: 5px;
+			text-transform: uppercase;
+		}
+	}
+	.white-bg{
+		background-color: #ccc;
+	}
+}
+
+@media (max-width: 768px) {
+	.page-table {
+		.toolbar-box {
+			display: block;
+			overflow: hidden;
+			font-size: 80%;
+		
+			& > * {
+				display: inline-block;
+				min-width: 120px;
+				height: 22px;
+				background: rgba(0, 0, 0, 0.04);
+				padding: 4px;
+				margin: 3px !important;
+			}
+		}
+	}
+}
+</style>
+

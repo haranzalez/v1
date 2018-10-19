@@ -25,6 +25,9 @@ import TrailersEditForm from '../views/Trailers/EditForm.vue'
 import VehiculosTable from '../views/Vehiculos/Vehiculos.vue'
 import VehiculosCreateForm from '../views/Vehiculos/CreateForm.vue'
 import VehiculosEditForm from '../views/Vehiculos/EditForm.vue'
+//rutas
+import RutasTable from '../views/Rutas/Rutas.vue'
+import RutasEditForm from '../views/Rutas/EditForm.vue'
 
 //pages
 import Login from '../views/pages/authentication/Login.vue'
@@ -164,6 +167,31 @@ const router = new Router({
 				layout: layouts.navLeft,
 				searchable: true,
 				tags: ['pages']
+			}
+		},
+		//=========================================================================
+		//Trailers
+		//=========================================================================
+		{
+			path: '/Rutas',
+			name: 'rutas',
+			component: RutasTable,
+			meta: {
+				auth: true,
+				layout: layouts.navLeft,
+				searchable: true,
+				tags: ['Logistica']
+			}
+		},
+		{
+			path: '/rutas-editar',
+			name: 'rutas - editar',
+			component: RutasEditForm,
+			meta: {
+				auth: true,
+				layout: layouts.navLeft,
+				searchable: true,
+				tags: ['Logistica']
 			}
 		},
 		

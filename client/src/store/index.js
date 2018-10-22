@@ -13,6 +13,10 @@ import vehiculos from './vehiculos'
 import trailers from './trailers'
 import rutas from './rutas'
 
+import clientes from './clientes'
+import cuadreViajes from './cuadreViajes'
+
+
 Vue.use(Vuex)
 
 const debug = process.env.NODE_ENV !== 'production'
@@ -31,6 +35,8 @@ export default new Vuex.Store({
 		vehiculos,
 		trailers,
 		rutas,
+		clientes,
+		cuadreViajes,
 	},
 	mutations: {
 	},

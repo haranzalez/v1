@@ -27,12 +27,12 @@
 				<i class="mdi mdi-fullscreen" v-if="!fullscreen"></i>
 				<i class="mdi mdi-fullscreen-exit" v-if="fullscreen"></i>
 			</button>
-			<el-popover ref="popover" placement="bottom" :width="popoverWidth" trigger="click">
-				<notification-box></notification-box>
+			<!--<el-popover ref="popover" placement="bottom" :width="popoverWidth" trigger="click">
+				 <notification-box></notification-box> 
 			</el-popover>
 			<el-badge :is-dot="true" class="notification-icon-badge">
 				<el-button v-popover:popover icon="mdi mdi-bell" class="notification-icon"></el-button>
-			</el-badge>
+			</el-badge>-->
 			<span class="username"><router-link to="/profile" :value="nombreCompleto">{{nombreCompleto}}</router-link></span>
 			<el-dropdown trigger="click" @command="onCommand">
 				<span class="el-dropdown-link">
@@ -40,8 +40,6 @@
 				</span>
 				<el-dropdown-menu slot="dropdown">
 					<el-dropdown-item command="/profile"><i class="mdi mdi-account mr-10"></i> Profile</el-dropdown-item>
-					<el-dropdown-item command="/calendar"><i class="mdi mdi-calendar mr-10"></i> Calendar</el-dropdown-item>
-					<el-dropdown-item command="/contacts"><i class="mdi mdi-account-multiple mr-10"></i> Contacts</el-dropdown-item>
 					<el-dropdown-item command="/logout" divided><i class="mdi mdi-logout mr-10"></i> Logout</el-dropdown-item>
 				</el-dropdown-menu>
 			</el-dropdown>

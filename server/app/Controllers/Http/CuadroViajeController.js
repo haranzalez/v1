@@ -4,7 +4,19 @@ const Consolidacion = use('App/Models/Consolidacion')
 const Ruta = use('App/Models/Ruta')
 class CuadroViajeController {
     async get_all_cuadres(){
-        return await CuadreViaje.all()
+        const cuadre = await CuadreViaje.query()
+        .with('vehiculo')
+        .with('ruta.municipios')
+        .with('consolidacion')
+        .fetch()
+
+        for(let prop in cuadre.rows){
+            let consolidacion = await Consolidacion.find(cuadre.rows[prop]['consolidacion_id'])
+            let cliente = await consolidacion.cliente().fetch()
+            cuadre.rows[prop]['nombre_cliente'] = cliente.nombre_razon_social
+        }
+        
+        return cuadre
     }
     async get_cuadre({ params }){
         const { id } = params;
@@ -88,7 +100,6 @@ class CuadroViajeController {
                 message: "No se pudo encontrar este cuadre de viaje en la base de datos."
             }
         }
-
         const ruta = await Ruta.find(ruta_id)
         //descuento
         const porcentaje_descuento =  flete / ruta.valor_flete
@@ -115,5 +126,4 @@ class CuadroViajeController {
         return cuadre.delete()
     }
 }
-
 module.exports = CuadroViajeController

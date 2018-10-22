@@ -51,7 +51,7 @@ export default {
 					
 				}
             }
-            console.log(pkg)
+           
             commit('setExtractedPermisos', pkg)
         },
         setTimer({dispatch}){
@@ -93,7 +93,7 @@ export default {
                 password: state.credenciales.password,
             })
             .then(({ data }) => {
-                console.log(data)
+                
                 if(!data.mess){
                     if(data.user[0].estado !== 'inactivo'){
                         commit('setUsuario', data.user[0])
@@ -107,11 +107,9 @@ export default {
                             }
                         }
                         let final = UserServices.removeDuplicatesFromObj(menu, 'id')
-                        console.log(final)
                         commit('setMenu', final)
                         commit('setIsLogged')
-                        
-                        router.push('/dashboard')
+                        router.push('/'+final[1]['subModulo'][0]['nombre'])
                         return;
                     }
                     Notification.warning({
@@ -141,7 +139,7 @@ export default {
             }, {root: true})
             HTTP().local.get('/api/logout')
             .then(({data}) => {
-                console.log(data)
+                
             }).catch(err => {
                 console.log(err)
             })
@@ -161,7 +159,7 @@ export default {
                 password: state.credenciales.password,
             })
             .then(({ data }) => {
-                console.log(data)
+                
                 Notification.success({
                     title: 'Exito!',
                     message: 'Registro exitoso. Porfavor proceda a ingresar',

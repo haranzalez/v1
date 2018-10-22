@@ -28,6 +28,14 @@ import VehiculosEditForm from '../views/Vehiculos/EditForm.vue'
 //rutas
 import RutasTable from '../views/Rutas/Rutas.vue'
 import RutasEditForm from '../views/Rutas/EditForm.vue'
+//clientes
+import ClientesTable from '../views/Clientes/clientes.vue'
+import ClientesCreateForm from '../views/Clientes/CreateForm.vue'
+import ClientesEditForm from '../views/Clientes/EditForm.vue'
+//cuadro viajes
+import CuadroViajesTable from '../views/CuadroViajes/CuadroViajes.vue'
+import CuadroViajesCreateForm from '../views/CuadroViajes/CreateForm.vue'
+import CuadroViajesEditForm from '../views/CuadroViajes/EditForm.vue'
 
 //pages
 import Login from '../views/pages/authentication/Login.vue'
@@ -170,6 +178,42 @@ const router = new Router({
 			}
 		},
 		//=========================================================================
+		//Cuadro VIajes
+		//=========================================================================
+		{
+			path: '/cuadre-viajes',
+			name: 'cuadre viaje',
+			component: CuadroViajesTable,
+			meta: {
+				auth: true,
+				layout: layouts.navLeft,
+				searchable: true,
+				tags: ['pages']
+			}
+		},
+		{
+			path: '/cuadre-viajes-crear',
+			name: 'Cuadre Viaje - crear',
+			component: CuadroViajesCreateForm,
+			meta: {
+				auth: true,
+				layout: layouts.navLeft,
+				searchable: true,
+				tags: ['pages']
+			}
+		},
+		{
+			path: '/cuadre-viajes-editar',
+			name: 'Cuadre Viaje - editar',
+			component: CuadroViajesEditForm,
+			meta: {
+				auth: true,
+				layout: layouts.navLeft,
+				searchable: true,
+				tags: ['pages']
+			}
+		},
+		//=========================================================================
 		//Trailers
 		//=========================================================================
 		{
@@ -192,6 +236,42 @@ const router = new Router({
 				layout: layouts.navLeft,
 				searchable: true,
 				tags: ['Logistica']
+			}
+		},
+		//=========================================================================
+		//Clientes
+		//=========================================================================
+		{
+			path: '/Clientes',
+			name: 'clientes',
+			component: ClientesTable,
+			meta: {
+				auth: true,
+				layout: layouts.navLeft,
+				searchable: true,
+				tags: ['pages']
+			}
+		},
+		{
+			path: '/clientes-crear',
+			name: 'clientes - crear',
+			component: ClientesCreateForm,
+			meta: {
+				auth: true,
+				layout: layouts.navLeft,
+				searchable: true,
+				tags: ['pages']
+			}
+		},
+		{
+			path: '/clientes-editar',
+			name: 'clientes - editar',
+			component: ClientesEditForm,
+			meta: {
+				auth: true,
+				layout: layouts.navLeft,
+				searchable: true,
+				tags: ['pages']
 			}
 		},
 		
@@ -383,6 +463,7 @@ router.beforeEach((to, from, next) => {
 		authrequired = true
 
 	console.log('authrequired', authrequired, to.name)
+	
 
 	if(authrequired) {
 		if(auth.loggedIn()) {
@@ -394,6 +475,7 @@ router.beforeEach((to, from, next) => {
 			}
 		} else {
 			if(to.name !== 'login'){
+				
 				window.location.href = '/login'
 				return false
 			}
@@ -401,6 +483,7 @@ router.beforeEach((to, from, next) => {
 		}
 	} else {
 		if(auth.loggedIn() && to.name === 'login'){
+			
 			window.location.href = '/'
 			return false
 		} else {

@@ -3,6 +3,7 @@
 		
 		<resize-observer @notify="__resizeHanlder" />
 		<el-row class="mt-0" :gutter="30">
+
 			<el-col :xs="24" :sm="12" :md="12" :lg="6" :xl="6">
 				<div class="card-base card-shadow--medium mb-30 widget small-widget" v-loading="!asyncComponent">
 						
@@ -15,8 +16,8 @@
 								</div>
 							</div>
 							<div class="widget-info box grow text-truncate animated fadeInLeft">
-								<div class="o-050 widget-title text-truncate pt-5 pb-10">Users</div>
-								<h2 class="m-0 text-truncate">4,523</h2>
+								<div class="o-050 widget-title text-truncate pt-5 pb-10">Clientes</div>
+								<h2 class="m-0 text-truncate"></h2>
 							</div>
 						</div>
 					</div>
@@ -24,6 +25,7 @@
 					<component :is="asyncComponent" :type="'line'" :options='{ width: "100%", height: 80 }' :data="[1, 3, 2, 4, 4, 9, 3, 4, 6, 5, 4, 6, 9, 8, 11, 12, 13, 12, 12, 14].toString()"/>
 				</div>
 			</el-col>
+
 			<el-col :xs="24" :sm="12" :md="12" :lg="6" :xl="6">
 				<div class="card-base card-shadow--medium mb-30 widget small-widget" v-loading="!asyncComponent">
 
@@ -66,6 +68,7 @@
 					<component :is="asyncComponent" :type="'line'" :options='{ width: "100%", height: 80, fill: "#56f19a", stroke: "#67C23A" }' :data="[10, 7, 8, 5, 4, 9, 3, 4, 6, 5, 4, 4, 2, 4, 5, 9, 13, 12, 12, 14].toString()"/>
 				</div>
 			</el-col>
+
 			<el-col :xs="24" :sm="12" :md="12" :lg="6" :xl="6">
 				<div class="card-base card-shadow--medium mb-30 widget small-widget" v-loading="!asyncComponent">
 
@@ -87,49 +90,12 @@
 					<component :is="asyncComponent" :type="'bar'" :options='{ width: "100%", height: 80, fill: ["#56f19a"] }' :data="[6, 5, 4, 3, 5, 3, 4, 5, 6, 5, 4, 2, 3, 8, 7, 6, 5, 2, 1, 5].toString()"/>
 				</div>
 			</el-col>
-			<!--<el-col :xs="24" :sm="12" :md="8" :lg="4" :xl="4">
-				<div class="card-base card-shadow--medium mb-30 widget small-widget" v-loading="!asyncComponent">
-
-					<div class="widget-header ph-20 pt-20">
-						<div class="flex justify-center align-center">
-							<div class="widget-icon-box mr-20 animated fadeInRight">
-								<i class="widget-icon mdi mdi-message-text-outline danger-text fs-30"></i>
-								<div class="badge-box">
-									<span class="badge"><i class="mdi mdi-trending-down danger-text mr-10"></i><strong class="danger-text">23%</strong></span>
-								</div>
-							</div>
-							<div class="widget-info box grow text-truncate animated fadeInLeft">
-								<div class="o-050 widget-title text-truncate pt-5 pb-10">Messages</div>
-								<h2 class="m-0 text-truncate">52,628</h2>
-							</div>
-						</div>
-					</div>
-
-					<component :is="asyncComponent" :type="'line'" :options='{ width: "100%", height: 80, fill: "#EF5F8B", stroke: "#CF2256" }' :data="[9, 7, 5, 4, 4, 8, 3, 4, 6, 5, 4, 6, 5, 7, 3, 2, 4, 3, 2, 1].toString()"/>
-				</div>
-			</el-col>
-			<el-col :xs="24" :sm="12" :md="8" :lg="4" :xl="4">
-				<div class="card-base card-shadow--medium mb-30 widget small-widget" v-loading="!asyncComponent">
-
-					<div class="widget-header ph-20 pt-20">
-						<div class="flex justify-center align-center">
-							<div class="widget-icon-box mr-20 animated fadeInRight">
-								<i class="widget-icon mdi mdi-cart danger-text fs-30"></i>
-								<div class="badge-box">
-									<span class="badge"><i class="mdi mdi-trending-down danger-text mr-10"></i><strong class="danger-text">9%</strong></span>
-								</div>
-							</div>
-							<div class="widget-info box grow text-truncate animated fadeInLeft">
-								<div class="o-050 widget-title text-truncate pt-5 pb-10">Purchases</div>
-								<h2 class="m-0 text-truncate">3,346</h2>
-							</div>
-						</div>
-					</div>
-
-					<component :is="asyncComponent" :type="'bar'" :options='{ width: "100%", height: 80, fill: ["#EF5F8B"] }' :data="[1, 2, 3, 4, 5, 4, 3, 2, 1, 2, 3, 4, 5, 4, 3, 2, 1, 2, 3, 4].toString()"/>
-				</div>
-			</el-col>-->
+			
 		</el-row>
+
+
+
+
 
 		<el-row class="mt-0" :gutter="30">
 			<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">

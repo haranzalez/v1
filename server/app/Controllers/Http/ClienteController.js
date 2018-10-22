@@ -15,7 +15,7 @@ class ClienteController {
     async create_cliente({ request }){
         const { 
             nombre_razon_social, 
-            NIT, 
+            nit, 
             direccion, 
             ciudad,
             email,
@@ -25,9 +25,9 @@ class ClienteController {
             direccion_envio_de_factura,
             tipo_contrato } = request.all()
             
-        return await Cliente.create({
+        await Cliente.create({
             nombre_razon_social, 
-            NIT, 
+            nit, 
             direccion, 
             ciudad,
             email,
@@ -37,6 +37,10 @@ class ClienteController {
             direccion_envio_de_factura,
             tipo_contrato,
         })
+
+        return {
+            message: "success"
+        }
     }
     //UPDATE
     async update_cliente({ request, params }){
@@ -44,7 +48,7 @@ class ClienteController {
         const cliente = await Cliente.find(id)
         const {
             nombre_razon_social, 
-            NIT, 
+            nit, 
             direccion, 
             ciudad,
             email,
@@ -56,7 +60,7 @@ class ClienteController {
         } = request.all()
 
         cliente.nombre_razon_social = nombre_razon_social 
-        cliente.NIT = NIT 
+        cliente.nit = nit 
         cliente.direccion = direccion 
         cliente.ciudad = ciudad
         cliente.email = email

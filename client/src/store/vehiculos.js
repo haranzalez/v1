@@ -129,14 +129,17 @@ export default {
                 console.log(err)
             })
         },
-        fetchVehiculosList({commit, dispatch}){
+        fetchVehiculosList({commit, dispatch}, resource){
             HTTP().local.get('api/vehiculos')
             .then(d => {
                 commit('setVehiculosList', d.data)
-                dispatch('renderSelectedConductores')
-                dispatch('renderSelectedTrailers')
+                if(resource == null){
+                    dispatch('renderSelectedConductores')
+                    dispatch('renderSelectedTrailers')
+                    dispatch('renderTableHeadings')
+                }
                 commit('setDataReady', true)
-                dispatch('renderTableHeadings')
+                
             })
             .catch(err => {
                 console.log(err)

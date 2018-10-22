@@ -1,7 +1,7 @@
 <template>
 <div>
 	<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
-		<h1>Conductores</h1>
+		<h1>Clientes</h1>
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
 			<div class="serachBar-ctn">
 				<el-input placeholder="Buscar" v-model="filter" class="input-with-select">
@@ -13,13 +13,10 @@
 		</el-col>
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
 			<div style="text-align:right;">
-				<el-button type="text" @click="back">Volver</el-button>
-				<el-button :disabled="(permisos['Usuarios'].crear)? false:true" @click="pushToCreateConductor">Crear</el-button>
+				<el-button type="text" @click="back">Regresar</el-button>
+				<el-button :disabled="(permisos['Usuarios'].crear)? false:true" @click="pushToCreateCliente">Crear</el-button>
 			</div>
 		</el-col>
-		
-		
-	
 	<el-table
     :data="filtered"
 	:default-sort = "{prop: 'id', order: 'descending'}"
@@ -33,57 +30,69 @@
     </el-table-column>
     <el-table-column
 	  sortable
-      prop="codigo"
-      label="Codigo"
-      width="120">
+      prop="nombre_razon_social"
+      label="Razon social"
+      width="220">
     </el-table-column>
     <el-table-column
 	  sortable
-      prop="nombres"
-      label="Nombres"
-      width="120">
+      prop="nit"
+      label="NIT"
+      width="150">
     </el-table-column>
 	<el-table-column
 	  sortable
-      prop="primer_apellido"
-      label="Apellido 1"
-      width="120">
+      prop="direccion"
+      label="Direccion"
+      width="190">
     </el-table-column>
 	<el-table-column
 	  sortable
-      prop="segundo_apellido"
-      label="Apellido 2"
-      width="120">
+      prop="ciudad"
+      label="Ciudad"
+      width="200">
+    </el-table-column>
+   <el-table-column
+	  sortable
+      prop="email"
+      label="Email"
+      width="200">
     </el-table-column>
 	<el-table-column
 	  sortable
-      prop="tipo_de_conductor"
-      label="Tipo"
-      width="120">
+      prop="telefono"
+      label="Telefono"
+      width="200">
     </el-table-column>
-    <el-table-column
-	  sortable
-      prop="telefono_1"
-      label="Telefono 1"
-      width="120">
-    </el-table-column>
-    <el-table-column
-	  sortable
-      prop="telefono_2"
-      label="Telefono 2"
-      width="120">
-    </el-table-column>
-     <el-table-column
+	<el-table-column
 	  sortable
       prop="celular"
       label="Celular"
+      width="200">
+    </el-table-column>
+	<el-table-column
+	  sortable
+      prop="persona_de_contacto"
+      label="Celular"
+      width="200">
+    </el-table-column>
+	<el-table-column
+	  sortable
+      prop="direccion_envio_de_factura"
+      label="Direccion envio de facturas"
+      width="500">
+    </el-table-column>
+	<el-table-column
+	  sortable
+      prop="tipo_contrato"
+      label="Tipo de contrato"
       width="120">
     </el-table-column>
-     <el-table-column
+	<el-table-column
 	  sortable
-      prop="transportadora"
-      label="Transportadora"
-      width="150">
+      prop="created_at"
+      label="Fecha creacion"
+      width="300">
     </el-table-column>
     <el-table-column
       fixed="right"
@@ -108,34 +117,36 @@ import moment from 'moment-timezone'
 import router from '../../router'
 
 export default {
-	name: 'ConductorTable',
+	name: 'ClientesTable',
 	data () {
       	return {
-            selectTypeOfSearch: 'Nombre',
-            filter: '',
+            selectTypeOfSearch: '',
+			filter: '',
 		}
 	},
 	computed: {
         ...mapState('authentication', [
 			'permisos',
         ]),
-        ...mapState('conductores', [
-            'headings',
-            'conductoresList',
-            'dataReady',
+        ...mapState('clientes', [
+			'clientesList',
+			'headings',
+			'dataReady',
+			'cliente',
 		]),
         filtered(){
 			if(this.dataReady){
 				if(this.filter !== ''){
 					let type = this.selectTypeOfSearch.toLowerCase()
-					return this.conductoresList.filter(conductor => {
-						if(isNaN(conductor[type])){
-							return conductor[type].toLowerCase().includes(this.filter.toLowerCase())
+					return this.clientesList.filter(cliente => {
+						if(isNaN(cliente[type])){
+							return cliente[type].toLowerCase().includes(this.filter.toLowerCase())
 						}
-						return conductor[type].toString().includes(this.filter.toString())
+						return cliente[type].toString().includes(this.filter.toString())
 					})
 				}
-				return this.conductoresList
+				console.log(this.clientesList)
+				return this.clientesList
 			}
 		},
 	},
@@ -143,24 +154,29 @@ export default {
 	},
     methods: {
 		back(){
-			router.push('/Vehiculos')
+			router.push('/')
 		},
-		...mapMutations('conductores', [
-			'setFullConductor',
+		...mapMutations('clientes', [
+			'setFullCliente',
 		]),
-        ...mapActions('conductores',[
-			'fetchConductoresList',
+        ...mapActions('clientes',[
+			'fetchClientesList',
+			'createCliente',
 		]),
-        pushToCreateConductor(){
-            router.push('/conductores-crear')
+         pushToCreateCliente(){
+            router.push('/clientes-crear')
 		},
 		pushToEdit(row){
-			this.setFullConductor(row)
-			router.push('/conductores-editar')
+			console.log(row)
+			this.setFullCliente(row)
+			router.push('/clientes-editar')
+		},
+		pushToCreateCliente(){
+            router.push('/clientes-crear')
 		},
     },
     created: function(){
-		this.fetchConductoresList()
+		this.fetchClientesList()
 	}
 }
 </script>
@@ -174,6 +190,9 @@ export default {
 	
 	.table-box {
 		overflow: hidden;
+	}
+	.center{
+		text-align: center;
 	}
 }
 </style>

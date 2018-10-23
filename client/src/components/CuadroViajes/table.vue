@@ -13,8 +13,6 @@
 		</el-col>
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
 			<div style="text-align:right;">
-				<el-button class="trailerBtn animated fadeInRight" type="text" @click="pushTo('Trailers')"><i class="mdi mdi-truck-trailer"></i> Trailers</el-button>
-				<el-button class="conductorBtn animated fadeInRight" type="text" @click="pushTo('Conductores')"><i class="mdi mdi-account-circle"></i> Conductores</el-button>
 				<el-button class="animated fadeInRight" @click="">Crear</el-button>
 			</div>
 		</el-col>
@@ -35,27 +33,7 @@
       label="Cliente"
       width="120">
     </el-table-column>
-    <el-table-column
-	  sortable
-      prop="ruta"
-      label="Ruta"
-      width="120">
-	  <template slot-scope="scope">
-		  <el-button v-popover="scope.row.id">{{scope.row.ruta[0]['id']}}</el-button>
-		  <el-popover
-			:ref="scope.row.id"
-			placement="right"
-			width="400"
-			trigger="click">
-			<div v-for="(item, key) in scope.row.ruta" :key="item.id">
-                <el-row v-if="key !== 'created_at' || key !== 'updated_at' || key !== 'pivot'">
-                    <el-col :xs="10" :sm="10" :md="10" :lg="10" :xl="10"><b>{{title(key)}}</b></el-col>
-                    <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12">{{item}}</el-col>
-                </el-row>
-            </div>
-		  </el-popover>
-	  </template>
-    </el-table-column>
+   
 	<el-table-column
 	  sortable
       label="Vehiculo"
@@ -66,7 +44,7 @@
             placement="right"
             width="400"
             trigger="click">
-            <div v-for="(item, key) in scope.row.vehiculo" :key="item.id">
+            <div v-for="(item, key) in scope.row.vehiculo[0]" :key="item.id">
                 <el-row v-if="key !== 'created_at' || 
 				key !== 'updated_at' || 
 				key !== 'pivot'">
@@ -89,72 +67,6 @@
             </el-select>
       </template>
     </el-table-column>
-
-    <el-table-column
-	  sortable
-      label="Trailer"
-      width="170">
-       <template slot-scope="scope">
-           <el-popover
-            :ref="scope.row.placa+'-trailer'"
-            placement="right"
-            width="400"
-            trigger="hover">
-            <div v-for="(item, key) in scope.row.trailer" :key="item.id">
-                <el-row>
-                    <el-col :xs="10" :sm="10" :md="10" :lg="10" :xl="10"><b>{{title(key)}}</b></el-col>
-                    <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12">{{item}}</el-col>
-                </el-row>
-            </div>
-            </el-popover>
-           <el-select 
-           v-popover="scope.row.placa+'-trailer'" 
-           v-model="selectedTrailer[scope.row.placa]" 
-           placeholder="Seleccione.."
-           @change="assignTrailerToVehicle($event, scope.row.id)">
-                <el-option
-                v-for="item in trailersList"
-                :key="item.placa"
-                :label="item.placa"
-                :value="item.id">
-                </el-option>
-            </el-select>
-      </template>
-    </el-table-column>
-
-	<el-table-column
-      label="Tipo de flota"
-	  prop="tipo_de_flota"
-      width="120">
-    </el-table-column>
-
-	<el-table-column
-      label="Capasidad carga"
-	  prop="capasidad_carga"
-      width="150">
-    </el-table-column>
-
-	<el-table-column
-      label="Peso"
-	  prop="peso"
-      width="120">
-    </el-table-column>
-
-	<el-table-column
-	  fixed="right"
-      prop="estado"
-      label="Estado"
-      width="100"
-      :filters="[{ text: 'en espera', value: 'en espera' },{ text: 'disponible', value: 'disponible' }]"
-      :filter-method="filterTag"
-      filter-placement="bottom-end">
-      <template slot-scope="scope">
-        <el-tag
-          :type="determineEstado(scope.row.estado)"
-          disable-transitions>{{scope.row.estado}}</el-tag>
-      </template>
-    </el-table-column>
-	
     <el-table-column
       fixed="right"
       label="Acciones"
@@ -179,7 +91,7 @@ import moment from 'moment-timezone'
 import router from '../../router'
 
 export default {
-	name: 'VehiculoTable',
+	name: 'CuadreViajesTable',
 	data () {
       	return {
             selectTypeOfSearch: 'ID',
@@ -191,11 +103,16 @@ export default {
         ...mapState('authentication', [
 			'permisos',
         ]),
-        ...mapState('vehiculos', [
-            'vehiculosList',
-        ]),
+        ...mapState('cuadreViajes', [
+			'cuadresList',
+			'headings',
+			'dataReady',
+			'selectedVehiculo',
+		]),
+		...mapState('vehiculos', [
+			'vehiculosList',
+		]),
        
-		
         filtered(){
 			if(this.dataReady){
 				if(this.filter !== ''){
@@ -203,14 +120,14 @@ export default {
 					type = type.replace(' ', '_')
 					type = type.replace(' ', '_')
 					console.log(type)
-					return this.vehiculosList.filter(conductor => {
-						if(isNaN(conductor[type])){
-							return conductor[type].toLowerCase().includes(this.filter.toLowerCase())
+					return this.cuadresList.filter(cuadre => {
+						if(isNaN(cuadre[type])){
+							return cuadre[type].toLowerCase().includes(this.filter.toLowerCase())
 						}
-						return conductor[type].toString().includes(this.filter.toString())
+						return cuadre[type].toString().includes(this.filter.toString())
 					})
 				}
-				return this.vehiculosList
+				return this.cuadresList
 			}
         },
 
@@ -235,9 +152,8 @@ export default {
 		filterTag(value, row) {
         	return row.estado === value;
       	},
-        ...mapMutations('vehiculos', [
-			'setVehicleId',
-			'setFullVehicle',
+        ...mapMutations('cuadreViajes', [
+			
 		]),
 		
         title(field){
@@ -245,8 +161,11 @@ export default {
             field = field.charAt(0).toUpperCase() + field.slice(1)
             return field
         },
-        ...mapActions('vehiculos',[
-            'fetchVehiculosList',
+        ...mapActions('cuadreViajes',[
+			'fetchCuadresList',
+		]),
+		...mapActions('vehiculos',[
+			'fetchVehiculosList',
         ]),
         
         pushToCreateVehicle({state,commit}){
@@ -267,7 +186,8 @@ export default {
         },
     },
     created: function(){
-        this.fetchVehiculosList()
+		this.fetchCuadresList()
+		this.fetchVehiculosList('cuadre_viajes')
 	}
 }
 </script>

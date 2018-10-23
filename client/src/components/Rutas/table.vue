@@ -119,14 +119,13 @@
 			:ref="scope.row.id"
 			placement="left"
 			width="450"
-			trigger="hover">
+			trigger="click">
 			<el-table :data="scope.row.comentario">
 				<el-table-column width="150" property="fecha" label="Fecha"></el-table-column>
 				<el-table-column width="100" property="usuario" label="Usuario"></el-table-column>
 				<el-table-column width="300" property="comentario" label="Comentario"></el-table-column>
 			</el-table>
 			</el-popover>
-
 			<el-button v-popover="scope.row.id">Ver comentarios</el-button>
 	  </template>
     </el-table-column>

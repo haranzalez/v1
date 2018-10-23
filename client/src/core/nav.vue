@@ -14,7 +14,7 @@
 			<span>{{mod.nombre}}</span>
 			</div>
 
-			<el-menu-item v-for="item in mod.subModulo" :key="item.id" :index="'/'+item.nombre">
+			<el-menu-item v-for="item in mod.subModulo" :key="item.id" :index="'/'+item.link">
 				<i :class="'mdi '+item.icono"></i><span slot="title">{{item.nombre}}</span>
 			</el-menu-item>
 		</div>

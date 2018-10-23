@@ -13,8 +13,6 @@
 		</el-col>
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
 			<div style="text-align:right;">
-				<el-button class="trailerBtn animated fadeInRight" type="text" @click="pushTo('Trailers')"><i class="mdi mdi-truck-trailer"></i> Trailers</el-button>
-				<el-button class="conductorBtn animated fadeInRight" type="text" @click="pushTo('Conductores')"><i class="mdi mdi-account-circle"></i> Conductores</el-button>
 				<el-button class="animated fadeInRight" @click="pushToCreateVehicle">Crear</el-button>
 			</div>
 		</el-col>

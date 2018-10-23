@@ -72,9 +72,11 @@ export default {
         fetchCuadresList({commit, dispatch}){
             HTTP().local.get('api/cuadre-viajes')
             .then(d => {
+                console.log(d.data)
                 commit('setCuadresList', d.data)
                 commit('setDataReady', true)
                 dispatch('renderTableHeadings')
+                dispatch('renderSelectedVehiculo')
             })
             .catch(err => {
                 console.log(err)
@@ -82,7 +84,7 @@ export default {
         },
         renderTableHeadings({state, commit}){
             let pkg = []
-            for(let prop2 in state.vehiculosList[0]){
+            for(let prop2 in state.cuadresList[0]){
                 if(prop2 !== 'created_at' || prop2 !== 'updated_at'){
                     prop2 = prop2.split('_').join(' ')
                     prop2 = prop2.charAt(0).toUpperCase() + prop2.slice(1)
@@ -102,12 +104,12 @@ export default {
         renderSelectedVehiculo({ state, commit }){
             let obj = {}
             for(let prop in state.cuadresList){
-                for(let prop2 in state.cuadreList[prop]['vehiculo']){
+                for(let prop2 in state.cuadreList[prop].vehiculo){
+                    console.log(state.cuadresList[prop].vehiculo[prop2])
                     obj[state.cuadresList[prop]['vehiculo'][prop2]['placa']] = (state.cuadresList[prop]['vehiculo'][prop2]['placa'] !== null)
                     ? state.cuadresList[prop]['vehiculo'][prop2]['placa']
                     : ''
                 }
-                
             }
             console.log(obj)
             commit('setSelectedVehiculo', obj)

@@ -7,7 +7,7 @@ class ConductoresSchema extends Schema {
     this.create('conductores', (table) => {
       table.increments()
       table.integer('vehiculo_id').unsigned()
-      table.foreign('vehiculo_id').references('vehiculos.id').onDelete('cascade')
+      table.foreign('vehiculo_id').references('vehiculos.id').onDelete('SET NULL')
       table.integer('codigo')
       table.string('tipo_de_identificacion')
       table.string('cedula')

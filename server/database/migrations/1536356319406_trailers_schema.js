@@ -7,7 +7,7 @@ class TrailersSchema extends Schema {
     this.create('trailers', (table) => {
       table.increments()
       table.integer('vehiculo_id')
-      table.foreign('vehiculo_id').references('vehiculos.id').onDelete('cascade')
+      table.foreign('vehiculo_id').references('vehiculos.id').onDelete('SET NULL')
       table.string('placa').notNullable().unique()
       table.string('tipo_de_vehiculo')
       table.string('tipo_de_configuracion')

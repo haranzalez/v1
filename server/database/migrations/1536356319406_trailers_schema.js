@@ -21,7 +21,7 @@ class TrailersSchema extends Schema {
       table.string('peso')
       table.string('tipo_carroceria')
       table.string('estado')
-      table.string('radica_rndc')
+      table.boolean('radica_rndc')
       table.timestamps()
     })
   }

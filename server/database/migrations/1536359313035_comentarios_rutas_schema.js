@@ -9,7 +9,7 @@ class ComentariosRutasSchema extends Schema {
       table.integer('ruta_id')
       table.foreign('ruta_id').references('rutas.id').onDelete('cascade')
       table.string('usuario')
-      table.string('comentario', 255)
+      table.text('comentario')
       table.timestamps()
     })
   }

@@ -9,7 +9,7 @@ class DepositoClienteAplicadosSchema extends Schema {
       table.integer('deposito_id')
       table.foreign('deposito_id').references('deposito_clientes.id').onDelete('cascade')
       table.integer('consolidacion_id')
-      table.foreign('consolidacion_id').references('consolidaciones.id').onDelete('cascade')
+      table.foreign('consolidacion_id').references('consolidacions.id').onDelete('cascade')
       table.date('fecha_aplicado')
       table.float('cantidad')
       table.timestamps()

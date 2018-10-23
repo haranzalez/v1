@@ -18,6 +18,8 @@ const Route = use('Route')
 
 Route.group(() => {
 
+  Route.get('/', 'TestController.answer')
+
   Route.post('login', 'UserController.login');
   Route.get('logout', 'UserController.logout');
   Route.post('password', 'UserController.sendPasswordChangeEmail');

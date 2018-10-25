@@ -40,10 +40,10 @@
       width="170">
        <template slot-scope="scope">
            <el-popover
-            :ref="scope.row.id"
+            :ref="scope.row.vehiculo[0].placa"
             placement="right"
             width="400"
-            trigger="click">
+            trigger="hover">
             <div v-for="(item, key) in scope.row.vehiculo[0]" :key="item.id">
                 <el-row v-if="key !== 'created_at' || 
 				key !== 'updated_at' || 
@@ -54,14 +54,14 @@
             </div>
             </el-popover>
            <el-select 
-           v-popover="scope.row.placa" 
-           v-model="selectedVehiculo[scope.row.placa]" 
-           placeholder="Seleccione.."
+           v-popover="scope.row.vehiculo[0].placa" 
+           v-model="selectedVehiculo[scope.row.vehiculo[0].placa]" 
+           placeholder="Seleccione..."
            @change="">
                 <el-option
                 v-for="item in vehiculosList"
-                :key="item.nombres"
-                :label="item.nombres"
+                :key="item.placa" 
+                :label="item.placa"
                 :value="item.id">
                 </el-option>
             </el-select>
@@ -94,12 +94,11 @@ export default {
 	name: 'CuadreViajesTable',
 	data () {
       	return {
-            selectTypeOfSearch: 'ID',
+            selectTypeOfSearch: 'id',
             filter: '',
 		}
 	},
 	computed: {
-        
         ...mapState('authentication', [
 			'permisos',
         ]),
@@ -112,14 +111,15 @@ export default {
 		...mapState('vehiculos', [
 			'vehiculosList',
 		]),
-       
         filtered(){
 			if(this.dataReady){
+				console.log(this.cuadresList, this.selectTypeOfSearch)
 				if(this.filter !== ''){
 					let type = this.selectTypeOfSearch.toLowerCase()
-					type = type.replace(' ', '_')
-					type = type.replace(' ', '_')
 					console.log(type)
+					type = type.replace(' ', '_')
+					type = type.replace(' ', '_')
+					
 					return this.cuadresList.filter(cuadre => {
 						if(isNaN(cuadre[type])){
 							return cuadre[type].toLowerCase().includes(this.filter.toLowerCase())
@@ -130,8 +130,6 @@ export default {
 				return this.cuadresList
 			}
         },
-
-        
 	},
 	components: {
 	},

@@ -132,6 +132,7 @@ export default {
         fetchVehiculosList({commit, dispatch}, resource){
             HTTP().local.get('api/vehiculos')
             .then(d => {
+                console.log(d.data)
                 commit('setVehiculosList', d.data)
                 if(resource == null){
                     dispatch('renderSelectedConductores')

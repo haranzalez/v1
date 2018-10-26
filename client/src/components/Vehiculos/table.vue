@@ -267,7 +267,7 @@ export default {
         },
     },
     created: function(){
-        this.fetchVehiculosList()
+        this.fetchVehiculosList(null)
         this.fetchConductoresList()
         this.fetchTrailersList()
 	}

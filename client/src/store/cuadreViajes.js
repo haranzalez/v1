@@ -9,21 +9,27 @@ export default {
         cuadre:{
             id: null,
             consolidacion_id: null,
+            ruta_id: null,
             flete: null,
+            anticipo: null,
+
             descuento: null,
             ganancia: null,
             debe: null,
-            anticipo: null,
         },
         cuadresList: null,
         selectedVehiculo: null,
+        selectedRuta: null,
         dataReady: false,
         headings: [],  
     },
     actions: {
         createCuadre({state}){
             HTTP().local.post('api/cuadre-viajes/crear', {
-                
+                consolidacion_id: state.cuadre.consolidacion_id,
+                ruta_id: state.cuadre.ruta_id,
+                flete: state.cuadre.flete,
+                anticipo: state.cuadre.anticipo,
             })
             .then(d => {
                 Message({
@@ -38,7 +44,10 @@ export default {
         },
         editCuadre({state}){
             HTTP().local.put('api/cuadre-viajes/'+state.cuadre.id+'/update', {
-               
+                consolidacion_id: state.cuadre.consolidacion_id,
+                ruta_id: state.cuadre.ruta_id,
+                flete: state.cuadre.flete,
+                anticipo: state.cuadre.anticipo,
             })
             .then(d => {
                 console.log(d)
@@ -76,6 +85,7 @@ export default {
                 commit('setDataReady', true)
                 dispatch('renderTableHeadings')
                 dispatch('renderSelectedVehiculo')
+                dispatch('renderSelectedRuta')
             })
             .catch(err => {
                 console.log(err)
@@ -95,18 +105,21 @@ export default {
         renderSelectedRuta({ state, commit }){
             let obj = {}
             for(let prop in state.cuadresList){
-                obj[state.cuadresList[prop]['placa']] = (state.cuadresList[prop]['conductor'] !== null)?state.vehiculosList[prop]['conductor']['nombres']:''
+                for(let prop2 in state.cuadresList[prop].ruta){
+                    obj[state.cuadresList[prop]['ruta'][prop2]['id']] = (state.cuadresList[prop]['ruta'] !== [])
+                    ? state.cuadresList[prop]['ruta'][prop2]['nombre_municipio']
+                    : ''
+                }
             }
             console.log(obj)
-            commit('setSelectedConductorList', obj)
+            commit('setSelectedRuta', obj)
         },
         renderSelectedVehiculo({ state, commit }){
             let obj = {}
 
             for(let prop in state.cuadresList){
                 for(let prop2 in state.cuadresList[prop].vehiculo){
-                    console.log(state.cuadresList[prop].vehiculo[prop2])
-                    obj[state.cuadresList[prop]['vehiculo'][prop2]['placa']] = (state.cuadresList[prop]['vehiculo'][prop2]['placa'] !== null)
+                    obj[state.cuadresList[prop]['vehiculo'][prop2]['placa']] = (state.cuadresList[prop]['vehiculo'] !== [])
                     ? state.cuadresList[prop]['vehiculo'][prop2]['placa']
                     : ''
                 }
@@ -133,23 +146,20 @@ export default {
         setConsolidacionId(state, value){
             state.cuadre.consolidacion_id = value
         },
+        setRutaId(state, value){
+            state.cuadre.ruta_id = value
+        },
         setFlete(state, value){
             state.cuadre.flete = value
-        },
-        setDescuento(state, value){
-            state.cuadre.descuento = value
-        },
-        setGanancia(state, value){
-            state.cuadre.ganancia = value
         },
         setAnticipo(state, value){
             state.cuadre.anticipo = value
         },
-        setDebe(state, value){
-            state.cuadre.debe = value
-        },
         setSelectedVehiculo(state, value){
             state.selectedVehiculo = value
+        },
+        setSelectedRuta(state, value){
+            state.selectedRuta = value
         },
         
         

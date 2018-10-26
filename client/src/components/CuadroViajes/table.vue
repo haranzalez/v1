@@ -67,6 +67,69 @@
             </el-select>
       </template>
     </el-table-column>
+	<el-table-column
+	  sortable
+      label="Ruta"
+      width="170">
+       <template slot-scope="scope">
+           <el-popover
+            :ref="scope.row.ruta[0].id"
+            placement="right"
+            width="400"
+            trigger="hover">
+            <div v-for="(item, key) in scope.row.ruta[0]" :key="item.id">
+                <el-row v-if="key != 'created_at' || 
+				key != 'updated_at' || 
+				key != 'pivot'">
+                    <el-col :xs="10" :sm="10" :md="10" :lg="10" :xl="10"><b>{{title(key)}}</b></el-col>
+                    <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12">{{(key == 'municipios') ? item.nombre_municipio : item}}</el-col>
+                </el-row>
+            </div>
+            </el-popover>
+           <el-select 
+           v-popover="scope.row.ruta[0].id" 
+           v-model="selectedRuta[scope.row.ruta[0].id]" 
+           placeholder="Seleccione..."
+           @change="">
+                <el-option
+                v-for="item in rutasList"
+                :key="item.id" 
+                :label="item.nombre_municipio"
+                :value="item.id">
+                </el-option>
+            </el-select>
+      </template>
+    </el-table-column>
+	<el-table-column
+	  sortable
+      prop="flete"
+      label="Flete"
+      width="120">
+    </el-table-column>
+	<el-table-column
+	  sortable
+      prop="anticipo"
+      label="Anticipo"
+      width="120">
+    </el-table-column>
+	<el-table-column
+	  sortable
+      prop="descuento"
+      label="Descuento"
+      width="120">
+    </el-table-column>
+	<el-table-column
+	  sortable
+      prop="ganancia"
+      label="Ganancia"
+      width="120">
+    </el-table-column>
+	<el-table-column
+	  sortable
+      prop="debe"
+      label="Debe"
+      width="120">
+    </el-table-column>
     <el-table-column
       fixed="right"
       label="Acciones"
@@ -107,9 +170,14 @@ export default {
 			'headings',
 			'dataReady',
 			'selectedVehiculo',
+			'selectedRuta',
 		]),
 		...mapState('vehiculos', [
 			'vehiculosList',
+			
+		]),
+		...mapState('rutas', [
+			'rutasList',
 		]),
         filtered(){
 			if(this.dataReady){
@@ -164,6 +232,9 @@ export default {
 		]),
 		...mapActions('vehiculos',[
 			'fetchVehiculosList',
+		]),
+		...mapActions('rutas',[
+			'fetchRutasList',
         ]),
         
         pushToCreateVehicle({state,commit}){
@@ -186,6 +257,7 @@ export default {
     created: function(){
 		this.fetchCuadresList()
 		this.fetchVehiculosList('cuadre_viajes')
+		this.fetchRutasList()
 	}
 }
 </script>

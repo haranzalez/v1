@@ -12,3 +12,4 @@ database/development.sqlite
 
 # Pakage.json
 package.json
+package-lock.json

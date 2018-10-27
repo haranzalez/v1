@@ -49,7 +49,7 @@
             placement="right"
             width="400"
             trigger="hover">
-				<div v-if="vehiculosDataReady" v-for="(item, key) in scope.row.conductor[0]" :key="item.id">
+				<div v-for="(item, key) in scope.row.conductor" :key="key">
 					<el-row>
 						<el-col :xs="10" :sm="10" :md="10" :lg="10" :xl="10"><b>{{title(key)}}</b></el-col>
 						<el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12">{{item}}</el-col>
@@ -83,7 +83,7 @@
             placement="right"
             width="400"
             trigger="hover">
-            <div v-if="vehiculosDataReady" v-for="(item, key) in scope.row.trailer[0]" :key="item.id">
+            <div v-for="(item, key) in scope.row.trailer" :key="item.id">
                 <el-row>
                     <el-col :xs="10" :sm="10" :md="10" :lg="10" :xl="10"><b>{{title(key)}}</b></el-col>
                     <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12">{{item}}</el-col>

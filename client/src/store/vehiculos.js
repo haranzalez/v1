@@ -24,7 +24,7 @@ export default {
         vehiculosList: null,
         selectedConductor: null,
         selectedTrailer: null,
-        dataReady: false,
+        vehiculosDataReady: false,
         headings: [], 
         assignVehicleId: null,  
     },
@@ -183,7 +183,7 @@ export default {
             state.headings = headings;
         },
         setDataReady(state, ready){
-            state.dataReady = ready
+            state.vehiculosDataReady = ready
         },
         setSelectedConductorList(state, list){
             state.selectedConductor = list

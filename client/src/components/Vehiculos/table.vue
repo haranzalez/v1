@@ -49,19 +49,20 @@
             placement="right"
             width="400"
             trigger="hover">
-            <div v-for="(item, key) in scope.row.conductor" :key="item.id">
-                <el-row>
-                    <el-col :xs="10" :sm="10" :md="10" :lg="10" :xl="10"><b>{{title(key)}}</b></el-col>
-                    <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12">{{item}}</el-col>
-                </el-row>
-            </div>
+				<div v-if="vehiculosDataReady" v-for="(item, key) in scope.row.conductor[0]" :key="item.id">
+					<el-row>
+						<el-col :xs="10" :sm="10" :md="10" :lg="10" :xl="10"><b>{{title(key)}}</b></el-col>
+						<el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12">{{item}}</el-col>
+					</el-row>
+				</div>
             </el-popover>
            <el-select 
            v-popover="scope.row.placa" 
            v-model="selectedConductor[scope.row.placa]" 
            placeholder="Seleccione.."
            @change="assignConductorToVehicle($event, scope.row.id)">
-                <el-option
+                <el-option 
+				v-if="conductoresDataReady"
                 v-for="item in conductoresList"
                 :key="item.nombres"
                 :label="item.nombres"
@@ -76,12 +77,13 @@
       label="Trailer"
       width="170">
        <template slot-scope="scope">
+		  
            <el-popover
             :ref="scope.row.placa+'-trailer'"
             placement="right"
             width="400"
             trigger="hover">
-            <div v-for="(item, key) in scope.row.trailer" :key="item.id">
+            <div v-if="vehiculosDataReady" v-for="(item, key) in scope.row.trailer[0]" :key="item.id">
                 <el-row>
                     <el-col :xs="10" :sm="10" :md="10" :lg="10" :xl="10"><b>{{title(key)}}</b></el-col>
                     <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12">{{item}}</el-col>
@@ -89,11 +91,13 @@
             </div>
             </el-popover>
            <el-select 
+		   
            v-popover="scope.row.placa+'-trailer'" 
            v-model="selectedTrailer[scope.row.placa]" 
            placeholder="Seleccione.."
            @change="assignTrailerToVehicle($event, scope.row.id)">
                 <el-option
+				v-if="trailersDataReady"
                 v-for="item in trailersList"
                 :key="item.placa"
                 :label="item.placa"
@@ -163,6 +167,12 @@ export default {
 	name: 'VehiculoTable',
 	data () {
       	return {
+			tableDdataReady: () => {
+				if(this.vehiculosDataReady && this.conductoresDataReady && this.trailersDataReady){
+					return this.filtered()
+				}
+				return []
+			},
             selectTypeOfSearch: 'ID',
             filter: '',
 		}
@@ -175,12 +185,13 @@ export default {
         ...mapState('vehiculos', [
             'headings',
             'vehiculosList',
-            'dataReady',
+            'vehiculosDataReady',
             'selectedConductor',
             'selectedTrailer',
         ]),
         ...mapState('trailers', [
-            'trailersList',
+			'trailersList',
+			'trailersDataReady',
             
         ]),
         ...mapState('conductores', [
@@ -189,7 +200,7 @@ export default {
 		]),
 		
         filtered(){
-			if(this.dataReady){
+			if(this.vehiculosDataReady && this.conductoresDataReady && this.trailersDataReady){
 				if(this.filter !== ''){
 					let type = this.selectTypeOfSearch.toLowerCase()
 					type = type.replace(' ', '_')
@@ -204,6 +215,7 @@ export default {
 				}
 				return this.vehiculosList
 			}
+			return []
         },
 
         
@@ -268,7 +280,7 @@ export default {
     },
     created: function(){
         this.fetchVehiculosList(null)
-        this.fetchConductoresList()
+		this.fetchConductoresList()
         this.fetchTrailersList()
 	}
 }

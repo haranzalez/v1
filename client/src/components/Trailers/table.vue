@@ -157,10 +157,10 @@ export default {
         ...mapState('trailers', [
 			'trailersList',
 			'headings',
-			'dataReady',
+			'trailersDataReady',
 		]),
         filtered(){
-			if(this.dataReady){
+			if(this.trailersDataReady){
 				if(this.filter !== ''){
 					let type = this.selectTypeOfSearch.toLowerCase()
 					return this.trailersList.filter(conductor => {

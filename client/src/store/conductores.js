@@ -85,13 +85,17 @@ export default {
                 console.log(err)
             })
         },
-        fetchConductoresList({commit, dispatch}){
+        fetchConductoresList({state, commit, dispatch}){
             HTTP().local.get('api/conductores')
             .then(d => {
+                console.log(d.data)
                 commit('setConductorList', d.data)
-                commit('setDataReady', true)
-                commit('setConductoresDataReady', true)
-                dispatch('renderTableHeadings')
+                if(state.conductoresList != null){
+                    commit('setDataReady', true)
+                    dispatch('renderTableHeadings')
+                }
+                
+                
             })
             .catch(err => {
                 console.log(err)
@@ -131,16 +135,14 @@ export default {
     },
     mutations: {
         setConductorList(state, list){
+            console.log(list)
             state.conductoresList = list
         },
         setTableHeadings(state, headings){
             state.headings = headings;
         },
         setDataReady(state, ready){
-            state.dataReady = ready
-        },
-        setConductoresDataReady(state, ready){
-            state.dataReady = ready
+            state.conductoresDataReady = ready
         },
 
         setCodigo(state, value){

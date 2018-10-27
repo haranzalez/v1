@@ -24,7 +24,7 @@ export default {
             radica_rndc: null,
         },
         trailersList: null,
-        dataReady: false,
+        trailersDataReady: false,
         headings: [],   
     },
 
@@ -101,12 +101,13 @@ export default {
                 console.log(err)
             })
         },
-        fetchTrailersList({commit, dispatch}){
+        fetchTrailersList({state, commit, dispatch}){
             HTTP().local.get('api/trailers')
             .then(d => {
                 commit('setTrailerList', d.data)
                 commit('setDataReady', true)
                 dispatch('renderTableHeadings')
+              
             })
             .catch(err => {
                 console.log(err)
@@ -139,7 +140,7 @@ export default {
             state.headings = headings;
         },
         setDataReady(state, ready){
-            state.dataReady = ready
+            state.trailersDataReady = ready
         },
         setPlaca(state, value){
             state.trailer.placa = value

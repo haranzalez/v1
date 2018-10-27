@@ -122,10 +122,10 @@ export default {
         ...mapState('conductores', [
             'headings',
             'conductoresList',
-            'dataReady',
+            'conductoresDataReady',
 		]),
         filtered(){
-			if(this.dataReady){
+			if(this.conductoresDataReady){
 				if(this.filter !== ''){
 					let type = this.selectTypeOfSearch.toLowerCase()
 					return this.conductoresList.filter(conductor => {

@@ -27,6 +27,7 @@ export default {
         dataReady: false,
         conductoresDataReady: false,
         headings: [],
+        loading: false,
     },
 
     actions: {
@@ -77,6 +78,7 @@ export default {
             })
             .then(d => {
                 Message({
+                    type: 'success',
                     showClose: true,
                     message: 'Actualizacion exitosa.'
                 })
@@ -86,15 +88,15 @@ export default {
             })
         },
         fetchConductoresList({state, commit, dispatch}){
+            commit('setLoading', true)
             HTTP().local.get('api/conductores')
             .then(d => {
-                console.log(d.data)
                 commit('setConductorList', d.data)
                 if(state.conductoresList != null){
                     commit('setDataReady', true)
                     dispatch('renderTableHeadings')
                 }
-                
+                commit('setLoading', false)
                 
             })
             .catch(err => {
@@ -190,6 +192,9 @@ export default {
         setFullConductor(state, value){
             state.conductor = value
         },
+        setLoading(state, value){
+            state.loading = value
+        }
         
     },
 

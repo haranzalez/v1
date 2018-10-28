@@ -1,5 +1,23 @@
 <template>
 <div>
+	<!--Edit dialog form -->
+	<el-dialog :title="conductor.nombres + ' ' + conductor.primer_apellido + ' ' + conductor.segundo_apellido" :visible.sync="editFormVisible">
+		<ConductoresEditForm></ConductoresEditForm>
+		<span slot="footer" class="dialog-footer">
+			<el-button @click="editFormVisible = false">Cancelar</el-button>
+			<el-button type="primary" @click="editConductor">Actualizar</el-button>
+			<el-button type="default" @click="pushToDel">Eliminar</el-button>
+		</span>
+	</el-dialog>
+	<!--Create dialog form -->
+	<el-dialog title="Nuevo conductor" :visible.sync="createFormVisible">
+		<ConductoresCreateForm></ConductoresCreateForm>
+		<span slot="footer" class="dialog-footer">
+			<el-button @click="createFormVisible = false">Cancelar</el-button>
+			<el-button type="primary" @click="create">Crear</el-button>
+		</span>
+	</el-dialog>
+	<!--Table-->
 	<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
 		<h1>Conductores</h1>
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
@@ -12,10 +30,16 @@
 			</div>
 		</el-col>
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-			<div style="text-align:right;">
-				<el-button type="text" @click="back">Volver</el-button>
-				<el-button :disabled="(permisos['Usuarios'].crear)? false:true" @click="pushToCreateConductor">Crear</el-button>
-			</div>
+			
+		
+		<el-dropdown style="float: right; padding: 3px 0" trigger="click" @command="handleAction">  
+			<el-button size="mini">
+				<i class="mdi mdi-settings"></i>
+			</el-button>
+			<el-dropdown-menu slot="dropdown">
+				<el-dropdown-item :disabled="(permisos['Conductores'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Nuevo</el-dropdown-item>
+			</el-dropdown-menu>
+    	</el-dropdown>
 		</el-col>
 		
 		
@@ -23,7 +47,8 @@
 	<el-table
     :data="filtered"
 	:default-sort = "{prop: 'id', order: 'descending'}"
-    style="width: 100%">
+    style="width: 100%"
+	v-loading.body="loading">
     <el-table-column
 	  sortable
       fixed
@@ -90,6 +115,7 @@
       label="Acciones"
       width="120">
       <template slot-scope="scope">
+		  
         <el-button @click="pushToEdit(scope.row)" type="text" size="small">Editar</el-button>
       </template>
     </el-table-column>
@@ -106,12 +132,18 @@ import HTTP from '../../http';
 import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
 import moment from 'moment-timezone'
 import router from '../../router'
+//componentes
+import ConductoresEditForm from '@/components/Conductores/editForm'
+import ConductoresCreateForm from '@/components/Conductores/createForm'
 
 export default {
 	name: 'ConductorTable',
 	data () {
       	return {
-            selectTypeOfSearch: 'Nombre',
+			editFormVisible: false,
+			createFormVisible: false,
+			selectTypeOfSearch: 'Nombre',
+			tableData: [],
             filter: '',
 		}
 	},
@@ -120,12 +152,14 @@ export default {
 			'permisos',
         ]),
         ...mapState('conductores', [
+			'conductor',
             'headings',
             'conductoresList',
-            'conductoresDataReady',
+			'conductoresDataReady',
+			'loading',
 		]),
         filtered(){
-			if(this.conductoresDataReady){
+			
 				if(this.filter !== ''){
 					let type = this.selectTypeOfSearch.toLowerCase()
 					return this.conductoresList.filter(conductor => {
@@ -136,28 +170,59 @@ export default {
 					})
 				}
 				return this.conductoresList
-			}
+			
 		},
 	},
 	components: {
+		ConductoresEditForm,
+		ConductoresCreateForm,
 	},
     methods: {
+		handleAction(e, row){
+            if(e == 'create'){
+				this.createFormVisible = true;
+            }
+        },
 		back(){
 			router.push('/Vehiculos')
 		},
 		...mapMutations('conductores', [
 			'setFullConductor',
+			'setDataReady',
 		]),
         ...mapActions('conductores',[
 			'fetchConductoresList',
+			'createConductor',
+			'editConductor',
+            'delConductor',
 		]),
-        pushToCreateConductor(){
-            router.push('/conductores-crear')
-		},
 		pushToEdit(row){
 			this.setFullConductor(row)
-			router.push('/conductores-editar')
+			this.editFormVisible = true
 		},
+		create(){
+			this.createConductor()
+			this.createFormVisible = false
+			this.fetchConductoresList()
+		},
+		pushToDel(){
+			this.$confirm('Esta operacion eliminara permanentemente este registro. Continuar?', 'Atencion!', {
+                confirmButtonText: 'OK',
+                cancelButtonText: 'Cancelar',
+                type: 'warning'
+            }).then(() => {
+                this.setDataReady(false)
+				this.delConductor()
+				this.editFormVisible = false
+				this.fetchConductoresList()
+            }).catch(() => {
+                this.$message({
+                    type: 'warning',
+                    message: 'Cancelado'
+                });          
+            });
+			
+		}
     },
     created: function(){
 		this.fetchConductoresList()

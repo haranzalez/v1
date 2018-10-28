@@ -1,11 +1,11 @@
 <template>
+
    <vue-scroll class="page-conductores-create">
-       <h1>Conductores - Crear</h1>
-       <el-form label-position="top" ref="form" :model="form" label-width="120px">
+       <el-form label-position="top" ref="form" :rules="rules" label-width="120px" clearValidate> 
         <el-row>
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Codigo">
+                    <el-form-item label="Codigo" prop="codigo">
                         <el-input 
                         @input="setCodigo"
                         placeholder="">
@@ -13,7 +13,7 @@
                     </el-form-item>
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Tipo de identificacion">
+                    <el-form-item label="Tipo de identificacion" prop="tipo_de_identificacion">
                         <el-select 
                         v-model="conductor.tipo_de_identificacion" 
                         placeholder="Select"
@@ -31,7 +31,7 @@
 
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Cedula">
+                    <el-form-item label="Cedula" prop="cedula">
                         <el-input 
                         @input="setCedula"
                         placeholder="">
@@ -39,7 +39,7 @@
                     </el-form-item>
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Municipio documento">
+                    <el-form-item label="Municipio documento" prop="municipio_documento">
                         <el-input 
                         @input="setMunicipioDocumento"
                         placeholder="">
@@ -50,7 +50,7 @@
 
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Nombres">
+                    <el-form-item label="Nombres" prop="nombres">
                         <el-input 
                         @input="setNombres"
                         placeholder="">
@@ -58,7 +58,7 @@
                     </el-form-item>
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Primer apellido">
+                    <el-form-item label="Primer apellido" prop="primer_apellido">
                         <el-input 
                         @input="setPrimerApellido"
                         placeholder="">
@@ -69,7 +69,7 @@
 
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Segundo apellido">
+                    <el-form-item label="Segundo apellido" prop="segundo_apellido"> 
                         <el-input 
                         @input="setSegundoApellido"
                         placeholder="">
@@ -77,7 +77,7 @@
                     </el-form-item>
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Tipo de conductor">
+                    <el-form-item label="Tipo de conductor" prop="tipo_conductor">
                         <el-input 
                         @input="setTipoDeConductor"
                         placeholder="">
@@ -88,7 +88,7 @@
 
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Direccion">
+                    <el-form-item label="Direccion" prop="direccion">
                         <el-input 
                         @input="setDireccion"
                         placeholder="">
@@ -96,7 +96,7 @@
                     </el-form-item>
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Municipio">
+                    <el-form-item label="Municipio" prop="municipio">
                         <el-input 
                         @input="setMunicipio"
                         placeholder="">
@@ -107,7 +107,7 @@
 
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Telefono 1">
+                    <el-form-item label="Telefono 1" prop="telefono_1"> 
                         <el-input 
                         @input="setTelefono1"
                         placeholder="">
@@ -115,7 +115,7 @@
                     </el-form-item>
 				</el-col>
                 <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Telefono 2">
+                    <el-form-item label="Telefono 2" prop="telefono_2">
                         <el-input 
                         @input="setTelefono2"
                         placeholder="">
@@ -126,7 +126,7 @@
 
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Celular">
+                    <el-form-item label="Celular" prop="celular">
                         <el-input 
                         @input="setCelular"
                         placeholder="">
@@ -134,7 +134,7 @@
                     </el-form-item>
 				</el-col>
                 <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Transportadora">
+                    <el-form-item label="Transportadora" prop="transportadora">
                         <el-input 
                         @input="setTransportadora"
                         placeholder="">
@@ -143,18 +143,11 @@
 				</el-col>
 			</el-col>
 
-            <el-col class="col-p pull-right">
-                <el-form-item>
-                    <el-button  type="primary" @click="createConductor">Crear</el-button>
-                    <el-button  @click="back">Cancelar</el-button>
-                </el-form-item>
-            </el-col>
-
         </el-row>
         
         
             
-        </el-form>
+    </el-form>
    </vue-scroll>
 </template>
 
@@ -179,7 +172,51 @@ export default {
                     value: 'pasaporte',
                     label: 'Pasaporte',
                 },
-              ]
+              ],
+              rules: {
+                codigo: [
+                    { required: true, message: 'Porfavor ingrese codigo', trigger: 'blur' }
+                ],
+                tipo_de_identificacion: [
+                    { required: true, message: 'Porfavor ingrese tipo de identificacion', trigger: 'blur' }
+                ],
+                cedula: [
+                    { required: true, message: 'Porfavor ingrese cedula', trigger: 'blur' }
+                ],
+                municipio_documento: [
+                    { required: true, message: 'Porfavor ingrese municipio del documento', trigger: 'blur' }
+                ],
+                nombres: [
+                    { required: true, message: 'Porfavor ingrese nombres', trigger: 'blur' }
+                ],
+                primer_apellido: [
+                    { required: true, message: 'Porfavor ingrese primer apellido', trigger: 'blur' }
+                ],
+                segundo_apellido: [
+                    { required: true, message: 'Porfavor ingrese segundo apellido', trigger: 'blur' }
+                ],
+                tipo_conductor: [
+                    { required: true, message: 'Porfavor ingrese tipo conductor', trigger: 'blur' }
+                ],
+                direccion: [
+                    { required: true, message: 'Porfavor ingrese direccion', trigger: 'blur' }
+                ],
+                municipio: [
+                    { required: true, message: 'Porfavor ingrese municipio', trigger: 'blur' }
+                ],
+                telefono_1: [
+                    { required: true, message: 'Porfavor ingrese telefono 1', trigger: 'blur' }
+                ],
+                telefono_2: [
+                    { required: true, message: 'Porfavor ingrese telefono 2', trigger: 'blur' }
+                ],
+                celular: [
+                    { required: true, message: 'Porfavor ingrese celular', trigger: 'blur' }
+                ],
+                transportadora: [
+                    { required: true, message: 'Porfavor ingrese transportadora', trigger: 'blur' }
+                ],
+            }
 		}
 	},
 	computed: {
@@ -195,6 +232,14 @@ export default {
 	components: {
 	},
     methods: {
+         handleAction(e){
+            if(e == 'create'){
+                this.createConductor()
+            }
+            if(e == 'back'){
+                this.back()
+            }
+        },
         back() {
 			router.push('/COnductores')
 		},

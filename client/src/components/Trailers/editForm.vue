@@ -1,6 +1,5 @@
 <template>
    <vue-scroll class="page-trailers-create">
-       <h1>Trailers - Crear</h1>
        <el-form label-position="top" ref="form" label-width="120px">
         <el-row>
             <el-col>
@@ -170,14 +169,6 @@
 				
                 
 			</el-col>
-
-            <el-col class="col-p pull-right">
-                <el-form-item>
-                    <el-button  type="primary" @click="editTrailer">Actualizar</el-button>
-                    <el-button  @click="back">Cancelar</el-button>
-                    <el-button :disabled="(permisos['Conductores'].eliminar)? false:true" type="text" @click="del">Eliminar</el-button>
-                </el-form-item>
-            </el-col>
 
         </el-row>
         

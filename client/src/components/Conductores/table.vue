@@ -1,16 +1,15 @@
 <template>
 <div>
 	<!--Edit dialog form -->
-	<el-dialog :title="conductor.nombres + ' ' + conductor.primer_apellido + ' ' + conductor.segundo_apellido" :visible.sync="editFormVisible">
+	<el-dialog width="60%" top="5vh" :title="conductor.nombres + ' ' + conductor.primer_apellido + ' ' + conductor.segundo_apellido" :visible.sync="editFormVisible">
 		<ConductoresEditForm></ConductoresEditForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button @click="editFormVisible = false">Cancelar</el-button>
 			<el-button type="primary" @click="editConductor">Actualizar</el-button>
-			<el-button type="default" @click="pushToDel">Eliminar</el-button>
 		</span>
 	</el-dialog>
 	<!--Create dialog form -->
-	<el-dialog title="Nuevo conductor" :visible.sync="createFormVisible">
+	<el-dialog width="60%" top="5vh" title="Nuevo conductor" :visible.sync="createFormVisible">
 		<ConductoresCreateForm></ConductoresCreateForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button @click="createFormVisible = false">Cancelar</el-button>
@@ -21,7 +20,7 @@
 	<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
 		<h1>Conductores</h1>
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-			<div class="serachBar-ctn">
+			<div class="serachBar-ctn pb-10">
 				<el-input placeholder="Buscar" v-model="filter" class="input-with-select">
 					<el-select v-model="selectTypeOfSearch" slot="prepend" placeholder="Seleccione">
 					<el-option v-for="col in headings" :key="col" :label="col" :value="col"></el-option>
@@ -38,6 +37,7 @@
 			</el-button>
 			<el-dropdown-menu slot="dropdown">
 				<el-dropdown-item :disabled="(permisos['Conductores'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Nuevo</el-dropdown-item>
+				<el-dropdown-item command="export"><i class="mdi mdi-file-excel mr-10"></i> Exportar</el-dropdown-item>
 			</el-dropdown-menu>
     	</el-dropdown>
 		</el-col>
@@ -45,6 +45,7 @@
 		
 	
 	<el-table
+	id="conductores_table"
     :data="filtered"
 	:default-sort = "{prop: 'id', order: 'descending'}"
     style="width: 100%"
@@ -116,7 +117,8 @@
       width="120">
       <template slot-scope="scope">
 		  
-        <el-button @click="pushToEdit(scope.row)" type="text" size="small">Editar</el-button>
+        <el-button @click="pushToEdit(scope.row)" type="text" size="medium"><i class="mdi mdi-lead-pencil mr-10"></i></el-button>
+		<el-button @click="pushToDel(scope.row)" type="text" size="medium"><i class="mdi mdi-delete mr-10"></i></el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -132,6 +134,8 @@ import HTTP from '../../http';
 import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
 import moment from 'moment-timezone'
 import router from '../../router'
+//servicios
+import exportService from '../../services/exportService'
 //componentes
 import ConductoresEditForm from '@/components/Conductores/editForm'
 import ConductoresCreateForm from '@/components/Conductores/createForm'
@@ -153,7 +157,7 @@ export default {
         ]),
         ...mapState('conductores', [
 			'conductor',
-            'headings',
+			'headings',
             'conductoresList',
 			'conductoresDataReady',
 			'loading',
@@ -178,9 +182,13 @@ export default {
 		ConductoresCreateForm,
 	},
     methods: {
+		
 		handleAction(e, row){
             if(e == 'create'){
 				this.createFormVisible = true;
+			}
+			if(e == 'export'){
+				exportService.toXLS(this.conductoresList, 'Conductores', true)
             }
         },
 		back(){
@@ -205,13 +213,13 @@ export default {
 			this.createFormVisible = false
 			this.fetchConductoresList()
 		},
-		pushToDel(){
+		pushToDel(row){
 			this.$confirm('Esta operacion eliminara permanentemente este registro. Continuar?', 'Atencion!', {
                 confirmButtonText: 'OK',
                 cancelButtonText: 'Cancelar',
                 type: 'warning'
             }).then(() => {
-                this.setDataReady(false)
+				this.setFullConductor(row)
 				this.delConductor()
 				this.editFormVisible = false
 				this.fetchConductoresList()

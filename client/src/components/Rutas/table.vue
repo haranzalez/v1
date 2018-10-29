@@ -1,5 +1,63 @@
 <template>
 <div>
+	<!-- dialog create  municipio -->
+	<el-dialog 
+		title="Nuevo Municipio" 
+		:visible.sync="dialogFormMunicipioVisible"
+		:close-on-press-escape="true"
+		center>
+		<el-form label-position="top">
+			<el-form-item label="Nombre municipio" :label-width="formLabelWidth">
+			<el-input @input="setMunicipioName" autocomplete="off"></el-input>
+			</el-form-item>
+			<el-form-item label="Codigo" :label-width="formLabelWidth">
+			<el-input @input="setCodigoMunicipio" autocomplete="off"></el-input>
+			</el-form-item>
+		</el-form>
+		<span slot="footer" class="dialog-footer">
+			<el-button @click="dialogFormMunicipioVisible = false">Cerrar</el-button>
+			<el-button type="primary" @click="createMunicipio">Crear</el-button>
+		</span>
+	</el-dialog>
+	<!-- dialog create ruta -->
+	<el-dialog 
+	title="Nueva ruta" 
+	:visible.sync="dialogFormVisible"
+	:close-on-press-escape="true"
+	center>
+		<el-form label-position="top">
+			<el-form-item label="Kilometros" :label-width="formLabelWidth">
+			<el-input v-model="ruta.kilometros" auto-complete="off"></el-input>
+			</el-form-item>
+			<el-form-item label="Municipio" :label-width="formLabelWidth">
+			<el-select @change="setMunicipioId" :value="ruta.municipio_id" placeholder="Select">
+				<el-option
+				v-for="item in municipios_list"
+				:key="item.id"
+				:label="item.nombre_municipio"
+				:value="item.id">
+				</el-option>
+			</el-select>
+			</el-form-item>
+			<el-form-item label="Valor flete">
+				<el-input 
+				@input="setValorflete"
+				placeholder="">
+				</el-input>
+			</el-form-item>
+			<el-form-item label="Anticipo sugerido">
+				<el-input 
+				@input="setAnticipoSugerido"
+				placeholder="">
+				</el-input>
+			</el-form-item>
+		</el-form>
+		<span slot="footer" class="dialog-footer">
+			<el-button @click="dialogFormVisible = false">Cancelar</el-button>
+			<el-button type="primary" @click="create_ruta">Crear</el-button>
+		</span>
+	</el-dialog>
+
 	<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
 		<h1>Rutas</h1>
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
@@ -13,66 +71,16 @@
 		</el-col>
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
 			<div style="text-align:right;">
-				<el-button type="text" @click="back">Volver</el-button>
-				<el-button :disabled="(permisos['Usuarios'].crear)? false:true" @click="dialogFormVisible = true; rutaReset()">Crear ruta</el-button>
-				<el-button :disabled="(permisos['Usuarios'].crear)? false:true" @click="dialogFormMunicipioVisible = true; rutaReset()">Crear municipio</el-button>
-				<el-dialog 
-				title="Nuevo Municipio" 
-				:visible.sync="dialogFormMunicipioVisible"
-				:close-on-press-escape="true"
-				center>
-				<el-form label-position="top">
-					<el-form-item label="Nombre municipio" :label-width="formLabelWidth">
-					<el-input @input="setMunicipioName" autocomplete="off"></el-input>
-					</el-form-item>
-					<el-form-item label="Codigo" :label-width="formLabelWidth">
-					<el-input @input="setCodigoMunicipio" autocomplete="off"></el-input>
-					</el-form-item>
-				</el-form>
-				<span slot="footer" class="dialog-footer">
-					<el-button @click="dialogFormMunicipioVisible = false">Cerrar</el-button>
-					<el-button type="primary" @click="createMunicipio">Crear</el-button>
-				</span>
-				</el-dialog>
-
-
-				<el-dialog 
-				title="Nueva ruta" 
-				:visible.sync="dialogFormVisible"
-				:close-on-press-escape="true"
-				center>
-					<el-form label-position="top">
-						<el-form-item label="Kilometros" :label-width="formLabelWidth">
-						<el-input v-model="ruta.kilometros" auto-complete="off"></el-input>
-						</el-form-item>
-						<el-form-item label="Municipio" :label-width="formLabelWidth">
-						<el-select @change="setMunicipioId" :value="ruta.municipio_id" placeholder="Select">
-                            <el-option
-                            v-for="item in municipios_list"
-                            :key="item.id"
-                            :label="item.nombre_municipio"
-                            :value="item.id">
-                            </el-option>
-                        </el-select>
-						</el-form-item>
-						<el-form-item label="Valor flete">
-							<el-input 
-							@input="setValorflete"
-							placeholder="">
-							</el-input>
-                    	</el-form-item>
-						<el-form-item label="Anticipo sugerido">
-							<el-input 
-							@input="setAnticipoSugerido"
-							placeholder="">
-							</el-input>
-                    	</el-form-item>
-					</el-form>
-					<span slot="footer" class="dialog-footer">
-						<el-button @click="dialogFormVisible = false">Cancelar</el-button>
-						<el-button type="primary" @click="create_ruta">Crear</el-button>
-					</span>
-				</el-dialog>
+				<el-dropdown style="float: right; padding: 3px 0" trigger="click" @command="handleAction">  
+					<el-button size="mini">
+						<i class="mdi mdi-settings"></i>
+					</el-button>
+					<el-dropdown-menu slot="dropdown">
+						<el-dropdown-item :disabled="(permisos['Rutas'].crear)? false:true" command="createRuta"><i class="mdi mdi-routes"></i> Nueva ruta</el-dropdown-item>
+						<el-dropdown-item :disabled="(permisos['Rutas'].crear)? false:true" command="createMunicipio"><i class="mdi mdi-city mr-10"></i> Nuevo municipio</el-dropdown-item>
+						<el-dropdown-item command="export"><i class="mdi mdi-file-excel mr-10"></i> Exportar</el-dropdown-item>
+					</el-dropdown-menu>
+				</el-dropdown>
 			</div>
 		</el-col>
 	<el-table
@@ -134,7 +142,8 @@
       label="Acciones"
       width="120">
       <template slot-scope="scope">
-        <el-button @click="pushToEdit(scope.row)" type="text" size="small">Editar</el-button>
+        <el-button @click="pushToEdit(scope.row)" type="text" size="medium"><i class="mdi mdi-lead-pencil mr-10"></i></el-button>
+		<el-button @click="pushToDel(scope.row)" type="text" size="medium"><i class="mdi mdi-delete mr-10"></i></el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -150,6 +159,8 @@ import HTTP from '../../http';
 import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
 import moment from 'moment-timezone'
 import router from '../../router'
+//servicios
+import exportService from '../../services/exportService'
 
 export default {
 	name: 'RutasTable',
@@ -193,6 +204,17 @@ export default {
 	components: {
 	},
     methods: {
+		handleAction(e, row){
+            if(e == 'createRuta'){
+				this.dialogFormVisible = true;
+			}
+			if(e == 'createMunicipio'){
+				this.dialogFormMunicipioVisible = true;
+			}
+			if(e == 'export'){
+				exportService.toXLS(this.rutasList, 'Rutas', true)
+            }
+        },
 		back(){
 			router.push('/cuadre-viaje')
 		},
@@ -212,12 +234,9 @@ export default {
 			'fetchMunicipios',
 			'createRuta',
 			'create_municipio',
+			'delRuta',
 		]),
-         pushToCreateRuta(){
-            router.push('/rutas-crear')
-		},
 		pushToEdit(row){
-			console.log(row)
 			this.setFullRuta(row)
 			router.push('/rutas-editar')
 		},
@@ -231,6 +250,23 @@ export default {
 			if(this.create_municipio()){
 				this.dialogFormMunicipioVisible = false
 			}
+		},
+		pushToDel(row){
+			this.$confirm('Esta operacion eliminara permanentemente este registro. Continuar?', 'Atencion!', {
+                confirmButtonText: 'OK',
+                cancelButtonText: 'Cancelar',
+                type: 'warning'
+            }).then(() => {
+				this.setFullRuta(row)
+				this.delRuta()
+				this.fetchRutasList()
+            }).catch(() => {
+                this.$message({
+                    type: 'warning',
+                    message: 'Cancelado'
+                });          
+            });
+			
 		}
     },
     created: function(){

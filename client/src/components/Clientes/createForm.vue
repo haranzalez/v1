@@ -1,6 +1,5 @@
 <template>
    <vue-scroll class="page-vehiculos-create">
-       <h1>Vehiculos - Crear</h1>
        <el-form label-position="top" ref="form" label-width="120px">
         <el-row>
             <el-col :span="12" :md="12" :sm="24" :xs="24">
@@ -87,13 +86,6 @@
                         </el-input>
                     </el-form-item>
 				</el-col>
-            </el-col>
-
-            <el-col class="col-p pull-right">
-                <el-form-item>
-                    <el-button  type="primary" @click="createCliente">Crear</el-button>
-                    <el-button  @click="back">Regresar</el-button>
-                </el-form-item>
             </el-col>
 
         </el-row>

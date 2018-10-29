@@ -121,7 +121,6 @@ export default {
         },
         renderTableHeadings({state, commit}){
             let pkg = []
-           
             for(let prop2 in state.conductoresList[0]){
                 if(prop2 !== 'created_at' || prop2 !== 'updated_at'){
                     prop2 = prop2.split('_').join(' ')
@@ -130,18 +129,20 @@ export default {
                 }
                 
             }
-            
             commit('setTableHeadings', pkg)
+            
         },
 
     },
     mutations: {
         setConductorList(state, list){
-            console.log(list)
             state.conductoresList = list
         },
         setTableHeadings(state, headings){
             state.headings = headings;
+        },
+        setTableHeadingsToExport(state, headings){
+            state.exportHeadings = headings;
         },
         setDataReady(state, ready){
             state.conductoresDataReady = ready

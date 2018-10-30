@@ -5,7 +5,7 @@
 		<ClientesEditForm></ClientesEditForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button @click="editFormVisible = false">Cancelar</el-button>
-			<el-button type="primary" @click="editConductor">Actualizar</el-button>
+			<el-button type="primary" @click="editCliente">Actualizar</el-button>
 		</span>
 	</el-dialog>
 	<!--Create dialog form -->
@@ -36,12 +36,16 @@
 					</el-button>
 					<el-dropdown-menu slot="dropdown">
 						<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Nuevo</el-dropdown-item>
+						<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="consolidacion"><i class="mdi mdi-briefcase mr-10"></i> Nuevo cuadre</el-dropdown-item>
+						<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" @click="setCurrent()"><i class="mdi mdi-eraser-variant mr-10"></i> Soltar seleccion</el-dropdown-item>
 						<el-dropdown-item command="export"><i class="mdi mdi-file-excel mr-10"></i> Exportar</el-dropdown-item>
 					</el-dropdown-menu>
 				</el-dropdown>
 			</div>
 		</el-col>
 	<el-table
+	highlight-current-row
+	@current-change="handleCurrentTableChange"
     :data="filtered"
 	:default-sort = "{prop: 'id', order: 'descending'}"
     style="width: 100%">
@@ -150,6 +154,7 @@ export default {
 	name: 'ClientesTable',
 	data () {
       	return {
+			currentRow: false,
 			editFormVisible: false,
 			createFormVisible: false,
             selectTypeOfSearch: '',
@@ -184,9 +189,19 @@ export default {
 		ClientesCreateForm,
 	},
     methods: {
+		setCurrent(row) {
+			this.$refs.singleTable.setCurrentRow(row);
+		},
+		handleCurrentTableChange(val) {
+			console.log(val.id)
+			this.setClienteId(val.id)
+		},
 		handleAction(e, row){
             if(e == 'create'){
 				this.createFormVisible = true;
+			}
+			if(e == 'consolidacion'){
+				this.createConsolidacion()
 			}
 			if(e == 'export'){
 				exportService.toXLS(this.clientesList, 'Clientes', true)
@@ -198,10 +213,18 @@ export default {
 		...mapMutations('clientes', [
 			'setFullCliente',
 		]),
+		
         ...mapActions('clientes',[
 			'fetchClientesList',
 			'createCliente',
 			'delCliente',
+			'editCliente',
+		]),
+		...mapMutations('consolidaciones', [
+			'setClienteId',
+		]),
+		...mapActions('consolidaciones',[
+			'createConsolidacion',
 		]),
         pushToEdit(row){
 			this.setFullCliente(row)

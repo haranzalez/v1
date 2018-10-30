@@ -3,7 +3,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 //apps
-import Dashboard from '../views/apps/Dashboard.vue'
+
 import Usuarios from '../views/Usuarios/Usuarios.vue'
 import UserEdit from '../views/Usuarios/EditarUsuario.vue'
 import UserCreate from '../views/Usuarios/CrearUsuario.vue'
@@ -12,11 +12,10 @@ import RoleEdit from '../views/Usuarios/Roles/EditarRole.vue'
 import Roles from '../views/Usuarios/Roles/RolesTable.vue'
 import UsersLogs from '../views/Usuarios/Logs/LogsTable.vue'
 import layouts from '../layout'
-
+//Consolidaciones
+import Consolidaciones from '../views/Consolidaciones/Consolidaciones.vue'
 //conductores
 import ConductoresTable from '../views/Conductores/Conductores.vue'
-import ConductoresCreateForm from '../views/Conductores/CreateForm.vue'
-import ConductoresEditForm from '../views/Conductores/EditForm.vue'
 //trailers
 import TrailersTable from '../views/Trailers/Trailers.vue'
 import TrailersCreateForm from '../views/Trailers/CreateForm.vue'
@@ -55,13 +54,13 @@ const router = new Router({
 	mode: 'history',
 	routes: [
 		//=========================================================================
-		//Dashboard
+		//Consolidaciones
 		//=========================================================================
 		{
 			path: '/',
-			alias: '/dashboard',
-			name: 'dashboard',
-			component: Dashboard,
+			alias: '/Consolidaciones',
+			name: 'Consolidaciones',
+			component: Consolidaciones,
 			meta: {
 				auth: true,
 				layout: layouts.navLeft,
@@ -76,28 +75,6 @@ const router = new Router({
 			path: '/Conductores',
 			name: 'conductores',
 			component: ConductoresTable,
-			meta: {
-				auth: true,
-				layout: layouts.navLeft,
-				searchable: true,
-				tags: ['Logistica']
-			}
-		},
-		{
-			path: '/conductores-crear',
-			name: 'conductores - crear',
-			component: ConductoresCreateForm,
-			meta: {
-				auth: true,
-				layout: layouts.navLeft,
-				searchable: true,
-				tags: ['Logistica']
-			}
-		},
-		{
-			path: '/conductores-editar',
-			name: 'conductores - editar',
-			component: ConductoresEditForm,
 			meta: {
 				auth: true,
 				layout: layouts.navLeft,

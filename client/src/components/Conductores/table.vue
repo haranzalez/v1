@@ -1,7 +1,7 @@
 <template>
 <div>
 	<!--Edit dialog form -->
-	<el-dialog width="60%" top="5vh" :title="conductor.nombres + ' ' + conductor.primer_apellido + ' ' + conductor.segundo_apellido" :visible.sync="editFormVisible">
+	<el-dialog width="50%" top="5vh" :title="conductor.nombres + ' ' + conductor.primer_apellido + ' ' + conductor.segundo_apellido" :visible.sync="editFormVisible">
 		<ConductoresEditForm></ConductoresEditForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button @click="editFormVisible = false">Cancelar</el-button>
@@ -9,7 +9,7 @@
 		</span>
 	</el-dialog>
 	<!--Create dialog form -->
-	<el-dialog width="60%" top="5vh" title="Nuevo conductor" :visible.sync="createFormVisible">
+	<el-dialog width="50%" top="10vh" title="Nuevo conductor" :visible.sync="createFormVisible">
 		<ConductoresCreateForm></ConductoresCreateForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button @click="createFormVisible = false">Cancelar</el-button>
@@ -164,16 +164,16 @@ export default {
 		]),
         filtered(){
 			
-				if(this.filter !== ''){
-					let type = this.selectTypeOfSearch.toLowerCase()
-					return this.conductoresList.filter(conductor => {
-						if(isNaN(conductor[type])){
-							return conductor[type].toLowerCase().includes(this.filter.toLowerCase())
-						}
-						return conductor[type].toString().includes(this.filter.toString())
-					})
-				}
-				return this.conductoresList
+			if(this.filter !== ''){
+				let type = this.selectTypeOfSearch.toLowerCase()
+				return this.conductoresList.filter(conductor => {
+					if(isNaN(conductor[type])){
+						return conductor[type].toLowerCase().includes(this.filter.toLowerCase())
+					}
+					return conductor[type].toString().includes(this.filter.toString())
+				})
+			}
+			return this.conductoresList
 			
 		},
 	},

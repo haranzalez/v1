@@ -5,7 +5,7 @@
             <el-col :span="12" :md="12" :sm="24" :xs="24">
 				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Nombre razon social">
-                        <el-input 
+                        <el-input size="mini"
                         @input="setNombreRazonSocial"
                         placeholder="">
                         </el-input>
@@ -13,7 +13,7 @@
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="NIT">
-                        <el-input 
+                        <el-input size="mini"
                         @input="setNit"
                         placeholder="">
                         </el-input>
@@ -21,7 +21,7 @@
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Direccion">
-                        <el-input 
+                        <el-input size="mini"
                         @input="setDireccion"
                         placeholder="">
                         </el-input>
@@ -29,7 +29,7 @@
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Ciudad">
-                        <el-input 
+                        <el-input size="mini"
                         @input="setCiudad"
                         placeholder="">
                         </el-input>
@@ -37,7 +37,7 @@
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Email">
-                        <el-input 
+                        <el-input size="mini"
                         @input="setEmail"
                         placeholder="">
                         </el-input>
@@ -48,7 +48,7 @@
             <el-col :span="12" :md="12" :sm="24" :xs="24">
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Telefono">
-                        <el-input 
+                        <el-input size="mini"
                         @input="setTelefono"
                         placeholder="">
                         </el-input>
@@ -56,7 +56,7 @@
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Celular">
-                        <el-input 
+                        <el-input size="mini"
                         @input="setCelular"
                         placeholder="">
                         </el-input>
@@ -64,7 +64,7 @@
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Persona de contacto">
-                        <el-input 
+                        <el-input size="mini"
                         @input="setPersonaDeContacto"
                         placeholder="">
                         </el-input>
@@ -72,7 +72,7 @@
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Direccion envio de factura">
-                        <el-input 
+                        <el-input size="mini"
                         @input="setDireccionEnvioDeFactura"
                         placeholder="">
                         </el-input>
@@ -80,7 +80,7 @@
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Tipo de contrato">
-                        <el-input 
+                        <el-input size="mini"
                         @input="setTipoContrato"
                         placeholder="">
                         </el-input>

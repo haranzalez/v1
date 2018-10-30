@@ -1,5 +1,22 @@
 <template>
 <div>
+	<!--Edit dialog form -->
+	<el-dialog width="50%" top="10vh" :title="'Placa: '+vehiculo.placa" :visible.sync="editFormVisible">
+		<VehiculosEditForm></VehiculosEditForm>
+		<span slot="footer" class="dialog-footer">
+			<el-button @click="editFormVisible = false">Cancelar</el-button>
+			<el-button type="primary" @click="editVehiculo">Actualizar</el-button>
+		</span>
+	</el-dialog>
+	<!--Create dialog form -->
+	<el-dialog width="50%" top="10vh" title="Nuevo vehiculo" :visible.sync="createFormVisible">
+		<VehiculosCreateForm></VehiculosCreateForm>
+		<span slot="footer" class="dialog-footer">
+			<el-button @click="createFormVisible = false">Cancelar</el-button>
+			<el-button type="primary" @click="create">Crear</el-button>
+		</span>
+	</el-dialog>
+	<!--Table-->
 	<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
 		<h1>Vehiculos</h1>
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
@@ -13,7 +30,15 @@
 		</el-col>
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
 			<div style="text-align:right;">
-				<el-button class="animated fadeInRight" @click="pushToCreateVehicle">Crear</el-button>
+				<el-dropdown style="float: right; padding: 3px 0" trigger="click" @command="handleAction">  
+					<el-button size="mini">
+						<i class="mdi mdi-settings"></i>
+					</el-button>
+					<el-dropdown-menu slot="dropdown">
+						<el-dropdown-item :disabled="(permisos['Vehiculos'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Nuevo</el-dropdown-item>
+						<el-dropdown-item command="export"><i class="mdi mdi-file-excel mr-10"></i> Exportar</el-dropdown-item>
+					</el-dropdown-menu>
+				</el-dropdown>
 			</div>
 		</el-col>
 	<el-table
@@ -145,7 +170,8 @@
       label="Acciones"
       width="120">
       <template slot-scope="scope">
-        <el-button @click="pushToEditVehicle(scope.row)" type="text" size="small">Detalles/editar</el-button>
+		<el-button @click="pushToEdit(scope.row)" type="text" size="medium"><i class="mdi mdi-lead-pencil mr-10"></i></el-button>
+		<el-button @click="pushToDel(scope.row)" type="text" size="medium"><i class="mdi mdi-delete mr-10"></i></el-button>
       </template>
     </el-table-column>
 
@@ -162,11 +188,18 @@ import HTTP from '../../http';
 import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
 import moment from 'moment-timezone'
 import router from '../../router'
+//servicios
+import exportService from '../../services/exportService'
+//componentes
+import VehiculosEditForm from '@/components/Vehiculos/editForm'
+import VehiculosCreateForm from '@/components/Vehiculos/createForm'
 
 export default {
 	name: 'VehiculoTable',
 	data () {
       	return {
+			editFormVisible: false,
+			createFormVisible: false,
 			tableDdataReady: () => {
 				if(this.vehiculosDataReady && this.conductoresDataReady && this.trailersDataReady){
 					return this.filtered()
@@ -183,6 +216,7 @@ export default {
 			'permisos',
         ]),
         ...mapState('vehiculos', [
+			'vehiculo',
             'headings',
             'vehiculosList',
             'vehiculosDataReady',
@@ -221,8 +255,18 @@ export default {
         
 	},
 	components: {
+		VehiculosEditForm,
+		VehiculosCreateForm,
 	},
     methods: {
+		handleAction(e, row){
+            if(e == 'create'){
+				this.createFormVisible = true;
+			}
+			if(e == 'export'){
+				exportService.toXLS(this.vehiculosList, 'Vehiculos', true)
+            }
+        },
 		pushTo(resource){
 			router.push('/'+resource)
 		},
@@ -241,7 +285,7 @@ export default {
       	},
         ...mapMutations('vehiculos', [
 			'setVehicleId',
-			'setFullVehicle',
+			'setFullVehiculo',
 		]),
 		
         title(field){
@@ -252,7 +296,10 @@ export default {
         ...mapActions('vehiculos',[
             'fetchVehiculosList',
             'assignConductor',
-            'assignTrailer',
+			'assignTrailer',
+			'editVehiculo',
+			'delVehiculo',
+			'createVehiculo',
         ]),
         ...mapActions('conductores',[
 			'fetchConductoresList',
@@ -261,14 +308,6 @@ export default {
 			'fetchTrailersList',
         ]),
         
-        pushToCreateVehicle({state,commit}){
-            router.push('/vehiculos-crear')
-		},
-		pushToEditVehicle(row){
-			this.setFullVehicle(row)
-			router.push('/vehiculos-editar')
-		},
-		
         assignConductorToVehicle(e,id){
             this.setVehicleId(id)
             this.assignConductor(e)
@@ -276,7 +315,34 @@ export default {
         assignTrailerToVehicle(e,id){
             this.setVehicleId(id)
             this.assignTrailer(e)
-        },
+		},
+		pushToEdit(row){
+			this.setFullVehiculo(row)
+			this.editFormVisible = true
+		},
+		create(){
+			this.createVehiculo()
+			this.createFormVisible = false
+			this.fetchVehiulosList()
+		},
+		pushToDel(row){
+			this.$confirm('Esta operacion eliminara permanentemente este registro. Continuar?', 'Atencion!', {
+                confirmButtonText: 'OK',
+                cancelButtonText: 'Cancelar',
+                type: 'warning'
+            }).then(() => {
+				this.setFullVehiculo(row)
+				this.delVehiculo()
+				this.editFormVisible = false
+				this.fetchVehiculosList()
+            }).catch(() => {
+                this.$message({
+                    type: 'warning',
+                    message: 'Cancelado'
+                });          
+            });
+			
+		}
     },
     created: function(){
         this.fetchVehiculosList(null)

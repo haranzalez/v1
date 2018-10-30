@@ -5,7 +5,7 @@
             <el-col :span="12" :md="12" :sm="24" :xs="24">
 				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Nombre razon social">
-                        <el-input 
+                        <el-input size="mini" 
                         :value="cliente.nombre_razon_social"
                         @input="setNombreRazonSocial"
                         placeholder="">
@@ -14,7 +14,7 @@
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="NIT">
-                        <el-input 
+                        <el-input size="mini" 
                         :value="cliente.nit"
                         @input="setNit"
                         placeholder="">
@@ -23,7 +23,7 @@
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Direccion">
-                        <el-input 
+                        <el-input size="mini" 
                         :value="cliente.direccion"
                         @input="setDireccion"
                         placeholder="">
@@ -32,7 +32,7 @@
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Ciudad">
-                        <el-input 
+                        <el-input size="mini" 
                         :value="cliente.ciudad"
                         @input="setCiudad"
                         placeholder="">
@@ -41,7 +41,7 @@
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Email">
-                        <el-input 
+                        <el-input size="mini" 
                         :value="cliente.email"
                         @input="setEmail"
                         placeholder="">
@@ -53,7 +53,7 @@
             <el-col :span="12" :md="12" :sm="24" :xs="24">
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Telefono">
-                        <el-input 
+                        <el-input size="mini" 
                         :value="cliente.telefono"
                         @input="setTelefono"
                         placeholder="">
@@ -62,7 +62,7 @@
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Celular">
-                        <el-input 
+                        <el-input size="mini" 
                         :value="cliente.celular"
                         @input="setCelular"
                         placeholder="">
@@ -71,7 +71,7 @@
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Persona de contacto">
-                        <el-input 
+                        <el-input size="mini" 
                         :value="cliente.persona_de_contacto"
                         @input="setPersonaDeContacto"
                         placeholder="">
@@ -80,7 +80,7 @@
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Direccion envio de factura">
-                        <el-input 
+                        <el-input size="mini" 
                         :value="cliente.direccion_envio_de_factura"
                         @input="setDireccionEnvioDeFactura"
                         placeholder="">
@@ -89,7 +89,7 @@
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Tipo de contrato">
-                        <el-input 
+                        <el-input size="mini" 
                         :value="cliente.tipo_contrato"
                         @input="setTipoContrato"
                         placeholder="">
@@ -191,7 +191,7 @@ export default {
 		margin-bottom: 20px;
 	}
 	.col-p {
-		padding: 0 10px;
+        padding: 0px 10px;
 		box-sizing: border-box;
 	}
 	.select-wide {

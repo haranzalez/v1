@@ -20,6 +20,8 @@ export default {
         cuadresList: null,
         selectedVehiculo: null,
         selectedRuta: null,
+        selectedCreateVehiculo: '',
+        selectedCreateRuta: '',
         dataReady: false,
         headings: [],  
     },
@@ -27,8 +29,8 @@ export default {
         createCuadre({state}){
             HTTP().local.post('api/cuadre-viajes/crear', {
                 consolidacion_id: state.cuadre.consolidacion_id,
-                ruta_id: state.cuadre.ruta_id,
-                flete: state.cuadre.flete,
+                ruta_id: state.selectedCreateVehiculo,
+                flete: state.selectedCreateRuta,
                 anticipo: state.cuadre.anticipo,
             })
             .then(d => {
@@ -161,7 +163,12 @@ export default {
         setSelectedRuta(state, value){
             state.selectedRuta = value
         },
-        
+        setSelectedCreateVehiculo(state, value){
+            state.selectedCreateVehiculo = value
+        },
+        setSelectedCreateRuta(state, value){
+            state.selectedCreateRuta = value
+        },
         
     },
 

@@ -6,7 +6,7 @@
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Codigo">
-                        <el-input 
+                        <el-input size="mini" 
                         :value="conductor.codigo"
                         :disabled="(permisos['Conductores'].editar)? false:true"
                         
@@ -17,7 +17,7 @@
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Tipo de identificacion">
-                        <el-select 
+                        <el-select size="mini" 
                         :value="conductor.tipo_de_identificacion"
                         :disabled="(permisos['Conductores'].editar)? false:true"
                         
@@ -37,7 +37,7 @@
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Cedula">
-                        <el-input 
+                        <el-input size="mini"
                         :value="conductor.cedula"
                         :disabled="(permisos['Conductores'].editar)? false:true"
                         
@@ -48,7 +48,7 @@
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Municipio documento">
-                        <el-input 
+                        <el-input size="mini" 
                         :value="conductor.municipio_documento"
                         :disabled="(permisos['Conductores'].editar)? false:true"
                         
@@ -62,7 +62,7 @@
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Nombres">
-                        <el-input 
+                        <el-input size="mini" 
                         :value="conductor.nombres"
                         :disabled="(permisos['Conductores'].editar)? false:true"
                        
@@ -73,7 +73,7 @@
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Primer apellido">
-                        <el-input 
+                        <el-input size="mini" 
                         :value="conductor.primer_apellido"
                         :disabled="(permisos['Conductores'].editar)? false:true"
                        
@@ -87,7 +87,7 @@
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Segundo apellido">
-                        <el-input 
+                        <el-input size="mini" 
                         :value="conductor.segundo_apellido"
                         :disabled="(permisos['Conductores'].editar)? false:true"
                        
@@ -98,7 +98,7 @@
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Tipo de conductor">
-                        <el-input 
+                        <el-input size="mini" 
                         :value="conductor.tipo_de_conductor"
                         :disabled="(permisos['Conductores'].editar)? false:true"
                         
@@ -112,7 +112,7 @@
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Direccion">
-                        <el-input 
+                        <el-input size="mini" 
                         :value="conductor.direccion"
                         :disabled="(permisos['Conductores'].editar)? false:true"
                        
@@ -123,7 +123,7 @@
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Municipio">
-                        <el-input 
+                        <el-input size="mini" 
                         :value="conductor.municipio"
                         :disabled="(permisos['Conductores'].editar)? false:true"
                       
@@ -137,7 +137,7 @@
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Telefono 1">
-                        <el-input 
+                        <el-input size="mini" 
                         :value="conductor.telefono_1"
                         :disabled="(permisos['Conductores'].editar)? false:true"
                         
@@ -148,7 +148,7 @@
 				</el-col>
                 <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Telefono 2">
-                        <el-input 
+                        <el-input size="mini" 
                         :value="conductor.telefono_2"
                         :disabled="(permisos['Conductores'].editar)? false:true"
                         
@@ -162,7 +162,7 @@
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Celular">
-                        <el-input 
+                        <el-input size="mini" 
                         :value="conductor.celular"
                         :disabled="(permisos['Conductores'].editar)? false:true"
                         
@@ -173,7 +173,7 @@
 				</el-col>
                 <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Transportadora">
-                        <el-input 
+                        <el-input size="mini" 
                         :value="conductor.transportadora"
                         :disabled="(permisos['Conductores'].editar)? false:true"
                         

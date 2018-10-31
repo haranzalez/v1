@@ -4,7 +4,7 @@
 	<el-dialog width="60%" top="5vh" :title="cliente.nombre_razon_social" :visible.sync="editFormVisible">
 		<ClientesEditForm></ClientesEditForm>
 		<span slot="footer" class="dialog-footer">
-			<el-button @click="editFormVisible = false">Cancelar</el-button>
+			<el-button @click="editFormVisible = false; paramsReset(); setDataReady(false)">Cancelar</el-button>
 			<el-button type="primary" @click="editCliente">Actualizar</el-button>
 		</span>
 	</el-dialog>
@@ -12,7 +12,7 @@
 	<el-dialog width="60%" top="5vh" title="Nuevo cliente" :visible.sync="createFormVisible">
 		<ClientesCreateForm></ClientesCreateForm>
 		<span slot="footer" class="dialog-footer">
-			<el-button @click="createFormVisible = false">Cancelar</el-button>
+			<el-button @click="createFormVisible = false; paramsReset(); setDataReady(false)">Cancelar</el-button>
 			<el-button type="primary" @click="create">Crear</el-button>
 		</span>
 	</el-dialog>
@@ -29,17 +29,22 @@
 			</div>
 		</el-col>
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-			<div style="text-align:right;">
-				<el-dropdown style="float: right; padding: 3px 0" trigger="click" @command="handleAction">  
-					<el-button size="mini">
-						<i class="mdi mdi-settings"></i>
-					</el-button>
-					<el-dropdown-menu slot="dropdown">
-						<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Nuevo</el-dropdown-item>
-						<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="consolidacion"><i class="mdi mdi-briefcase mr-10"></i> Nuevo cuadre</el-dropdown-item>
-						<el-dropdown-item command="export"><i class="mdi mdi-file-excel mr-10"></i> Exportar</el-dropdown-item>
-					</el-dropdown-menu>
-				</el-dropdown>
+			<div style="float: right; padding: 3px 0; width:30%;">
+				<el-row>
+					<el-button type="default" size="mini" style="margin-right:5px;"><i class="mdi mdi-reload"></i></el-button>
+					<el-dropdown trigger="click" @command="handleAction">  
+						<el-button size="mini">
+							<i class="mdi mdi-settings"></i>
+						</el-button>
+						<el-dropdown-menu slot="dropdown">
+							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Nuevo cliente</el-dropdown-item>
+							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="edit"><i class="mdi mdi-lead-pencil mr-10"></i> Editar</el-dropdown-item>
+							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
+							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="consolidacion"><i class="mdi mdi-briefcase mr-10"></i> Nuevo cuadre</el-dropdown-item>
+							<el-dropdown-item command="export"><i class="mdi mdi-file-excel mr-10"></i> Exportar</el-dropdown-item>
+						</el-dropdown-menu>
+					</el-dropdown>
+				</el-row>
 			</div>
 		</el-col>
 	<el-table
@@ -50,22 +55,16 @@
     style="width: 100%">
     <el-table-column
 	  sortable
-      fixed
-      prop="id"
-      label="ID"
-      width="50">
+	  fixed
+      prop="nit"
+      label="NIT"
+      width="110">
     </el-table-column>
     <el-table-column
 	  sortable
       prop="nombre_razon_social"
       label="Razon social"
       width="220">
-    </el-table-column>
-    <el-table-column
-	  sortable
-      prop="nit"
-      label="NIT"
-      width="150">
     </el-table-column>
 	<el-table-column
 	  sortable
@@ -77,19 +76,19 @@
 	  sortable
       prop="ciudad"
       label="Ciudad"
-      width="200">
+      width="120">
     </el-table-column>
    <el-table-column
 	  sortable
       prop="email"
       label="Email"
-      width="200">
+      width="220">
     </el-table-column>
 	<el-table-column
 	  sortable
       prop="telefono"
       label="Telefono"
-      width="200">
+      width="140">
     </el-table-column>
 	<el-table-column
 	  sortable
@@ -100,35 +99,26 @@
 	<el-table-column
 	  sortable
       prop="persona_de_contacto"
-      label="Celular"
+      label="Persona de contacto"
       width="200">
     </el-table-column>
 	<el-table-column
 	  sortable
       prop="direccion_envio_de_factura"
       label="Direccion envio de facturas"
-      width="500">
+      width="220">
     </el-table-column>
 	<el-table-column
 	  sortable
       prop="tipo_contrato"
       label="Tipo de contrato"
-      width="120">
+      width="140">
     </el-table-column>
 	<el-table-column
 	  sortable
       prop="created_at"
       label="Fecha creacion"
       width="300">
-    </el-table-column>
-    <el-table-column
-      fixed="right"
-      label="Acciones"
-      width="120">
-      <template slot-scope="scope">
-        <el-button @click="pushToEdit(scope.row)" type="text" size="medium"><i class="mdi mdi-lead-pencil mr-10"></i></el-button>
-		<el-button @click="pushToDel(scope.row)" type="text" size="medium"><i class="mdi mdi-delete mr-10"></i></el-button>
-      </template>
     </el-table-column>
   </el-table>
 
@@ -205,10 +195,35 @@ export default {
 		handleCurrentTableChange(val) {
 			this.setClienteId(val.id)
 			this.setFullCliente(val)
+			this.setDataReady(true)
 		},
-		handleAction(e, row){
+		handleAction(e){
             if(e == 'create'){
+				this.paramsReset()
+				this.setDataReady(false)
 				this.createFormVisible = true;
+			}
+			if(e == 'edit'){
+				if(this.dataReady){
+					this.editFormVisible = true
+				}else{
+					Message({
+						type: "warning",
+						showClose: true,
+						message: 'Porfavor seleccione cliente.'
+					})
+            	}
+			}
+			if(e == 'del'){
+				if(this.dataReady){
+					this.pushToDel()
+				}else{
+					Message({
+						type: "warning",
+						showClose: true,
+						message: 'Porfavor seleccione cliente.'
+					})
+            	}
 			}
 			if(e == 'consolidacion'){
 				if(this.consolidacion.cliente_id != null){
@@ -245,6 +260,8 @@ export default {
 		},
 		...mapMutations('clientes', [
 			'setFullCliente',
+			'paramsReset',
+			'setDataReady',
 		]),
 		
         ...mapActions('clientes',[
@@ -259,22 +276,17 @@ export default {
 		...mapActions('consolidaciones',[
 			'createConsolidacion',
 		]),
-        pushToEdit(row){
-			this.setFullCliente(row)
-			this.editFormVisible = true
-		},
 		create(){
 			this.createCliente()
 			this.createFormVisible = false
 			this.fetchClientesList()
 		},
-		pushToDel(row){
+		pushToDel(){
 			this.$confirm('Esta operacion eliminara permanentemente este registro. Continuar?', 'Atencion!', {
                 confirmButtonText: 'OK',
                 cancelButtonText: 'Cancelar',
                 type: 'warning'
             }).then(() => {
-				this.setFullCliente(row)
 				this.delCliente()
 				this.editFormVisible = false
 				this.fetchClientesList()

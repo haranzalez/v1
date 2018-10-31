@@ -103,15 +103,12 @@ export default {
             HTTP().local.get('api/clientes')
             .then(d => {
                 commit('setClientesList', d.data)
-                commit('setDataReady', true)
                 dispatch('renderTableHeadings')
             })
             .catch(err => {
                 console.log(err)
             })
         },
-       
-        
         renderTableHeadings({state, commit}){
             let pkg = []
            
@@ -174,7 +171,7 @@ export default {
             state.cliente.celular = value
         },
         
-        paramsReset(state, value){
+        paramsReset(state){
             state.cliente = {
                 id: null,
                 nombre_razon_social: null,

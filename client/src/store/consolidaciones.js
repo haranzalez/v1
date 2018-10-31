@@ -22,18 +22,27 @@ export default {
     },
     actions: {
         createConsolidacion({state}){
-            HTTP().local.get('api/consolidaciones/'+state.consolidacion.cliente_id+'/crear')
-            .then(d => {
-                console.log(d)
-                Message({
-                    type: "success",
-                    showClose: true,
-                    message: 'Consolidacion creada.'
+            if(state.consolidacion.cliente_id != null){
+                HTTP().local.get('api/consolidaciones/'+state.consolidacion.cliente_id+'/crear')
+                .then(d => {
+                    console.log(d)
+                    Message({
+                        type: "success",
+                        showClose: true,
+                        message: 'Consolidacion creada.'
+                    })
                 })
-            })
-            .catch(err => {
-                console.log(err)
-            })
+                .catch(err => {
+                    console.log(err)
+                })
+            }else{
+                Message({
+                    type: "warning",
+                    showClose: true,
+                    message: 'Porfavor seleccione cliente.'
+                })
+            }
+            
         },
         
         delConsolidacion({state}){

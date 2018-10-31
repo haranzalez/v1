@@ -37,7 +37,6 @@
 					<el-dropdown-menu slot="dropdown">
 						<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Nuevo</el-dropdown-item>
 						<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="consolidacion"><i class="mdi mdi-briefcase mr-10"></i> Nuevo cuadre</el-dropdown-item>
-						<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" @click="setCurrent()"><i class="mdi mdi-eraser-variant mr-10"></i> Soltar seleccion</el-dropdown-item>
 						<el-dropdown-item command="export"><i class="mdi mdi-file-excel mr-10"></i> Exportar</el-dropdown-item>
 					</el-dropdown-menu>
 				</el-dropdown>
@@ -144,6 +143,8 @@ import HTTP from '../../http';
 import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
 import moment from 'moment-timezone'
 import router from '../../router'
+//UI
+import { Notification, Message, Confirm } from 'element-ui'
 //servicios
 import exportService from '../../services/exportService'
 //componentes
@@ -171,6 +172,9 @@ export default {
 			'dataReady',
 			'cliente',
 		]),
+		...mapState('consolidaciones', [
+			'consolidacion',
+		]),
         filtered(){
 			if(this.filter !== ''){
 				let type = this.selectTypeOfSearch.toLowerCase()
@@ -190,22 +194,51 @@ export default {
 	},
     methods: {
 		setCurrent(row) {
+			if(row == null){
+					this.setClienteId(null)
+					this.$refs.singleTable.setCurrentRow(row);
+					return
+			}
 			this.$refs.singleTable.setCurrentRow(row);
+			
 		},
 		handleCurrentTableChange(val) {
-			console.log(val.id)
 			this.setClienteId(val.id)
+			this.setFullCliente(val)
 		},
 		handleAction(e, row){
             if(e == 'create'){
 				this.createFormVisible = true;
 			}
 			if(e == 'consolidacion'){
-				this.createConsolidacion()
+				if(this.consolidacion.cliente_id != null){
+					this.$confirm('Esta a punto de crear un nuevo cuadre para el cliente: '+this.cliente.nombre_razon_social+' NIT: '+this.cliente.nit+'. Continuar?', 'Atencion!', {
+						confirmButtonText: 'OK',
+						cancelButtonText: 'Cancelar',
+						type: 'warning'
+					}).then(() => {
+						this.createConsolidacion()
+					}).catch(() => {
+						this.$message({
+							type: 'warning',
+							message: 'Cancelado'
+						});          
+					});
+				}else{
+					Message({
+						type: "warning",
+						showClose: true,
+						message: 'Porfavor seleccione cliente.'
+					})
+            	}
+				
 			}
 			if(e == 'export'){
 				exportService.toXLS(this.clientesList, 'Clientes', true)
-            }
+			}
+			if(e == 'clear'){
+				this.setCurrent()
+			}
         },
 		back(){
 			router.push('/')

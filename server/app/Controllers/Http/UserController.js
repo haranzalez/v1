@@ -3,6 +3,7 @@
 /**
  * Resourceful controller for interacting with users
  */
+const Env = use('Env');
 const User = use('App/Models/User');
 const EmailService = use('App/Services/EmailService');
 const Encryption = require('crypto');
@@ -145,7 +146,8 @@ class UserController {
 
       const e = new EmailService()
       const token = Encryption.randomBytes(20).toString('hex')
-      
+      const iplink = '172.30.10.18';
+      const port = '3333';
       e.sendPasswordResetEmail({
         from: 'haranzalez@gmail.com',
         to: email,
@@ -153,7 +155,7 @@ class UserController {
         text: 'Esta recibiendo este email porque usted (o alguien) solicito '+
         'cambiar el password de su cuenta.\n\n'+
         'Porfavor haga click en el siguiente link para completar el proceso de cambio:\n\n'+
-        'http://localhost:3333/api/password/reset/' + token + '\n\n'+
+        'http://'+iplink+':'+port+'/api/password/reset/' + token + '\n\n'+
         'Si usted no ha solicitado cambiar su password, porfavor ignore este email y su password no cambiara.',
         user_id: user.rows[0].id,
         ip: ip,
@@ -182,7 +184,7 @@ class UserController {
     const now = Date.now();
     
       if(requests.rows.length > 0 && requests.rows[0].expires >= now){
-        response.redirect('http://localhost:8080/reset-password/'+token)
+        response.redirect('http://172.30.10.17:8080/reset-password/'+token)
       }else {
         return{
           message: 'Solicitud expirada'

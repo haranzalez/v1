@@ -184,7 +184,7 @@ class UserController {
     const now = Date.now();
     
       if(requests.rows.length > 0 && requests.rows[0].expires >= now){
-        response.redirect('http://localhost:8080/reset-password/'+token)
+        response.redirect('http://172.30.10.17:8080/reset-password/'+token)
       }else {
         return{
           message: 'Solicitud expirada'

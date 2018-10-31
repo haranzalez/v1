@@ -1,12 +1,11 @@
 <template>
    <vue-scroll class="page-vehiculos-create">
-       <h1>Vehiculos - Detalles/Editar</h1>
        <el-form label-position="top" ref="form" label-width="120px">
         <el-row>
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Placa">
-                        <el-input 
+                        <el-input size="mini"
                         @input="setPlaca"
                         placeholder="Placa"
                         :value="vehiculo.placa"
@@ -18,7 +17,7 @@
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Numero chasis">
-                        <el-input 
+                        <el-input size="mini"
                         :value="vehiculo.numero_chasis"
                         v-model="vehiculo.numero_chasis"
                         @input="setNumeroChasis"
@@ -31,7 +30,7 @@
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Tipo de vehiculo">
-                        <el-input 
+                        <el-input size="mini"
                         :value="vehiculo.tipo_de_vehiculo"
                         v-model="vehiculo.tipo_de_vehiculo"
                         @input="setTipoDeVehiculo"
@@ -41,7 +40,7 @@
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Tipo configuracion">
-                        <el-input 
+                        <el-input size="mini"
                         :value="vehiculo.tipo_configuracion"
                         v-model="vehiculo.tipo_configuracion"
                         @input="setTipoConfiguracion"
@@ -54,7 +53,7 @@
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Modelo">
-                        <el-input 
+                        <el-input size="mini"
                         :value="vehiculo.modelo"
                         v-model="vehiculo.modelo"
                         @input="setModelo"
@@ -64,7 +63,7 @@
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Numero Motor">
-                        <el-input 
+                        <el-input size="mini"
                         :value="vehiculo.numero_motor"
                         v-model="vehiculo.numero_motor"
                         @input="setNumeroMotor"
@@ -77,7 +76,7 @@
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Tipo de flota">
-                        <el-input 
+                        <el-input size="mini"
                         :value="vehiculo.tipo_de_flota"
                         v-model="vehiculo.tipo_de_flota"
                         @input="setTipoDeFlota"
@@ -87,7 +86,7 @@
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Marca cabezote">
-                        <el-input 
+                        <el-input size="mini"
                         :value="vehiculo.marca_cabezote"
                         v-model="vehiculo.marca_cabezote"
                         @input="setMarcaCabezote"
@@ -100,7 +99,7 @@
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Linea cabezote">
-                        <el-input 
+                        <el-input size="mini"
                         :value="vehiculo.linea_cabezote"
                         v-model="vehiculo.linea_cabezote"
                         @input="setLineaCabezote"
@@ -110,7 +109,7 @@
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Tipo de combustible">
-                        <el-input 
+                        <el-input size="mini"
                         :value="vehiculo.tipo_de_combustible"
                         v-model="vehiculo.tipo_de_combustible"
                         @input="setTipoDeCombustible"
@@ -123,7 +122,7 @@
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Color">
-                        <el-input 
+                        <el-input size="mini"
                         :value="vehiculo.color"
                         v-model="vehiculo.color"
                         @input="setColor"
@@ -134,7 +133,8 @@
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
                     <el-col :span="12" :md="12" :sm="24" :xs="24">
                         <el-form-item label="Peso (Toneladas)">
-                        <el-input-number 
+                        <el-input-number
+                        size="mini" 
                         :value="vehiculo.peso"
                         v-model="vehiculo.peso" 
                         controls-position="right" 
@@ -146,7 +146,8 @@
                     </el-col>
                     <el-col :span="12" :md="12" :sm="24" :xs="24">
                         <el-form-item label="Capasidad de carga (Toneladas)">
-                        <el-input-number 
+                        <el-input-number
+                        size="mini" 
                         :value="vehiculo.capasidad_carga"
                         v-model="vehiculo.capasidad_carga" 
                         controls-position="right" 
@@ -158,14 +159,6 @@
                     </el-col>
 				</el-col>
 			</el-col>
-
-            <el-col class="col-p pull-right">
-                <el-form-item>
-                    <el-button :disabled="(permisos['Vehiculos'].editar)? false:true" type="primary" @click="editVehiculo">Actualizar</el-button>
-                    <el-button  @click="back">Cancelar</el-button>
-                    <el-button :disabled="(permisos['Vehiculos'].eliminar)? false:true" type="text" @click="del">Eliminar</el-button>
-                </el-form-item>
-            </el-col>
 
         </el-row>
         

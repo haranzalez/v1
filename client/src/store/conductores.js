@@ -27,6 +27,7 @@ export default {
         dataReady: false,
         conductoresDataReady: false,
         headings: [],
+        loading: false,
     },
 
     actions: {
@@ -77,6 +78,7 @@ export default {
             })
             .then(d => {
                 Message({
+                    type: 'success',
                     showClose: true,
                     message: 'Actualizacion exitosa.'
                 })
@@ -85,13 +87,17 @@ export default {
                 console.log(err)
             })
         },
-        fetchConductoresList({commit, dispatch}){
+        fetchConductoresList({state, commit, dispatch}){
+            commit('setLoading', true)
             HTTP().local.get('api/conductores')
             .then(d => {
                 commit('setConductorList', d.data)
-                commit('setDataReady', true)
-                commit('setConductoresDataReady', true)
-                dispatch('renderTableHeadings')
+                if(state.conductoresList != null){
+                    commit('setDataReady', true)
+                    dispatch('renderTableHeadings')
+                }
+                commit('setLoading', false)
+                
             })
             .catch(err => {
                 console.log(err)
@@ -115,7 +121,6 @@ export default {
         },
         renderTableHeadings({state, commit}){
             let pkg = []
-           
             for(let prop2 in state.conductoresList[0]){
                 if(prop2 !== 'created_at' || prop2 !== 'updated_at'){
                     prop2 = prop2.split('_').join(' ')
@@ -124,8 +129,8 @@ export default {
                 }
                 
             }
-            
             commit('setTableHeadings', pkg)
+            
         },
 
     },
@@ -136,11 +141,11 @@ export default {
         setTableHeadings(state, headings){
             state.headings = headings;
         },
-        setDataReady(state, ready){
-            state.dataReady = ready
+        setTableHeadingsToExport(state, headings){
+            state.exportHeadings = headings;
         },
-        setConductoresDataReady(state, ready){
-            state.dataReady = ready
+        setDataReady(state, ready){
+            state.conductoresDataReady = ready
         },
 
         setCodigo(state, value){
@@ -188,6 +193,9 @@ export default {
         setFullConductor(state, value){
             state.conductor = value
         },
+        setLoading(state, value){
+            state.loading = value
+        }
         
     },
 

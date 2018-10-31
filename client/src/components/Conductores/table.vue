@@ -1,9 +1,26 @@
 <template>
 <div>
+	<!--Edit dialog form -->
+	<el-dialog width="50%" top="5vh" :title="conductor.nombres + ' ' + conductor.primer_apellido + ' ' + conductor.segundo_apellido" :visible.sync="editFormVisible">
+		<ConductoresEditForm></ConductoresEditForm>
+		<span slot="footer" class="dialog-footer">
+			<el-button @click="editFormVisible = false">Cancelar</el-button>
+			<el-button type="primary" @click="editConductor">Actualizar</el-button>
+		</span>
+	</el-dialog>
+	<!--Create dialog form -->
+	<el-dialog width="50%" top="10vh" title="Nuevo conductor" :visible.sync="createFormVisible">
+		<ConductoresCreateForm></ConductoresCreateForm>
+		<span slot="footer" class="dialog-footer">
+			<el-button @click="createFormVisible = false">Cancelar</el-button>
+			<el-button type="primary" @click="create">Crear</el-button>
+		</span>
+	</el-dialog>
+	<!--Table-->
 	<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
 		<h1>Conductores</h1>
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-			<div class="serachBar-ctn">
+			<div class="serachBar-ctn pb-10">
 				<el-input placeholder="Buscar" v-model="filter" class="input-with-select">
 					<el-select v-model="selectTypeOfSearch" slot="prepend" placeholder="Seleccione">
 					<el-option v-for="col in headings" :key="col" :label="col" :value="col"></el-option>
@@ -12,18 +29,27 @@
 			</div>
 		</el-col>
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-			<div style="text-align:right;">
-				<el-button type="text" @click="back">Volver</el-button>
-				<el-button :disabled="(permisos['Usuarios'].crear)? false:true" @click="pushToCreateConductor">Crear</el-button>
-			</div>
+			
+		
+		<el-dropdown style="float: right; padding: 3px 0" trigger="click" @command="handleAction">  
+			<el-button size="mini">
+				<i class="mdi mdi-settings"></i>
+			</el-button>
+			<el-dropdown-menu slot="dropdown">
+				<el-dropdown-item :disabled="(permisos['Conductores'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Nuevo</el-dropdown-item>
+				<el-dropdown-item command="export"><i class="mdi mdi-file-excel mr-10"></i> Exportar</el-dropdown-item>
+			</el-dropdown-menu>
+    	</el-dropdown>
 		</el-col>
 		
 		
 	
 	<el-table
+	id="conductores_table"
     :data="filtered"
 	:default-sort = "{prop: 'id', order: 'descending'}"
-    style="width: 100%">
+    style="width: 100%"
+	v-loading.body="loading">
     <el-table-column
 	  sortable
       fixed
@@ -90,7 +116,9 @@
       label="Acciones"
       width="120">
       <template slot-scope="scope">
-        <el-button @click="pushToEdit(scope.row)" type="text" size="small">Editar</el-button>
+		  
+        <el-button @click="pushToEdit(scope.row)" type="text" size="medium"><i class="mdi mdi-lead-pencil mr-10"></i></el-button>
+		<el-button @click="pushToDel(scope.row)" type="text" size="medium"><i class="mdi mdi-delete mr-10"></i></el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -106,12 +134,20 @@ import HTTP from '../../http';
 import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
 import moment from 'moment-timezone'
 import router from '../../router'
+//servicios
+import exportService from '../../services/exportService'
+//componentes
+import ConductoresEditForm from '@/components/Conductores/editForm'
+import ConductoresCreateForm from '@/components/Conductores/createForm'
 
 export default {
 	name: 'ConductorTable',
 	data () {
       	return {
-            selectTypeOfSearch: 'Nombre',
+			editFormVisible: false,
+			createFormVisible: false,
+			selectTypeOfSearch: 'Nombre',
+			tableData: [],
             filter: '',
 		}
 	},
@@ -120,44 +156,81 @@ export default {
 			'permisos',
         ]),
         ...mapState('conductores', [
-            'headings',
+			'conductor',
+			'headings',
             'conductoresList',
-            'dataReady',
+			'conductoresDataReady',
+			'loading',
 		]),
         filtered(){
-			if(this.dataReady){
-				if(this.filter !== ''){
-					let type = this.selectTypeOfSearch.toLowerCase()
-					return this.conductoresList.filter(conductor => {
-						if(isNaN(conductor[type])){
-							return conductor[type].toLowerCase().includes(this.filter.toLowerCase())
-						}
-						return conductor[type].toString().includes(this.filter.toString())
-					})
-				}
-				return this.conductoresList
+			
+			if(this.filter !== ''){
+				let type = this.selectTypeOfSearch.toLowerCase()
+				return this.conductoresList.filter(conductor => {
+					if(isNaN(conductor[type])){
+						return conductor[type].toLowerCase().includes(this.filter.toLowerCase())
+					}
+					return conductor[type].toString().includes(this.filter.toString())
+				})
 			}
+			return this.conductoresList
+			
 		},
 	},
 	components: {
+		ConductoresEditForm,
+		ConductoresCreateForm,
 	},
     methods: {
+		
+		handleAction(e, row){
+            if(e == 'create'){
+				this.createFormVisible = true;
+			}
+			if(e == 'export'){
+				exportService.toXLS(this.conductoresList, 'Conductores', true)
+            }
+        },
 		back(){
 			router.push('/Vehiculos')
 		},
 		...mapMutations('conductores', [
 			'setFullConductor',
+			'setDataReady',
 		]),
         ...mapActions('conductores',[
 			'fetchConductoresList',
+			'createConductor',
+			'editConductor',
+            'delConductor',
 		]),
-        pushToCreateConductor(){
-            router.push('/conductores-crear')
-		},
 		pushToEdit(row){
 			this.setFullConductor(row)
-			router.push('/conductores-editar')
+			this.editFormVisible = true
 		},
+		create(){
+			this.createConductor()
+			this.createFormVisible = false
+			this.fetchConductoresList()
+		},
+		pushToDel(row){
+			this.$confirm('Esta operacion eliminara permanentemente este registro. Continuar?', 'Atencion!', {
+                confirmButtonText: 'OK',
+                cancelButtonText: 'Cancelar',
+                type: 'warning'
+            }).then(() => {
+				this.setFullConductor(row)
+				this.delConductor()
+				this.editFormVisible = false
+				this.fetchConductoresList()
+            }).catch(() => {
+                this.$message({
+                    type: 'warning',
+                    message: 'Cancelado'
+                });          
+            });
+			
+		}
     },
     created: function(){
 		this.fetchConductoresList()

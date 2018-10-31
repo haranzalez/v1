@@ -1,5 +1,22 @@
 <template>
 <div>
+	<!--Edit dialog form -->
+	<el-dialog width="60%" top="5vh" :title="trailer.placa" :visible.sync="editFormVisible">
+		<TrailersEditForm></TrailersEditForm>
+		<span slot="footer" class="dialog-footer">
+			<el-button @click="editFormVisible = false">Cancelar</el-button>
+			<el-button type="primary" @click="editTrailer">Actualizar</el-button>
+		</span>
+	</el-dialog>
+	<!--Create dialog form -->
+	<el-dialog width="60%" top="5vh" title="Nuevo trailer" :visible.sync="createFormVisible">
+		<TrailersCreateForm></TrailersCreateForm>
+		<span slot="footer" class="dialog-footer">
+			<el-button @click="createFormVisible = false">Cancelar</el-button>
+			<el-button type="primary" @click="create">Crear</el-button>
+		</span>
+	</el-dialog>
+	<!-- searchbar -->
 	<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
 		<h1>Trailers</h1>
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
@@ -12,9 +29,17 @@
 			</div>
 		</el-col>
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+			
 			<div style="text-align:right;">
-				<el-button type="text" @click="back">Volver</el-button>
-				<el-button :disabled="(permisos['Usuarios'].crear)? false:true" @click="pushToCreateTrailer">Crear</el-button>
+				<el-dropdown  trigger="click" @command="handleAction">  
+				<el-button size="mini">
+					<i class="mdi mdi-settings"></i>
+				</el-button>
+				<el-dropdown-menu slot="dropdown">
+					<el-dropdown-item :disabled="(permisos['Trailers'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Nuevo</el-dropdown-item>
+					<el-dropdown-item command="export"><i class="mdi mdi-file-excel mr-10"></i> Exportar</el-dropdown-item>
+				</el-dropdown-menu>
+    		</el-dropdown>
 			</div>
 		</el-col>
 		
@@ -125,7 +150,8 @@
       label="Acciones"
       width="120">
       <template slot-scope="scope">
-        <el-button @click="pushToEdit(scope.row)" type="text" size="small">Editar</el-button>
+        <el-button @click="pushToEdit(scope.row)" type="text" size="medium"><i class="mdi mdi-lead-pencil mr-10"></i></el-button>
+		<el-button @click="pushToDel(scope.row)" type="text" size="medium"><i class="mdi mdi-delete mr-10"></i></el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -141,11 +167,18 @@ import HTTP from '../../http';
 import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
 import moment from 'moment-timezone'
 import router from '../../router'
+//servicios
+import exportService from '../../services/exportService'
+//componentes
+import TrailersEditForm from '@/components/Trailers/editForm'
+import TrailersCreateForm from '@/components/Trailers/createForm'
 
 export default {
 	name: 'TrailerTable',
 	data () {
       	return {
+			editFormVisible: false,
+			createFormVisible: false,
             selectTypeOfSearch: 'Placa',
             filter: '',
 		}
@@ -155,12 +188,13 @@ export default {
 			'permisos',
         ]),
         ...mapState('trailers', [
+			'trailer',
 			'trailersList',
 			'headings',
-			'dataReady',
+			'trailersDataReady',
 		]),
         filtered(){
-			if(this.dataReady){
+			
 				if(this.filter !== ''){
 					let type = this.selectTypeOfSearch.toLowerCase()
 					return this.trailersList.filter(conductor => {
@@ -171,12 +205,21 @@ export default {
 					})
 				}
 				return this.trailersList
-			}
 		},
 	},
 	components: {
+		TrailersEditForm,
+		TrailersCreateForm,
 	},
     methods: {
+		handleAction(e, row){
+            if(e == 'create'){
+				this.createFormVisible = true;
+			}
+			if(e == 'export'){
+				exportService.toXLS(this.trailersList, 'Trailers', true)
+            }
+        },
 		back(){
 			router.push('/Vehiculos')
 		},
@@ -185,14 +228,37 @@ export default {
 		]),
         ...mapActions('trailers',[
 			'fetchTrailersList',
+			'editTrailer',
+			'createTrailer',
+			'delTrailer',
 		]),
-         pushToCreateTrailer(){
-            router.push('/trailers-crear')
-		},
-		pushToEdit(row){
+        pushToEdit(row){
 			this.setFullTrailer(row)
-			router.push('/trailers-editar')
+			this.editFormVisible = true
 		},
+		create(){
+			this.createTrailer()
+			this.createFormVisible = false
+			this.fetchTrailersList()
+		},
+		pushToDel(row){
+			this.$confirm('Esta operacion eliminara permanentemente este registro. Continuar?', 'Atencion!', {
+                confirmButtonText: 'OK',
+                cancelButtonText: 'Cancelar',
+                type: 'warning'
+            }).then(() => {
+				this.setFullTrailer(row)
+				this.delTrailer()
+				this.editFormVisible = false
+				this.fetchTrailersList()
+            }).catch(() => {
+                this.$message({
+                    type: 'warning',
+                    message: 'Cancelado'
+                });          
+            });
+			
+		}
     },
     created: function(){
 		this.fetchTrailersList()

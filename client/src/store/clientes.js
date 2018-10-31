@@ -74,6 +74,7 @@ export default {
             .then(d => {
                 console.log(d)
                 Message({
+                    type: 'success',
                     showClose: true,
                     message: 'Actualizacion exitosa.'
                 })

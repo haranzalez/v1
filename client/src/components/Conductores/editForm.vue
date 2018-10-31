@@ -1,14 +1,15 @@
 <template>
-   <vue-scroll class="page-conductores-edit">
-       <h1>Conductores - Actualizar</h1>
+
+  <vue-scroll class="page-conductores-edit">
        <el-form label-position="top" ref="form" label-width="120px">
         <el-row>
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Codigo">
-                        <el-input 
+                        <el-input size="mini" 
                         :value="conductor.codigo"
-                        v-model="conductor.codigo"
+                        :disabled="(permisos['Conductores'].editar)? false:true"
+                        
                         @input="setCodigo"
                         placeholder="">
                         </el-input>
@@ -16,9 +17,10 @@
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Tipo de identificacion">
-                        <el-select 
+                        <el-select size="mini" 
                         :value="conductor.tipo_de_identificacion"
-                        v-model="conductor.tipo_de_identificacion" 
+                        :disabled="(permisos['Conductores'].editar)? false:true"
+                        
                         placeholder="Select"
                         @change="setTipoDeiIdentificacion">
                             <el-option
@@ -35,9 +37,10 @@
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Cedula">
-                        <el-input 
+                        <el-input size="mini"
                         :value="conductor.cedula"
-                        v-model="conductor.cedula"
+                        :disabled="(permisos['Conductores'].editar)? false:true"
+                        
                         @input="setCedula"
                         placeholder="">
                         </el-input>
@@ -45,9 +48,10 @@
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Municipio documento">
-                        <el-input 
+                        <el-input size="mini" 
                         :value="conductor.municipio_documento"
-                        v-model="conductor.municipio_documento"
+                        :disabled="(permisos['Conductores'].editar)? false:true"
+                        
                         @input="setMunicipioDocumento"
                         placeholder="">
                         </el-input>
@@ -58,9 +62,10 @@
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Nombres">
-                        <el-input 
+                        <el-input size="mini" 
                         :value="conductor.nombres"
-                        v-model="conductor.nombres"
+                        :disabled="(permisos['Conductores'].editar)? false:true"
+                       
                         @input="setNombres"
                         placeholder="">
                         </el-input>
@@ -68,9 +73,10 @@
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Primer apellido">
-                        <el-input 
+                        <el-input size="mini" 
                         :value="conductor.primer_apellido"
-                        v-model="conductor.primer_apellido"
+                        :disabled="(permisos['Conductores'].editar)? false:true"
+                       
                         @input="setPrimerApellido"
                         placeholder="">
                         </el-input>
@@ -81,9 +87,10 @@
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Segundo apellido">
-                        <el-input 
-                        :value="conductor.segundo_apelliod"
-                        v-model="conductor.segundo_apellido"
+                        <el-input size="mini" 
+                        :value="conductor.segundo_apellido"
+                        :disabled="(permisos['Conductores'].editar)? false:true"
+                       
                         @input="setSegundoApellido"
                         placeholder="">
                         </el-input>
@@ -91,9 +98,10 @@
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Tipo de conductor">
-                        <el-input 
+                        <el-input size="mini" 
                         :value="conductor.tipo_de_conductor"
-                        v-model="conductor.tipo_de_conductor"
+                        :disabled="(permisos['Conductores'].editar)? false:true"
+                        
                         @input="setTipoDeConductor"
                         placeholder="">
                         </el-input>
@@ -104,9 +112,10 @@
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Direccion">
-                        <el-input 
+                        <el-input size="mini" 
                         :value="conductor.direccion"
-                        v-model="conductor.direccion"
+                        :disabled="(permisos['Conductores'].editar)? false:true"
+                       
                         @input="setDireccion"
                         placeholder="">
                         </el-input>
@@ -114,9 +123,10 @@
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Municipio">
-                        <el-input 
+                        <el-input size="mini" 
                         :value="conductor.municipio"
-                        v-model="conductor.municipio"
+                        :disabled="(permisos['Conductores'].editar)? false:true"
+                      
                         @input="setMunicipio"
                         placeholder="">
                         </el-input>
@@ -127,9 +137,10 @@
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Telefono 1">
-                        <el-input 
+                        <el-input size="mini" 
                         :value="conductor.telefono_1"
-                        v-model="conductor.telefono_1"
+                        :disabled="(permisos['Conductores'].editar)? false:true"
+                        
                         @input="setTelefono1"
                         placeholder="">
                         </el-input>
@@ -137,9 +148,10 @@
 				</el-col>
                 <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Telefono 2">
-                        <el-input 
+                        <el-input size="mini" 
                         :value="conductor.telefono_2"
-                        v-model="conductor.telefono_2"
+                        :disabled="(permisos['Conductores'].editar)? false:true"
+                        
                         @input="setTelefono2"
                         placeholder="">
                         </el-input>
@@ -150,9 +162,10 @@
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Celular">
-                        <el-input 
+                        <el-input size="mini" 
                         :value="conductor.celular"
-                        v-model="conductor.celular"
+                        :disabled="(permisos['Conductores'].editar)? false:true"
+                        
                         @input="setCelular"
                         placeholder="">
                         </el-input>
@@ -160,9 +173,10 @@
 				</el-col>
                 <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Transportadora">
-                        <el-input 
+                        <el-input size="mini" 
                         :value="conductor.transportadora"
-                        v-model="conductor.transportadora"
+                        :disabled="(permisos['Conductores'].editar)? false:true"
+                        
                         @input="setTransportadora"
                         placeholder="">
                         </el-input>
@@ -170,13 +184,6 @@
 				</el-col>
 			</el-col>
 
-            <el-col class="col-p pull-right">
-                <el-form-item>
-                    <el-button :disabled="(permisos['Conductores'].editar)? false:true" type="primary" @click="editConductor">Actualizar</el-button>
-                    <el-button  @click="back">Cancelar</el-button>
-                    <el-button :disabled="(permisos['Conductores'].eliminar)? false:true" type="text" @click="del">Eliminar</el-button>
-                </el-form-item>
-            </el-col>
 
         </el-row>
         
@@ -184,6 +191,8 @@
             
         </el-form>
    </vue-scroll>
+  
+   
 </template>
 
 <script>
@@ -196,6 +205,7 @@ export default {
 	name: 'ConductoresEditForm',
 	data () {
       	return {
+              targetInputEditing: '',
               capacidadNum: 1,
               pesoNum: 1,
               tipoIdentificacionOptions: [
@@ -223,6 +233,18 @@ export default {
 	components: {
 	},
     methods: {
+       
+        handleAction(e){
+            if(e == 'del'){
+                this.del()
+            }
+            if(e == 'edit'){
+                this.editConductor()
+            }
+            if(e == 'back'){
+                this.back()
+            }
+        },
         back() {
 			router.push('/Conductores')
 		},
@@ -266,6 +288,9 @@ export default {
                 });          
             });
         }
+    },
+    created(){
+        console.log(this.permisos)
     },
 
 }

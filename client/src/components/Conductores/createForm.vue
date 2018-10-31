@@ -1,20 +1,20 @@
 <template>
+
    <vue-scroll class="page-conductores-create">
-       <h1>Conductores - Crear</h1>
-       <el-form label-position="top" ref="form" :model="form" label-width="120px">
+       <el-form label-position="top" ref="form" :status-icon="true" :show-message="false" label-width="120px" clearValidate> 
         <el-row>
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Codigo">
-                        <el-input 
+                    <el-form-item label="Codigo" prop="codigo">
+                        <el-input size="mini" 
                         @input="setCodigo"
                         placeholder="">
                         </el-input>
                     </el-form-item>
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Tipo de identificacion">
-                        <el-select 
+                    <el-form-item label="Tipo de identificacion" prop="tipo_de_identificacion">
+                        <el-select size="mini" 
                         v-model="conductor.tipo_de_identificacion" 
                         placeholder="Select"
                         @change="setTipoDeiIdentificacion">
@@ -31,16 +31,16 @@
 
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Cedula">
-                        <el-input 
+                    <el-form-item label="Cedula" prop="cedula">
+                        <el-input size="mini" 
                         @input="setCedula"
                         placeholder="">
                         </el-input>
                     </el-form-item>
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Municipio documento">
-                        <el-input 
+                    <el-form-item label="Municipio documento" prop="municipio_documento">
+                        <el-input size="mini" 
                         @input="setMunicipioDocumento"
                         placeholder="">
                         </el-input>
@@ -50,16 +50,16 @@
 
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Nombres">
-                        <el-input 
+                    <el-form-item label="Nombres" prop="nombres">
+                        <el-input size="mini" 
                         @input="setNombres"
                         placeholder="">
                         </el-input>
                     </el-form-item>
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Primer apellido">
-                        <el-input 
+                    <el-form-item label="Primer apellido" prop="primer_apellido">
+                        <el-input size="mini" 
                         @input="setPrimerApellido"
                         placeholder="">
                         </el-input>
@@ -69,16 +69,16 @@
 
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Segundo apellido">
-                        <el-input 
+                    <el-form-item label="Segundo apellido" prop="segundo_apellido"> 
+                        <el-input size="mini" 
                         @input="setSegundoApellido"
                         placeholder="">
                         </el-input>
                     </el-form-item>
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Tipo de conductor">
-                        <el-input 
+                    <el-form-item label="Tipo de conductor" prop="tipo_conductor">
+                        <el-input size="mini" 
                         @input="setTipoDeConductor"
                         placeholder="">
                         </el-input>
@@ -88,16 +88,16 @@
 
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Direccion">
-                        <el-input 
+                    <el-form-item label="Direccion" prop="direccion">
+                        <el-input size="mini" 
                         @input="setDireccion"
                         placeholder="">
                         </el-input>
                     </el-form-item>
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Municipio">
-                        <el-input 
+                    <el-form-item label="Municipio" prop="municipio">
+                        <el-input size="mini" 
                         @input="setMunicipio"
                         placeholder="">
                         </el-input>
@@ -107,16 +107,16 @@
 
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Telefono 1">
-                        <el-input 
+                    <el-form-item label="Telefono 1" prop="telefono_1"> 
+                        <el-input size="mini" 
                         @input="setTelefono1"
                         placeholder="">
                         </el-input>
                     </el-form-item>
 				</el-col>
                 <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Telefono 2">
-                        <el-input 
+                    <el-form-item label="Telefono 2" prop="telefono_2">
+                        <el-input size="mini" 
                         @input="setTelefono2"
                         placeholder="">
                         </el-input>
@@ -126,16 +126,16 @@
 
             <el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Celular">
-                        <el-input 
+                    <el-form-item label="Celular" prop="celular">
+                        <el-input size="mini" 
                         @input="setCelular"
                         placeholder="">
                         </el-input>
                     </el-form-item>
 				</el-col>
                 <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Transportadora">
-                        <el-input 
+                    <el-form-item label="Transportadora" prop="transportadora">
+                        <el-input size="mini" 
                         @input="setTransportadora"
                         placeholder="">
                         </el-input>
@@ -143,18 +143,11 @@
 				</el-col>
 			</el-col>
 
-            <el-col class="col-p pull-right">
-                <el-form-item>
-                    <el-button  type="primary" @click="createConductor">Crear</el-button>
-                    <el-button  @click="back">Cancelar</el-button>
-                </el-form-item>
-            </el-col>
-
         </el-row>
         
         
             
-        </el-form>
+    </el-form>
    </vue-scroll>
 </template>
 
@@ -179,7 +172,51 @@ export default {
                     value: 'pasaporte',
                     label: 'Pasaporte',
                 },
-              ]
+              ],
+              rules: {
+                codigo: [
+                    { required: true, trigger: 'blur' }
+                ],
+                tipo_de_identificacion: [
+                    { required: true,  trigger: 'blur' }
+                ],
+                cedula: [
+                    { required: true,  trigger: 'blur' }
+                ],
+                municipio_documento: [
+                    { required: true,  trigger: 'blur' }
+                ],
+                nombres: [
+                    { required: true,  trigger: 'blur' }
+                ],
+                primer_apellido: [
+                    { required: true,  trigger: 'blur' }
+                ],
+                segundo_apellido: [
+                    { required: true,  trigger: 'blur' }
+                ],
+                tipo_conductor: [
+                    { required: true,  trigger: 'blur' }
+                ],
+                direccion: [
+                    { required: true,  trigger: 'blur' }
+                ],
+                municipio: [
+                    { required: true,  trigger: 'blur' }
+                ],
+                telefono_1: [
+                    { required: true,  trigger: 'blur' }
+                ],
+                telefono_2: [
+                    { required: true, trigger: 'blur' }
+                ],
+                celular: [
+                    { required: true, trigger: 'blur' }
+                ],
+                transportadora: [
+                    { required: true, trigger: 'blur' }
+                ],
+            }
 		}
 	},
 	computed: {
@@ -195,6 +232,14 @@ export default {
 	components: {
 	},
     methods: {
+         handleAction(e){
+            if(e == 'create'){
+                this.createConductor()
+            }
+            if(e == 'back'){
+                this.back()
+            }
+        },
         back() {
 			router.push('/COnductores')
 		},

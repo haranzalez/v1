@@ -24,7 +24,7 @@ export default {
         vehiculosList: null,
         selectedConductor: null,
         selectedTrailer: null,
-        dataReady: false,
+        vehiculosDataReady: false,
         headings: [], 
         assignVehicleId: null,  
     },
@@ -47,6 +47,7 @@ export default {
             })
             .then(d => {
                 Message({
+                    type: 'success',
                     showClose: true,
                     message: 'Vehiculo creado.'
                 })
@@ -75,6 +76,7 @@ export default {
             .then(d => {
                 console.log(d)
                 Message({
+                    type: 'success',
                     showClose: true,
                     message: 'Actualizacion Exitosa.'
                 })
@@ -173,7 +175,7 @@ export default {
         },
     },
     mutations: {
-        setFullVehicle(state, value){
+        setFullVehiculo(state, value){
             state.vehiculo = value
         },
         setVehiculosList(state, list){
@@ -183,7 +185,7 @@ export default {
             state.headings = headings;
         },
         setDataReady(state, ready){
-            state.dataReady = ready
+            state.vehiculosDataReady = ready
         },
         setSelectedConductorList(state, list){
             state.selectedConductor = list

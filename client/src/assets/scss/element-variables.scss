@@ -16,9 +16,13 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
 @import "~element-ui/packages/theme-chalk/src/index";
 @import "~element-ui/packages/theme-chalk/src/display";
 
+
+.el-form-item {
+	margin-bottom: 4px !important; 
+}
 .el-form--label-top .el-form-item__label {
 	padding: 0;
-	line-height: 30px;
+	line-height: 10px;
 }
 .el-upload.el-upload--text {
 	max-width: 100%; 

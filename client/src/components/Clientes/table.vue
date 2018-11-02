@@ -1,7 +1,7 @@
 <template>
 <div>
 	<!--Edit dialog form -->
-	<el-dialog width="60%" top="5vh" :title="cliente.nombre_razon_social" :visible.sync="editFormVisible">
+	<el-dialog width="40%" top="5vh" :title="cliente.nombre_razon_social" :visible.sync="editFormVisible">
 		<ClientesEditForm></ClientesEditForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button @click="editFormVisible = false; paramsReset(); setDataReady(false)">Cancelar</el-button>
@@ -9,7 +9,7 @@
 		</span>
 	</el-dialog>
 	<!--Create dialog form -->
-	<el-dialog width="60%" top="5vh" title="Nuevo cliente" :visible.sync="createFormVisible">
+	<el-dialog width="40%" top="5vh" title="Nuevo cliente" :visible.sync="createFormVisible">
 		<ClientesCreateForm></ClientesCreateForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button @click="createFormVisible = false; paramsReset(); setDataReady(false)">Cancelar</el-button>
@@ -21,7 +21,7 @@
 		<h1>Clientes</h1>
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
 			<div class="serachBar-ctn">
-				<el-input placeholder="Buscar" v-model="filter" class="input-with-select">
+				<el-input size="mini" placeholder="Buscar" v-model="filter" class="input-with-select">
 					<el-select v-model="selectTypeOfSearch" slot="prepend" placeholder="Seleccione">
 					<el-option v-for="col in headings" :key="col" :label="col" :value="col"></el-option>
 					</el-select>
@@ -29,9 +29,10 @@
 			</div>
 		</el-col>
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-			<div style="float: right; padding: 3px 0; width:30%;">
-				<el-row>
-					<el-button type="default" size="mini" style="margin-right:5px;"><i class="mdi mdi-reload"></i></el-button>
+			<div style="padding: 3px 0;">
+				<el-row style="text-align: right;">
+					<el-button type="default" size="mini" @click="reloadTable" style="margin-right:5px;"><i class="mdi mdi-reload"></i></el-button>
+					<el-button type="default" size="mini" @click="exportTable" style="margin-right:5px;"><i class="mdi mdi-file-excel"></i></el-button>
 					<el-dropdown trigger="click" @command="handleAction">  
 						<el-button size="mini">
 							<i class="mdi mdi-settings"></i>
@@ -40,85 +41,86 @@
 							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Nuevo cliente</el-dropdown-item>
 							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="edit"><i class="mdi mdi-lead-pencil mr-10"></i> Editar</el-dropdown-item>
 							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
-							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="consolidacion"><i class="mdi mdi-briefcase mr-10"></i> Nuevo cuadre</el-dropdown-item>
-							<el-dropdown-item command="export"><i class="mdi mdi-file-excel mr-10"></i> Exportar</el-dropdown-item>
+							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="consolidacion" divided><i class="mdi mdi-briefcase mr-10"></i> Nuevo cuadre</el-dropdown-item>
+							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="listConsolidacion"><i class="mdi mdi-folder-open mr-10"></i> Ver cuadres</el-dropdown-item>
 						</el-dropdown-menu>
 					</el-dropdown>
 				</el-row>
 			</div>
 		</el-col>
 	<el-table
+	stripe
+	max-height="250"
 	highlight-current-row
 	@current-change="handleCurrentTableChange"
     :data="filtered"
-	:default-sort = "{prop: 'id', order: 'descending'}"
     style="width: 100%">
     <el-table-column
 	  sortable
 	  fixed
       prop="nit"
       label="NIT"
-      width="110">
+	  min-width="110">
     </el-table-column>
     <el-table-column
 	  sortable
       prop="nombre_razon_social"
       label="Razon social"
-      width="220">
+      min-width="220">
     </el-table-column>
 	<el-table-column
 	  sortable
       prop="direccion"
       label="Direccion"
-      width="190">
+      min-width="190">
     </el-table-column>
 	<el-table-column
 	  sortable
       prop="ciudad"
       label="Ciudad"
-      width="120">
+      min-width="120">
     </el-table-column>
    <el-table-column
 	  sortable
       prop="email"
       label="Email"
-      width="220">
+      min-width="220">
     </el-table-column>
 	<el-table-column
 	  sortable
       prop="telefono"
       label="Telefono"
-      width="140">
+      min-width="140">
     </el-table-column>
 	<el-table-column
 	  sortable
       prop="celular"
       label="Celular"
-      width="200">
+      min-width="200">
     </el-table-column>
 	<el-table-column
 	  sortable
       prop="persona_de_contacto"
       label="Persona de contacto"
-      width="200">
+      min-width="200">
     </el-table-column>
 	<el-table-column
 	  sortable
       prop="direccion_envio_de_factura"
       label="Direccion envio de facturas"
-      width="220">
+      min-width="220">
     </el-table-column>
 	<el-table-column
 	  sortable
       prop="tipo_contrato"
       label="Tipo de contrato"
-      width="140">
+      min-width="160">
     </el-table-column>
 	<el-table-column
 	  sortable
       prop="created_at"
       label="Fecha creacion"
-      width="300">
+      min-width="300">
     </el-table-column>
   </el-table>
 
@@ -183,9 +185,14 @@ export default {
 		ClientesCreateForm,
 	},
     methods: {
+		exportTable(){
+			exportService.toXLS(this.clientesList, 'Clientes', true)
+		},
+		reloadTable(){
+			this.fetchClientesList()
+		},
 		setCurrent(row) {
 			if(row == null){
-					this.setClienteId(null)
 					this.$refs.singleTable.setCurrentRow(row);
 					return
 			}
@@ -226,7 +233,7 @@ export default {
             	}
 			}
 			if(e == 'consolidacion'){
-				if(this.consolidacion.cliente_id != null){
+				if(this.cliente.id != null){
 					this.$confirm('Esta a punto de crear un nuevo cuadre para el cliente: '+this.cliente.nombre_razon_social+' NIT: '+this.cliente.nit+'. Continuar?', 'Atencion!', {
 						confirmButtonText: 'OK',
 						cancelButtonText: 'Cancelar',
@@ -247,12 +254,6 @@ export default {
 					})
             	}
 				
-			}
-			if(e == 'export'){
-				exportService.toXLS(this.clientesList, 'Clientes', true)
-			}
-			if(e == 'clear'){
-				this.setCurrent()
 			}
         },
 		back(){

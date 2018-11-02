@@ -3,23 +3,29 @@ import router from '../router'
 import UserServices from '../services/UserServices'
 import { Notification, Message, Confirm } from 'element-ui'
 import { mapGetters } from 'vuex';
+const formatter = new Intl.NumberFormat({
+    style: 'currency',
+})
 
 export default {
     namespaced: true,
     state: {
         ruta:{
             id: null,
-            kilometros: null,
-            anticipo_sugerido: null,
-            valor_flete: null,
+            kilometros: 0,
+            anticipo_sugerido: 0,
+            valor_flete: 0,
             municipio_id: null,
             comentario: null,
             nombre_municipio: null,
+            departamento: null,
         },
         municipio: {
             nombre_municipio: null,
             codigo_municipio: null,
         },
+        valor_flete_formatted: 0,
+        valor_anticipo_formatted: 0,
         comentarios_list: null,
         rutasList: null,
         municipios_list: null,
@@ -32,6 +38,7 @@ export default {
             HTTP().local.post('api/municipios/crear', {
                 nombre_municipio: state.municipio.nombre_municipio,
                 codigo_municipio: state.municipio.codigo_municipio,
+                departamento: state.municipio.departamento,
             })
             .then(d => {
                 if(d.data.message == "success"){
@@ -109,7 +116,8 @@ export default {
         fetchRutasList({commit, dispatch}){
             HTTP().local.get('api/rutas')
             .then(d => {
-                commit('setRutaList', d.data)
+                dispatch('formatValuesInRutasList', d.data)
+                //commit('setRutaList', d.data)
                 commit('setDataReady', true)
                 dispatch('renderTableHeadings')
             })
@@ -166,8 +174,13 @@ export default {
                 console.log(err)
             })
         },
-       
-
+        formatValuesInRutasList({commit},data){
+            for(let prop in data){
+                data[prop]['anticipo_sugerido'] = '$'+formatter.format(parseInt(data[prop]['anticipo_sugerido']))
+                data[prop]['valor_flete'] = '$'+formatter.format(parseInt(data[prop]['valor_flete']))
+            }
+            commit('setRutaList', data)
+        },
     },
     mutations: {
         setFullRuta(state, value){
@@ -186,10 +199,20 @@ export default {
             state.ruta.kilometros = value
         },
         setAnticipoSugerido(state, value){
+            value = (value == '' || value == '$')? '0' : value;
+            value = value.replace(/\$/g,'');
+            value = value.replace(/\,/g,'');
+            const res = formatter.format(parseInt(value));
+            state.valor_anticipo_formatted = '$'+res
             state.ruta.anticipo_sugerido = value
         },
         setValorflete(state, value){
-            state.ruta.valor_flete = value
+            value = (value == '' || value == '$')? '0' : value;
+            value = value.replace(/\$/g,'');
+            value = value.replace(/\,/g,'');
+            const res = formatter.format(parseInt(value));
+            state.valor_flete_formatted = '$'+res;
+            state.ruta.valor_flete = value;
         },
         setComentario(state, value){
             state.ruta.comentario = value
@@ -208,6 +231,9 @@ export default {
         },
         setCodigoMunicipio(state, value){
             state.municipio.codigo_municipio = value
+        },
+        setDepartamentoName(state, value){
+            state.municipio.departamento = value
         },
         rutaReset(state, value){
             state.ruta = {

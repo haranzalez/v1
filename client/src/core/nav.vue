@@ -9,7 +9,7 @@
 		class="main-navigation-menu"
 		:class="{'nav-collapsed':isCollapse}"
 	>
-		<div v-for="mod in menu">
+		<div v-for="mod in menu" :key="mod.id">
 			<div class="el-menu-item-group__title" style="padding-top: 4px;">
 			<span>{{mod.nombre}}</span>
 			</div>

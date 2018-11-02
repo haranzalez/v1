@@ -2,16 +2,20 @@
 <div>
 	<!-- dialog create  municipio -->
 	<el-dialog 
+	    width="30%"
 		title="Nuevo Municipio" 
 		:visible.sync="dialogFormMunicipioVisible"
 		:close-on-press-escape="true"
 		center>
 		<el-form label-position="top">
-			<el-form-item label="Nombre municipio" :label-width="formLabelWidth">
-			<el-input @input="setMunicipioName" autocomplete="off"></el-input>
+			<el-form-item label="Codigo dane" :label-width="formLabelWidth">
+			<el-input size="mini" @input="setCodigoMunicipio" autoComplete="off"></el-input>
 			</el-form-item>
-			<el-form-item label="Codigo" :label-width="formLabelWidth">
-			<el-input @input="setCodigoMunicipio" autocomplete="off"></el-input>
+			<el-form-item label="Nombre municipio" :label-width="formLabelWidth">
+			<el-input size="mini" @input="setMunicipioName" autoComplete="off"></el-input>
+			</el-form-item>
+			<el-form-item label="Departamento" :label-width="formLabelWidth">
+			<el-input size="mini" @input="setDepartamentoName" autoComplete="off"></el-input>
 			</el-form-item>
 		</el-form>
 		<span slot="footer" class="dialog-footer">
@@ -21,16 +25,17 @@
 	</el-dialog>
 	<!-- dialog create ruta -->
 	<el-dialog 
+	width="30%"
 	title="Nueva ruta" 
 	:visible.sync="dialogFormVisible"
 	:close-on-press-escape="true"
 	center>
 		<el-form label-position="top">
 			<el-form-item label="Kilometros" :label-width="formLabelWidth">
-			<el-input v-model="ruta.kilometros" auto-complete="off"></el-input>
+			<el-input size="mini" v-model="ruta.kilometros" auto-complete="off"></el-input>
 			</el-form-item>
 			<el-form-item label="Municipio" :label-width="formLabelWidth">
-			<el-select @change="setMunicipioId" :value="ruta.municipio_id" placeholder="Select">
+			<el-select size="mini" @change="setMunicipioId" :value="ruta.municipio_id" placeholder="Select">
 				<el-option
 				v-for="item in municipios_list"
 				:key="item.id"
@@ -41,28 +46,32 @@
 			</el-form-item>
 			<el-form-item label="Valor flete">
 				<el-input 
+				:value="valor_flete_formatted"
+				size="mini"
 				@input="setValorflete"
 				placeholder="">
 				</el-input>
 			</el-form-item>
 			<el-form-item label="Anticipo sugerido">
 				<el-input 
+				:value="valor_anticipo_formatted"
+				size="mini"
 				@input="setAnticipoSugerido"
 				placeholder="">
 				</el-input>
 			</el-form-item>
 		</el-form>
 		<span slot="footer" class="dialog-footer">
-			<el-button @click="dialogFormVisible = false">Cancelar</el-button>
-			<el-button type="primary" @click="create_ruta">Crear</el-button>
+			<el-button size="medium" @click="dialogFormVisible = false; setAnticipoSugerido(0); setValorflete(0);">Cancelar</el-button>
+			<el-button size="medium" type="primary" @click="create_ruta">Crear</el-button>
 		</span>
 	</el-dialog>
 
 	<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
 		<h1>Rutas</h1>
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-			<div class="serachBar-ctn">
-				<el-input placeholder="Buscar" v-model="filter" class="input-with-select">
+			<div>
+				<el-input size="mini" placeholder="Buscar" v-model="filter" class="input-with-select">
 					<el-select v-model="selectTypeOfSearch" slot="prepend" placeholder="Seleccione">
 					<el-option v-for="col in headings" :key="col" :label="col" :value="col"></el-option>
 					</el-select>
@@ -76,7 +85,7 @@
 						<i class="mdi mdi-settings"></i>
 					</el-button>
 					<el-dropdown-menu slot="dropdown">
-						<el-dropdown-item :disabled="(permisos['Rutas'].crear)? false:true" command="createRuta"><i class="mdi mdi-routes"></i> Nueva ruta</el-dropdown-item>
+						<el-dropdown-item :disabled="(permisos['Rutas'].crear)? false:true" command="createRuta"><i class="mdi mdi-plus"></i> Nueva ruta</el-dropdown-item>
 						<el-dropdown-item :disabled="(permisos['Rutas'].crear)? false:true" command="createMunicipio"><i class="mdi mdi-city mr-10"></i> Nuevo municipio</el-dropdown-item>
 						<el-dropdown-item command="export"><i class="mdi mdi-file-excel mr-10"></i> Exportar</el-dropdown-item>
 					</el-dropdown-menu>
@@ -84,7 +93,11 @@
 			</div>
 		</el-col>
 	<el-table
+	size="mini"
     :data="filtered"
+	show-summary
+	:summary-method="summarizeValues"
+	sum-text="Total"
 	:default-sort = "{prop: 'id', order: 'descending'}"
     style="width: 100%">
     <el-table-column
@@ -92,35 +105,35 @@
       fixed
       prop="id"
       label="ID"
-      width="50">
+      min-width="50">
     </el-table-column>
     <el-table-column
 	  sortable
       prop="nombre_municipio"
       label="Municipio"
-      width="120">
+      min-width="120">
     </el-table-column>
     <el-table-column
 	  sortable
       prop="kilometros"
       label="Kilometros"
-      width="150">
+      min-width="150">
     </el-table-column>
 	<el-table-column
 	  sortable
       prop="valor_flete"
       label="Valor flete"
-      width="190">
+      min-width="190">
     </el-table-column>
 	<el-table-column
 	  sortable
       prop="anticipo_sugerido"
       label="Anticipo Sugerido"
-      width="200">
+      min-width="200">
     </el-table-column>
     <el-table-column
       label="Comentarios"
-      width="180"
+      min-width="180"
 	  align="center">
 	  <template slot-scope="scope">
 		    <el-popover
@@ -134,13 +147,13 @@
 				<el-table-column width="300" property="comentario" label="Comentario"></el-table-column>
 			</el-table>
 			</el-popover>
-			<el-button v-popover="scope.row.id">Ver comentarios</el-button>
+			<el-button size="mini" v-popover="scope.row.id">Ver comentarios</el-button>
 	  </template>
     </el-table-column>
     <el-table-column
       fixed="right"
       label="Acciones"
-      width="120">
+      min-width="120">
       <template slot-scope="scope">
         <el-button @click="pushToEdit(scope.row)" type="text" size="medium"><i class="mdi mdi-lead-pencil mr-10"></i></el-button>
 		<el-button @click="pushToDel(scope.row)" type="text" size="medium"><i class="mdi mdi-delete mr-10"></i></el-button>
@@ -161,6 +174,9 @@ import moment from 'moment-timezone'
 import router from '../../router'
 //servicios
 import exportService from '../../services/exportService'
+const formatter = new Intl.NumberFormat({
+    style: 'currency',
+})
 
 export default {
 	name: 'RutasTable',
@@ -183,7 +199,9 @@ export default {
 			'headings',
 			'dataReady',
 			'ruta',
-			'municipios_list'
+			'municipios_list',
+			'valor_flete_formatted',
+			'valor_anticipo_formatted',
 		]),
         filtered(){
 			if(this.dataReady){
@@ -196,7 +214,6 @@ export default {
 						return ruta[type].toString().includes(this.filter.toString())
 					})
 				}
-				console.log(this.rutasList)
 				return this.rutasList
 			}
 		},
@@ -204,6 +221,50 @@ export default {
 	components: {
 	},
     methods: {
+		summarizeValues(param){
+			const { columns, data } = param;
+			const sums = [];
+			columns.forEach((column, index) => {
+			if (index === 0) {
+				sums[index] = 'Total';
+				return;
+			}
+			
+			const values = data.map(item => Number(item[column.property]));
+			for(let prop in values){
+				console.log(values[prop])
+				values[prop] = parseInt(values[prop].replace(/\,/g,''))
+				values[prop] = parseInt(values[prop].replace(/\$/g,''))
+			}
+			if (!values.every(value => isNaN(value))) {
+				if(index === 2){
+					sums[index] = values.reduce((prev, curr) => {
+					const value = Number(curr);
+					if (!isNaN(value)) {
+						return prev + curr;
+					} else {
+						return prev;
+					}
+					}, 0)+ ' Km.';
+				}else{
+					
+					sums[index] = '$ ' + formatter.format(values.reduce((prev, curr) => {
+					const value = Number(curr);
+					if (!isNaN(value)) {
+						return prev + curr;
+					} else {
+						return prev;
+					}
+					}, 0));
+				}
+				
+			} else {
+				sums[index] = '';
+			}
+			});
+
+			return sums;
+		},
 		handleAction(e, row){
             if(e == 'createRuta'){
 				this.dialogFormVisible = true;
@@ -227,6 +288,7 @@ export default {
 			'setMunicipioId',
 			'rutaReset',
 			'setMunicipioName',
+			'setDepartamentoName',
 			'setCodigoMunicipio',
 		]),
         ...mapActions('rutas',[
@@ -244,6 +306,8 @@ export default {
 			if(this.createRuta()){
 				this.fetchRutasList()
 				this.dialogFormVisible = false
+				setAnticipoSugerido(0); 
+				setValorflete(0);
 			}
 		},
 		createMunicipio(){
@@ -294,9 +358,7 @@ export default {
 <style lang="scss">
 @import '../../assets/scss/_variables';
 
-.serachBar-ctn{
 
-}
 .page-table {
 	
 	.custom-action-row {

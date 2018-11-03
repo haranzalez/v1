@@ -15,13 +15,15 @@ class MunicipioController {
     //CREATE
     async create_municipio({ request }){
         const {
-            codigo_municipio,
+            codigo_dane,
             nombre_municipio,
+            departamento,
         } = request.all()
 
         await Municipio.create({
-            codigo_municipio,
-            nombre_municipio
+            codigo_dane,
+            nombre_municipio,
+            departamento,
         })
 
         return {

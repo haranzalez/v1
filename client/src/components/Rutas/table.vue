@@ -229,8 +229,9 @@ export default {
 				sums[index] = 'Total';
 				return;
 			}
-			
+			console.log()
 			const values = data.map(item => Number(item[column.property]));
+			console.log(values)
 			for(let prop in values){
 				console.log(values[prop])
 				values[prop] = parseInt(values[prop].replace(/\,/g,''))

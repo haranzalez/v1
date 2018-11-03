@@ -157,7 +157,6 @@ class RutaController {
         let municipio = []
        
         if(municipio_id != null){
-            
             const muni = await ruta.municipios().fetch()
             console.log(muni.rows[0]['id'])
             if(muni.rows.length > 0){

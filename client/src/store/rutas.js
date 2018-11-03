@@ -37,7 +37,7 @@ export default {
         create_municipio({ state }){
             HTTP().local.post('api/municipios/crear', {
                 nombre_municipio: state.municipio.nombre_municipio,
-                codigo_municipio: state.municipio.codigo_municipio,
+                codigo_dane: state.municipio.codigo_municipio,
                 departamento: state.municipio.departamento,
             })
             .then(d => {

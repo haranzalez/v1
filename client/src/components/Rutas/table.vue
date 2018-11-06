@@ -35,7 +35,7 @@
 			<el-input size="mini" v-model="ruta.kilometros" auto-complete="off"></el-input>
 			</el-form-item>
 			<el-form-item label="Municipio" :label-width="formLabelWidth">
-			<el-select size="mini" @change="setMunicipioId" :value="ruta.municipio_id" placeholder="Select">
+			<el-select size="mini" @change="setMunicipioId" filterable :value="ruta.municipio_id" placeholder="Select">
 				<el-option
 				v-for="item in municipios_list"
 				:key="item.id"

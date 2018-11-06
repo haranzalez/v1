@@ -6,7 +6,7 @@
             <el-col :span="12" :md="12" :sm="24" :xs="24">
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Municipio">
-                        <el-select @change="setMunicipio" :value="ruta.municipio_id" placeholder="Select">
+                        <el-select size="mini" @change="setMunicipio" filterable :value="ruta.municipio_id" placeholder="Select">
                             <el-option
                             v-for="item in municipios_list"
                             :key="item.id"
@@ -18,7 +18,7 @@
 				</el-col>
 				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Kilometros">
-                        <el-input 
+                        <el-input size="mini" 
                         :value="ruta.kilometros"
                         @input="setKilometros"
                         placeholder="">
@@ -27,7 +27,7 @@
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Valor flete">
-                        <el-input 
+                        <el-input size="mini" 
                         :value="ruta.valor_flete"
                         @input="setValorflete"
                         placeholder="">
@@ -36,7 +36,7 @@
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Anticipo sugerido">
-                        <el-input 
+                        <el-input size="mini" 
                         :value="ruta.anticipo_sugerido"
                         @input="setAnticipoSugerido"
                         placeholder="">

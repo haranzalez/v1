@@ -159,7 +159,6 @@ class RutaController {
         if(municipio_id != null){
             
             const muni = await ruta.municipios().fetch()
-            console.log(muni.rows[0]['id'])
             if(muni.rows.length > 0){
                 await ruta.municipios().detach([muni.rows[0]['id']])
             }

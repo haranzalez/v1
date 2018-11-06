@@ -81,6 +81,7 @@ export default {
             })
         },
         editRuta({state}){
+            console.log(state.ruta.id)
             HTTP().local.put('api/rutas/'+state.ruta.id+'/update', {
                 kilometros: state.ruta.kilometros,
                 anticipo_sugerido: state.ruta.anticipo_sugerido,

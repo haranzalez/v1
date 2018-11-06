@@ -27,7 +27,6 @@ export default {
     },
 
     actions: {
-       
         createCliente({state}){
             HTTP().local.post('api/clientes/crear', {
                 nombre_razon_social: state.cliente.nombre_razon_social,

@@ -4,7 +4,7 @@
 	<el-dialog width="40%" top="5vh" :title="cliente.nombre_razon_social" :visible.sync="editFormVisible">
 		<ClientesEditForm></ClientesEditForm>
 		<span slot="footer" class="dialog-footer">
-			<el-button @click="editFormVisible = false; paramsReset(); setDataReady(false)">Cancelar</el-button>
+			<el-button @click="editFormVisible = false;">Cancelar</el-button>
 			<el-button type="primary" @click="editCliente">Actualizar</el-button>
 		</span>
 	</el-dialog>
@@ -12,7 +12,7 @@
 	<el-dialog width="40%" top="5vh" title="Nuevo cliente" :visible.sync="createFormVisible">
 		<ClientesCreateForm></ClientesCreateForm>
 		<span slot="footer" class="dialog-footer">
-			<el-button @click="createFormVisible = false; paramsReset(); setDataReady(false)">Cancelar</el-button>
+			<el-button @click="createFormVisible = false; paramsReset(); setDataReady(false);">Cancelar</el-button>
 			<el-button type="primary" @click="create">Crear</el-button>
 		</span>
 	</el-dialog>
@@ -42,13 +42,15 @@
 							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="edit"><i class="mdi mdi-lead-pencil mr-10"></i> Editar</el-dropdown-item>
 							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
 							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="consolidacion" divided><i class="mdi mdi-briefcase mr-10"></i> Nuevo cuadre</el-dropdown-item>
-							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="listConsolidacion"><i class="mdi mdi-folder-open mr-10"></i> Ver cuadres</el-dropdown-item>
+							<el-dropdown-item :disabled="dataReady" command="listConsolidacion"><i class="mdi mdi-folder-open mr-10"></i> Ver cuadres</el-dropdown-item>
 						</el-dropdown-menu>
 					</el-dropdown>
 				</el-row>
 			</div>
 		</el-col>
 	<el-table
+	size="mini"
+	ref="clientsTable"
 	stripe
 	max-height="250"
 	highlight-current-row
@@ -84,19 +86,19 @@
 	  sortable
       prop="email"
       label="Email"
-      min-width="220">
+      min-width="150">
     </el-table-column>
 	<el-table-column
 	  sortable
       prop="telefono"
       label="Telefono"
-      min-width="140">
+      min-width="120">
     </el-table-column>
 	<el-table-column
 	  sortable
       prop="celular"
       label="Celular"
-      min-width="200">
+      min-width="130">
     </el-table-column>
 	<el-table-column
 	  sortable
@@ -147,7 +149,7 @@ export default {
 	name: 'ClientesTable',
 	data () {
       	return {
-			currentRow: false,
+			currentRow: null,
 			editFormVisible: false,
 			createFormVisible: false,
             selectTypeOfSearch: '',
@@ -189,20 +191,21 @@ export default {
 			exportService.toXLS(this.clientesList, 'Clientes', true)
 		},
 		reloadTable(){
+			console.log(this.dataReady)
 			this.fetchClientesList()
-		},
-		setCurrent(row) {
-			if(row == null){
-					this.$refs.singleTable.setCurrentRow(row);
-					return
-			}
-			this.$refs.singleTable.setCurrentRow(row);
 			
 		},
 		handleCurrentTableChange(val) {
+			if(val == null){
+				this.$refs.clientsTable.setCurrentRow(val);
+				this.setDataReady(false)
+				return
+			}
 			this.setClienteId(val.id)
 			this.setFullCliente(val)
 			this.setDataReady(true)
+			this.$refs.clientsTable.setCurrentRow(val);
+			console.log(this.dataReady)
 		},
 		handleAction(e){
             if(e == 'create'){
@@ -255,7 +258,33 @@ export default {
             	}
 				
 			}
-        },
+		},
+		create(){
+			this.createCliente()
+			this.createFormVisible = false
+			this.fetchClientesList()
+		},
+		pushToDel(){
+			this.$confirm('Esta operacion eliminara permanentemente este registro. Continuar?', 'Atencion!', {
+                confirmButtonText: 'OK',
+                cancelButtonText: 'Cancelar',
+                type: 'warning'
+            }).then(() => {
+				this.delCliente()
+				this.editFormVisible = false
+				this.currentRow=false; 
+				this.$refs.clientsTable.setCurrentRow(null)
+				this.fetchClientesList()
+            }).catch(() => {
+				this.currentRow=false; 
+				this.$refs.clientsTable.setCurrentRow(null)
+                this.$message({
+                    type: 'warning',
+                    message: 'Cancelado'
+                });          
+            });
+			
+		},
 		back(){
 			router.push('/')
 		},
@@ -277,28 +306,7 @@ export default {
 		...mapActions('consolidaciones',[
 			'createConsolidacion',
 		]),
-		create(){
-			this.createCliente()
-			this.createFormVisible = false
-			this.fetchClientesList()
-		},
-		pushToDel(){
-			this.$confirm('Esta operacion eliminara permanentemente este registro. Continuar?', 'Atencion!', {
-                confirmButtonText: 'OK',
-                cancelButtonText: 'Cancelar',
-                type: 'warning'
-            }).then(() => {
-				this.delCliente()
-				this.editFormVisible = false
-				this.fetchClientesList()
-            }).catch(() => {
-                this.$message({
-                    type: 'warning',
-                    message: 'Cancelado'
-                });          
-            });
-			
-		}
+		
     },
     created: function(){
 		this.fetchClientesList()

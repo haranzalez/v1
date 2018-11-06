@@ -56,11 +56,6 @@ export default {
             
             commit('setTableHeadings', pkg)
         },
-        pushToEditUser({state,commit, dispatch}, row){
-            commit('setUser', row)
-            dispatch('fetchRolesList', 'edit')
-            router.push('/editando-usuario')
-        },
         editUser({state, commit}, roles){
             HTTP().local.patch('api/users/update/'+state.usuario.id,{
                 nombre: state.usuario.nombre,
@@ -177,7 +172,7 @@ export default {
 
     },
     mutations: {
-        setUser(state, usuario){
+        setFullUser(state, usuario){
             state.usuario = usuario;
         },
         setNombre(state, nombre){
@@ -230,6 +225,22 @@ export default {
         },
         setTableHeadings(state, headings){
             state.headings = headings;
+        },
+        paramsReset(state){
+            state.usuario = {
+                nombre: null,
+                apellido: null,
+                cedula: null,
+                email: null,
+                tel_fijo: null,
+                tel_mobil: null,
+                direccion: null,
+                ciudad: null,
+                departamento: null,
+                username: null,
+                password: null,
+                roles: null,
+            }
         }
         
     },

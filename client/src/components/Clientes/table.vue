@@ -50,7 +50,7 @@
 							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="edit"><i class="mdi mdi-lead-pencil mr-10"></i> Editar</el-dropdown-item>
 							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
 							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="consolidacion" divided><i class="mdi mdi-briefcase mr-10"></i> Nuevo cuadre</el-dropdown-item>
-							<el-dropdown-item :disabled="dataReady" command="listConsolidacion"><i class="mdi mdi-folder-open mr-10"></i> Ver cuadres</el-dropdown-item>
+							<el-dropdown-item command="listConsolidacion"><i class="mdi mdi-folder-open mr-10"></i> Ver cuadres</el-dropdown-item>
 						</el-dropdown-menu>
 					</el-dropdown>
 				</el-row>
@@ -267,6 +267,9 @@ export default {
 						message: 'Porfavor seleccione cliente.'
 					})
             	}
+				
+			}
+			if(e == 'listConsolidaciones'){
 				
 			}
 		},

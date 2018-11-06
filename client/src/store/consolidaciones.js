@@ -13,7 +13,19 @@ export default {
             descuento: 0,
             precio_final: 0,
         },
-        cconsolidacionesList: null,
+        viaje:{
+            flete: 0,
+            anticipo: 0,
+            ruta_id: null,
+        },
+        vehiculo:{
+            id: null,
+        },
+        ruta: {
+            id: null,
+        },
+        createViajeFormVisible: false,
+        consolidacionesList: null,
         selectedViaje: null,
         selectedProducto: null,
         selectedServicio: '',
@@ -21,15 +33,17 @@ export default {
         headings: [],  
     },
     actions: {
-        createConsolidacion({state}){
+        createConsolidacion({state, commit}){
             if(state.consolidacion.cliente_id != null){
                 HTTP().local.get('api/consolidaciones/'+state.consolidacion.cliente_id+'/crear')
                 .then(d => {
-                    console.log(d)
+                    console.log(d.data)
+                    commit('setFullConsolidacion', d.data)
+                    commit('setCuadreViajeFormVisible', true)
                     Message({
-                        type: "success",
+                        type: "info",
                         showClose: true,
-                        message: 'Consolidacion creada.'
+                        message: 'Consolidacion inicializada.'
                     })
                 })
                 .catch(err => {
@@ -119,6 +133,9 @@ export default {
         setClienteId(state, value){
             state.consolidacion.cliente_id = value
         },
+        setCuadreViajeFormVisible(state, value){
+            state.createViajeFormVisible = value
+        }
         
     },
 

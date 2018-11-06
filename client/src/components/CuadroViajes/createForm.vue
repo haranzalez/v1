@@ -1,6 +1,20 @@
 <template>
    <vue-scroll class="page-vehiculos-create">
        <el-form :inline="true" label-position="top" ref="form" label-width="120px">
+                    <el-form-item label="Valor flete">
+                        <el-input
+                            size="mini"
+                            placeholder="$0"
+                            @input="setFlete">
+                        </el-input>
+                    </el-form-item>
+                    <el-form-item label="Anticipo">
+                        <el-input
+                            size="mini"
+                            placeholder="$0"
+                            @input="setAnticipo">
+                        </el-input>
+                    </el-form-item>
                     <el-form-item label="Ruta">
                         <el-select :value.sync="selectedCreateRuta" placeholder="Seleccione.." @change="setSelectedCreateRuta">
                             <el-option
@@ -20,18 +34,6 @@
                             :value="item.id">
                             </el-option>
                         </el-select>
-                    </el-form-item>
-                    <el-form-item label="Valor flete">
-                        <el-input size="mini" 
-                        @input="setFlete"
-                        placeholder="">
-                        </el-input>
-                    </el-form-item>
-                    <el-form-item label="Anticipo">
-                        <el-input size="mini" 
-                        @input="setAnticipo"
-                        placeholder="">
-                        </el-input>
                     </el-form-item>
         </el-form>
    </vue-scroll>
@@ -101,6 +103,7 @@ export default {
     },
     created: function(){
        this.fetchRutasList()
+       this.fetchVehiculosList()
 	}
 
 }

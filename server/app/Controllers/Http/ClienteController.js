@@ -9,6 +9,7 @@ class ClienteController {
     async get_cliente({ params }){
         const { id } = params;
         return await Cliente.query()
+        .with('consolidacion.cuadre_viaje')
         .where('id', id).fetch()
     }
 

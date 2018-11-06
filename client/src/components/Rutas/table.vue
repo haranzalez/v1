@@ -35,7 +35,7 @@
 			<el-input size="mini" v-model="ruta.kilometros" auto-complete="off"></el-input>
 			</el-form-item>
 			<el-form-item label="Municipio" :label-width="formLabelWidth">
-			<el-select size="mini" @change="setMunicipioId" filterable :value="ruta.municipio_id" placeholder="Select">
+			<el-select size="mini" @change="setMunicipioId" filterable :value="ruta.municipio_id" placeholder="Seleccione..">
 				<el-option
 				v-for="item in municipios_list"
 				:key="item.id"
@@ -62,7 +62,7 @@
 			</el-form-item>
 		</el-form>
 		<span slot="footer" class="dialog-footer">
-			<el-button size="medium" @click="dialogFormVisible = false; setAnticipoSugerido(0); setValorflete(0);">Cancelar</el-button>
+			<el-button size="medium" @click="dialogFormVisible = false; setAnticipoSugerido(0); setValorflete(0); rutaReset()">Cerrar</el-button>
 			<el-button size="medium" type="primary" @click="create_ruta">Crear</el-button>
 		</span>
 	</el-dialog>
@@ -268,6 +268,7 @@ export default {
 		},
 		handleAction(e, row){
             if(e == 'createRuta'){
+				this.rutaReset()
 				this.dialogFormVisible = true;
 			}
 			if(e == 'createMunicipio'){

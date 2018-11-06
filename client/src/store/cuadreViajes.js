@@ -12,7 +12,6 @@ export default {
             ruta_id: null,
             flete: null,
             anticipo: null,
-
             descuento: null,
             ganancia: null,
             debe: null,
@@ -20,17 +19,18 @@ export default {
         cuadresList: null,
         selectedVehiculo: null,
         selectedRuta: null,
-        selectedCreateVehiculo: '',
-        selectedCreateRuta: '',
+        selectedCreateVehiculo: null,
+        selectedCreateRuta: null,
         dataReady: false,
         headings: [],  
     },
     actions: {
-        createCuadre({state}){
+        createCuadre({state}, consolidacion_id){
             HTTP().local.post('api/cuadre-viajes/crear', {
-                consolidacion_id: state.cuadre.consolidacion_id,
-                ruta_id: state.selectedCreateVehiculo,
-                flete: state.selectedCreateRuta,
+                consolidacion_id: consolidacion_id,
+                ruta_id: state.selectedCreateRuta,
+                vehiculo_id: state.selectedCreateVehiculo,
+                flete: state.cuadre.flete,
                 anticipo: state.cuadre.anticipo,
             })
             .then(d => {

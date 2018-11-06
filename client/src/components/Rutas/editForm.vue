@@ -6,7 +6,7 @@
             <el-col :span="12" :md="12" :sm="24" :xs="24">
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Municipio">
-                        <el-select size="mini" @change="setMunicipio" filterable :value="ruta.municipio_id" placeholder="Select">
+                        <el-select size="mini" @change="setMunicipio" filterable :value="ruta.municipio_id" placeholder="Seleccione..">
                             <el-option
                             v-for="item in municipios_list"
                             :key="item.id"

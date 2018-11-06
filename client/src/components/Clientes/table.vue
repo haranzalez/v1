@@ -1,5 +1,13 @@
 <template>
 <div>
+	<!--Create viaje form -->
+	<el-dialog width="40%" top="5vh" title="Viaje" :visible.sync="createViajeFormVisible">
+		<ViajeCreateForm></ViajeCreateForm>
+		<span slot="footer" class="dialog-footer">
+			<el-button @click="createViajeFormVisible = false;">Cerrrar</el-button>
+			<el-button type="primary" @click="createCuadre(consolidacion.id)">Crear</el-button>
+		</span>
+	</el-dialog>
 	<!--Edit dialog form -->
 	<el-dialog width="40%" top="5vh" :title="cliente.nombre_razon_social" :visible.sync="editFormVisible">
 		<ClientesEditForm></ClientesEditForm>
@@ -144,6 +152,7 @@ import exportService from '../../services/exportService'
 //componentes
 import ClientesEditForm from '@/components/Clientes/editForm'
 import ClientesCreateForm from '@/components/Clientes/createForm'
+import ViajeCreateForm from '@/components/CuadroViajes/createForm'
 
 export default {
 	name: 'ClientesTable',
@@ -168,6 +177,7 @@ export default {
 		]),
 		...mapState('consolidaciones', [
 			'consolidacion',
+			'createViajeFormVisible',
 		]),
         filtered(){
 			if(this.filter !== ''){
@@ -185,6 +195,7 @@ export default {
 	components: {
 		ClientesEditForm,
 		ClientesCreateForm,
+		ViajeCreateForm,
 	},
     methods: {
 		exportTable(){
@@ -259,6 +270,7 @@ export default {
 				
 			}
 		},
+		
 		create(){
 			this.createCliente()
 			this.createFormVisible = false
@@ -300,8 +312,12 @@ export default {
 			'delCliente',
 			'editCliente',
 		]),
+		...mapActions('cuadreViajes',[
+			'createCuadre',
+		]),
 		...mapMutations('consolidaciones', [
 			'setClienteId',
+			'setCuadreViajeFormVisible',
 		]),
 		...mapActions('consolidaciones',[
 			'createConsolidacion',

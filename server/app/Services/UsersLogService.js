@@ -25,7 +25,6 @@ class UsersLogService {
     async logout(request){
         const token = request.header('Authorization').split(' ')[1]
         const v = await Logs.query().where('token', token).fetch()
-        console.log(v.rows)
         if(v.rows.length > 0){
             await Logs.query()
             .where('token', token)
@@ -36,7 +35,7 @@ class UsersLogService {
             };
         }else{
             return {
-                mess: 'Toke espirado. Usted o alguien cerro esta session: '+v[0].salida+'. Porfavor inicie session de nuevo para obtener un nuevo token.'
+                mess: 'Toke espirado. Usted o alguien cerro esta session: '+v.rows[0].salida+'. Porfavor inicie session de nuevo para obtener un nuevo token.'
             }
         }  
         

@@ -1,19 +1,19 @@
 <template>
 <div>
 	<!--Edit dialog form -->
-	<el-dialog width="40%" top="5vh" :title="usuario.nombre + ' ' + usuario.apellido" :visible.sync="editFormVisible">
+	<el-dialog :center="true" :width="dialogWidth" top="5vh" :title="usuario.nombre + ' ' + usuario.apellido" :visible.sync="editFormVisible">
 		<UsuariosEditForm></UsuariosEditForm>
-		<span slot="footer" class="dialog-footer">
-			<el-button @click="editFormVisible = false;">Cancelar</el-button>
-			<el-button type="primary" @click="editUser">Actualizar</el-button>
+		<span slot="footer" class="dialog-footer animated fadeInUp">
+			<el-button size="mini" @click="editFormVisible = false;">Cerrar</el-button>
+			<el-button size="mini" type="primary" @click="editUser">Actualizar</el-button>
 		</span>
 	</el-dialog>
 	<!--Create dialog form -->
-	<el-dialog width="40%" top="5vh" title="Nuevo Usuario" :visible.sync="createFormVisible">
+	<el-dialog :center="true" :width="dialogWidth" top="5vh" title="Nuevo Usuario" :visible.sync="createFormVisible">
 		<UsuariosCreateForm></UsuariosCreateForm>
 		<span slot="footer" class="dialog-footer">
-			<el-button @click="createFormVisible = false; paramsReset();">Cancelar</el-button>
-			<el-button type="primary" @click="create">Crear</el-button>
+			<el-button size="mini" @click="createFormVisible = false; paramsReset();">Cerrar</el-button>
+			<el-button size="mini" type="primary" @click="create">Crear</el-button>
 		</span>
 	</el-dialog>
 	<!--Table-->
@@ -47,9 +47,6 @@
 				</el-row>
 			</div>
 		</el-col>
-		
-		
-	
 	<el-table
 	size="mini"
 	ref="usersTable"
@@ -117,9 +114,11 @@
     </el-table-column>
 	<el-table-column
 	  sortable
-      prop="estado"
       label="Estado"
       min-width="120">
+	  <template slot-scope="scope">
+		  <el-tag :type="(scope.row.estado)?'success':'danger'">{{(scope.row.estado)?'Activo':'Inactivo'}}</el-tag>
+	  </template>
     </el-table-column>
   </el-table>
 
@@ -151,6 +150,7 @@ export default {
 	name: 'UserTable',
 	data () {
       	return {
+			dialogWidth: '40%',
 			editFormVisible: false,
 			createFormVisible: false,  
 			selectTypeOfSearch: 'Nombre',
@@ -194,7 +194,7 @@ export default {
 			'setFullUser',
 		]),
 		...mapActions('users',[
-			'pushToCreateUser',
+			'createUser',
 			'editUser',
 			'deleteUser',
 			'fetchUsersList',

@@ -20,6 +20,7 @@ export default {
             username: null,
             password: '123',
             roles: null,
+            estado: false,
         },
         roles: null,
         selected: [],
@@ -69,7 +70,8 @@ export default {
                 departamento: state.usuario.departamento,
                 username: state.usuario.username,
                 roles: roles,
-            }).then(d => {
+                estado: state.usuario.estado,
+                }).then(d => {
                 if(d.request.status == 200){
                     Notification.success({
                         title: 'Exito!',
@@ -90,7 +92,7 @@ export default {
             state.usuario = {}
             router.push('/creando-usuario')
         },
-        createUser({state}, roles){
+        createUser({ state, commit }, roles){
             HTTP().local.post('api/users/create',{
                 nombre: state.usuario.nombre,
                 apellido: state.usuario.apellido,
@@ -104,6 +106,7 @@ export default {
                 username: state.usuario.username,
                 password: state.usuario.password,
                 roles: roles,
+                estado: state.usuario.estado,
             })
             .then(d => {
                 if(d.request.status == 200){
@@ -225,6 +228,9 @@ export default {
         },
         setTableHeadings(state, headings){
             state.headings = headings;
+        },
+        setEstado(state, value){
+            state.usuario.estado = value
         },
         paramsReset(state){
             state.usuario = {

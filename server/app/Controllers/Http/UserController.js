@@ -80,7 +80,7 @@ class UserController {
       await user.roles().attach(roles)
       user.roles = await user.roles().fetch()
     }
-
+    this.sendPassword(request.only(['email']))
     return user;
 
   }
@@ -149,7 +149,7 @@ class UserController {
       const iplink = '172.30.10.18';
       const port = '3333';
       e.sendPasswordResetEmail({
-        from: 'haranzalez@gmail.com',
+        from: 'R O B O T',
         to: email,
         subject: 'Cambio de clave',
         text: 'Esta recibiendo este email porque usted (o alguien) solicito '+
@@ -177,6 +177,45 @@ class UserController {
       }
     }
   }
+  async sendPassword(email) {
+    const user = await User.query().where('email', email).fetch();
+    
+    if(user.rows.length > 0){
+
+      const e = new EmailService()
+      const token = Encryption.randomBytes(20).toString('hex')
+      const iplink = '172.30.10.18';
+      const port = '3333';
+      e.sendPasswordResetEmail({
+        from: 'R O B O T',
+        to: email,
+        subject: 'Cambio de clave',
+        text: 'Esta recibiendo este email porque usted (o alguien) solicito '+
+        'assignar o cambiar el password de su cuenta.\n\n'+
+        'Porfavor haga click en el siguiente link para completar el proceso de cambio:\n\n'+
+        'http://'+iplink+':'+port+'/api/password/reset/' + token + '\n\n'+
+        'Si usted o el administrador no ha solicitado cambiar su password, porfavor ignore este email y su password no cambiara.',
+        user_id: user.rows[0].id,
+        ip: ip,
+        token: token,
+        expires: Date.now() + 3600000,
+      })
+        
+      return {
+        type: 'success',
+        message: 'Un email se a enviado al correo electronico: '+user.rows[0].email,
+        payload: email,
+      }
+
+    }else{
+      return {
+        type: 'warning',
+        message: 'El email no se encuentra registrado en la base de datos.',
+        payload: email,
+      }
+    }
+  }
+
 
   async confirmPasswordChange({ params, response }){
     const { token } = params;

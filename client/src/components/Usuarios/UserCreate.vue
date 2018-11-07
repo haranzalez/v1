@@ -1,90 +1,71 @@
 <template>
 <div class="page-profile">
-	<div class="card-base card-shadow--medium identity" id="boundary">
-			<div class="cover"></div>
-			<!--<div class="username" v-affix="{parentid: 'affix-container', boundaryid: '', delay:600, offset:0, enable:() => affixEnabled}">-->
-			<div class="username">
-				<div class="cover-small"></div>
-				<div class="avatar-small"><img src="@/assets/images/avatar-default.svg" alt="avatar"></div>
-				<span :value="usuario.nombre+' '+usuario.apellido">{{usuario.nombre+' '+usuario.apellido}}</span>
-			</div>
-			<div class="avatar"><i class="mdi mdi-account"></i></div>
-			<img src="@/assets/images/cubierta-1.jpg" id="color-thief" class="color-thief" alt="profile cover">
-	</div>
 		<div class="page-profile-edit">
-		<h2 class="mv-0 animated fadeInDown">Crear Usuario</h2>
-		
-
-		<el-form ref="form" label-width="120px" :label-position="labelPosition">
-			<el-col>
+		<el-form ref="userCreateForm" label-width="120px" size="mini" :label-position="labelPosition">
+				
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Username">
 						<el-input  
 					    @input="setUsername"
-                        placeholder="Username"/>
+                        />
 					</el-form-item>
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Email">
 						<el-input  
 					    @input="setEmail"
-                        placeholder="Email"/>
+                        />
 					</el-form-item>
 				</el-col>
-			</el-col>
-			<el-col>
+			
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Nombre">
 						<el-input  
 					    @input="setNombre"
-                        placeholder="Nombre"/>
+                        />
 					</el-form-item>
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Apellido">
 						<el-input  
 					    @input="setApellido"
-                        placeholder="Apellido"/>
+                        />
 					</el-form-item>
 				</el-col>
-			</el-col>
 			
-			<el-col>
                 <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Cedula">
 						<el-input  
 					    @input="setCedula"
-                        placeholder="Cedula"/>
+                        />
 					</el-form-item>
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Fijo">
 						<el-input  
 					    @input="setTelFijo"
-                        placeholder="Fijo"/>
+                        />
 					</el-form-item>
 				</el-col>
 				
-			</el-col>
-			<el-col>
+			
                 <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Mobil">
 						<el-input  
 					    @input="setTelMobil"
-                        placeholder="Mobil"/>
+                        />
 					</el-form-item>
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Direccion">
 						<el-input  
 					    @input="setDireccion"
-                        placeholder="Direccion"/>
+                        />
 					</el-form-item>
 				</el-col>
 				
 				
-			</el-col>
-			<el-col>
+			
                 <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Roles">
 						<el-select
@@ -94,7 +75,7 @@
                             allow-create
 							multiple
                             no-match-text
-							placeholder="Roles...">
+							placeholder="Seleccione...">
 							<el-option
 							v-for="item in roles"
 							:key="item.id"
@@ -108,25 +89,32 @@
 					<el-form-item label="Ciudad">
 						<el-input  
 					    @input="setCiudad"
-                        placeholder="ciudad"/>
+                        />
 					</el-form-item>
 				</el-col>
-			</el-col>
+			
 			
 			<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 				<el-form-item label="Departamento">
 					<el-input  
 					    @input="setDepartamento"
-                        placeholder="Departamento"/>
+                        />
 				</el-form-item>
-			</el-col>
 				
-			<el-col class="col-p pull-right">
-				<el-form-item>
-					<el-button class="animated slideInUp" plain @click="back">Cancelar</el-button>
-					<el-button class="animated slideInDown" :disabled="(permisos['Usuarios'].crear)?false:true"  type="primary" @click="onSubmit">Crear</el-button>
-				</el-form-item>
 			</el-col>
+			<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+					<el-form-item>
+						<el-switch
+							active-text="Activo"
+							inactive-text="Inactivo"
+							v-model="usuario.estado"
+							@change="setEstado"
+							active-color="#13ce66"
+							inactive-color="#ff4949">
+						</el-switch>
+					</el-form-item>
+				</el-col>
+			
 		</el-form>
 	</div>
 </div>
@@ -141,7 +129,7 @@ export default {
 	name: 'UserEdit',
 	data() {
 		return {
-			labelPosition: 'right',
+			labelPosition: 'top',
 			selectedRoles: [],
 		}
 	},
@@ -171,6 +159,7 @@ export default {
             'setUsername',
 			'setPassword',
 			'setRoles',
+			'setEstado',
         ]),
          ...mapActions('users', [
             'fetchRolesList',

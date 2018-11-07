@@ -1,20 +1,9 @@
 <template>
 	<div class="page-profile">
-	<div class="card-base card-shadow--medium identity" id="boundary">
-		<div class="cover"></div>
-		<!--<div class="username" v-affix="{parentid: 'affix-container', boundaryid: '', delay:600, offset:0, enable:() => affixEnabled}">-->
-		<div class="username">
-			<div class="cover-small"></div>
-			<div class="avatar-small"><img src="@/assets/images/avatar-default.svg" alt="avatar"></div>
-			<span :value="usuario.nombre+' '+usuario.apellido">{{usuario.nombre+' '+usuario.apellido}}</span>
-			
-		</div>
-		<div class="avatar"><i class="mdi mdi-account"></i></div>
-		<img src="@/assets/images/cubierta-1.jpg" id="color-thief" class="color-thief" alt="profile cover">
-	</div>
 	<div class="page-profile-edit">
 
-		<el-form ref="form" label-width="120px" :label-position="labelPosition">
+		<el-form ref="userEditForm" label-width="120px" :label-position="labelPosition">
+			
 			<el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Username">
@@ -22,7 +11,7 @@
                         :value="usuario.username"
 						v-model="usuario.username"
 					    @input="setUsername"
-                        placeholder="Username"/>
+                        />
 					</el-form-item>
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
@@ -31,7 +20,7 @@
                         :value="usuario.email"
 						v-model="usuario.email"
 					    @input="setEmail"
-                        placeholder="Email"/>
+                        />
 					</el-form-item>
 				</el-col>
 			</el-col>
@@ -42,7 +31,7 @@
                         :value="usuario.nombre"
 						v-model="usuario.nombre"
 					    @input="setNombre"
-                        placeholder="Nombre"/>
+                        />
 					</el-form-item>
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
@@ -51,7 +40,7 @@
                         :value="usuario.apellido"
 						v-model="usuario.apellido"
 					    @input="setApellido"
-                        placeholder="Apellido"/>
+                        />
 					</el-form-item>
 				</el-col>
 			</el-col>
@@ -63,7 +52,7 @@
                         :value="usuario.cedula"
 						v-model="usuario.cedula"
 					    @input="setCedula"
-                        placeholder="Cedula"/>
+                        />
 					</el-form-item>
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
@@ -72,7 +61,7 @@
                         :value="usuario.tel_fijo"
 						v-model="usuario.tel_fijo"
 					    @input="setTelFijo"
-                        placeholder="Fijo"/>
+                        />
 					</el-form-item>
 				</el-col>
 				
@@ -84,7 +73,7 @@
                         :value="usuario.tel_mobil"
 					    @input="setTelMobil"
 						v-model="usuario.tel_mobil"
-                        placeholder="Mobil"/>
+                        />
 					</el-form-item>
 				</el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
@@ -93,7 +82,7 @@
                         :value="usuario.direccion"
 						v-model="usuario.direccion"
 					    @input="setDireccion"
-                        placeholder="Direccion"/>
+                        />
 					</el-form-item>
 				</el-col>
 				
@@ -108,7 +97,7 @@
 						multiple
 						no-match-text
 						v-model="selectedRoles"
-						placeholder="Roles...">
+						placeholder="Seleccione...">
 							<el-option
 							v-if="roles"
 							v-for="item in roles"
@@ -125,7 +114,7 @@
 						v-model="usuario.ciudad" 
                         :value="usuario.ciudad"
 					    @input="setCiudad"
-                        placeholder="Ciudad"/>
+                        />
 					</el-form-item>
 				</el-col>
 			</el-col>
@@ -136,17 +125,22 @@
                         :value="usuario.departamento"
 						v-model="usuario.departamento"
 					    @input="setCiudad"
-                        placeholder="Departamento"/>
+                        />
 				</el-form-item>
 			</el-col>
-				
-			<el-col class="col-p pull-right">
+			<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
 				<el-form-item>
-					<el-button :disabled="(permisos['Usuarios'].eliminar)? false:true"  type="text" @click="del(usuario.id)">Eliminar</el-button>
-					<el-button @click="back">Cancelar</el-button>
-					<el-button :disabled="(permisos['Usuarios'].editar)? false:true"  type="primary" @click="onSubmit">Guardar</el-button>
+					<el-switch
+						active-text="Activo"
+						inactive-text="Inactivo"
+						v-model="usuario.estado"
+						@change="setEstado"
+						active-color="#13ce66"
+						inactive-color="#ff4949">
+					</el-switch>
 				</el-form-item>
 			</el-col>
+			
 		</el-form>
 	</div>
 	</div>
@@ -161,7 +155,7 @@ export default {
 	name: 'UserEdit',
 	data() {
 		return {
-			labelPosition: 'right',
+			labelPosition: 'top',
 			selectedRoles: [],
 		}
 	},
@@ -203,7 +197,8 @@ export default {
             'setCiudad',
             'setDepartamento',
             'setUsername',
-            'setPassword',
+			'setPassword',
+			'setEstado',
         ]),
          ...mapActions('users', [
             'fetchRolesList',

@@ -32,6 +32,16 @@ export default {
     },
 
     actions: {
+        fetchUser({ commit },id){
+            HTTP().local.get('api/users/'+id)
+            .then(d => {
+                console.log(d.data)
+                commit('setFullUser', d.data[0])
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
         fetchUsersList({commit, dispatch}){
             HTTP().local.get('api/users')
             .then(d => {
@@ -147,11 +157,47 @@ export default {
                 });
             })
         },
-        changeEstado(){
+        
+        fetchRolesList({state, commit}, op){
+            HTTP().local.get('api/roles')
+            .then(d => {
+                
+                if(op == 'edit'){
+                    let userRole = state.usuario.roles;
+                    let allRoles = JSON.parse(d.request.response)
+                    let ids = new Set(userRole.map(({ id }) => id));
+                    
+                    allRoles = allRoles.filter(({ id }) => ids.has(id));
+                    
+                    let final = []
+                    for(let prop in allRoles){
+                        final.push(allRoles[prop].id)
+                    }
+                
+                    commit('setSelectedRoles', final)
+                    commit('setRoles', JSON.parse(d.request.response))
+                }else{
+                    commit('setRoles', JSON.parse(d.request.response))
+                }
+                
+            }).catch(err => {
+                console.log(err)
+            })
+        },
+        renderEstadosObj({ state, commit }){
+            let pkg = {}
+            for(let prop2 in state.usersList){
+                
+                pkg[state.usersList[prop2]['id']] = state.usersList[prop2]['estado']
+            }
+            commit('setEstadosObj', pkg)
+            console.log(state.estados)
+        },
+        changeEstado({ state }){
             HTTP().local.patch('api/users/change-state/'+state.usuario.id,{
                     estado: state.estados[state.usuario.id],
                 }).then(d => {
-                if(d.request.status == 200){
+                if(d.data.message == 'success'){
                     Notification.success({
                         title: 'Exito!',
                         message: 'Cambio de estado exitoso.',
@@ -167,40 +213,6 @@ export default {
                 });
             })
         },
-        fetchRolesList({state, commit}, op){
-            HTTP().local.get('api/roles')
-            .then(d => {
-                
-                if(op == 'edit'){
-                    let userRole = state.usuario.roles;
-                    let allRoles = JSON.parse(d.request.response)
-                    let ids = new Set(userRole.map(({ id }) => id));
-                    console.log(ids)
-                    allRoles = allRoles.filter(({ id }) => ids.has(id));
-                    console.log(allRoles)
-                    let final = []
-                    for(let prop in allRoles){
-                        final.push(allRoles[prop].id)
-                    }
-                    console.log(final)
-                    commit('setSelectedRoles', final)
-                    commit('setRoles', JSON.parse(d.request.response))
-                }else{
-                    commit('setRoles', JSON.parse(d.request.response))
-                }
-                
-            }).catch(err => {
-                console.log(err)
-            })
-        },
-        renderEstadosObj({ state, commit }){
-            let pkg = {}
-            for(let prop2 in state.usersList){
-                pkg[state.usersList[prop2]['id']] = state.usersList[prop2]['estado']
-            }
-            
-            commit('setEstadosObj', pkg)
-        }
         
         
 

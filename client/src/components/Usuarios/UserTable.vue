@@ -113,12 +113,13 @@
       min-width="150">
     </el-table-column>
 	<el-table-column
+	  fixed="right"
 	  sortable
       label="Estado"
       min-width="120">
 	  <template slot-scope="scope">
 		  	<el-switch
-			@change="changeEstado($event, scope.row.id)"
+			@change="changeState($event, scope.row)"
 			:value="estados[scope.row.id]"
 			active-color="#13ce66"
 			inactive-color="#ff4949">
@@ -201,6 +202,7 @@ export default {
 			'paramsReset',
 			'setFullUser',
 			'setChangeEstdo',
+			'selected',
 		]),
 		...mapActions('users',[
 			'createUser',
@@ -209,15 +211,16 @@ export default {
 			'fetchUsersList',
 			'fetchRolesList',
 			'changeEstado',
+			'fetchUser',
 		]),
-		changeEstado(e, user_id){
-			console.log(e)
+		changeState(e, user){
 			this.setChangeEstdo({
-				id: user_id,
+				id: user.id,
 				value: e
 			})
+			this.setFullUser(user)
 			this.changeEstado()
-			this.fetchUsersList()
+			
 		},	
 		exportTable(){
 			exportService.toXLS(this.usersList, 'Usuarios', true)
@@ -230,8 +233,8 @@ export default {
 				this.$refs.usersTable.setCurrentRow(val);
 				return
 			}
-			this.setFullUser(val)
-			this.fetchRolesList()
+			this.fetchUser(val.id)
+			this.fetchRolesList('edit')
 			this.$refs.usersTable.setCurrentRow(val);
 		},
 		handleAction(e){

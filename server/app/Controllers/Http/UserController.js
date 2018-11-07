@@ -34,6 +34,7 @@ class UserController {
   async login ({ auth, request }) {
     var log = new UserLogService()
     const { username, password } = request.all();
+    console.log(username, password)
     const token = await auth.attempt(username,password);
     const user = await User.query()
     .with('roles.modulos.subModulo.permisos')

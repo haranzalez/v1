@@ -93,9 +93,9 @@ export default {
                 password: state.credenciales.password,
             })
             .then(({ data }) => {
-                
+                console.log(data)
                 if(!data.mess){
-                    if(data.user[0].estado !== 'inactivo'){
+                    if(data.user[0].estado){
                         commit('setUsuario', data.user[0])
                         commit('setNombreCompleto', data.user[0].nombre + ' ' + data.user[0].apellido)
                         commit('setToken', data.token.token)

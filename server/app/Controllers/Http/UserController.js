@@ -263,6 +263,18 @@ class UserController {
      
      
     }
+
+    async changeState({ params, request }){
+      const { id } = params
+      const { estado } = request.all()
+
+      const user = await User.find(id)
+      user.estado = estado
+      user.save()
+      return {
+        message: 'success'
+      }
+    }
   
 
 

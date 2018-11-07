@@ -22,6 +22,7 @@ export default {
             roles: null,
             estado: false,
         },
+        estados: null,
         roles: null,
         selected: [],
         usersList: null,
@@ -35,8 +36,10 @@ export default {
             HTTP().local.get('api/users')
             .then(d => {
                 commit('setUsersList', d.data)
+                
                 commit('setDataReady', true)
                 dispatch('renderTableHeadings')
+                dispatch('renderEstadosObj')
             })
             .catch(err => {
                 console.log(err)
@@ -125,8 +128,8 @@ export default {
                 });
             })
         },
-        deleteUser({state, commit}, id){
-            HTTP().local.delete('api/users/destroy/'+id)
+        deleteUser({state, commit}){
+            HTTP().local.delete('api/users/destroy/'+state.usuario.id)
             .then(d => {
                 if(d.request.status == 200){
                     Notification.success({
@@ -140,6 +143,26 @@ export default {
                 Notification.warning({
                     title: 'Atencion!',
                     message: 'Se produjo un problema. Porfavor contactarse con el administrador',
+                    position: 'bottom-right',
+                });
+            })
+        },
+        changeEstado(){
+            HTTP().local.patch('api/users/change-state/'+state.usuario.id,{
+                    estado: state.estados[state.usuario.id],
+                }).then(d => {
+                if(d.request.status == 200){
+                    Notification.success({
+                        title: 'Exito!',
+                        message: 'Cambio de estado exitoso.',
+                        position: 'bottom-right',
+                    });
+                }
+               
+            }).catch(err => {
+                Notification.warning({
+                    title: 'Atencion!',
+                    message: 'Se a producido un error en la operacion. Porfavor notifique al administrador',
                     position: 'bottom-right',
                 });
             })
@@ -170,11 +193,25 @@ export default {
                 console.log(err)
             })
         },
+        renderEstadosObj({ state, commit }){
+            let pkg = {}
+            for(let prop2 in state.usersList){
+                pkg[state.usersList[prop2]['id']] = state.usersList[prop2]['estado']
+            }
+            
+            commit('setEstadosObj', pkg)
+        }
         
         
 
     },
     mutations: {
+        setChangeEstdo(state, value){
+            state.estados[value.id] = value.value
+        },
+        setEstadosObj(state, value){
+            state.estados = value
+        },
         setFullUser(state, usuario){
             state.usuario = usuario;
         },

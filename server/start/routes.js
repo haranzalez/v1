@@ -32,6 +32,8 @@ Route.group(() => {
   Route.post('users/create', 'UserController.create').middleware('auth');
   Route.delete('users/destroy/:id', 'UserController.destroy').middleware('auth');
   Route.patch('users/update/:id', 'UserController.update').middleware('auth');
+  Route.patch('users/change-state/:id', 'UserController.changeState').middleware('auth');
+
 
   Route.get('roles', 'RoleController.index').middleware('auth');
   Route.get('roles/:id', 'RoleController.fetchOne').middleware('auth');

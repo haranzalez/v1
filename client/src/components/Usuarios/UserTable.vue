@@ -117,7 +117,12 @@
       label="Estado"
       min-width="120">
 	  <template slot-scope="scope">
-		  <el-tag :type="(scope.row.estado)?'success':'danger'">{{(scope.row.estado)?'Activo':'Inactivo'}}</el-tag>
+		  	<el-switch
+			@change="changeEstado($event, scope.row.id)"
+			:value="estados[scope.row.id]"
+			active-color="#13ce66"
+			inactive-color="#ff4949">
+			</el-switch>
 	  </template>
     </el-table-column>
   </el-table>
@@ -137,6 +142,8 @@ import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
 import moment from 'moment-timezone'
 import Papa from 'papaparse'
 import * as FS from 'file-saver'
+//servicios
+import exportService from '../../services/exportService'
 //componentes
 import UsuariosEditForm from '@/components/Usuarios/UserEdit'
 import UsuariosCreateForm from '@/components/Usuarios/UserCreate'
@@ -178,6 +185,7 @@ export default {
 			'usersList',
 			'dataReady',
 			'headings',
+			'estados',
 		]),
 		...mapState('authentication', [
 			'permisos',
@@ -192,6 +200,7 @@ export default {
 		...mapMutations('users', [
 			'paramsReset',
 			'setFullUser',
+			'setChangeEstdo',
 		]),
 		...mapActions('users',[
 			'createUser',
@@ -199,7 +208,17 @@ export default {
 			'deleteUser',
 			'fetchUsersList',
 			'fetchRolesList',
+			'changeEstado',
 		]),
+		changeEstado(e, user_id){
+			console.log(e)
+			this.setChangeEstdo({
+				id: user_id,
+				value: e
+			})
+			this.changeEstado()
+			this.fetchUsersList()
+		},	
 		exportTable(){
 			exportService.toXLS(this.usersList, 'Usuarios', true)
 		},
@@ -213,7 +232,7 @@ export default {
 			}
 			this.setFullUser(val)
 			this.fetchRolesList()
-			this.$refs.clientsTable.setCurrentRow(val);
+			this.$refs.usersTable.setCurrentRow(val);
 		},
 		handleAction(e){
             if(e == 'create'){
@@ -223,26 +242,28 @@ export default {
 			if(e == 'edit'){
 				this.editFormVisible = true;
 			}
+			if(e == 'del'){
+				this.$confirm(this.usuario.nombre+' '+this.usuario.apellido+' sera permanentemente eliminado de los registros. Continuar?', 'Atencion', {
+					confirmButtonText: 'OK',
+					cancelButtonText: 'Cancelar',
+					type: 'warning',
+					center: true,
+				}).then(() => {
+					this.deleteUser()
+					this.fetchUsersList();
+				}).catch(() => {
+					this.$message({
+						type: 'info',
+						message: 'Eliminacion cancelada'
+					});
+				});
+			}
 			
 		},
 		
 	
 		del(nombre,apellido,id) {
-			this.$confirm(nombre+' '+apellido+' sera permanentemente eliminado de los registros. Continuar?', 'Atencion', {
-				confirmButtonText: 'OK',
-				cancelButtonText: 'Cancelar',
-				type: 'warning',
-				center: true
-			}).then(() => {
-				this.deleteUser(id)
-				this.fetchUsers();
-				this.$refs.usersTable.refresh();
-			}).catch(() => {
-				this.$message({
-					type: 'info',
-					message: 'Eliminacion cancelada'
-				});
-			});
+			
 		},
 		create(){
 			this.createUser()

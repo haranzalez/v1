@@ -107,7 +107,7 @@
 						<el-switch
 							active-text="Activo"
 							inactive-text="Inactivo"
-							v-model="usuario.estado"
+							:value="usuario.estado"
 							@change="setEstado"
 							active-color="#13ce66"
 							inactive-color="#ff4949">

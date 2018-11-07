@@ -2,7 +2,7 @@
 	<div class="page-profile">
 	<div class="page-profile-edit">
 
-		<el-form ref="userEditForm" label-width="120px" :label-position="labelPosition">
+		<el-form size="mini" ref="userEditForm" label-width="120px" :label-position="labelPosition">
 			
 			<el-col>
 				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
@@ -133,7 +133,7 @@
 					<el-switch
 						active-text="Activo"
 						inactive-text="Inactivo"
-						v-model="usuario.estado"
+						:value="usuario.estado"
 						@change="setEstado"
 						active-color="#13ce66"
 						inactive-color="#ff4949">

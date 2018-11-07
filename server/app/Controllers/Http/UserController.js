@@ -39,7 +39,10 @@ class UserController {
     .with('roles.modulos.subModulo.permisos')
     .where('username', username).fetch();
     const userId = user.rows[0].id
-    console.log(request.connection.remoteAddress)
+    console.log(request.headers['x-forwarded-for'] ||
+    request.connection.remoteAddress ||
+    request.socket.remoteAddress ||
+    request.connection.socket.remoteAddress)
     const logResult = await log.login(request.ip(),token.token, userId)
     return {
       user,
@@ -47,6 +50,7 @@ class UserController {
     }
     
   }
+
 
   async logout({request}){
     var log = new UserLogService()

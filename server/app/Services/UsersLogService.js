@@ -8,12 +8,13 @@ class UsersLogService {
         let check = await this.checkUserLogs(userId)
         console.log(check)
         if(check == false){
-            await Logs.create({
+            const res = await Logs.create({
                 user_id: userId,
                 ip: ip,
                 token: token,
                 is_revoke: false,
             })
+            console.log(res)
             return true
         }else{
             return check

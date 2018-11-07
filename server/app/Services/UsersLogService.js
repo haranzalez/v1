@@ -25,8 +25,8 @@ class UsersLogService {
     async logout(request){
         const token = request.header('Authorization').split(' ')[1]
         const v = await Logs.query().where('token', token).fetch()
-        console.log(v[0])
-        if(v.length > 0){
+        console.log(v.rows)
+        if(v.rows.length > 0){
             await Logs.query()
             .where('token', token)
             .update({ salida: moment().format()})

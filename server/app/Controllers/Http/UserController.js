@@ -149,7 +149,7 @@ class UserController {
       const iplink = '172.30.10.18';
       const port = '3333';
       e.sendPasswordResetEmail({
-        from: 'R O B O T',
+        from: 'haranzalez@gmail.com',
         to: email,
         subject: 'Cambio de clave',
         text: 'Esta recibiendo este email porque usted (o alguien) solicito '+
@@ -187,7 +187,7 @@ class UserController {
       const iplink = '172.30.10.18';
       const port = '3333';
       e.sendPasswordResetEmail({
-        from: 'R O B O T',
+        from: 'haranzalez@gmail.com',
         to: email,
         subject: 'Cambio de clave',
         text: 'Esta recibiendo este email porque usted (o alguien) solicito '+

@@ -8,7 +8,7 @@ class UsersLogService {
         let check = await this.checkUserLogs(userId)
         console.log(check)
         if(check == false){
-            Logs.create({
+            await Logs.create({
                 user_id: userId,
                 ip: ip,
                 token: token,

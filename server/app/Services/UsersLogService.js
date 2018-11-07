@@ -28,7 +28,7 @@ class UsersLogService {
         if(v.rows.length > 0){
             await Logs.query()
             .where('token', token)
-            .update({ salida: moment().format()})
+            .update({ salida: moment().format(), is_revoke: true})
 
             return {
                 mess: 'Su session cerro exitosamente!.'

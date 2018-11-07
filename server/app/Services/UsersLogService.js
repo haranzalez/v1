@@ -14,7 +14,6 @@ class UsersLogService {
                 token: token,
                 is_revoke: false,
             })
-            console.log(res)
             return true
         }else{
             return check
@@ -25,12 +24,12 @@ class UsersLogService {
 
     async logout(request){
         const token = request.header('Authorization').split(' ')[1]
-        const v = await Logs.query().where('token', token)
+        const v = await Logs.query().where('token', token).fetch()
         console.log(v[0])
-        if(v.length > 0 && v[0].is_revoke == false){
+        if(v.length > 0){
             await Logs.query()
             .where('token', token)
-            .update({ salida: moment().format(), is_revoke: true })
+            .update({ salida: moment().format()})
 
             return {
                 mess: 'Su session cerro exitosamente!.'
@@ -45,7 +44,7 @@ class UsersLogService {
     async checkUserLogs(uid){
         const uLogs = await Logs.query().where('user_id', uid).fetch()
         const activeSess = {}
-            
+            console.log(uLogs.rows)
         if(uLogs.rows.length > 0){
             for(let prop in uLogs.rows){
                 if(uLogs.rows[prop]['is_revoke'] == false){

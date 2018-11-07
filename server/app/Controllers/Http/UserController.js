@@ -39,7 +39,6 @@ class UserController {
     .with('roles.modulos.subModulo.permisos')
     .where('username', username).fetch();
     const userId = user.rows[0].id
-    console.log(request.headers)
     const logResult = await log.login(request.ip(),token.token, userId)
     return {
       user,

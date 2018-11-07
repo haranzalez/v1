@@ -108,7 +108,7 @@ export default {
                         }
                         let final = UserServices.removeDuplicatesFromObj(menu, 'id')
                         commit('setMenu', final)
-                        commit('setIsLogged')
+                        commit('setIsLogged', true)
                         router.push('/'+final[1]['subModulo'][0]['nombre'])
                         return;
                     }
@@ -137,6 +137,7 @@ export default {
                 navPos: null,
                 toolbar: null,
             }, {root: true})
+
             HTTP().local.get('/api/logout')
             .then(({data}) => {
                 
@@ -224,8 +225,8 @@ export default {
         setUsuario(state, usuario){
             state.usuario = usuario;
         },
-        setIsLogged(state){
-            state.logged = true;
+        setIsLogged(state, value){
+            state.logged = value;
         },
         setLogout(state, payload) {
             state.logged = false

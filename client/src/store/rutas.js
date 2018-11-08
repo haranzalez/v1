@@ -3,6 +3,7 @@ import router from '../router'
 import UserServices from '../services/UserServices'
 import { Notification, Message, Confirm } from 'element-ui'
 import { mapGetters } from 'vuex';
+import NumbersService from '../services/NumberFormattingService'
 const formatter = new Intl.NumberFormat({
     style: 'currency',
 })
@@ -19,12 +20,18 @@ export default {
             comentario: null,
             nombre_municipio: null,
             departamento: null,
+            pago_conductor_HQ: null,
+            pago_tercero: null,
+            pago_cabezote: null,
         },
         municipio: {
             nombre_municipio: null,
             codigo_municipio: null,
         },
         valor_flete_formatted: 0,
+        pago_conductor_formatted: 0,
+        pago_tercero_formatted: 0,
+        pago_cabezote_formatted: 0,
         valor_anticipo_formatted: 0,
         comentarios_list: null,
         rutasList: null,
@@ -61,6 +68,9 @@ export default {
                 kilometros: state.ruta.kilometros,
                 anticipo_sugerido: state.ruta.anticipo_sugerido,
                 valor_flete: state.ruta.valor_flete,
+                pago_conductor_HQ: state.ruta.pago_conductor_HQ,
+                pago_tercero: state.ruta.pago_tercero,
+                pago_cabezote: state.ruta.pago_cabezote,
                 comentario: state.ruta.comentario,
                 municipio_id: state.ruta.municipio_id,
             })
@@ -86,6 +96,9 @@ export default {
                 kilometros: state.ruta.kilometros,
                 anticipo_sugerido: state.ruta.anticipo_sugerido,
                 valor_flete: state.ruta.valor_flete,
+                pago_conductor_HQ: state.ruta.pago_conductor_HQ,
+                pago_tercero: state.ruta.pago_tercero,
+                pago_cabezote: state.ruta.pago_cabezote,
                 municipio_id: state.ruta.municipio_id,
             })
             .then(d => {
@@ -179,6 +192,9 @@ export default {
             for(let prop in data){
                 data[prop]['anticipo_sugerido'] = '$'+formatter.format(parseInt(data[prop]['anticipo_sugerido']))
                 data[prop]['valor_flete'] = '$'+formatter.format(parseInt(data[prop]['valor_flete']))
+                data[prop]['pago_conductor_HQ'] = '$'+formatter.format(parseInt(data[prop]['pago_conductor_HQ']))
+                data[prop]['pago_tercero'] = '$'+formatter.format(parseInt(data[prop]['pago_tercero']))
+                data[prop]['pago_cabezote'] = '$'+formatter.format(parseInt(data[prop]['pago_cabezote']))
             }
             commit('setRutaList', data)
         },
@@ -200,20 +216,24 @@ export default {
             state.ruta.kilometros = value
         },
         setAnticipoSugerido(state, value){
-            value = (value == '' || value == '$')? '0' : value;
-            value = value.replace(/\$/g,'');
-            value = value.replace(/\,/g,'');
-            const res = formatter.format(parseInt(value));
-            state.valor_anticipo_formatted = '$'+res
+            state.valor_anticipo_formatted = '$'+NumbersService.formatToCurrency(value);
             state.ruta.anticipo_sugerido = value
         },
         setValorflete(state, value){
-            value = (value == '' || value == '$')? '0' : value;
-            value = value.replace(/\$/g,'');
-            value = value.replace(/\,/g,'');
-            const res = formatter.format(parseInt(value));
-            state.valor_flete_formatted = '$'+res;
+            state.valor_flete_formatted = '$'+NumbersService.formatToCurrency(value);
             state.ruta.valor_flete = value;
+        },
+        setPagoConductor(state, value){
+            state.pago_conductor_formatted = '$'+NumbersService.formatToCurrency(value);
+            state.ruta.pago_conductor_HQ = value
+        },
+        setPagoTercero(state, value){
+            state.pago_tercero_formatted = '$'+NumbersService.formatToCurrency(value);
+            state.ruta.pago_tercero = value
+        },
+        setPagoCabezote(state, value){
+            state.pago_cabezote_formatted = '$'+NumbersService.formatToCurrency(value);
+            state.ruta.pago_cabezote = value
         },
         setComentario(state, value){
             state.ruta.comentario = value
@@ -236,6 +256,7 @@ export default {
         setDepartamentoName(state, value){
             state.municipio.departamento = value
         },
+        
         rutaReset(state, value){
             state.ruta = {
                 id: null,

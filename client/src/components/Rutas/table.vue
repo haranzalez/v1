@@ -25,6 +25,7 @@
 	</el-dialog>
 	<!-- dialog create ruta -->
 	<el-dialog 
+	top="10%"
 	width="30%"
 	title="Nueva ruta" 
 	:visible.sync="dialogFormVisible"
@@ -57,6 +58,30 @@
 				:value="valor_anticipo_formatted"
 				size="mini"
 				@input="setAnticipoSugerido"
+				placeholder="">
+				</el-input>
+			</el-form-item>
+			<el-form-item label="Pago conductor HQ">
+				<el-input 
+				:value="pago_conductor_formatted"
+				size="mini"
+				@input="setPagoConductor"
+				placeholder="">
+				</el-input>
+			</el-form-item>
+			<el-form-item label="Pago tercero">
+				<el-input 
+				:value="pago_tercero_formatted"
+				size="mini"
+				@input="setPagoTercero"
+				placeholder="">
+				</el-input>
+			</el-form-item>
+			<el-form-item label="Pago cabezote">
+				<el-input 
+				:value="pago_cabezote_formatted"
+				size="mini"
+				@input="setPagoCabezote"
 				placeholder="">
 				</el-input>
 			</el-form-item>
@@ -131,6 +156,24 @@
       label="Anticipo Sugerido"
       min-width="200">
     </el-table-column>
+	<el-table-column
+	  sortable
+      prop="pago_conductor_HQ"
+      label="Pago conductor"
+      min-width="200">
+    </el-table-column>
+	<el-table-column
+	  sortable
+      prop="pago_tercero"
+      label="Pago tercero"
+      min-width="200">
+    </el-table-column>
+	<el-table-column
+	  sortable
+      prop="pago_cabezote"
+      label="Pago cabezote"
+      min-width="200">
+    </el-table-column>
     <el-table-column
       label="Comentarios"
       min-width="180"
@@ -202,6 +245,9 @@ export default {
 			'municipios_list',
 			'valor_flete_formatted',
 			'valor_anticipo_formatted',
+			'pago_conductor_formatted',
+			'pago_tercero_formatted',
+			'pago_cabezote_formatted',
 		]),
         filtered(){
 			if(this.dataReady){
@@ -221,6 +267,28 @@ export default {
 	components: {
 	},
     methods: {
+		...mapMutations('rutas', [
+			'setFullRuta',
+			'setKilometros',
+            'setAnticipoSugerido',
+            'setValorflete',
+            'setComentario',
+			'setMunicipioId',
+			'rutaReset',
+			'setMunicipioName',
+			'setDepartamentoName',
+			'setCodigoMunicipio',
+			'setPagoConductor',
+			'setPagoTercero',
+			'setPagoCabezote',
+		]),
+        ...mapActions('rutas',[
+			'fetchRutasList',
+			'fetchMunicipios',
+			'createRuta',
+			'create_municipio',
+			'delRuta',
+		]),
 		summarizeValues(param){
 			const { columns, data } = param;
 			const sums = [];
@@ -229,8 +297,23 @@ export default {
 				sums[index] = 'Total';
 				return;
 			}
-			console.log()
-			const values = data.map(item => Number(item[column.property]));
+			if (index === 1 || index == 2 || index == 8) {
+				sums[index] = '';
+				return;
+			}
+			
+			for(let prop in data){
+				for(let prop2 in data[prop]){
+					console.log(data[prop]['valor_flete'].replace(/\,/g,'').replace(/\$/g,''))
+					data[prop]['valor_flete'] = parseInt(data[prop]['valor_flete'].replace(/\,/g,'').replace(/\$/g,''))
+					data[prop]['anticipo_sugerido'] = parseInt(data[prop]['anticipo_sugerido'].replace(/\,/g,'').replace(/\$/g,''))
+					data[prop]['pago_conductor_HQ'] = parseInt(data[prop]['pago_conductor_HQ'].replace(/\,/g,'').replace(/\$/g,''))
+					data[prop]['pago_tercero'] = parseInt(data[prop]['pago_tercero'].replace(/\,/g,'').replace(/\$/g,''))
+					data[prop]['pago_cabezote'] = parseInt(data[prop]['pago_cabezote'].replace(/\,/g,'').replace(/\$/g,''))
+				}
+			}
+			console.log(data)
+			const values = data.map(item => Number(item[column.property]))
 			console.log(values)
 			for(let prop in values){
 				console.log(values[prop])
@@ -281,25 +364,6 @@ export default {
 		back(){
 			router.push('/cuadre-viaje')
 		},
-		...mapMutations('rutas', [
-			'setFullRuta',
-			'setKilometros',
-            'setAnticipoSugerido',
-            'setValorflete',
-            'setComentario',
-			'setMunicipioId',
-			'rutaReset',
-			'setMunicipioName',
-			'setDepartamentoName',
-			'setCodigoMunicipio',
-		]),
-        ...mapActions('rutas',[
-			'fetchRutasList',
-			'fetchMunicipios',
-			'createRuta',
-			'create_municipio',
-			'delRuta',
-		]),
 		pushToEdit(row){
 			this.setFullRuta(row)
 			router.push('/rutas-editar')
@@ -332,7 +396,6 @@ export default {
                     message: 'Cancelado'
                 });          
             });
-			
 		}
     },
     created: function(){

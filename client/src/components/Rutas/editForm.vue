@@ -41,10 +41,41 @@
                         @input="setAnticipoSugerido"
                         placeholder="">
                         </el-input>
+                   
                     </el-form-item>
 				</el-col>
-            </el-col>
 
+            <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Pago conductor HQ">
+                    <el-input 
+                    :value="ruta.pago_conductor_HQ"
+                    size="mini"
+                    @input="setPagoConductor"
+                    placeholder="">
+                    </el-input>
+                </el-form-item>
+            </el-col>
+            <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                <el-form-item label="Pago tercero">
+                    <el-input 
+                    :value="ruta.pago_tercero"
+                    size="mini"
+                    @input="setPagoTercero"
+                    placeholder="">
+                    </el-input>
+                </el-form-item>
+            </el-col>
+            <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                <el-form-item label="Pago cabezote">
+                    <el-input 
+                    :value="ruta.pago_cabezote"
+                    size="mini"
+                    @input="setPagoCabezote"
+                    placeholder="">
+                    </el-input>
+                </el-form-item>
+            </el-col>
+        </el-col>
             <el-col :span="12" :md="12" :sm="24" :xs="24">
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="">

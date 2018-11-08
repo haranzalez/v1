@@ -9,6 +9,9 @@ class RutasSchema extends Schema {
       table.float('kilometros')
       table.float('anticipo_sugerido')
       table.float('valor_flete')
+      table.float('pago_conductor_hq')
+      table.float('pago_tercero')
+      table.float('pago_cabezote')
       table.timestamps()
     })
   }

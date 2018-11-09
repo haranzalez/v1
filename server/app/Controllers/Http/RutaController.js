@@ -12,6 +12,7 @@ class RutaController {
         .with('comentarios')
         .with('municipios')
         .fetch()
+        console.log(rutas.rows)
         for(let prop in rutas.rows)
         {
             let muni = await rutas.rows[prop].municipios().fetch()

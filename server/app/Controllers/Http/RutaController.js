@@ -12,7 +12,6 @@ class RutaController {
         .with('comentarios')
         .with('municipios')
         .fetch()
-        console.log(rutas.rows)
         for(let prop in rutas.rows)
         {
             let muni = await rutas.rows[prop].municipios().fetch()
@@ -91,8 +90,6 @@ class RutaController {
             pago_conductor_HQ,
             pago_tercero,
             pago_cabezote,
-            municipio_origen_id,
-            municipio_destino_id,
         })
 
         /*if(comentario && user){
@@ -112,6 +109,12 @@ class RutaController {
             }
 
         }*/
+        if(municipio_origen_id){
+            await ruta.municipios().attach(municipio_origen_id)
+        }
+        if(municipio_destino_id){
+            await ruta.municipios().attach(municipio_destino_id)
+        }
 
         return {
             message: "success"

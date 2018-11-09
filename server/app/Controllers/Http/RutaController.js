@@ -16,8 +16,8 @@ class RutaController {
         {
             let muni = await rutas.rows[prop].municipios().fetch()
             if(muni.rows.length > 0){
-                rutas.rows[prop]['municipio_id'] = muni.rows[0]['id']
-                rutas.rows[prop]['nombre_municipio'] = muni.rows[0]['nombre_municipio']
+                rutas.rows[prop]['municipio_id'] = muni.rows[prop]['id']
+                rutas.rows[prop]['nombre_municipio'] = muni.rows[prop]['nombre_municipio']
             }else{
                 rutas.rows[prop]['municipio_id'] = null
                 rutas.rows[prop]['nombre_municipio'] = 'No aplica'

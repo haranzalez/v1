@@ -23,8 +23,14 @@ export default {
             pago_conductor_HQ: null,
             pago_tercero: null,
             pago_cabezote: null,
+            municipio_origen_id: null,
+            municipio_destino_id: null,
         },
-        municipio: {
+        municipio_origen: {
+            nombre_municipio: null,
+            codigo_municipio: null,
+        },
+        municipio_destino: {
             nombre_municipio: null,
             codigo_municipio: null,
         },
@@ -197,6 +203,7 @@ export default {
                 data[prop]['pago_tercero'] = '$'+formatter.format(parseInt(data[prop]['pago_tercero']))
                 data[prop]['pago_cabezote'] = '$'+formatter.format(parseInt(data[prop]['pago_cabezote']))
             }
+            console.log(data)
             commit('setRutaList', data)
         },
     },

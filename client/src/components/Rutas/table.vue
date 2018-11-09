@@ -129,8 +129,8 @@
 					</el-button>
 					<el-dropdown-menu slot="dropdown">
 						<el-dropdown-item :disabled="(permisos['Rutas'].crear)? false:true" command="createRuta"><i class="mdi mdi-plus"></i> Nueva ruta</el-dropdown-item>
-						<el-dropdown-item :disabled="(permisos['Rutas'].editar)? false:true" command="edit"><i class="mdi mdi-city mr-10"></i> Editar</el-dropdown-item>
-						<el-dropdown-item :disabled="(permisos['Rutas'].eliminar)? false:true" command="del"><i class="mdi mdi-city mr-10"></i> Eliminar</el-dropdown-item>
+						<el-dropdown-item :disabled="(permisos['Rutas'].editar)? false:true" command="edit"><i class="mdi mdi-pencil mr-10"></i> Editar</el-dropdown-item>
+						<el-dropdown-item :disabled="(permisos['Rutas'].eliminar)? false:true" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
 						<el-dropdown-item :disabled="(permisos['Rutas'].crear)? false:true" command="createMunicipio" divided><i class="mdi mdi-city mr-10"></i> Nuevo municipio</el-dropdown-item>
 					</el-dropdown-menu>
 				</el-dropdown>

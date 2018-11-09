@@ -4,7 +4,8 @@ const Model = use('Model')
 
 class Municipio extends Model {
     rutas() {
-        return this.belongsTo('App/Models/Ruta')
+        return this.belongsToMany('App/Models/Ruta')
+        .pivotModel(use('App/Models/PivotRutasMunicipio'));
     }
 }
 

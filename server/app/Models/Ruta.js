@@ -8,7 +8,8 @@ class Ruta extends Model {
         .pivotModel(use('App/Models/PivotCuadreViajeRuta'));
     }
     municipios() {
-        return this.hasMany('App/Models/Municipio')
+        return this.belongsToMany('App/Models/Municipio')
+        .pivotModel(use('App/Models/PivotRutasMunicipio'));
     }
     comentarios(){
         return this.hasMany('App/Models/ComentariosRuta')

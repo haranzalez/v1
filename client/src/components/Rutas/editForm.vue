@@ -1,7 +1,6 @@
 <template>
    <vue-scroll class="page-trailers-create">
-       <h1>Rutas - Actualizar</h1>
-       <el-form label-position="top" ref="form" label-width="120px">
+       <el-form label-position="right" ref="form" label-width="150px">
         <el-row>
             <el-col :span="12" :md="12" :sm="24" :xs="24">
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
@@ -79,7 +78,7 @@
             <el-col :span="12" :md="12" :sm="24" :xs="24">
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="">
-                        <el-card class="box-card">
+                        <el-card class="box-card" style="margin-left:20px;">
                             <div slot="header" class="clearfix">
                                 <span>Comentarios</span>
                                 <el-button @click="comentar" style="float: right; padding: 3px 0" type="text">Nuevo</el-button>
@@ -108,13 +107,6 @@
                     </el-form-item>
 				</el-col>
                
-            </el-col>
-
-            <el-col class="col-p pull-right">
-                <el-form-item>
-                    <el-button  type="primary" @click="editRuta">Actualizar</el-button>
-                    <el-button  @click="back">Regresar</el-button>
-                </el-form-item>
             </el-col>
 
         </el-row>
@@ -199,6 +191,9 @@ export default {
             'setValorflete',
             'setComentario',
             'setMunicipioId',
+            'setPagoConductor',
+            'setPagoTercero',
+            'setPagoCabezote',
         ]),
         title(field){
             field = field.split('_').join(' ')

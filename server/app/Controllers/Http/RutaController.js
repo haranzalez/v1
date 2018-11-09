@@ -76,14 +76,22 @@ class RutaController {
             kilometros,
             anticipo_sugerido,
             valor_flete,
-            municipio_id,
-            comentario,
+            pago_conductor_HQ,
+            pago_tercero,
+            pago_cabezote,
+            municipio_origen_id,
+            municipio_destino_id,
         } = request.all()
        
         const ruta = await Ruta.create({
             kilometros,
             anticipo_sugerido,
-            valor_flete
+            valor_flete,
+            pago_conductor_HQ,
+            pago_tercero,
+            pago_cabezote,
+            municipio_origen_id,
+            municipio_destino_id,
         })
 
         /*if(comentario && user){
@@ -103,9 +111,6 @@ class RutaController {
             }
 
         }*/
-        if(municipio_id){
-            await ruta.municipios().attach(municipio_id)
-        }
 
         return {
             message: "success"

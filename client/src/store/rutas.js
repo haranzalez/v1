@@ -130,6 +130,7 @@ export default {
         fetchRutasList({commit, dispatch}){
             HTTP().local.get('api/rutas')
             .then(d => {
+                console.log(d.data)
                 dispatch('formatValuesInRutasList', d.data)
                 //commit('setRutaList', d.data)
                 commit('setDataReady', true)

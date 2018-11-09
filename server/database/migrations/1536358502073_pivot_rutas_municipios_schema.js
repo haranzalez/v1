@@ -9,6 +9,7 @@ class PivotRutasMunicipiosSchema extends Schema {
       table.foreign('ruta_id').references('rutas.id').onDelete('cascade')
       table.integer('municipio_id')
       table.foreign('municipio_id').references('municipios.id').onDelete('cascade')
+      table.string('role')
     })
   }
 

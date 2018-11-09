@@ -25,7 +25,7 @@
 	</el-dialog>
 	<!-- dialog create ruta -->
 	<el-dialog 
-	top="10%"
+	top="5vh"
 	width="30%"
 	title="Nueva ruta" 
 	:visible.sync="dialogFormVisible"
@@ -92,6 +92,21 @@
 		</span>
 	</el-dialog>
 
+	<!-- dialog edit ruta -->
+	<el-dialog 
+	top="5vh"
+	width="60%"
+	title="Actualizando ruta" 
+	:visible.sync="dialogFormEditVisible"
+	:close-on-press-escape="true"
+	center>
+		<RutasEditForm></RutasEditForm>
+		<span slot="footer" class="dialog-footer">
+			<el-button size="medium" @click="dialogFormEditVisible = false; setAnticipoSugerido(0); setValorflete(0); rutaReset()">Cerrar</el-button>
+			<el-button size="medium" type="primary" @click="editRuta">Actualizar</el-button>
+		</span>
+	</el-dialog>
+
 	<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
 		<h1>Rutas</h1>
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
@@ -104,21 +119,31 @@
 			</div>
 		</el-col>
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-			<div style="text-align:right;">
-				<el-dropdown style="float: right; padding: 3px 0" trigger="click" @command="handleAction">  
+			<div style="padding: 3px 0;">
+				<el-row style="text-align: right;">
+				<el-button type="default" size="mini" @click="reloadTable" style="margin-right:5px;"><i class="mdi mdi-reload"></i></el-button>
+				<el-button type="default" size="mini" @click="exportTable" style="margin-right:5px;"><i class="mdi mdi-file-excel"></i></el-button>
+				<el-dropdown style="float: right;" trigger="click" @command="handleAction">  
 					<el-button size="mini">
 						<i class="mdi mdi-settings"></i>
 					</el-button>
 					<el-dropdown-menu slot="dropdown">
 						<el-dropdown-item :disabled="(permisos['Rutas'].crear)? false:true" command="createRuta"><i class="mdi mdi-plus"></i> Nueva ruta</el-dropdown-item>
-						<el-dropdown-item :disabled="(permisos['Rutas'].crear)? false:true" command="createMunicipio"><i class="mdi mdi-city mr-10"></i> Nuevo municipio</el-dropdown-item>
-						<el-dropdown-item command="export"><i class="mdi mdi-file-excel mr-10"></i> Exportar</el-dropdown-item>
+						<el-dropdown-item :disabled="(permisos['Rutas'].editar)? false:true" command="edit"><i class="mdi mdi-city mr-10"></i> Editar</el-dropdown-item>
+						<el-dropdown-item :disabled="(permisos['Rutas'].eliminar)? false:true" command="del"><i class="mdi mdi-city mr-10"></i> Eliminar</el-dropdown-item>
+						<el-dropdown-item :disabled="(permisos['Rutas'].crear)? false:true" command="createMunicipio" divided><i class="mdi mdi-city mr-10"></i> Nuevo municipio</el-dropdown-item>
 					</el-dropdown-menu>
 				</el-dropdown>
+				</el-row>
 			</div>
 		</el-col>
 	<el-table
+	ref="rutasTable"
 	size="mini"
+	stripe
+	max-height="250"
+	highlight-current-row
+	@current-change="handleCurrentTableChange"
     :data="filtered"
 	show-summary
 	:summary-method="summarizeValues"
@@ -175,6 +200,7 @@
       min-width="200">
     </el-table-column>
     <el-table-column
+	  fixed="right"
       label="Comentarios"
       min-width="180"
 	  align="center">
@@ -193,15 +219,6 @@
 			<el-button size="mini" v-popover="scope.row.id">Ver comentarios</el-button>
 	  </template>
     </el-table-column>
-    <el-table-column
-      fixed="right"
-      label="Acciones"
-      min-width="120">
-      <template slot-scope="scope">
-        <el-button @click="pushToEdit(scope.row)" type="text" size="medium"><i class="mdi mdi-lead-pencil mr-10"></i></el-button>
-		<el-button @click="pushToDel(scope.row)" type="text" size="medium"><i class="mdi mdi-delete mr-10"></i></el-button>
-      </template>
-    </el-table-column>
   </el-table>
 
   </el-col>
@@ -215,6 +232,8 @@ import HTTP from '../../http';
 import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
 import moment from 'moment-timezone'
 import router from '../../router'
+//componentes
+import RutasEditForm from '@/components/Rutas/editForm'
 //servicios
 import exportService from '../../services/exportService'
 const formatter = new Intl.NumberFormat({
@@ -230,6 +249,7 @@ export default {
 			dialogTableVisible: false,
 			dialogFormVisible: false,
 			dialogFormMunicipioVisible: false,
+			dialogFormEditVisible: false,
 			formLabelWidth: '120px',
 		}
 	},
@@ -265,6 +285,7 @@ export default {
 		},
 	},
 	components: {
+		RutasEditForm,
 	},
     methods: {
 		...mapMutations('rutas', [
@@ -288,66 +309,58 @@ export default {
 			'createRuta',
 			'create_municipio',
 			'delRuta',
+			'editRuta',
 		]),
-		summarizeValues(param){
-			const { columns, data } = param;
-			const sums = [];
-			columns.forEach((column, index) => {
-			if (index === 0) {
-				sums[index] = 'Total';
-				return;
-			}
-			if (index === 1 || index == 2 || index == 8) {
-				sums[index] = '';
-				return;
-			}
-			
-			for(let prop in data){
-				for(let prop2 in data[prop]){
-					console.log(data[prop]['valor_flete'].replace(/\,/g,'').replace(/\$/g,''))
-					data[prop]['valor_flete'] = parseInt(data[prop]['valor_flete'].replace(/\,/g,'').replace(/\$/g,''))
-					data[prop]['anticipo_sugerido'] = parseInt(data[prop]['anticipo_sugerido'].replace(/\,/g,'').replace(/\$/g,''))
-					data[prop]['pago_conductor_HQ'] = parseInt(data[prop]['pago_conductor_HQ'].replace(/\,/g,'').replace(/\$/g,''))
-					data[prop]['pago_tercero'] = parseInt(data[prop]['pago_tercero'].replace(/\,/g,'').replace(/\$/g,''))
-					data[prop]['pago_cabezote'] = parseInt(data[prop]['pago_cabezote'].replace(/\,/g,'').replace(/\$/g,''))
-				}
-			}
-			console.log(data)
-			const values = data.map(item => Number(item[column.property]))
-			console.log(values)
-			for(let prop in values){
-				console.log(values[prop])
-				values[prop] = parseInt(values[prop].replace(/\,/g,''))
-				values[prop] = parseInt(values[prop].replace(/\$/g,''))
-			}
-			if (!values.every(value => isNaN(value))) {
-				if(index === 2){
-					sums[index] = values.reduce((prev, curr) => {
-					const value = Number(curr);
-					if (!isNaN(value)) {
-						return prev + curr;
-					} else {
-						return prev;
-					}
-					}, 0)+ ' Km.';
-				}else{
-					
-					sums[index] = '$ ' + formatter.format(values.reduce((prev, curr) => {
-					const value = Number(curr);
-					if (!isNaN(value)) {
-						return prev + curr;
-					} else {
-						return prev;
-					}
-					}, 0));
-				}
-				
-			} else {
-				sums[index] = '';
-			}
-			});
-
+		summarizeValues(param) {
+        const { columns, data } = param;
+        const sums = [];
+        columns.forEach((column, index) => {
+          if (index === 0) {
+            sums[index] = 'Total';
+            return;
+		  }
+		  if (index === 8) {
+			  sums[index] = '';
+            return;
+          }
+          const values = data.map(item => {
+			  if(column.property == 'comentario'){
+				  return
+			  }
+			  if(item[column.property] != undefined){
+			  	  return Number(item[column.property].toString().replace(/\$/g,'').replace(/\,/g,''))
+			  }
+			  return
+		  })
+          if (!values.every(value => isNaN(value))) {
+            sums[index] = '$ ' + formatter.format(parseInt(values.reduce((prev, curr) => {
+              const value = Number(curr);
+              if (!isNaN(value)) {
+                return prev + curr;
+              } else {
+                return prev
+              }
+            }, 0)));
+          } else {
+            sums[index] = '';
+          }
+        });
 			return sums;
+		},
+		exportTable(){
+			exportService.toXLS(this.rutasList, 'Rutas', true)
+		},
+		reloadTable(){
+			this.fetchRutasList()	
+		},
+		handleCurrentTableChange(val) {
+			if(val == null){
+				this.$refs.rutasTable.setCurrentRow(val);
+				this.setDataReady(false)
+				return
+			}
+			this.setFullRuta(val)
+			this.$refs.rutasTable.setCurrentRow(val);
 		},
 		handleAction(e, row){
             if(e == 'createRuta'){
@@ -357,16 +370,32 @@ export default {
 			if(e == 'createMunicipio'){
 				this.dialogFormMunicipioVisible = true;
 			}
-			if(e == 'export'){
-				exportService.toXLS(this.rutasList, 'Rutas', true)
-            }
+			if(e == 'edit'){
+				this.dialogFormEditVisible = true
+			}
+		
+			if(e == 'del'){
+				this.$confirm('Esta operacion eliminara permanentemente este registro. Continuar?', 'Atencion!', {
+					confirmButtonText: 'OK',
+					cancelButtonText: 'Cancelar',
+					type: 'warning'
+				}).then(() => {
+					this.delRuta()
+					this.fetchRutasList()
+				}).catch(() => {
+					this.$message({
+						type: 'warning',
+						message: 'Cancelado'
+					});          
+				});
+			}
         },
 		back(){
 			router.push('/cuadre-viaje')
 		},
 		pushToEdit(row){
 			this.setFullRuta(row)
-			router.push('/rutas-editar')
+
 		},
 		create_ruta(){
 			if(this.createRuta()){
@@ -381,22 +410,7 @@ export default {
 				this.dialogFormMunicipioVisible = false
 			}
 		},
-		pushToDel(row){
-			this.$confirm('Esta operacion eliminara permanentemente este registro. Continuar?', 'Atencion!', {
-                confirmButtonText: 'OK',
-                cancelButtonText: 'Cancelar',
-                type: 'warning'
-            }).then(() => {
-				this.setFullRuta(row)
-				this.delRuta()
-				this.fetchRutasList()
-            }).catch(() => {
-                this.$message({
-                    type: 'warning',
-                    message: 'Cancelado'
-                });          
-            });
-		}
+		
     },
     created: function(){
 		this.fetchRutasList()

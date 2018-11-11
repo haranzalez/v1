@@ -36,7 +36,17 @@
 			<el-input size="mini" v-model="ruta.kilometros" auto-complete="off"></el-input>
 			</el-form-item>
 			<el-form-item label="Municipio" :label-width="formLabelWidth">
-			<el-select size="mini" @change="setMunicipioId" filterable :value="ruta.municipio_id" placeholder="Seleccione..">
+			<el-select size="mini" @change="setMunicipioOrigenId" filterable :value="ruta.municipio_id" placeholder="Seleccione..">
+				<el-option
+				v-for="item in municipios_list"
+				:key="item.id"
+				:label="item.nombre_municipio"
+				:value="item.id">
+				</el-option>
+			</el-select>
+			</el-form-item>
+			<el-form-item label="Municipio" :label-width="formLabelWidth">
+			<el-select size="mini" @change="setMunicipioDestinoId" filterable :value="ruta.municipio_id" placeholder="Seleccione..">
 				<el-option
 				v-for="item in municipios_list"
 				:key="item.id"
@@ -302,6 +312,8 @@ export default {
 			'setPagoConductor',
 			'setPagoTercero',
 			'setPagoCabezote',
+			'setMunicipioOrigenId',
+			'setMunicipioDestinoId',
 		]),
         ...mapActions('rutas',[
 			'fetchRutasList',

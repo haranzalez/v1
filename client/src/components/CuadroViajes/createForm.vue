@@ -1,8 +1,15 @@
 <template>
    <vue-scroll class="page-cuadro-viaje-create">
-       <el-form :inline="true" label-position="top" ref="form" label-width="120px">
+       <el-form :inline="false" label-position="top" ref="form" label-width="120px">
+           <el-row>
+               <el-col :xs="24" :sm="24" :md="8" :lg="8" :xl="8">
                     <el-form-item label="Vehiculo">
-                        <el-select size="mini" :value.sync="selectedCreateVehiculo" placeholder="Seleccione.." @change="setSelectedCreateVehiculo">
+                        <el-select 
+                        class="inputWidth"
+                        size="mini" 
+                        :value.sync="selectedCreateVehiculo" 
+                        placeholder="Seleccione.." 
+                        @change="setSelectedCreateVehiculo">
                             <el-option
                             v-for="item in vehiculosList"
                             :key="item.id"
@@ -11,8 +18,15 @@
                             </el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="Producto">
-                        <el-select size="mini" :value.sync="selectedCreateProducto" placeholder="Seleccione.." @change="setSelectedCreateProducto">
+               </el-col>
+                <el-col :xs="24" :sm="24" :md="8" :lg="8" :xl="8">
+                     <el-form-item label="Producto">
+                        <el-select 
+                        class="inputWidth"
+                        size="mini" 
+                        :value.sync="selectedCreateProducto" 
+                        placeholder="Seleccione.." 
+                        @change="setSelectedCreateProducto">
                             <el-option
                             v-for="item in productosList"
                             :key="item.id"
@@ -21,8 +35,15 @@
                             </el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="Ruta">
-                        <el-select size="mini" :value.sync="selectedCreateRuta" placeholder="Seleccione.." @change="setSelectedCreateRuta">
+               </el-col>
+                <el-col :xs="24" :sm="24" :md="8" :lg="8" :xl="8">
+                     <el-form-item label="Ruta">
+                        <el-select
+                        class="inputWidth" 
+                        size="mini" 
+                        :value.sync="selectedCreateRuta" 
+                        placeholder="Seleccione.." 
+                        @change="rutaChange">
                             <el-option
                             v-for="item in rutasList"
                             :key="item.id"
@@ -31,22 +52,33 @@
                             </el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="Valor flete">
+               </el-col>
+           </el-row>
+           <el-row>
+               <el-col :xs="24" :sm="24" :md="8" :lg="8" :xl="8">
+                    <el-form-item label="Valor cuadre">
                         <el-input
+                            class="inputWidth"
                             size="mini"
                             placeholder="$0"
                             @input="setFlete">
                         </el-input>
                     </el-form-item>
-                    <el-form-item label="Anticipo">
+               </el-col>
+               <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+                   <el-form-item label="Anticipo">
                         <el-input
+                            class="inputWidth"
                             size="mini"
                             placeholder="$0"
                             @input="setAnticipo">
                         </el-input>
                     </el-form-item>
-                    
-                   
+               </el-col>
+               <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+                   <summaryTable></summaryTable>
+               </el-col>
+           </el-row>
         </el-form>
    </vue-scroll>
 </template>
@@ -56,6 +88,7 @@ import HTTP from '../../http';
 import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
 import moment from 'moment-timezone'
 import router from '../../router'
+import summaryTable from './summaryTable.vue'
 
 export default {
 	name: 'CuadreViajeCreateForm',
@@ -75,6 +108,7 @@ export default {
             'dataReady',
             'selectedCreateVehiculo',
             'selectedCreateRuta',
+            'selectedCreateProducto',
         ]),
          ...mapState('rutas', [
             'rutasList',
@@ -88,6 +122,7 @@ export default {
 
 	},
 	components: {
+        summaryTable,
 	},
     methods: {
         back() {
@@ -99,10 +134,12 @@ export default {
             'setFlete',
             'setAnticipo',
             'setSelectedCreateVehiculo',
-            'setSelectedCreateRuta'
+            'setSelectedCreateRuta',
+            'setSelectedCreateProducto',
         ]),
         ...mapActions('rutas', [
             'fetchRutasList',
+            'fetchRuta',
         ]),
         ...mapActions('vehiculos', [
             'fetchVehiculosList',
@@ -117,6 +154,10 @@ export default {
             field = field.split('_').join(' ')
             field = field.charAt(0).toUpperCase() + field.slice(1)
             return field
+        },
+        rutaChange(value){
+            this.fetchRuta(value)
+            this.setSelectedCreateRuta(value)
         },
        
     },
@@ -149,6 +190,9 @@ export default {
 	.pull-right {
 		text-align: right;
 	}
+}
+.inputWidth{
+    width: 150px;
 }
 
 </style>

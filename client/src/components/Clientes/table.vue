@@ -2,7 +2,7 @@
 <div>
 	
 	<!--Create viaje form -->
-	<el-dialog width="78%" top="15vh" title="Viaje" :visible.sync="createViajeFormVisible">
+	<el-dialog center width="50%" top="15vh" title="Cuadre viaje" :visible.sync="createViajeFormVisible">
 		<ViajeCreateForm></ViajeCreateForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button size="mini" type="primary" @click="create_cuadre_viaje(consolidacion.id)">Crear Viaje</el-button>
@@ -232,6 +232,7 @@ export default {
 		...mapActions('consolidaciones',[
 			'createConsolidacion',
 		]),
+		
 //=============================//
 //======= UI Functions =====//
 //=============================//

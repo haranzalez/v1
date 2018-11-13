@@ -171,6 +171,9 @@ export default {
         setSelectedCreateRuta(state, value){
             state.selectedCreateRuta = value
         },
+        setSelectedCreateProducto(state, value){
+            state.selectedCreateProducto = value
+        },
         
     },
 

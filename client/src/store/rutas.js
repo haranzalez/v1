@@ -150,6 +150,16 @@ export default {
                 console.log(err)
             })
         },
+        fetchRuta({commit, dispatch}, id){
+            HTTP().local.get('api/rutas/'+id)
+            .then(d => {
+                console.log(d.data)
+                commit('setFullRuta', d.data)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
         fetchComments({state, commit}){
             HTTP().local.get('api/rutas/comentario/'+state.ruta.id)
             .then(d => {

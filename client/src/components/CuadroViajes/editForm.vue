@@ -1,6 +1,5 @@
 <template>
    <vue-scroll class="page-vehiculos-create">
-       <h1>Vehiculos - Detalles/Editar</h1>
        <el-form label-position="top" ref="form" label-width="120px">
         <el-row>
             <el-col>

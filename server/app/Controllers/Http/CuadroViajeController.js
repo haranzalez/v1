@@ -64,10 +64,13 @@ class CuadroViajeController {
         if(ruta_id){
             await cuadre.ruta().attach(ruta_id)
         }
+        if(producto_id){
+            await cuadre.producto().attach(producto_id)
+        }
 
-        return await Consolidacion.query()
-        .with('cuadre_viaje.ruta')
-        .fetch()
+        return {
+            message: 'success'
+        }
     }
     async update_cuadre({ params, request }){
         const { id } = params;

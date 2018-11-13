@@ -1,14 +1,14 @@
 <template>
 <div>
+	
 	<!--Create viaje form -->
-	<el-dialog width="40%" top="5vh" title="Viaje" :visible.sync="createViajeFormVisible">
+	<el-dialog width="78%" top="15vh" title="Viaje" :visible.sync="createViajeFormVisible">
 		<ViajeCreateForm></ViajeCreateForm>
 		<span slot="footer" class="dialog-footer">
-			<el-button @click="createViajeFormVisible = false;">Cerrrar</el-button>
-			<el-button type="primary" @click="createCuadre(consolidacion.id)">Crear</el-button>
+			<el-button size="mini" type="primary" @click="create_cuadre_viaje(consolidacion.id)">Crear Viaje</el-button>
 		</span>
 	</el-dialog>
-	<!--Edit dialog form -->
+	<!--Edit cliente dialog form -->
 	<el-dialog width="40%" top="5vh" :title="cliente.nombre_razon_social" :visible.sync="editFormVisible">
 		<ClientesEditForm></ClientesEditForm>
 		<span slot="footer" class="dialog-footer">
@@ -16,12 +16,12 @@
 			<el-button type="primary" @click="editCliente">Actualizar</el-button>
 		</span>
 	</el-dialog>
-	<!--Create dialog form -->
+	<!--Create cliente dialog form -->
 	<el-dialog width="40%" top="5vh" title="Nuevo cliente" :visible.sync="createFormVisible">
 		<ClientesCreateForm></ClientesCreateForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button @click="createFormVisible = false; paramsReset(); setDataReady(false);">Cancelar</el-button>
-			<el-button type="primary" @click="create">Crear</el-button>
+			<el-button type="primary" @click="create_client">Crear</el-button>
 		</span>
 	</el-dialog>
 	<!--Table-->
@@ -161,11 +161,15 @@ export default {
 			currentRow: null,
 			editFormVisible: false,
 			createFormVisible: false,
+			createViajeFormVisible: false,
             selectTypeOfSearch: '',
 			filter: '',
 		}
 	},
 	computed: {
+//=============================//
+//========== Imports Variables =========//
+//=============================//
         ...mapState('authentication', [
 			'permisos',
         ]),
@@ -177,8 +181,13 @@ export default {
 		]),
 		...mapState('consolidaciones', [
 			'consolidacion',
-			'createViajeFormVisible',
 		]),
+		...mapState('productos', [
+			'productosList',
+		]),
+//=============================//
+//========== Local Variables =========//
+//=============================//
         filtered(){
 			if(this.filter !== ''){
 				let type = this.selectTypeOfSearch.toLowerCase()
@@ -198,6 +207,35 @@ export default {
 		ViajeCreateForm,
 	},
     methods: {
+//=============================//
+//========== Imports Functions =========//
+//=============================//
+		...mapMutations('clientes', [
+			'setFullCliente',
+			'paramsReset',
+			'setDataReady',
+		]),
+		
+        ...mapActions('clientes',[
+			'fetchClientesList',
+			'createCliente',
+			'delCliente',
+			'editCliente',
+		]),
+		...mapActions('cuadreViajes',[
+			'createCuadre',
+		]),
+		...mapMutations('consolidaciones', [
+			'setClienteId',
+			'setCuadreViajeFormVisible',
+		]),
+		...mapActions('consolidaciones',[
+			'createConsolidacion',
+		]),
+//=============================//
+//======= UI Functions =====//
+//=============================//
+
 		exportTable(){
 			exportService.toXLS(this.clientesList, 'Clientes', true)
 		},
@@ -254,6 +292,8 @@ export default {
 						type: 'warning'
 					}).then(() => {
 						this.createConsolidacion()
+						this.createViajeFormVisible = true;
+						
 					}).catch(() => {
 						this.$message({
 							type: 'warning',
@@ -273,11 +313,22 @@ export default {
 				
 			}
 		},
+//=============================//
+//========== CRUD =========//
+//=============================//
 		
-		create(){
+		create_client(){
 			this.createCliente()
 			this.createFormVisible = false
 			this.fetchClientesList()
+		},
+		create_cuadre_viaje(id){
+			if(this.createCuadre(id)){
+				Notification({
+					showClose: true,
+					message: 'Se a creado un nuevo cuadre.'
+            	})
+			}
 		},
 		pushToDel(){
 			this.$confirm('Esta operacion eliminara permanentemente este registro. Continuar?', 'Atencion!', {
@@ -303,30 +354,13 @@ export default {
 		back(){
 			router.push('/')
 		},
-		...mapMutations('clientes', [
-			'setFullCliente',
-			'paramsReset',
-			'setDataReady',
-		]),
 		
-        ...mapActions('clientes',[
-			'fetchClientesList',
-			'createCliente',
-			'delCliente',
-			'editCliente',
-		]),
-		...mapActions('cuadreViajes',[
-			'createCuadre',
-		]),
-		...mapMutations('consolidaciones', [
-			'setClienteId',
-			'setCuadreViajeFormVisible',
-		]),
-		...mapActions('consolidaciones',[
-			'createConsolidacion',
-		]),
 		
-    },
+	},
+//=============================//
+//========== UI State Functions =========//
+//=============================//
+	
     created: function(){
 		this.fetchClientesList()
 	}

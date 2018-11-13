@@ -16,12 +16,18 @@ class RutaController {
         {
             let muni = await rutas.rows[prop].municipios().fetch()
             if(muni.rows.length > 0){
-                rutas.rows[prop]['municipio_id'] = muni.rows[prop]['id']
-                rutas.rows[prop]['nombre_municipio'] = muni.rows[prop]['nombre_municipio']
+                console.warn(muni.rows[prop])
+                rutas.rows[prop]['municipio_origen_id'] = (muni.rows[0]['id'] != undefined)?muni.rows[0]['id']:null
+                rutas.rows[prop]['municipio_destino_id'] =(muni.rows[1]['id'] != undefined)?muni.rows[1]['id']:null
+                rutas.rows[prop]['nombre_municipio_origen'] = muni.rows[0]['nombre_municipio']
+                rutas.rows[prop]['nombre_municipio_destino'] = muni.rows[1]['nombre_municipio']
             }else{
-                rutas.rows[prop]['municipio_id'] = null
-                rutas.rows[prop]['nombre_municipio'] = 'No aplica'
+                rutas.rows[prop]['municipio_origen_id'] = null
+                rutas.rows[prop]['municipio_destino_id'] = null
+                rutas.rows[prop]['nombre_municipio_origen'] = 'No aplica'
+                rutas.rows[prop]['nombre_municipio_destino'] = 'No aplica'
             }
+            
         }
         for(let prop1 in rutas.rows){
             let comentarios = await rutas.rows[prop1].comentarios().fetch()
@@ -161,24 +167,39 @@ class RutaController {
             kilometros,
             anticipo_sugerido,
             valor_flete,
-            municipio_id,
+            pago_conductor_HQ,
+            pago_tercero,
+            pago_cabezote,
+            municipio_origen_id,
+            municipio_destino_id,
         } = request.all()
         let municipio = []
        
-        if(municipio_id != null){
+        if(municipio_origen_id != null){
             const muni = await ruta.municipios().fetch()
             if(muni.rows.length > 0){
                 await ruta.municipios().detach([muni.rows[0]['id']])
             }
-            await ruta.municipios().attach(municipio_id)
+            await ruta.municipios().attach(municipio_origen_id)
         }
-
+        if(municipio_destino_id != null){
+            const muni = await ruta.municipios().fetch()
+            if(muni.rows.length > 0){
+                await ruta.municipios().detach([muni.rows[1]['id']])
+            }
+            await ruta.municipios().attach(municipio_destino_id)
+        }
         ruta.kilometros = kilometros
-        ruta.anticipo_sugerido = anticipo_sugerido
-        ruta.valor_flete = valor_flete
+        ruta.anticipo_sugerido = Number(anticipo_sugerido.replace(/\$/g,'').replace(/\,/g,''))
+        ruta.valor_flete = Number(valor_flete.replace(/\$/g,'').replace(/\,/g,''))
+        ruta.pago_conductor_HQ = Number(pago_conductor_HQ.replace(/\$/g,'').replace(/\,/g,''));
+        ruta.pago_tercero = Number(pago_tercero.replace(/\$/g,'').replace(/\,/g,''));
+        ruta.pago_cabezote = Number(pago_cabezote.replace(/\$/g,'').replace(/\,/g,''));
         ruta.save()
         ruta['municipio'] = await ruta.municipios().fetch()
-        return ruta
+        return {
+            message: 'success'
+        }
 
     }
 

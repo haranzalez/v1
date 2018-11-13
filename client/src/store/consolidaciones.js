@@ -24,7 +24,6 @@ export default {
         ruta: {
             id: null,
         },
-        createViajeFormVisible: false,
         consolidacionesList: null,
         selectedViaje: null,
         selectedProducto: null,
@@ -37,14 +36,18 @@ export default {
             if(state.consolidacion.cliente_id != null){
                 HTTP().local.get('api/consolidaciones/'+state.consolidacion.cliente_id+'/crear')
                 .then(d => {
-                    console.log(d.data)
-                    commit('setFullConsolidacion', d.data)
-                    commit('setCuadreViajeFormVisible', true)
-                    Message({
-                        type: "info",
-                        showClose: true,
-                        message: 'Consolidacion inicializada.'
-                    })
+                    console.log(d.data.pkg)
+                    
+                    if(d.data.message == 'success'){
+                        commit('setFullConsolidacion', d.data.pkg)
+                        Notification({
+                            type: "info",
+                            showClose: true,
+                            message: 'Se a creado una nueva consolidacion para el NIT: '+d.data.pkg.cliente.nit+'.'
+                        })
+                        return true
+                    }
+                    
                 })
                 .catch(err => {
                     console.log(err)
@@ -133,9 +136,6 @@ export default {
         setClienteId(state, value){
             state.consolidacion.cliente_id = value
         },
-        setCuadreViajeFormVisible(state, value){
-            state.createViajeFormVisible = value
-        }
         
     },
 

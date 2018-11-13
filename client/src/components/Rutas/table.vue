@@ -33,31 +33,41 @@
 	center>
 		<el-form label-position="top">
 			<el-form-item label="Kilometros" :label-width="formLabelWidth">
-			<el-input size="mini" v-model="ruta.kilometros" auto-complete="off"></el-input>
+				<el-input 
+					size="mini" 
+					@input="setKilometros"
+					auto-complete="off">
+				</el-input>
 			</el-form-item>
-			<el-form-item label="Municipio" :label-width="formLabelWidth">
-			<el-select size="mini" @change="setMunicipioOrigenId" filterable :value="ruta.municipio_id" placeholder="Seleccione..">
-				<el-option
-				v-for="item in municipios_list"
-				:key="item.id"
-				:label="item.nombre_municipio"
-				:value="item.id">
-				</el-option>
-			</el-select>
-			</el-form-item>
-			<el-form-item label="Municipio" :label-width="formLabelWidth">
-			<el-select size="mini" @change="setMunicipioDestinoId" filterable :value="ruta.municipio_id" placeholder="Seleccione..">
-				<el-option
-				v-for="item in municipios_list"
-				:key="item.id"
-				:label="item.nombre_municipio"
-				:value="item.id">
-				</el-option>
-			</el-select>
-			</el-form-item>
+			<el-row>
+				<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+					<el-form-item label="Origen" :label-width="formLabelWidth">
+						<el-select size="mini" @change="setMunicipioOrigenId" filterable :value="ruta.municipio_origen_id" placeholder="Seleccione..">
+							<el-option
+							v-for="item in municipios_list"
+							:key="item.id"
+							:label="item.nombre_municipio"
+							:value="item.id">
+							</el-option>
+						</el-select>
+					</el-form-item>
+				</el-col>
+				<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+					<el-form-item label="Destino" :label-width="formLabelWidth">
+						<el-select size="mini" @change="setMunicipioDestinoId" filterable :value="ruta.municipio_destino_id" placeholder="Seleccione..">
+							<el-option
+							v-for="item in municipios_list"
+							:key="item.id"
+							:label="item.nombre_municipio"
+							:value="item.id">
+							</el-option>
+						</el-select>
+					</el-form-item>
+				</el-col>
+			</el-row>
 			<el-form-item label="Valor flete">
 				<el-input 
-				:value="valor_flete_formatted"
+				style="color:green;"
 				size="mini"
 				@input="setValorflete"
 				placeholder="">
@@ -65,7 +75,7 @@
 			</el-form-item>
 			<el-form-item label="Anticipo sugerido">
 				<el-input 
-				:value="valor_anticipo_formatted"
+				style="color:yellow;"
 				size="mini"
 				@input="setAnticipoSugerido"
 				placeholder="">
@@ -73,24 +83,24 @@
 			</el-form-item>
 			<el-form-item label="Pago conductor HQ">
 				<el-input 
-				:value="pago_conductor_formatted"
 				size="mini"
+				style="color:red;"
 				@input="setPagoConductor"
 				placeholder="">
 				</el-input>
 			</el-form-item>
 			<el-form-item label="Pago tercero">
 				<el-input 
-				:value="pago_tercero_formatted"
 				size="mini"
+				style="color:red;"
 				@input="setPagoTercero"
 				placeholder="">
 				</el-input>
 			</el-form-item>
 			<el-form-item label="Pago cabezote">
 				<el-input 
-				:value="pago_cabezote_formatted"
 				size="mini"
+				style="color:red;"
 				@input="setPagoCabezote"
 				placeholder="">
 				</el-input>
@@ -112,7 +122,7 @@
 	center>
 		<RutasEditForm></RutasEditForm>
 		<span slot="footer" class="dialog-footer">
-			<el-button size="medium" @click="dialogFormEditVisible = false; setAnticipoSugerido(0); setValorflete(0); rutaReset()">Cerrar</el-button>
+			<el-button size="medium" @click="dialogFormEditVisible = false;  rutaReset()">Cerrar</el-button>
 			<el-button size="medium" type="primary" @click="editRuta">Actualizar</el-button>
 		</span>
 	</el-dialog>
@@ -162,15 +172,22 @@
     style="width: 100%">
     <el-table-column
 	  sortable
+	  center
       fixed
       prop="id"
       label="ID"
-      min-width="50">
+      min-width="60">
     </el-table-column>
     <el-table-column
 	  sortable
-      prop="nombre_municipio"
-      label="Municipio"
+      prop="nombre_municipio_origen"
+      label="Origen"
+      min-width="120">
+    </el-table-column>
+	 <el-table-column
+	  sortable
+      prop="nombre_municipio_destino"
+      label="Destino"
       min-width="120">
     </el-table-column>
     <el-table-column
@@ -212,7 +229,7 @@
     <el-table-column
 	  fixed="right"
       label="Comentarios"
-      min-width="180"
+      min-width="100"
 	  align="center">
 	  <template slot-scope="scope">
 		    <el-popover
@@ -226,7 +243,7 @@
 				<el-table-column width="300" property="comentario" label="Comentario"></el-table-column>
 			</el-table>
 			</el-popover>
-			<el-button size="mini" v-popover="scope.row.id">Ver comentarios</el-button>
+			<el-button size="mini" v-popover="scope.row.id"><i class="mdi mdi-eye"></i></el-button>
 	  </template>
     </el-table-column>
   </el-table>
@@ -331,7 +348,7 @@ export default {
             sums[index] = 'Total';
             return;
 		  }
-		  if (index === 8) {
+		  if (index === 9) {
 			  sums[index] = '';
             return;
           }
@@ -345,12 +362,16 @@ export default {
 			  return
 		  })
           if (!values.every(value => isNaN(value))) {
-            sums[index] = '$ ' + formatter.format(parseInt(values.reduce((prev, curr) => {
+			  let symbol = '$';
+			  if(index == 'kilometros'){
+				  symbol = '';
+			  }
+            sums[index] = symbol + formatter.format(parseInt(values.reduce((prev, curr) => {
               const value = Number(curr);
               if (!isNaN(value)) {
                 return prev + curr;
               } else {
-                return prev
+                return prev;
               }
             }, 0)));
           } else {
@@ -368,7 +389,6 @@ export default {
 		handleCurrentTableChange(val) {
 			if(val == null){
 				this.$refs.rutasTable.setCurrentRow(val);
-				this.setDataReady(false)
 				return
 			}
 			this.setFullRuta(val)

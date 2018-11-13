@@ -21,6 +21,7 @@ export default {
         selectedRuta: null,
         selectedCreateVehiculo: null,
         selectedCreateRuta: null,
+        selectedCreateProducto: null,
         dataReady: false,
         headings: [],  
     },
@@ -30,15 +31,15 @@ export default {
                 consolidacion_id: consolidacion_id,
                 ruta_id: state.selectedCreateRuta,
                 vehiculo_id: state.selectedCreateVehiculo,
+                producto_id: state.selectedCreateProducto,
                 flete: state.cuadre.flete,
                 anticipo: state.cuadre.anticipo,
             })
             .then(d => {
-                Message({
-                    showClose: true,
-                    message: 'Cuadre creado.'
-                })
-                router.push('/cuadre-viajes')
+                if(d.data.message == 'success'){
+                    return true
+                }
+               
             })
             .catch(err => {
                 console.log(err)
@@ -83,6 +84,7 @@ export default {
         fetchCuadresList({commit, dispatch}){
             HTTP().local.get('api/cuadre-viajes')
             .then(d => {
+                console.log(d.data)
                 commit('setCuadresList', d.data)
                 commit('setDataReady', true)
                 dispatch('renderTableHeadings')

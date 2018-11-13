@@ -3,18 +3,37 @@
        <el-form label-position="right" ref="form" label-width="150px">
         <el-row>
             <el-col :span="12" :md="12" :sm="24" :xs="24">
-                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Municipio">
-                        <el-select size="mini" @change="setMunicipio" filterable :value="ruta.municipio_id" placeholder="Seleccione..">
-                            <el-option
-                            v-for="item in municipios_list"
-                            :key="item.id"
-                            :label="item.nombre_municipio"
-                            :value="item.id">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-				</el-col>
+                        <el-form-item label="Origen" label-width="200px">
+                            <el-select 
+                            size="mini" 
+                            @change="setMunicipioOrigenId" 
+                            filterable 
+                            :value="ruta.municipio_origen_id" 
+                            placeholder="Seleccione.."
+                            >
+                                <el-option
+                                v-for="item in municipios_list"
+                                :key="item.id"
+                                :label="item.nombre_municipio"
+                                :value="item.id">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="Destino" label-width="200px">
+                            <el-select 
+                            size="mini" 
+                            @change="setMunicipioDestinoId" 
+                            filterable :value="ruta.municipio_destino_id" 
+                            placeholder="Seleccione.."
+                            >
+                                <el-option
+                                v-for="item in municipios_list"
+                                :key="item.id"
+                                :label="item.nombre_municipio"
+                                :value="item.id">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
 				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Kilometros">
                         <el-input size="mini" 
@@ -78,7 +97,7 @@
             <el-col :span="12" :md="12" :sm="24" :xs="24">
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="">
-                        <el-card class="box-card" style="margin-left:20px;">
+                        <el-card class="box-card">
                             <div slot="header" class="clearfix">
                                 <span>Comentarios</span>
                                 <el-button @click="comentar" style="float: right; padding: 3px 0" type="text">Nuevo</el-button>
@@ -178,6 +197,7 @@ export default {
             });
         },
         ...mapActions('rutas',[
+
             'editRuta',
             'delRuta',
             'fetchMunicipios',
@@ -194,15 +214,16 @@ export default {
             'setPagoConductor',
             'setPagoTercero',
             'setPagoCabezote',
+            'setMunicipioOrigenId',
+            'setMunicipioDestinoId',
+
         ]),
         title(field){
             field = field.split('_').join(' ')
             field = field.charAt(0).toUpperCase() + field.slice(1)
             return field
         },
-        setMunicipio(municipio){
-            this.setMunicipioId(municipio)
-        }
+      
         
     },
     created(){

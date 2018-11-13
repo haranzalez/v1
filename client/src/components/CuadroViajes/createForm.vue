@@ -1,6 +1,36 @@
 <template>
-   <vue-scroll class="page-vehiculos-create">
+   <vue-scroll class="page-cuadro-viaje-create">
        <el-form :inline="true" label-position="top" ref="form" label-width="120px">
+                    <el-form-item label="Vehiculo">
+                        <el-select size="mini" :value.sync="selectedCreateVehiculo" placeholder="Seleccione.." @change="setSelectedCreateVehiculo">
+                            <el-option
+                            v-for="item in vehiculosList"
+                            :key="item.id"
+                            :label="item.placa"
+                            :value="item.id">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="Producto">
+                        <el-select size="mini" :value.sync="selectedCreateProducto" placeholder="Seleccione.." @change="setSelectedCreateProducto">
+                            <el-option
+                            v-for="item in productosList"
+                            :key="item.id"
+                            :label="item.nombre"
+                            :value="item.id">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="Ruta">
+                        <el-select size="mini" :value.sync="selectedCreateRuta" placeholder="Seleccione.." @change="setSelectedCreateRuta">
+                            <el-option
+                            v-for="item in rutasList"
+                            :key="item.id"
+                            :label="item.nombre_municipio"
+                            :value="item.id">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
                     <el-form-item label="Valor flete">
                         <el-input
                             size="mini"
@@ -15,26 +45,8 @@
                             @input="setAnticipo">
                         </el-input>
                     </el-form-item>
-                    <el-form-item label="Ruta">
-                        <el-select :value.sync="selectedCreateRuta" placeholder="Seleccione.." @change="setSelectedCreateRuta">
-                            <el-option
-                            v-for="item in rutasList"
-                            :key="item.id"
-                            :label="item.nombre_municipio"
-                            :value="item.id">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="Vehiculo">
-                        <el-select :value.sync="selectedCreateVehiculo" placeholder="Seleccione.." @change="setSelectedCreateVehiculo">
-                            <el-option
-                            v-for="item in vehiculosList"
-                            :key="item.id"
-                            :label="item.placa"
-                            :value="item.id">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
+                    
+                   
         </el-form>
    </vue-scroll>
 </template>
@@ -70,6 +82,9 @@ export default {
         ...mapState('vehiculos', [
             'vehiculosList',
         ]),
+          ...mapState('productos', [
+            'productosList',
+        ]),
 
 	},
 	components: {
@@ -92,18 +107,23 @@ export default {
         ...mapActions('vehiculos', [
             'fetchVehiculosList',
         ]),
+         ...mapActions('cuadreViajes',[
+            'createCuadre',
+        ]),
+         ...mapActions('productos',[
+            'fetchProductosList',
+        ]),
         title(field){
             field = field.split('_').join(' ')
             field = field.charAt(0).toUpperCase() + field.slice(1)
             return field
         },
-        ...mapActions('cuadreViajes',[
-            'createCuadre',
-        ]),
+       
     },
     created: function(){
        this.fetchRutasList()
        this.fetchVehiculosList()
+        this.fetchProductosList()
 	}
 
 }

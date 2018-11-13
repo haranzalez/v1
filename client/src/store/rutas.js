@@ -77,8 +77,8 @@ export default {
                 pago_conductor_HQ: state.ruta.pago_conductor_HQ,
                 pago_tercero: state.ruta.pago_tercero,
                 pago_cabezote: state.ruta.pago_cabezote,
-                comentario: state.ruta.comentario,
-                municipio_id: state.ruta.municipio_id,
+                municipio_destino_id: state.ruta.municipio_destino_id,
+                municipio_origen_id: state.ruta.municipio_origen_id,
             })
             .then(d => {
                 if(d.data.message == "success"){
@@ -97,7 +97,6 @@ export default {
             })
         },
         editRuta({state}){
-            console.log(state.ruta.id)
             HTTP().local.put('api/rutas/'+state.ruta.id+'/update', {
                 kilometros: state.ruta.kilometros,
                 anticipo_sugerido: state.ruta.anticipo_sugerido,
@@ -105,13 +104,18 @@ export default {
                 pago_conductor_HQ: state.ruta.pago_conductor_HQ,
                 pago_tercero: state.ruta.pago_tercero,
                 pago_cabezote: state.ruta.pago_cabezote,
-                municipio_id: state.ruta.municipio_id,
+                municipio_destino_id: state.ruta.municipio_destino_id,
+                municipio_origen_id: state.ruta.municipio_origen_id,
             })
             .then(d => {
-                Message({
-                    showClose: true,
-                    message: 'Actualizacion exitosa.'
-                })
+                if(d.data.message == 'success'){
+                    Message({
+                        type: 'success',
+                        showClose: true,
+                        message: 'Actualizacion exitosa.'
+                    })
+                }
+                
             })
             .catch(err => {
                 console.log(err)
@@ -209,6 +213,7 @@ export default {
     },
     mutations: {
         setFullRuta(state, value){
+            console.log(value)
             state.ruta = value
         },
         setRutaList(state, list){
@@ -264,16 +269,28 @@ export default {
         setDepartamentoName(state, value){
             state.municipio.departamento = value
         },
-        
+        setMunicipioOrigenId(state, value){
+            console.warn(value)
+            state.ruta.municipio_origen_id = value
+        },
+        setMunicipioDestinoId(state, value){
+            state.ruta.municipio_destino_id = value
+        },
         rutaReset(state, value){
             state.ruta = {
                 id: null,
-                kilometros: null,
-                anticipo_sugerido: null,
-                valor_flete: null,
+                kilometros: 0,
+                anticipo_sugerido: 0,
+                valor_flete: 0,
                 municipio_id: null,
                 comentario: null,
                 nombre_municipio: null,
+                departamento: null,
+                pago_conductor_HQ: null,
+                pago_tercero: null,
+                pago_cabezote: null,
+                municipio_origen_id: null,
+                municipio_destino_id: null,
             }
         }
         

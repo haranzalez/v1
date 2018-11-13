@@ -1,5 +1,6 @@
 'use strict'
 const Consolidacion = use('App/Models/Consolidacion')
+const Cliente = use('App/Models/Cliente')
 const CuadreProducto = use('App/Models/CuadreProducto')
 const CuadreViaje = use('App/Models/CuadreViaje')
 class ConsolidacionController {
@@ -25,7 +26,10 @@ class ConsolidacionController {
             cliente_id
         })
         consolidacion.cliente = await consolidacion.cliente().fetch()
-        return consolidacion
+        return {
+            message: 'success',
+            pkg: consolidacion
+        }
     }
     async add_viaje({ params }){
         const { consolidacion_id, cuadre_viaje_id } = params

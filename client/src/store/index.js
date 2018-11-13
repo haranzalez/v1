@@ -16,6 +16,7 @@ import rutas from './rutas'
 import clientes from './clientes'
 import cuadreViajes from './cuadreViajes'
 import consolidaciones from './consolidaciones'
+import productos from './productos'
 
 
 Vue.use(Vuex)
@@ -40,6 +41,7 @@ export default new Vuex.Store({
 		clientes,
 		cuadreViajes,
 		consolidaciones,
+		productos,
 	},
 	mutations: {
 	},

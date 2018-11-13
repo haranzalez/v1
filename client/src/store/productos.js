@@ -18,6 +18,26 @@ export default {
     },
 
     actions: {
+        fetchProductosList({state, commit, dispatch}){
+            HTTP().local.get('api/productos')
+            .then(d => {
+                commit('setProductosList', d.data)
+                dispatch('renderTableHeadings')
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
+        fetchProducto({commit, dispatch}, id){
+            HTTP().local.get('api/productos/'+id)
+            .then(d => {
+                console.log(d.data)
+                commit('setFullProducto', d.data[0])
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
         createProducto({state}){
             HTTP().local.post('api/productos/crear', {
                 id: state.producto.id,
@@ -69,16 +89,7 @@ export default {
                 console.log(err)
             })
         },
-        fetchProductosList({state, commit, dispatch}){
-            HTTP().local.get('api/productos')
-            .then(d => {
-                commit('setProductosList', d.data)
-                dispatch('renderTableHeadings')
-            })
-            .catch(err => {
-                console.log(err)
-            })
-        },
+      
         renderTableHeadings({state, commit}){
             let pkg = []
            
@@ -114,5 +125,13 @@ export default {
         setPrecioProducto(state, value){
             state.producto.precio = value
         },
+        productoReset(state){
+            state.producto = {
+                id: null,
+                nombre: null,
+                descripcion: null,
+                precio: null,
+            }
+        }
     },
 };

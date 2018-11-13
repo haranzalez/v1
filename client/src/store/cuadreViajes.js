@@ -174,7 +174,11 @@ export default {
         setSelectedCreateProducto(state, value){
             state.selectedCreateProducto = value
         },
-        
+        resetSelections(state){
+            state.selectedCreateVehiculo = null;
+            state.selectedCreateRuta = null;
+            state.selectedCreateProducto = null;
+        }
     },
 
 };

@@ -5,7 +5,7 @@
                <el-col :xs="24" :sm="24" :md="8" :lg="8" :xl="8">
                     <el-form-item label="Vehiculo">
                         <el-select 
-                        class="inputWidth"
+                        class="selectWidth"
                         size="mini" 
                         :value.sync="selectedCreateVehiculo" 
                         placeholder="Seleccione.." 
@@ -22,11 +22,11 @@
                 <el-col :xs="24" :sm="24" :md="8" :lg="8" :xl="8">
                      <el-form-item label="Producto">
                         <el-select 
-                        class="inputWidth"
+                        class="selectWidth"
                         size="mini" 
                         :value.sync="selectedCreateProducto" 
                         placeholder="Seleccione.." 
-                        @change="setSelectedCreateProducto">
+                        @change="productoChange">
                             <el-option
                             v-for="item in productosList"
                             :key="item.id"
@@ -39,7 +39,7 @@
                 <el-col :xs="24" :sm="24" :md="8" :lg="8" :xl="8">
                      <el-form-item label="Ruta">
                         <el-select
-                        class="inputWidth" 
+                         class="selectWidth" 
                         size="mini" 
                         :value.sync="selectedCreateRuta" 
                         placeholder="Seleccione.." 
@@ -55,7 +55,7 @@
                </el-col>
            </el-row>
            <el-row>
-               <el-col :xs="24" :sm="24" :md="8" :lg="8" :xl="8">
+               <el-col :xs="24" :sm="24" :md="6" :lg="6" :xl="6">
                     <el-form-item label="Valor cuadre">
                         <el-input
                             class="inputWidth"
@@ -65,7 +65,7 @@
                         </el-input>
                     </el-form-item>
                </el-col>
-               <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+               <el-col :xs="24" :sm="24" :md="6" :lg="6" :xl="6">
                    <el-form-item label="Anticipo">
                         <el-input
                             class="inputWidth"
@@ -75,7 +75,7 @@
                         </el-input>
                     </el-form-item>
                </el-col>
-               <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+               <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
                    <summaryTable></summaryTable>
                </el-col>
            </el-row>
@@ -149,6 +149,7 @@ export default {
         ]),
          ...mapActions('productos',[
             'fetchProductosList',
+            'fetchProducto'
         ]),
         title(field){
             field = field.split('_').join(' ')
@@ -159,12 +160,16 @@ export default {
             this.fetchRuta(value)
             this.setSelectedCreateRuta(value)
         },
+        productoChange(value){
+            this.fetchProducto(value)
+            this.setSelectedCreateProducto(value)
+        },
        
     },
     created: function(){
        this.fetchRutasList()
        this.fetchVehiculosList()
-        this.fetchProductosList()
+       this.fetchProductosList()
 	}
 
 }
@@ -192,7 +197,7 @@ export default {
 	}
 }
 .inputWidth{
-    width: 150px;
+    width: 100px;
 }
 
 </style>

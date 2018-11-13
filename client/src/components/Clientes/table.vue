@@ -2,7 +2,7 @@
 <div>
 	
 	<!--Create viaje form -->
-	<el-dialog center width="50%" top="15vh" title="Cuadre viaje" :visible.sync="createViajeFormVisible">
+	<el-dialog center width="40%" top="15vh" title="Cuadre viaje" :visible.sync="createViajeFormVisible">
 		<ViajeCreateForm></ViajeCreateForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button size="mini" type="primary" @click="create_cuadre_viaje(consolidacion.id)">Crear Viaje</el-button>
@@ -225,14 +225,23 @@ export default {
 		...mapActions('cuadreViajes',[
 			'createCuadre',
 		]),
+		...mapActions('consolidaciones', [
+			'createConsolidacion'
+		]),
 		...mapMutations('consolidaciones', [
 			'setClienteId',
 			'setCuadreViajeFormVisible',
 		]),
-		...mapActions('consolidaciones',[
-			'createConsolidacion',
+		...mapMutations('cuadreViajes', [
+			'resetSelections',
 		]),
 		
+		...mapMutations('rutas',[
+			'rutaReset',
+		]),
+		...mapMutations('productos',[
+			'productoReset',
+		]),
 //=============================//
 //======= UI Functions =====//
 //=============================//
@@ -292,6 +301,9 @@ export default {
 						cancelButtonText: 'Cancelar',
 						type: 'warning'
 					}).then(() => {
+						this.resetSelections()
+						this.rutaReset()
+						this.productoReset()
 						this.createConsolidacion()
 						this.createViajeFormVisible = true;
 						

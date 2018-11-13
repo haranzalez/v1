@@ -1,15 +1,13 @@
 <template>
    <vue-scroll class="page-summary-viaje">
-       <el-container>
-           <el-row v-for="(value, key) in summary" :key="value.id" >
+           <el-row style="text-align:right;" v-for="(value, key) in summary" :key="key" >
                <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
                    <strong>{{key}}</strong>
                </el-col>
                <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-                   <p>{{value}}</p>
+                  {{value}}
                </el-col>
            </el-row>
-       </el-container>
    </vue-scroll>
 </template>
 
@@ -30,25 +28,27 @@ export default {
         ...mapState('rutas', [
             'ruta',
         ]),
+        ...mapState('productos', [
+            'producto',
+        ]),
         ...mapState('cuadreViajes', [
             'cuadre',
         ]),
         summary(){
-            let valor_real = Number(this.ruta.valor_flete)
-            let valor_cuadre = Number(this.cuadre.flete)
+            let flete = Number(this.ruta.valor_flete)
+            let producto = Number(this.producto.precio)
+            let cuadre = Number(this.cuadre.flete)
             let anticipo = Number(this.cuadre.anticipo)
-             let ajuste = valor_real - valor_cuadre
-             let debe = valor_cuadre - anticipo
-            console.log(valor_real, valor_cuadre, ajuste)
-           
+            let total = (flete + producto) - cuadre
+            let debe = cuadre - anticipo
             return {
-                valor_real,
-                valor_cuadre,
-                ajuste,
+                flete,
+                producto,
+                cuadre,
+                total,
                 debe
             }
         }
-
 	},
 	components: {
 	},

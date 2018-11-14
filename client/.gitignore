@@ -21,6 +21,6 @@ yarn-error.log*
 *.ntvs*
 *.njsproj
 *.sln
-
-# Vue config file
 vue.config.js
+
+

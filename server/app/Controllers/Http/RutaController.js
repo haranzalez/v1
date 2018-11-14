@@ -16,7 +16,6 @@ class RutaController {
         {
             let muni = await rutas.rows[prop].municipios().fetch()
             if(muni.rows.length > 0){
-                console.warn(muni.rows[prop])
                 rutas.rows[prop]['municipio_origen_id'] = (muni.rows[0]['id'] != undefined)?muni.rows[0]['id']:null
                 rutas.rows[prop]['municipio_destino_id'] =(muni.rows[1]['id'] != undefined)?muni.rows[1]['id']:null
                 rutas.rows[prop]['nombre_municipio_origen'] = muni.rows[0]['nombre_municipio']
@@ -27,6 +26,7 @@ class RutaController {
                 rutas.rows[prop]['nombre_municipio_origen'] = 'No aplica'
                 rutas.rows[prop]['nombre_municipio_destino'] = 'No aplica'
             }
+            rutas.rows[prop]['nombre_ruta'] = muni.rows[0]['nombre_municipio'] + ' - ' + muni.rows[1]['nombre_municipio']
             
         }
         for(let prop1 in rutas.rows){

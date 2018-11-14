@@ -1,86 +1,89 @@
 <template>
    <vue-scroll class="page-cuadro-viaje-create">
-       <el-form :inline="false" label-position="top" ref="form" label-width="120px">
-           <el-row>
-               <el-col :xs="24" :sm="24" :md="8" :lg="8" :xl="8">
-                    <el-form-item label="Vehiculo">
-                        <el-select 
-                        class="selectWidth"
-                        size="mini" 
-                        :value.sync="selectedCreateVehiculo" 
-                        placeholder="Seleccione.." 
-                        @change="setSelectedCreateVehiculo">
-                            <el-option
-                            v-for="item in vehiculosList"
-                            :key="item.id"
-                            :label="item.placa"
-                            :value="item.id">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-               </el-col>
-                <el-col :xs="24" :sm="24" :md="8" :lg="8" :xl="8">
-                     <el-form-item label="Producto">
-                        <el-select 
-                        class="selectWidth"
-                        size="mini" 
-                        :value.sync="selectedCreateProducto" 
-                        placeholder="Seleccione.." 
-                        @change="productoChange">
-                            <el-option
-                            v-for="item in productosList"
-                            :key="item.id"
-                            :label="item.nombre"
-                            :value="item.id">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-               </el-col>
-                <el-col :xs="24" :sm="24" :md="8" :lg="8" :xl="8">
-                     <el-form-item label="Ruta">
-                        <el-select
-                         class="selectWidth" 
-                        size="mini" 
-                        :value.sync="selectedCreateRuta" 
-                        placeholder="Seleccione.." 
-                        @change="rutaChange">
-                            <el-option
-                            v-for="item in rutasList"
-                            :key="item.id"
-                            :label="item.nombre_municipio"
-                            :value="item.id">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-               </el-col>
-           </el-row>
-           <el-row>
-               <el-col :xs="24" :sm="24" :md="6" :lg="6" :xl="6">
-                    <el-form-item label="Valor cuadre">
-                        <el-input
-                            class="inputWidth"
-                            size="mini"
-                            placeholder="$0"
-                            @input="setFlete">
-                        </el-input>
-                    </el-form-item>
-               </el-col>
-               <el-col :xs="24" :sm="24" :md="6" :lg="6" :xl="6">
-                   <el-form-item label="Anticipo">
-                        <el-input
-                            class="inputWidth"
-                            size="mini"
-                            placeholder="$0"
-                            @input="setAnticipo">
-                        </el-input>
-                    </el-form-item>
-               </el-col>
-               <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-                   <summaryTable></summaryTable>
-               </el-col>
-           </el-row>
-        </el-form>
-   </vue-scroll>
+        <el-form :inline="false" label-position="top" ref="form" label-width="120px">
+            <el-row>
+                <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+                    <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+                        <el-form-item label="Valor cuadre">
+                            <el-input
+                                class="inputWidth"
+                                size="mini"
+                                placeholder="$0"
+                                @input="setFlete">
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+                        <el-form-item label="Anticipo">
+                            <el-input
+                                class="inputWidth"
+                                size="mini"
+                                placeholder="$0"
+                                @input="setAnticipo">
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+                            <el-form-item label="Vehiculo">
+                                <el-select 
+                                class="selectWidth"
+                                size="mini" 
+                                :value.sync="selectedCreateVehiculo" 
+                                placeholder="Seleccione.." 
+                                @change="setSelectedCreateVehiculo">
+                                    <el-option
+                                    v-for="item in vehiculosList"
+                                    :key="item.id"
+                                    :label="item.placa"
+                                    :value="item.id">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                    </el-col>
+                    <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+                        <el-form-item label="Producto">
+                            <el-select 
+                            class="selectWidth"
+                            size="mini" 
+                            :value.sync="selectedCreateProducto" 
+                            placeholder="Seleccione.." 
+                            @change="productoChange">
+                                <el-option
+                                v-for="item in productosList"
+                                :key="item.id"
+                                :label="item.nombre"
+                                :value="item.id">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+                        <el-form-item label="Ruta">
+                            <el-select
+                            class="selectWidth" 
+                            size="mini" 
+                            :value.sync="selectedCreateRuta" 
+                            placeholder="Seleccione.." 
+                            @change="rutaChange">
+                                <el-option
+                                v-for="item in rutasList"
+                                :key="item.id"
+                                :label="item.nombre_ruta"
+                                :value="item.id">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    
+            </el-col>
+            <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+                    <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+                        <summaryTable></summaryTable>
+                    </el-col>
+            </el-col>
+        </el-row>
+</el-form>
+</vue-scroll>
 </template>
 
 <script>
@@ -168,6 +171,7 @@ export default {
     },
     created: function(){
        this.fetchRutasList()
+       console.log(this.rutasList)
        this.fetchVehiculosList()
        this.fetchProductosList()
 	}

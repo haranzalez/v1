@@ -3,8 +3,11 @@
 const Model = use('Model')
 
 class Cliente extends Model {
-    consolidacion(){
-        return this.hasMany('App/Models/Consolidacion')
+    cuadre_viaje(){
+        return this.hasMany('App/Models/CuadreViaje')
+    }
+    cuadre_producto(){
+        return this.hasMany('App/Models/CuadreProducto')
     }
     deposito(){
         return this.hasMany('App/Models/DepositoCliente')

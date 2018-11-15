@@ -11,8 +11,8 @@ class CuadreViaje extends Model {
         return this.belongsToMany('App/Models/Vehiculo')
         .pivotModel(use('App/Models/PivotCuadreViajeVehiculo'));
     }
-    consolidacion(){
-        return this.belongsTo('App/Models/Consolidacion')
+    cliente(){
+        return this.belongsTo('App/Models/Cliente')
     }
 
 }

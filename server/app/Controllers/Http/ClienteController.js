@@ -24,9 +24,10 @@ class ClienteController {
             celular,
             persona_de_contacto,
             direccion_envio_de_factura,
-            tipo_contrato } = request.all()
+            tipo_contrato 
+        } = request.all()
             
-        await Cliente.create({
+        const cliente = await Cliente.create({
             nombre_razon_social, 
             nit, 
             direccion, 
@@ -40,7 +41,8 @@ class ClienteController {
         })
 
         return {
-            message: "success"
+            message: "success",
+            cliente: cliente,
         }
     }
     //UPDATE

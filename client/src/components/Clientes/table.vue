@@ -5,9 +5,21 @@
 	<el-dialog center width="40%" top="15vh" title="Cuadre viaje" :visible.sync="createViajeFormVisible">
 		<ViajeCreateForm></ViajeCreateForm>
 		<span slot="footer" class="dialog-footer">
-			<el-button size="mini" type="primary" @click="create_cuadre_viaje(consolidacion.id)">Crear Viaje</el-button>
+			<el-button size="mini" type="primary" @click="">Assignar predeterminado</el-button>
+			<el-button size="mini" type="primary" @click="create_cuadre_viaje(cliente.id)">Crear Viaje</el-button>
 		</span>
 	</el-dialog>
+	<!--Create producto form -->
+	<el-dialog center width="40%" top="15vh" title="Cuadre viaje" :visible.sync="createProductoFormVisible">
+		<ProductoCreateForm></ProductoCreateForm>
+		<span slot="footer" class="dialog-footer">
+			<el-button size="mini" type="primary" @click="">Assignar predeterminado</el-button>
+			<el-button size="mini" type="primary" @click="create_cuadre_producto(cliente.id)">Cuadrar Viaje</el-button>
+		</span>
+	</el-dialog>
+
+
+
 	<!--Edit cliente dialog form -->
 	<el-dialog width="40%" top="5vh" :title="cliente.nombre_razon_social" :visible.sync="editFormVisible">
 		<ClientesEditForm></ClientesEditForm>
@@ -49,8 +61,7 @@
 							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Nuevo cliente</el-dropdown-item>
 							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="edit"><i class="mdi mdi-lead-pencil mr-10"></i> Editar</el-dropdown-item>
 							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
-							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="consolidacion" divided><i class="mdi mdi-briefcase mr-10"></i> Nuevo cuadre</el-dropdown-item>
-							<el-dropdown-item command="listConsolidacion"><i class="mdi mdi-folder-open mr-10"></i> Ver cuadres</el-dropdown-item>
+							<el-dropdown-item command="listConsolidacion"><i class="mdi mdi-folder-open mr-10" divided></i> Ver cuadres</el-dropdown-item>
 						</el-dropdown-menu>
 					</el-dropdown>
 				</el-row>
@@ -153,6 +164,7 @@ import exportService from '../../services/exportService'
 import ClientesEditForm from '@/components/Clientes/editForm'
 import ClientesCreateForm from '@/components/Clientes/createForm'
 import ViajeCreateForm from '@/components/CuadroViajes/createForm'
+import ProductoCreateForm from '@/components/CuadreProductos/createCuadreForm'
 
 export default {
 	name: 'ClientesTable',
@@ -162,6 +174,7 @@ export default {
 			editFormVisible: false,
 			createFormVisible: false,
 			createViajeFormVisible: false,
+			createProductoFormVisible: false,
             selectTypeOfSearch: '',
 			filter: '',
 		}
@@ -205,6 +218,7 @@ export default {
 		ClientesEditForm,
 		ClientesCreateForm,
 		ViajeCreateForm,
+		ProductoCreateForm,
 	},
     methods: {
 //=============================//
@@ -294,37 +308,6 @@ export default {
 					})
             	}
 			}
-			if(e == 'consolidacion'){
-				if(this.cliente.id != null){
-					this.$confirm('Esta a punto de crear un nuevo cuadre para el cliente: '+this.cliente.nombre_razon_social+' NIT: '+this.cliente.nit+'. Continuar?', 'Atencion!', {
-						confirmButtonText: 'OK',
-						cancelButtonText: 'Cancelar',
-						type: 'warning'
-					}).then(() => {
-						this.resetSelections()
-						this.rutaReset()
-						this.productoReset()
-						this.createConsolidacion()
-						this.createViajeFormVisible = true;
-						
-					}).catch(() => {
-						this.$message({
-							type: 'warning',
-							message: 'Cancelado'
-						});          
-					});
-				}else{
-					Message({
-						type: "warning",
-						showClose: true,
-						message: 'Porfavor seleccione cliente.'
-					})
-            	}
-				
-			}
-			if(e == 'listConsolidaciones'){
-				
-			}
 		},
 //=============================//
 //========== CRUD =========//
@@ -333,6 +316,7 @@ export default {
 		create_client(){
 			this.createCliente()
 			this.createFormVisible = false
+			this.createViajeFormVisible = true
 			this.fetchClientesList()
 		},
 		create_cuadre_viaje(id){

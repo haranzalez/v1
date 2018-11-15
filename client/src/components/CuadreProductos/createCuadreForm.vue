@@ -4,61 +4,32 @@
             <el-row>
                 <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
                     <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-                        <el-form-item label="Flete">
+                        <el-form-item label="Precio">
                             <el-input
                                 class="inputWidth"
                                 size="mini"
                                 placeholder="$0"
-                                @input="setFlete">
-                            </el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-                        <el-form-item label="Anticipo">
-                            <el-input
-                                class="inputWidth"
-                                size="mini"
-                                placeholder="$0"
-                                @input="setAnticipo">
+                                @input="setPrecioProducto">
                             </el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
-                        <el-form-item label="Ruta">
+                        <el-form-item label="Producto">
                             <el-select
                             class="selectWidth" 
                             size="mini" 
-                            :value.sync="selectedCreateRuta" 
+                            :value.sync="selectedCreateProducto" 
                             placeholder="Seleccione.." 
-                            @change="rutaChange">
+                            @change="productoChange">
                                 <el-option
-                                v-for="item in rutasList"
+                                v-for="item in productosList"
                                 :key="item.id"
-                                :label="item.nombre_ruta"
+                                :label="item.nombre"
                                 :value="item.id">
                                 </el-option>
                             </el-select>
                         </el-form-item>
                     </el-col>
-                    <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
-                            <el-form-item label="Vehiculo">
-                                <el-select 
-                                class="selectWidth"
-                                size="mini" 
-                                :value.sync="selectedCreateVehiculo" 
-                                placeholder="Seleccione.." 
-                                @change="setSelectedCreateVehiculo">
-                                    <el-option
-                                    v-for="item in vehiculosList"
-                                    :key="item.id"
-                                    :label="item.placa"
-                                    :value="item.id">
-                                    </el-option>
-                                </el-select>
-                            </el-form-item>
-                    </el-col>
-                    
-                    
             </el-col>
             <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
                     <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
@@ -81,8 +52,7 @@ export default {
 	name: 'CuadreViajeCreateForm',
 	data () {
       	return {
-              capacidadNum: 1,
-              pesoNum: 1,
+             
 		}
 	},
 	computed: {
@@ -105,6 +75,7 @@ export default {
         ]),
           ...mapState('productos', [
             'productosList',
+            'selectedProductos',
         ]),
 
 	},
@@ -123,7 +94,7 @@ export default {
             'setAnticipo',
             'setSelectedCreateVehiculo',
             'setSelectedCreateRuta',
-            'setSelectedCreateProducto',
+            
         ]),
         ...mapActions('rutas', [
             'fetchRutasList',
@@ -155,9 +126,6 @@ export default {
        
     },
     created: function(){
-       this.fetchRutasList()
-       console.log(this.rutasList)
-       this.fetchVehiculosList()
        this.fetchProductosList()
 	}
 

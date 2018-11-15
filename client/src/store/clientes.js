@@ -27,7 +27,7 @@ export default {
     },
 
     actions: {
-        createCliente({state}){
+        createCliente({state, commit}){
             HTTP().local.post('api/clientes/crear', {
                 nombre_razon_social: state.cliente.nombre_razon_social,
                 nit: state.cliente.nit,
@@ -42,6 +42,7 @@ export default {
             })
             .then(d => {
                 if(d.data.message == "success"){
+                    commit('setFullCliente', d.data.cliente)
                     Message({
                         type: 'success',
                         showClose: true,

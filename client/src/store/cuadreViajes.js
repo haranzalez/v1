@@ -11,6 +11,7 @@ export default {
             consolidacion_id: null,
             ruta_id: null,
             flete: null,
+            precio_producto: null,
             anticipo: null,
             descuento: null,
             ganancia: null,
@@ -26,12 +27,13 @@ export default {
         headings: [],  
     },
     actions: {
-        createCuadre({state}, consolidacion_id){
+        createCuadre({state}, cliente_id){
             HTTP().local.post('api/cuadre-viajes/crear', {
-                consolidacion_id: consolidacion_id,
+                cliente_id: cliente_id,
                 ruta_id: state.selectedCreateRuta,
                 vehiculo_id: state.selectedCreateVehiculo,
                 producto_id: state.selectedCreateProducto,
+                precio_producto: state.cuadre.precio_producto,
                 flete: state.cuadre.flete,
                 anticipo: state.cuadre.anticipo,
             })
@@ -155,6 +157,9 @@ export default {
         },
         setFlete(state, value){
             state.cuadre.flete = value
+        },
+        setPrecioProducto(state, value){
+            state.cuadre.precio_producto = value
         },
         setAnticipo(state, value){
             state.cuadre.anticipo = value

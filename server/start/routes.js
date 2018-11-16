@@ -64,6 +64,7 @@ Route.group(() => {
   //GET
   Route.get('cuadre-productos', 'CuadroProductoController.get_all_cuadres').middleware('auth')
   Route.get('cuadre-productos/:id', 'CuadroProductoController.get_cuadre').middleware('auth')
+  Route.get('cuadre-productos/client/:id', 'CuadroProductoController.get_client_cuadres').middleware('auth')
   //POST
   Route.post('cuadre-productos/crear', 'CuadroProductoController.create_cuadre').middleware('auth')
   //PUT

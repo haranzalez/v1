@@ -33,29 +33,29 @@ export default {
         ...mapState('productos', [
             'producto',
         ]),
-        ...mapState('cuadreViajes', [
+        ...mapState('cuadreProductos', [
             'cuadre',
         ]),
         summary(){
-            let flete = Number(this.ruta.valor_flete)
+            let cuadre = Number(this.cuadre.precio)
             let producto = Number(this.producto.precio)
-            let cuadre = Number(this.cuadre.flete)
-            let anticipo = Number(this.cuadre.anticipo)
-            let ajuste = (cuadre > 0 && flete > 0 && producto > 0)?cuadre - (flete + producto):0
-            let total = (flete + producto) + ajuste
-            let debe = cuadre - anticipo
+            let ajuste = (cuadre > 0 && producto > 0)?cuadre - producto:0
+            let total = producto + ajuste
+            this.setAjuste(ajuste)
             return {
-                flete,
                 producto,
                 ajuste,
                 cuadre,
-                debe
+                total
             }
         }
 	},
 	components: {
 	},
     methods: {
+        ...mapMutations('cuadreProductos', [
+            'setAjuste',
+        ])
     },
 }
 </script>

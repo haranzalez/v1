@@ -10,8 +10,7 @@ export default {
             id: null,
             cliente_id: null,
             precio: null,
-            descuento: null,
-            ganancia: null,
+            ajuste: null,
         },
         cuadreProductosList: null,
         selectedProductos: null,
@@ -20,15 +19,15 @@ export default {
     actions: {
         createCuadreProducto({state}, cliente_id){
             HTTP().local.post('api/cuadre-productos/crear', {
-                cliente_id: state.cuadre.cliente_id,
+                cliente_id: cliente_id,
                 precio: state.cuadre.precio,
-                descuento: state.cuadre.descuento,
-                ganancia: state.cuadre.ganancia,
+                ajuste: state.cuadre.descuento,
             })
             .then(d => {
                 if(d.data.message == 'success'){
                     return true
                 }
+                return d.data.message
             })
             .catch(err => {
                 console.log(err)
@@ -38,8 +37,7 @@ export default {
             HTTP().local.put('api/cuadre-productos/'+state.cuadre.id+'/update', {
                 cliente_id: state.cuadre.cliente_id,
                 precio: state.cuadre.precio,
-                descuento: state.cuadre.descuento,
-                ganancia: state.cuadre.ganancia,
+                ajuste: state.cuadre.descuento,
             })
             .then(d => {
                 console.log(d)
@@ -96,6 +94,15 @@ export default {
         },
         setTableHeadings(state, headings){
             state.headings = headings;
+        },
+        setClienteId(state, value){
+            state.cuadre.cliente_id = value
+        },
+        setPrecioProducto(state, value){
+            state.cuadre.precio = value
+        },
+        setAjuste(state, value){
+            state.cuadre.ajuste = value
         },
     },
 

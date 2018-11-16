@@ -8,13 +8,12 @@ export default {
     state: {
         cuadre:{
             id: null,
-            consolidacion_id: null,
-            ruta_id: null,
+            cliente_id: null,
             flete: null,
-            precio_producto: null,
+            ruta_id: null,
             anticipo: null,
-            descuento: null,
-            ganancia: null,
+            vehiculo_id: null,
+            ajuste: null,
             debe: null,
         },
         cuadresList: null,
@@ -32,10 +31,10 @@ export default {
                 cliente_id: cliente_id,
                 ruta_id: state.selectedCreateRuta,
                 vehiculo_id: state.selectedCreateVehiculo,
-                producto_id: state.selectedCreateProducto,
-                precio_producto: state.cuadre.precio_producto,
                 flete: state.cuadre.flete,
                 anticipo: state.cuadre.anticipo,
+                ajuste: state.cuadre.ajuste,
+                debe: state.cuadre.debe,
             })
             .then(d => {
                 if(d.data.message == 'success'){
@@ -49,10 +48,13 @@ export default {
         },
         editCuadre({state}){
             HTTP().local.put('api/cuadre-viajes/'+state.cuadre.id+'/update', {
-                consolidacion_id: state.cuadre.consolidacion_id,
-                ruta_id: state.cuadre.ruta_id,
+                cliente_id: cliente_id,
+                ruta_id: state.selectedCreateRuta,
+                vehiculo_id: state.selectedCreateVehiculo,
                 flete: state.cuadre.flete,
                 anticipo: state.cuadre.anticipo,
+                ajuste: state.cuadre.ajuste,
+                debe: state.cuadre.debe,
             })
             .then(d => {
                 console.log(d)
@@ -158,11 +160,14 @@ export default {
         setFlete(state, value){
             state.cuadre.flete = value
         },
-        setPrecioProducto(state, value){
-            state.cuadre.precio_producto = value
-        },
         setAnticipo(state, value){
             state.cuadre.anticipo = value
+        },
+        setAjuste(state, value){
+            state.cuadre.ajuste = value
+        },
+        setDebe(state, value){
+            state.cuadre.debe = value
         },
         setSelectedVehiculo(state, value){
             state.selectedVehiculo = value

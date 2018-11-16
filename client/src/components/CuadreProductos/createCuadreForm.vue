@@ -90,11 +90,13 @@ export default {
             'setConsolidacionId',
             'setRutaId',
             'setFlete',
-            'setPrecioProducto',
             'setAnticipo',
             'setSelectedCreateVehiculo',
             'setSelectedCreateRuta',
             
+        ]),
+        ...mapMutations('cuadreProductos', [
+            'setPrecioProducto',
         ]),
         ...mapActions('rutas', [
             'fetchRutasList',
@@ -103,8 +105,9 @@ export default {
         ...mapActions('vehiculos', [
             'fetchVehiculosList',
         ]),
-         ...mapActions('cuadreViajes',[
+         ...mapActions('cuadreProductos',[
             'createCuadre',
+
         ]),
          ...mapActions('productos',[
             'fetchProductosList',
@@ -121,7 +124,7 @@ export default {
         },
         productoChange(value){
             this.fetchProducto(value)
-            this.setSelectedCreateProducto(value)
+            this.setSelectedProducto(value)
         },
        
     },

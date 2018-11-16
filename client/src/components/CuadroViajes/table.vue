@@ -139,14 +139,8 @@
     </el-table-column>
 	<el-table-column
 	  sortable
-      prop="descuento"
-      label="Descuento"
-      width="120">
-    </el-table-column>
-	<el-table-column
-	  sortable
-      prop="ganancia"
-      label="Ganancia"
+      prop="ajuste"
+      label="Ajuste"
       width="120">
     </el-table-column>
 	<el-table-column

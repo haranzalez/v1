@@ -38,15 +38,16 @@ export default {
         ]),
         summary(){
             let flete = Number(this.ruta.valor_flete)
-            let producto = Number(this.producto.precio)
             let cuadre = Number(this.cuadre.flete)
             let anticipo = Number(this.cuadre.anticipo)
-            let ajuste = (cuadre > 0 && flete > 0 && producto > 0)?cuadre - (flete + producto):0
-            let total = (flete + producto) + ajuste
+            let ajuste = (cuadre > 0 && flete > 0)?cuadre - flete:0
+            let total = flete + ajuste
             let debe = cuadre - anticipo
+            this.setAjuste(ajuste)
+            this.setDebe(debe)
+            
             return {
                 flete,
-                producto,
                 ajuste,
                 cuadre,
                 debe
@@ -56,6 +57,10 @@ export default {
 	components: {
 	},
     methods: {
+        ...mapMutations('cuadreViajes', [
+            'setAjuste',
+            'setDebe'
+        ])
     },
 }
 </script>

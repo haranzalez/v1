@@ -5,21 +5,16 @@
 	<el-dialog center width="40%" top="15vh" title="Cuadre viaje" :visible.sync="createViajeFormVisible">
 		<ViajeCreateForm></ViajeCreateForm>
 		<span slot="footer" class="dialog-footer">
-			<el-button size="mini" type="primary" @click="">Assignar predeterminado</el-button>
 			<el-button size="mini" type="primary" @click="create_cuadre_viaje(cliente.id)">Crear Viaje</el-button>
 		</span>
 	</el-dialog>
 	<!--Create producto form -->
-	<el-dialog center width="40%" top="15vh" title="Cuadre viaje" :visible.sync="createProductoFormVisible">
+	<el-dialog center width="40%" top="15vh" title="Cuadre producto" :visible.sync="createProductoFormVisible">
 		<ProductoCreateForm></ProductoCreateForm>
 		<span slot="footer" class="dialog-footer">
-			<el-button size="mini" type="primary" @click="">Assignar predeterminado</el-button>
-			<el-button size="mini" type="primary" @click="create_cuadre_producto(cliente.id)">Cuadrar Viaje</el-button>
+			<el-button size="mini" type="primary" @click="create_cuadre_producto(cliente.id)">Cuadrar Producto</el-button>
 		</span>
 	</el-dialog>
-
-
-
 	<!--Edit cliente dialog form -->
 	<el-dialog width="40%" top="5vh" :title="cliente.nombre_razon_social" :visible.sync="editFormVisible">
 		<ClientesEditForm></ClientesEditForm>
@@ -239,8 +234,8 @@ export default {
 		...mapActions('cuadreViajes',[
 			'createCuadre',
 		]),
-		...mapActions('consolidaciones', [
-			'createConsolidacion'
+		...mapActions('cuadreProductos',[
+			'createCuadreProducto',
 		]),
 		...mapMutations('consolidaciones', [
 			'setClienteId',
@@ -321,9 +316,21 @@ export default {
 		},
 		create_cuadre_viaje(id){
 			if(this.createCuadre(id)){
+				this.createViajeFormVisible = false
+				this.createProductoFormVisible = true
+				Notification({
+					type: 'success',
+					showClose: true,
+					message: 'Cuadre viaje creado.'
+            	})
+			}
+		},
+		create_cuadre_producto(id){
+			if(this.createCuadreProducto(id)){
+				this.createProductoFormVisible = false
 				Notification({
 					showClose: true,
-					message: 'Se a creado un nuevo cuadre.'
+					message: 'Cuadre producto creado.'
             	})
 			}
 		},

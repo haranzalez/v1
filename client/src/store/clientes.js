@@ -23,6 +23,7 @@ export default {
         },
         clientesList: null,
         dataReady: false,
+        loading: false,
         headings: [],   
     },
 
@@ -100,10 +101,12 @@ export default {
             })
         },
         fetchClientesList({commit, dispatch}){
+            commit('setLoading', true)
             HTTP().local.get('api/clientes')
             .then(d => {
                 commit('setClientesList', d.data)
                 dispatch('renderTableHeadings')
+                commit('setLoading', false)
             })
             .catch(err => {
                 console.log(err)
@@ -125,6 +128,9 @@ export default {
         },
     },
     mutations: {
+        setLoading(state, value){
+            state.loading = value
+        },
         setFullCliente(state, value){
             state.cliente = value
         },

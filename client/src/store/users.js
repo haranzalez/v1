@@ -27,6 +27,7 @@ export default {
         selected: [],
         usersList: null,
         dataReady: false,
+        loading: false,
         headings: [],
         
     },
@@ -43,6 +44,7 @@ export default {
             })
         },
         fetchUsersList({commit, dispatch}){
+            commit('setLoading', true)
             HTTP().local.get('api/users')
             .then(d => {
                 commit('setUsersList', d.data)
@@ -50,6 +52,7 @@ export default {
                 commit('setDataReady', true)
                 dispatch('renderTableHeadings')
                 dispatch('renderEstadosObj')
+                commit('setLoading', false)
             })
             .catch(err => {
                 console.log(err)
@@ -218,6 +221,9 @@ export default {
 
     },
     mutations: {
+        setLoading(state, value){
+            state.loading = value
+        },
         setChangeEstdo(state, value){
             state.estados[value.id] = value.value
         },

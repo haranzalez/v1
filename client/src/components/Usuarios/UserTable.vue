@@ -48,6 +48,7 @@
 			</div>
 		</el-col>
 	<el-table
+	v-loading.body="loading"
 	size="mini"
 	ref="usersTable"
 	stripe
@@ -187,6 +188,7 @@ export default {
 			'dataReady',
 			'headings',
 			'estados',
+			'loading',
 		]),
 		...mapState('authentication', [
 			'permisos',

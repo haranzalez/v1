@@ -22,6 +22,7 @@ export default {
         selectedCreateVehiculo: null,
         selectedCreateRuta: null,
         selectedCreateProducto: null,
+        loading: false,
         dataReady: false,
         headings: [],  
     },
@@ -86,6 +87,7 @@ export default {
         },
        
         fetchCuadresList({commit, dispatch}){
+            commit('setLoading', true)
             HTTP().local.get('api/cuadre-viajes')
             .then(d => {
                 console.log(d.data)
@@ -94,6 +96,7 @@ export default {
                 dispatch('renderTableHeadings')
                 dispatch('renderSelectedVehiculo')
                 dispatch('renderSelectedRuta')
+                commit('setLoading', false)
             })
             .catch(err => {
                 console.log(err)
@@ -115,7 +118,7 @@ export default {
             for(let prop in state.cuadresList){
                 for(let prop2 in state.cuadresList[prop].ruta){
                     obj[state.cuadresList[prop]['ruta'][prop2]['id']] = (state.cuadresList[prop]['ruta'] !== [])
-                    ? state.cuadresList[prop]['ruta'][prop2]['nombre_municipio']
+                    ? state.cuadresList[prop]['ruta'][prop2]['nombre_ruta']
                     : ''
                 }
             }
@@ -139,6 +142,9 @@ export default {
         
     },
     mutations: {
+        setLoading(state, value){
+            state.loading = value
+        },
         setFullCuadre(state, value){
             state.cuadre = value
         },

@@ -53,16 +53,20 @@
 							<i class="mdi mdi-settings"></i>
 						</el-button>
 						<el-dropdown-menu slot="dropdown">
-							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Nuevo cliente</el-dropdown-item>
+							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Crear cliente</el-dropdown-item>
 							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="edit"><i class="mdi mdi-lead-pencil mr-10"></i> Editar</el-dropdown-item>
 							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
-							<el-dropdown-item command="listConsolidacion"><i class="mdi mdi-folder-open mr-10" divided></i> Ver cuadres</el-dropdown-item>
+							<el-dropdown-item command="listConsolidacion" divided><i class="mdi mdi-folder-open mr-10"></i> Ver cuadres</el-dropdown-item>
+							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="viaje"><i class="mdi mdi-routes mr-10"></i> Cuadrar ruta</el-dropdown-item>
+							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="producto"><i class="mdi mdi-barrel mr-10"></i> Cuadrar producto</el-dropdown-item>
+							
 						</el-dropdown-menu>
 					</el-dropdown>
 				</el-row>
 			</div>
 		</el-col>
 	<el-table
+	v-loading.body="loading"
 	size="mini"
 	ref="clientsTable"
 	stripe
@@ -186,6 +190,7 @@ export default {
 			'headings',
 			'dataReady',
 			'cliente',
+			'loading',
 		]),
 		...mapState('consolidaciones', [
 			'consolidacion',
@@ -259,7 +264,6 @@ export default {
 			exportService.toXLS(this.clientesList, 'Clientes', true)
 		},
 		reloadTable(){
-			console.log(this.dataReady)
 			this.fetchClientesList()
 			
 		},
@@ -303,6 +307,12 @@ export default {
 					})
             	}
 			}
+			if(e == 'viaje'){
+				this.createViajeFormVisible = true
+			}
+			if(e == 'producto'){
+				this.createProductoFormVisible = true
+			}
 		},
 //=============================//
 //========== CRUD =========//
@@ -311,13 +321,11 @@ export default {
 		create_client(){
 			this.createCliente()
 			this.createFormVisible = false
-			this.createViajeFormVisible = true
 			this.fetchClientesList()
 		},
 		create_cuadre_viaje(id){
 			if(this.createCuadre(id)){
 				this.createViajeFormVisible = false
-				this.createProductoFormVisible = true
 				Notification({
 					type: 'success',
 					showClose: true,

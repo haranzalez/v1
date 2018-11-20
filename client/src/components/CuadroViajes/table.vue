@@ -30,18 +30,21 @@
 		</el-col>
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
 			<div style="text-align:right;">
+				<el-button size="mini"><i class="mdi mdi-file-excel mr-10"></i></el-button>
 				<el-dropdown style="float: right; padding: 3px 0" trigger="click" @command="handleAction">  
 					<el-button size="mini">
 						<i class="mdi mdi-settings"></i>
 					</el-button>
 					<el-dropdown-menu slot="dropdown">
-						<el-dropdown-item :disabled="(permisos['Conductores'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Nuevo</el-dropdown-item>
-						<el-dropdown-item command="export"><i class="mdi mdi-file-excel mr-10"></i> Exportar</el-dropdown-item>
+						<el-dropdown-item :disabled="(permisos['Conductores'].crear)? false:true" command="edit"><i class="mdi mdi-lead-pencil mr-10"></i> Detalles</el-dropdown-item>
+						<el-dropdown-item :disabled="(permisos['Conductores'].crear)? false:true" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
 					</el-dropdown-menu>
 				</el-dropdown>
 			</div>
 		</el-col>
 	<el-table
+	v-loading.body="loading"
+	size="mini"
     :data="filtered"
 	:default-sort = "{prop: 'id', order: 'descending'}"
     style="width: 100%">
@@ -78,7 +81,8 @@
                 </el-row>
             </div>
             </el-popover>
-           <el-select 
+           <el-select
+		   size="mini" 
            v-popover="scope.row.vehiculo[0].placa" 
            v-model="selectedVehiculo[scope.row.vehiculo[0].placa]" 
            placeholder="Seleccione..."
@@ -102,24 +106,23 @@
             placement="right"
             width="400"
             trigger="hover">
-            <div v-for="(item, key) in scope.row.ruta[0]" :key="item.id">
-                <el-row v-if="key != 'created_at' || 
-				key != 'updated_at' || 
-				key != 'pivot'">
+            <div v-for="(item, key) in filterKey(scope.row.ruta[0])" :key="item.id">
+                <el-row v-if="key != 'id'">
                     <el-col :xs="10" :sm="10" :md="10" :lg="10" :xl="10"><b>{{title(key)}}</b></el-col>
-                    <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12">{{(key == 'municipios') ? item.nombre_municipio : item}}</el-col>
+                    <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12">{{item}}</el-col>
                 </el-row>
             </div>
             </el-popover>
            <el-select 
+		   size="mini"
            v-popover="scope.row.ruta[0].id" 
-           v-model="selectedRuta[scope.row.ruta[0].id]" 
+           v-model="selectedRuta" 
            placeholder="Seleccione..."
            >
                 <el-option
                 v-for="item in rutasList"
                 :key="item.id" 
-                :label="item.nombre_municipio"
+                :label="item.nombre_ruta"
                 :value="item.id">
                 </el-option>
             </el-select>
@@ -127,20 +130,29 @@
     </el-table-column>
 	<el-table-column
 	  sortable
-      prop="flete"
       label="Flete"
+      width="120">
+	   <template slot-scope="scope">
+         {{ scope.row.ruta[0]['valor_flete'] }}
+      </template>
+    </el-table-column>
+	<el-table-column
+	  sortable
+      prop="flete"
+      label="Cuadre"
+      width="120">
+    </el-table-column>
+	
+	<el-table-column
+	  sortable
+      prop="ajuste"
+      label="Ajuste"
       width="120">
     </el-table-column>
 	<el-table-column
 	  sortable
       prop="anticipo"
       label="Anticipo"
-      width="120">
-    </el-table-column>
-	<el-table-column
-	  sortable
-      prop="ajuste"
-      label="Ajuste"
       width="120">
     </el-table-column>
 	<el-table-column
@@ -188,6 +200,7 @@ export default {
 		}
 	},
 	computed: {
+		
         ...mapState('authentication', [
 			'permisos',
         ]),
@@ -197,6 +210,7 @@ export default {
 			'dataReady',
 			'selectedVehiculo',
 			'selectedRuta',
+			'loading',
 		]),
 		...mapState('vehiculos', [
 			'vehiculosList',
@@ -210,10 +224,8 @@ export default {
 				console.log(this.cuadresList, this.selectTypeOfSearch)
 				if(this.filter !== ''){
 					let type = this.selectTypeOfSearch.toLowerCase()
-					console.log(type)
 					type = type.replace(' ', '_')
 					type = type.replace(' ', '_')
-					
 					return this.cuadresList.filter(cuadre => {
 						if(isNaN(cuadre[type])){
 							return cuadre[type].toLowerCase().includes(this.filter.toLowerCase())
@@ -230,6 +242,21 @@ export default {
 		CuadroViajesCreateForm,
 	},
     methods: {
+		filterKey(val){
+			console.log(val)
+			for(let prop in val){
+				if(prop == 'created_at' || prop == 'updated_at' || prop == 'pivot'){
+					delete val[prop]
+				}
+				if(prop == 'municipios'){
+					val['origen'] = val[prop][0]['nombre_municipio']
+					val['destino'] = val[prop][1]['nombre_municipio']
+					val['nombre_ruta'] = val[prop][0]['nombre_municipio'] + ' - ' + val[prop][1]['nombre_municipio']
+					delete val[prop]
+				}
+			}
+			return val
+		},
 		handleAction(e, row){
             if(e == 'create'){
 				this.createFormVisible = true;

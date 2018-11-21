@@ -2,19 +2,19 @@
 
    
     <vue-scroll>
-    <CuadroViajesTable></CuadroViajesTable>
+    <CuadresRutasTable></CuadresRutasTable>
     </vue-scroll>
     
 </template>
 
 <script>
-    import CuadroViajesTable from '@/components/CuadroViajes/table'
+    import CuadresRutasTable from '@/components/CuadresRutas/table'
 
 
     export default {
         namespaced: true,
         components: {
-            CuadroViajesTable,
+            CuadresRutasTable,
         }
     }
 </script>

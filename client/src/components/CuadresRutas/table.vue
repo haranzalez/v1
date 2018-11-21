@@ -18,10 +18,10 @@
 	</el-dialog>
 	<!--Table-->
 	<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
-		<h1>Cuadro de viajes</h1>
+		<h1>Cuadres de rutas</h1>
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
 			<div class="serachBar-ctn">
-				<el-input placeholder="Buscar" v-model="filter" class="input-with-select">
+				<el-input size="mini" placeholder="Buscar" v-model="filter" class="input-with-select">
 					<el-select v-model="selectTypeOfSearch" slot="prepend" placeholder="Seleccione">
 					<el-option v-for="col in headings" :key="col" :label="col" :value="col"></el-option>
 					</el-select>
@@ -29,39 +29,46 @@
 			</div>
 		</el-col>
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-			<div style="text-align:right;">
-				<el-button size="mini"><i class="mdi mdi-file-excel mr-10"></i></el-button>
-				<el-dropdown style="float: right; padding: 3px 0" trigger="click" @command="handleAction">  
-					<el-button size="mini">
-						<i class="mdi mdi-settings"></i>
-					</el-button>
-					<el-dropdown-menu slot="dropdown">
-						<el-dropdown-item :disabled="(permisos['Conductores'].crear)? false:true" command="edit"><i class="mdi mdi-lead-pencil mr-10"></i> Detalles</el-dropdown-item>
-						<el-dropdown-item :disabled="(permisos['Conductores'].crear)? false:true" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
-					</el-dropdown-menu>
-				</el-dropdown>
+			<div style="padding: 3px 0;">
+				<el-row style="text-align: right;">
+					<el-button type="default" size="mini" @click="reloadTable" style="margin-right:5px;"><i class="mdi mdi-reload"></i></el-button>
+					<el-button type="default" size="mini" @click="exportTable" style="margin-right:5px;"><i class="mdi mdi-file-excel"></i></el-button>
+					<el-dropdown trigger="click" @command="handleAction">  
+						<el-button size="mini">
+							<i class="mdi mdi-settings"></i>
+						</el-button>
+						<el-dropdown-menu slot="dropdown">
+							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="crear"><i class="mdi mdi-plus mr-10"></i> Crear cuadre</el-dropdown-item>
+							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
+						</el-dropdown-menu>
+					</el-dropdown>
+				</el-row>
 			</div>
 		</el-col>
 	<el-table
+	ref="cuadreViajesTable"
+	highlight-current-row
+	@current-change="handleCurrentTableChange"
 	v-loading.body="loading"
 	size="mini"
     :data="filtered"
 	:default-sort = "{prop: 'id', order: 'descending'}"
     style="width: 100%">
     <el-table-column
+	  align="center"
 	  sortable
       fixed
       prop="id"
       label="ID"
-      width="70">
+      width="60">
     </el-table-column>
     <el-table-column
 	  sortable
+	  fixed
       prop="nombre_cliente"
       label="Cliente"
       width="120">
     </el-table-column>
-   
 	<el-table-column
 	  sortable
       label="Vehiculo"
@@ -73,9 +80,7 @@
             width="400"
             trigger="hover">
             <div v-for="(item, key) in scope.row.vehiculo[0]" :key="item.id">
-                <el-row v-if="key !== 'created_at' || 
-				key !== 'updated_at' || 
-				key !== 'pivot'">
+                <el-row>
                     <el-col :xs="10" :sm="10" :md="10" :lg="10" :xl="10"><b>{{title(key)}}</b></el-col>
                     <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12">{{item}}</el-col>
                 </el-row>
@@ -83,6 +88,7 @@
             </el-popover>
            <el-select
 		   size="mini" 
+		   @change="assign_vehicle({e:$event, cuadre:scope.row.id})"
            v-popover="scope.row.vehiculo[0].placa" 
            v-model="selectedVehiculo[scope.row.vehiculo[0].placa]" 
            placeholder="Seleccione..."
@@ -99,24 +105,24 @@
 	<el-table-column
 	  sortable
       label="Ruta"
-      width="170">
+      width="210">
        <template slot-scope="scope">
            <el-popover
+		    size="mini"
             :ref="scope.row.ruta[0].id"
             placement="right"
-            width="400"
+            width="300"
             trigger="hover">
-            <div v-for="(item, key) in filterKey(scope.row.ruta[0])" :key="item.id">
-                <el-row v-if="key != 'id'">
-                    <el-col :xs="10" :sm="10" :md="10" :lg="10" :xl="10"><b>{{title(key)}}</b></el-col>
-                    <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12">{{item}}</el-col>
+                <el-row v-for="(item, key) in filterProps(scope.row.ruta[0])" :key="item.id">
+                    <el-col class="pop-over-rows" :xs="12" :sm="12" :md="12" :lg="12" :xl="12"><b>{{title(key)}}</b></el-col>
+                    <el-col class="pop-over-rows" :xs="12" :sm="12" :md="12" :lg="12" :xl="12">{{item}}</el-col>
                 </el-row>
-            </div>
             </el-popover>
            <el-select 
+		   @change="assign_ruta({ruta_id:$event, cuadre_id:scope.row.id})"
 		   size="mini"
            v-popover="scope.row.ruta[0].id" 
-           v-model="selectedRuta" 
+           v-model="selectedRuta[scope.row.ruta[0].id]" 
            placeholder="Seleccione..."
            >
                 <el-option
@@ -129,6 +135,7 @@
       </template>
     </el-table-column>
 	<el-table-column
+	  align="center"
 	  sortable
       label="Flete"
       width="120">
@@ -137,6 +144,7 @@
       </template>
     </el-table-column>
 	<el-table-column
+	  align="center"
 	  sortable
       prop="flete"
       label="Cuadre"
@@ -144,30 +152,25 @@
     </el-table-column>
 	
 	<el-table-column
+	  align="center"
 	  sortable
       prop="ajuste"
       label="Ajuste"
       width="120">
     </el-table-column>
 	<el-table-column
+	  align="center"
 	  sortable
       prop="anticipo"
       label="Anticipo"
       width="120">
     </el-table-column>
 	<el-table-column
+	  align="center"
 	  sortable
       prop="debe"
       label="Debe"
       width="120">
-    </el-table-column>
-    <el-table-column
-      fixed="right"
-      label="Acciones"
-      width="120">
-      <template slot-scope="scope">
-        <el-button @click="pushToEditVehicle(scope.row)" type="text" size="small">Detalles/editar</el-button>
-      </template>
     </el-table-column>
 
   </el-table>
@@ -186,8 +189,8 @@ import router from '../../router'
 //servicios
 import exportService from '../../services/exportService'
 //componentes
-import CuadroViajesEditForm from '@/components/CuadroViajes/editForm'
-import CuadroViajesCreateForm from '@/components/CuadroViajes/createForm'
+import CuadroViajesEditForm from '@/components/CuadresRutas/editForm'
+import CuadroViajesCreateForm from '@/components/CuadresRutas/createForm'
 
 export default {
 	name: 'CuadreViajesTable',
@@ -221,7 +224,6 @@ export default {
 		]),
         filtered(){
 			if(this.dataReady){
-				console.log(this.cuadresList, this.selectTypeOfSearch)
 				if(this.filter !== ''){
 					let type = this.selectTypeOfSearch.toLowerCase()
 					type = type.replace(' ', '_')
@@ -242,16 +244,15 @@ export default {
 		CuadroViajesCreateForm,
 	},
     methods: {
-		filterKey(val){
-			console.log(val)
+		exportTable(){
+			exportService.toXLS(this.cuadresList, 'Cuadro de viaje', true)
+		},
+		reloadTable(){
+			this.fetchCuadresList()
+		},
+		filterProps(val){
 			for(let prop in val){
-				if(prop == 'created_at' || prop == 'updated_at' || prop == 'pivot'){
-					delete val[prop]
-				}
-				if(prop == 'municipios'){
-					val['origen'] = val[prop][0]['nombre_municipio']
-					val['destino'] = val[prop][1]['nombre_municipio']
-					val['nombre_ruta'] = val[prop][0]['nombre_municipio'] + ' - ' + val[prop][1]['nombre_municipio']
+				if(prop == 'created_at' || prop == 'updated_at'){
 					delete val[prop]
 				}
 			}
@@ -261,14 +262,20 @@ export default {
             if(e == 'create'){
 				this.createFormVisible = true;
 			}
-			if(e == 'export'){
-				exportService.toXLS(this.cuadresList, 'Cuadro_de_viajes', true)
+			if(e == 'detalles'){
+				this.editFormVisible = true
             }
 		},
-		pushToEdit(row){
-			this.setFullConductor(row)
-			this.editFormVisible = true
+		handleCurrentTableChange(val) {
+			if(val == null){
+				this.$refs.cuadreViajesTable.setCurrentRow(val);
+				return
+			}
+			this.setFullCuadre(val)
+			
+			this.$refs.cuadreViajesTable.setCurrentRow(val);
 		},
+	
 		create(){
 			this.createCuadre()
 			this.createFormVisible = false
@@ -316,12 +323,17 @@ export default {
             field = field.split('_').join(' ')
             field = field.charAt(0).toUpperCase() + field.slice(1)
             return field
-        },
+		},
+		...mapMutations('cuadreViajes', [
+			'setFullCuadre',
+		]),
         ...mapActions('cuadreViajes',[
 			'fetchCuadresList',
 			'editCuadre',
 			'delCuadre',
 			'createCuadre',
+			'assign_vehicle',
+			'assign_ruta',
 		]),
 		...mapActions('vehiculos',[
 			'fetchVehiculosList',
@@ -373,10 +385,14 @@ export default {
 .trailerBtn, .conductorBtn{
 	color:black;
 }
-
+.pop-over-rows{
+	text-align: right;
+	border-bottom:1px solid #eee;
+}
 
 .page-table {
 	
+
 	.custom-action-row {
 		overflow: hidden;
 		text-overflow: ellipsis;

@@ -180,8 +180,7 @@ import router from '../../router'
 //servicios
 import exportService from '../../services/exportService'
 //componentes
-import CuadroViajesEditForm from '@/components/CuadroViajes/editForm'
-import CuadroViajesCreateForm from '@/components/CuadroViajes/createForm'
+
 
 export default {
 	name: 'CuadreViajesTable',
@@ -232,8 +231,7 @@ export default {
         },
 	},
 	components: {
-		CuadroViajesEditForm,
-		CuadroViajesCreateForm,
+	
 	},
     methods: {
 		handleAction(e, row){

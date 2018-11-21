@@ -2,7 +2,6 @@
    <vue-scroll class="page-summary-viaje">
            <h3 style="text-align:left;width:60%;margin-left:auto;">Resumen</h3>
            <el-row style="text-align:right;width:60%;margin-left:auto;" v-for="(value, key) in summary" :key="key" >
-                
                <el-col style="border-bottom: 1px solid #ccc" :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
                    <strong>{{key}}</strong>
                </el-col>

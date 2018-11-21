@@ -1,5 +1,22 @@
 <template>
 <div>
+	<!--cuadre rutas table -->
+	<el-dialog center width="70%" top="5vh" :title="'Rutas para ' + cliente.nombre_razon_social" :visible.sync="cuadreViajeTableVisible">
+		<cuadreViajeTable></cuadreViajeTable>
+		<span slot="footer" class="dialog-footer">
+			<el-button size="mini" type="primary" @click="createViajeEditFormVisible = true">Editar cuadre</el-button>
+			<el-button size="mini" type="primary" @click="">Eliminar cuadre</el-button>
+			<el-button size="mini" type="primary" @click="cuadreViajeTableVisible = false">Cerrar</el-button>
+		</span>
+	</el-dialog>
+	    <!--edit viaje form -->
+		<el-dialog center width="40%" top="15vh" title="Cuadre viaje" :visible.sync="createViajeEditFormVisible">
+			<ViajeEditForm></ViajeEditForm>
+			<span slot="footer" class="dialog-footer">
+				<el-button size="mini" type="primary" @click="">Actualizar</el-button>
+				<el-button size="mini" type="primary" @click="createViajeEditFormVisible = false">Cerrar</el-button>
+			</span>
+		</el-dialog>
 	
 	<!--Create viaje form -->
 	<el-dialog center width="40%" top="15vh" title="Cuadre viaje" :visible.sync="createViajeFormVisible">
@@ -56,9 +73,9 @@
 							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Crear cliente</el-dropdown-item>
 							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="edit"><i class="mdi mdi-lead-pencil mr-10"></i> Editar</el-dropdown-item>
 							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
-							<el-dropdown-item command="listConsolidacion" divided><i class="mdi mdi-folder-open mr-10"></i> Ver cuadres</el-dropdown-item>
-							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="viaje"><i class="mdi mdi-routes mr-10"></i> Cuadrar ruta</el-dropdown-item>
-							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="producto"><i class="mdi mdi-barrel mr-10"></i> Cuadrar producto</el-dropdown-item>
+							<el-dropdown-item command="verCuadreRuta" divided><i class="mdi mdi-folder-open mr-10"></i> Ver cuadres de ruta</el-dropdown-item>
+							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="viaje"><i class="mdi mdi-routes mr-10"></i> Cuadrar nueva ruta</el-dropdown-item>
+							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="producto"><i class="mdi mdi-barrel mr-10"></i> Cuadrar nuevo producto</el-dropdown-item>
 							
 						</el-dropdown-menu>
 					</el-dropdown>
@@ -162,8 +179,10 @@ import exportService from '../../services/exportService'
 //componentes
 import ClientesEditForm from '@/components/Clientes/editForm'
 import ClientesCreateForm from '@/components/Clientes/createForm'
-import ViajeCreateForm from '@/components/CuadroViajes/createForm'
+import ViajeCreateForm from '@/components/CuadresRutas/createForm'
+import ViajeEditForm from '@/components/CuadresRutas/editForm'
 import ProductoCreateForm from '@/components/CuadreProductos/createCuadreForm'
+import cuadreViajeTable from './cuadreRutaTable'
 
 export default {
 	name: 'ClientesTable',
@@ -174,6 +193,8 @@ export default {
 			createFormVisible: false,
 			createViajeFormVisible: false,
 			createProductoFormVisible: false,
+			cuadreViajeTableVisible: false,
+			createViajeEditFormVisible: false,
             selectTypeOfSearch: '',
 			filter: '',
 		}
@@ -218,7 +239,9 @@ export default {
 		ClientesEditForm,
 		ClientesCreateForm,
 		ViajeCreateForm,
+		ViajeEditForm,
 		ProductoCreateForm,
+		cuadreViajeTable,
 	},
     methods: {
 //=============================//
@@ -231,6 +254,7 @@ export default {
 		]),
 		
         ...mapActions('clientes',[
+			'fetchCuadresRutas',
 			'fetchClientesList',
 			'createCliente',
 			'delCliente',
@@ -306,6 +330,10 @@ export default {
 						message: 'Porfavor seleccione cliente.'
 					})
             	}
+			}
+			if(e == 'verCuadreRuta'){
+				this.fetchCuadresRutas()
+				this.cuadreViajeTableVisible = true
 			}
 			if(e == 'viaje'){
 				this.createViajeFormVisible = true

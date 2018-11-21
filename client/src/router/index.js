@@ -32,9 +32,9 @@ import ClientesTable from '../views/Clientes/clientes.vue'
 import ClientesCreateForm from '../views/Clientes/CreateForm.vue'
 import ClientesEditForm from '../views/Clientes/EditForm.vue'
 //cuadro viajes
-import CuadroViajesTable from '../views/CuadroViajes/CuadroViajes.vue'
-import CuadroViajesCreateForm from '../views/CuadroViajes/CreateForm.vue'
-import CuadroViajesEditForm from '../views/CuadroViajes/EditForm.vue'
+import CuadroRutasTable from '../views/CuadresRutas/CuadresRutas.vue'
+import CuadroViajesCreateForm from '../views/CuadresRutas/CreateForm.vue'
+import CuadroViajesEditForm from '../views/CuadresRutas/EditForm.vue'
 
 //pages
 import Login from '../views/pages/authentication/Login.vue'
@@ -158,9 +158,9 @@ const router = new Router({
 		//Cuadro VIajes
 		//=========================================================================
 		{
-			path: '/cuadre-viajes',
-			name: 'cuadre viaje',
-			component: CuadroViajesTable,
+			path: '/cuadres-rutas',
+			name: 'Cuadres de rutas',
+			component: CuadroRutasTable,
 			meta: {
 				auth: true,
 				layout: layouts.navLeft,

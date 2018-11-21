@@ -9,7 +9,7 @@
 
 <script>
 
-import CuadroViajesEditForm from '@/components/CuadroViajes/editForm'
+import CuadroViajesEditForm from '@/components/CuadresRutas/editForm'
 
 
 export default {

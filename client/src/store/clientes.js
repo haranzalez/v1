@@ -22,12 +22,23 @@ export default {
            created_at: null,
         },
         clientesList: null,
+        cruadreRutasList: null,
         dataReady: false,
         loading: false,
         headings: [],   
     },
 
     actions: {
+        fetchCuadresRutas({state, commit}){
+            HTTP().local.get('api/clientes/'+state.cliente.id+'/cuadre-viajes')
+            .then(d => {
+                console.log(d.data)
+                commit('setCuadreRutasList', d.data)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
         createCliente({state, commit}){
             HTTP().local.post('api/clientes/crear', {
                 nombre_razon_social: state.cliente.nombre_razon_social,
@@ -133,6 +144,9 @@ export default {
         },
         setFullCliente(state, value){
             state.cliente = value
+        },
+        setCuadreRutasList(state, list){
+            state.cruadreRutasList = list
         },
         setClientesList(state, list){
             state.clientesList = list

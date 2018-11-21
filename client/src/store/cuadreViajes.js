@@ -27,6 +27,40 @@ export default {
         headings: [],  
     },
     actions: {
+        assign_vehicle({dispatch},value){
+            HTTP().local.get('api/cuadre-viajes/'+value.cuadre+'/vehiculo/'+value.e)
+            .then(d => {
+                if(d.data.message == 'success'){
+                    Notification({
+                        type: 'success',
+                        showClose: true,
+                        message: 'Cambio de vehiculo exitoso.'
+                    })
+                    dispatch('fetchCuadresList')
+                }
+               
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
+        assign_ruta({dispatch},pkg){
+            HTTP().local.get('api/cuadre-viajes/'+pkg.cuadre_id+'/ruta/'+pkg.ruta_id)
+            .then(d => {
+                if(d.data.message == 'success'){
+                    Notification({
+                        type: 'success',
+                        showClose: true,
+                        message: 'Cambio de ruta exitoso.'
+                    })
+                    dispatch('fetchCuadresList')
+                }
+               
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
         createCuadre({state}, cliente_id){
             HTTP().local.post('api/cuadre-viajes/crear', {
                 cliente_id: cliente_id,
@@ -85,6 +119,17 @@ export default {
                 console.log(err)
             })
         },
+        fetchCuadre({commit},pkg){
+            commit('setLoading', true)
+            HTTP().local.get('api/cuadre-viajes/'+pkg.id)
+            .then(d => {
+               commit('setFullCuadre', d.data)
+               commit('setLoading', false)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
        
         fetchCuadresList({commit, dispatch}){
             commit('setLoading', true)
@@ -116,11 +161,9 @@ export default {
         renderSelectedRuta({ state, commit }){
             let obj = {}
             for(let prop in state.cuadresList){
-                for(let prop2 in state.cuadresList[prop].ruta){
-                    obj[state.cuadresList[prop]['ruta'][prop2]['id']] = (state.cuadresList[prop]['ruta'] !== [])
-                    ? state.cuadresList[prop]['ruta'][prop2]['nombre_ruta']
-                    : ''
-                }
+                obj[state.cuadresList[prop]['ruta'][0]['id']] = (state.cuadresList[prop]['ruta'] !== [])
+                ? state.cuadresList[prop]['nombre_ruta']
+                : ''
             }
             console.log(obj)
             commit('setSelectedRuta', obj)

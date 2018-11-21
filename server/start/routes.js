@@ -149,6 +149,7 @@ Route.group(() => {
   //GET
   Route.get('clientes', 'ClienteController.get_all_clientes').middleware('auth')
   Route.get('clientes/:id', 'ClienteController.get_cliente').middleware('auth')
+  Route.get('clientes/:id/cuadre-viajes', 'ClienteController.get_cuadres_viajes').middleware('auth')
   //POST
   Route.post('clientes/crear', 'ClienteController.create_cliente').middleware('auth')
   //PUT
@@ -175,6 +176,8 @@ Route.group(() => {
   //GET
   Route.get('cuadre-viajes', 'CuadroViajeController.get_all_cuadres').middleware('auth')
   Route.get('cuadre-viajes/:id', 'CuadroViajeController.get_cuadre').middleware('auth')
+  Route.get('cuadre-viajes/:id/vehiculo/:vehiculo_id', 'CuadroViajeController.assign_vehiculo').middleware('auth')
+  Route.get('cuadre-viajes/:id/ruta/:ruta_id', 'CuadroViajeController.assign_ruta').middleware('auth')
   //POST
   Route.post('cuadre-viajes/crear', 'CuadroViajeController.create_cuadre').middleware('auth')
   //PUT

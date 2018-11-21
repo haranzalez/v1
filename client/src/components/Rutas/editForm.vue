@@ -94,16 +94,17 @@
                 </el-form-item>
             </el-col>
         </el-col>
-            <el-col :span="12" :md="12" :sm="24" :xs="24">
-                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="">
-                        <el-card class="box-card">
+            <el-col  :span="12" :md="12" :sm="24" :xs="24">
+                <el-col style="margin:0 !important;" :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                   
+                        <el-card>
                             <div slot="header" class="clearfix">
                                 <span>Comentarios</span>
                                 <el-button @click="comentar" style="float: right; padding: 3px 0" type="text">Nuevo</el-button>
                             </div>
                             <div class="text item">
                                 <el-table
+                                size="mini"
                                 :data="comentarios_list"
                                 style="width: 100%">
                                 <el-table-column type="expand">
@@ -123,7 +124,7 @@
                                 </el-table>
                             </div>
                         </el-card>
-                    </el-form-item>
+
 				</el-col>
                
             </el-col>
@@ -228,7 +229,7 @@ export default {
     },
     created(){
         this.fetchMunicipios()
-        this.fetchComments(this.ruta.id)
+        this.fetchComments()
     }
 
 
@@ -237,6 +238,9 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../assets/scss/_variables';
+.el-form-item__content{
+    margin: 0px !important;
+}
 .page-trailers-create {
 	.label-switch-box {
 		display: block;

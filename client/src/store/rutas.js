@@ -193,17 +193,18 @@ export default {
             
             commit('setTableHeadings', pkg)
         },
-        post_coment({state}, comentario){
+        post_coment({state, dispatch}, comentario){
             HTTP().local.post('api/rutas/comentario', {
                 ruta_id: state.ruta.id,
                 comentario: comentario,
             })
             .then(d => {
-                console.log(d)
+                
                 Message({
                     showClose: true,
                     message: 'Comentario registrado.'
                 })
+                dispatch('fetchComments')
             })
             .catch(err => {
                 console.log(err)

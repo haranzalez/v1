@@ -237,7 +237,7 @@
 			placement="left"
 			width="450"
 			trigger="click">
-			<el-table :data="scope.row.comentario">
+			<el-table size="mini" :data="scope.row.comentario">
 				<el-table-column width="150" property="fecha" label="Fecha"></el-table-column>
 				<el-table-column width="100" property="usuario" label="Usuario"></el-table-column>
 				<el-table-column width="300" property="comentario" label="Comentario"></el-table-column>
@@ -334,6 +334,7 @@ export default {
 		]),
         ...mapActions('rutas',[
 			'fetchRutasList',
+			'fetchComments',
 			'fetchMunicipios',
 			'createRuta',
 			'create_municipio',
@@ -403,6 +404,7 @@ export default {
 				this.dialogFormMunicipioVisible = true;
 			}
 			if(e == 'edit'){
+				this.fetchComments()
 				this.dialogFormEditVisible = true
 			}
 		

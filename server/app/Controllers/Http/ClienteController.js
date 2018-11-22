@@ -22,6 +22,16 @@ class ClienteController {
         }
         return res
     }
+    async get_cuadres_productos({ params }){
+        const { id } = params;
+        const client = await Cliente.find(id)
+        const res = await client.cuadre_producto().with('producto').fetch()
+        for(let prop in res.rows){
+            res.rows[prop]['producto'] = res.rows[prop].$relations.producto.rows[0].nombre
+            delete res.rows[prop].$relations
+        }
+        return res
+    }
     async create_cliente({ request }){
         const { 
             nombre_razon_social, 

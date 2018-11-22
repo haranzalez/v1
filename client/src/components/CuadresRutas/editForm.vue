@@ -167,7 +167,6 @@ export default {
     },
     created: function(){
        this.fetchRutasList()
-       console.log(this.rutasList)
        this.fetchVehiculosList()
        this.fetchProductosList()
 	}

@@ -26,6 +26,7 @@ export default {
         selectedCreateProducto: null,
         selectedEditRuta: null,
         loading: false,
+        loadingForm: false,
         dataReady: false,
         headings: [],  
     },
@@ -115,7 +116,6 @@ export default {
                         showClose: true,
                         message: 'Cuadre eliminado exitosamente'
                     })
-                    router.push('/cuadre-viajes')
                 }
             })
             .catch(err => {
@@ -203,6 +203,9 @@ export default {
         
     },
     mutations: {
+        setLoadingForm(state, value){
+            state.loadingForm = value
+        },
         setLoading(state, value){
             state.loading = value
         },

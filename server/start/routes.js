@@ -151,6 +151,7 @@ Route.group(() => {
   Route.get('clientes', 'ClienteController.get_all_clientes').middleware('auth')
   Route.get('clientes/:id', 'ClienteController.get_cliente').middleware('auth')
   Route.get('clientes/:id/cuadre-viajes', 'ClienteController.get_cuadres_viajes').middleware('auth')
+  Route.get('clientes/:id/cuadre-productos', 'ClienteController.get_cuadres_productos').middleware('auth')
   //POST
   Route.post('clientes/crear', 'ClienteController.create_cliente').middleware('auth')
   //PUT

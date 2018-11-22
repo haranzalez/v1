@@ -1,16 +1,25 @@
 <template>
 <div>
 	<!--cuadre rutas table -->
-	<el-dialog center width="50%" top="5vh" :title="'Rutas para ' + cliente.nombre_razon_social" :visible.sync="cuadreViajeTableVisible">
+	<el-dialog width="50%" top="5vh" :title="'Rutas para ' + cliente.nombre_razon_social + ' NIT:' + cliente.nit" :visible.sync="cuadreViajeTableVisible">
+		<div style="text-align: right;">
+			<el-dropdown trigger="click" @command="handleAction">  
+				<el-button size="mini">
+					<i class="mdi mdi-settings"></i>
+				</el-button>
+				<el-dropdown-menu slot="dropdown">
+					<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="createViaje"><i class="mdi mdi-plus mr-10"></i></el-dropdown-item>
+					<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="editViaje"><i class="mdi mdi-lead-pencil mr-10"></i></el-dropdown-item>
+					<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="delViaje"><i class="mdi mdi-delete mr-10"></i></el-dropdown-item>
+				</el-dropdown-menu>
+			</el-dropdown>
+		</div>
+		
 		<cuadreViajeTable></cuadreViajeTable>
-		<span slot="footer" class="dialog-footer">
-			<el-button size="mini" type="primary" @click="createViajeEditFormVisible = true">Editar cuadre</el-button>
-			<el-button size="mini"  @click="">Eliminar cuadre</el-button>
-			<el-button size="mini"  @click="cuadreViajeTableVisible = false">Cerrar</el-button>
-		</span>
+		
 	</el-dialog>
 	    <!--edit viaje form -->
-		<el-dialog center width="40%" top="15vh" title="Cuadre viaje" :visible.sync="createViajeEditFormVisible">
+		<el-dialog v-loading="loadingForm" center width="40%" top="15vh" title="Cuadre viaje" :visible.sync="createViajeEditFormVisible">
 			<ViajeEditForm></ViajeEditForm>
 			<span slot="footer" class="dialog-footer">
 				<el-button size="mini" type="primary" @click="edit(cliente.id)">Actualizar</el-button>
@@ -74,7 +83,6 @@
 							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="edit"><i class="mdi mdi-lead-pencil mr-10"></i> Editar</el-dropdown-item>
 							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
 							<el-dropdown-item command="verCuadreRuta" divided><i class="mdi mdi-folder-open mr-10"></i> Ver cuadres de ruta</el-dropdown-item>
-							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="viaje"><i class="mdi mdi-routes mr-10"></i> Cuadrar ruta</el-dropdown-item>
 							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="producto"><i class="mdi mdi-barrel mr-10"></i> Cuadrar producto</el-dropdown-item>
 							
 						</el-dropdown-menu>
@@ -212,9 +220,10 @@ export default {
 			'dataReady',
 			'cliente',
 			'loading',
+			'loadingCuadreTable',
 		]),
-		...mapState('consolidaciones', [
-			'consolidacion',
+		...mapState('cuadreViajes', [
+	
 		]),
 		...mapState('productos', [
 			'productosList',
@@ -264,6 +273,7 @@ export default {
 		...mapActions('cuadreViajes',[
 			'createCuadre',
 			'editCuadre',
+			'delCuadre',
 		]),
 		...mapActions('cuadreProductos',[
 			'createCuadreProducto',
@@ -290,8 +300,7 @@ export default {
 			exportService.toXLS(this.clientesList, 'Clientes', true)
 		},
 		reloadTable(){
-			this.fetchClientesList()
-			
+			this.fetchClientesList() 
 		},
 		handleCurrentTableChange(val) {
 			if(val == null){
@@ -321,6 +330,15 @@ export default {
 						message: 'Porfavor seleccione cliente.'
 					})
             	}
+			}
+			if(e == 'createViaje'){
+				this.createViajeFormVisible = true
+			}
+			if(e == 'editViaje'){
+				this.createViajeEditFormVisible = true
+			}
+			if(e == 'delViaje'){
+				this.pushToDelCuadre()
 			}
 			if(e == 'del'){
 				if(this.dataReady){
@@ -356,6 +374,7 @@ export default {
 		create_cuadre_viaje(id){
 			if(this.createCuadre(id)){
 				this.createViajeFormVisible = false
+				this.fetchCuadresRutas()
 				Notification({
 					type: 'success',
 					showClose: true,
@@ -386,6 +405,22 @@ export default {
             }).catch(() => {
 				this.currentRow=false; 
 				this.$refs.clientsTable.setCurrentRow(null)
+                this.$message({
+                    type: 'warning',
+                    message: 'Cancelado'
+                });          
+            });
+			
+		},
+		pushToDelCuadre(){
+			this.$confirm('Esta operacion eliminara permanentemente este registro. Continuar?', 'Atencion!', {
+                confirmButtonText: 'OK',
+                cancelButtonText: 'Cancelar',
+                type: 'warning'
+            }).then(() => {
+				this.delCuadre()
+				this.fetchCuadresRutas()
+            }).catch(() => {
                 this.$message({
                     type: 'warning',
                     message: 'Cancelado'

@@ -140,7 +140,7 @@ export default {
         fetchRutasList({commit, dispatch}){
             HTTP().local.get('api/rutas')
             .then(d => {
-                console.log(d.data)
+ 
                 dispatch('formatValuesInRutasList', d.data)
                 //commit('setRutaList', d.data)
                 commit('setDataReady', true)
@@ -153,7 +153,6 @@ export default {
         fetchRuta({commit, dispatch}, id){
             HTTP().local.get('api/rutas/'+id)
             .then(d => {
-                console.log(d.data)
                 commit('setFullRuta', d.data)
             })
             .catch(err => {
@@ -163,7 +162,7 @@ export default {
         fetchComments({state, commit}){
             HTTP().local.get('api/rutas/comentario/'+state.ruta.id)
             .then(d => {
-                console.log(d.data)
+
                 commit('setComentariosList', d.data)
             })
             .catch(err => {
@@ -183,7 +182,7 @@ export default {
             let pkg = []
            
             for(let prop2 in state.rutasList[0]){
-                console.log(prop2)
+ 
                 if(prop2 != 'comentario'){
                     prop2 = prop2.split('_').join(' ')
                     prop2 = prop2.charAt(0).toUpperCase() + prop2.slice(1)
@@ -225,7 +224,6 @@ export default {
     },
     mutations: {
         setFullRuta(state, value){
-            console.log(value)
             state.ruta = value
         },
         setRutaList(state, list){

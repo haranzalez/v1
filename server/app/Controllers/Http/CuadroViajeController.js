@@ -150,7 +150,7 @@ class CuadroViajeController {
     //DELETE
     async delete_cuadre({ params }){
         const { id } = params
-        const cuadre = await CuadreProducto.find(id)
+        const cuadre = await CuadreViaje.find(id)
         return cuadre.delete()
     }
 }

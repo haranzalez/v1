@@ -1,7 +1,7 @@
 <template>
 <div>
 	<el-table
-	v-loading="loadingCuadreTable"
+	v-loading="loadingCuadreTablePoducto"
     ref="clientsCuadreRutaTable"
     highlight-current-row
 	@current-change="handleCurrentTableChange"

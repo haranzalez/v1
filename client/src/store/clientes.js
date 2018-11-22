@@ -25,15 +25,17 @@ export default {
         cruadreRutasList: null,
         dataReady: false,
         loading: false,
+        loadingCuadreTable: false,
         headings: [],   
     },
 
     actions: {
         fetchCuadresRutas({state, commit}){
+            commit('setLoadingCuadreTable', true)
             HTTP().local.get('api/clientes/'+state.cliente.id+'/cuadre-viajes')
             .then(d => {
-                console.log(d.data)
                 commit('setCuadreRutasList', d.data)
+                commit('setLoadingCuadreTable', false)
             })
             .catch(err => {
                 console.log(err)
@@ -139,6 +141,9 @@ export default {
         },
     },
     mutations: {
+        setLoadingCuadreTable(state, value){
+            state.loadingCuadreTable = value
+        },
         setLoading(state, value){
             state.loading = value
         },

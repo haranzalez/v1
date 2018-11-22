@@ -148,6 +148,15 @@ export default {
                 console.log(err)
             })
         },
+        fetchVehiculo({commit}, resource){
+            HTTP().local.get('api/vehiculos/'+resource.id)
+            .then(d => {
+                commit('setFullVehiculo', d.data)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
         renderTableHeadings({state, commit}){
             let pkg = []
             for(let prop2 in state.vehiculosList[0]){

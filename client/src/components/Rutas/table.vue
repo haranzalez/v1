@@ -122,8 +122,8 @@
 	center>
 		<RutasEditForm></RutasEditForm>
 		<span slot="footer" class="dialog-footer">
-			<el-button size="medium" @click="dialogFormEditVisible = false;  rutaReset()">Cerrar</el-button>
-			<el-button size="medium" type="primary" @click="editRuta">Actualizar</el-button>
+			<el-button size="mini" @click="dialogFormEditVisible = false;  rutaReset()">Cerrar</el-button>
+			<el-button size="mini" type="primary" @click="editRuta">Actualizar</el-button>
 		</span>
 	</el-dialog>
 
@@ -192,58 +192,65 @@
     </el-table-column>
     <el-table-column
 	  sortable
+	  align="center"
       prop="kilometros"
       label="Kilometros"
       min-width="150">
     </el-table-column>
 	<el-table-column
 	  sortable
+	  align="center"
       prop="valor_flete"
       label="Valor flete"
       min-width="190">
     </el-table-column>
 	<el-table-column
 	  sortable
+	  align="center"
       prop="anticipo_sugerido"
       label="Anticipo Sugerido"
       min-width="200">
     </el-table-column>
 	<el-table-column
 	  sortable
+	  align="center"
       prop="pago_conductor_HQ"
       label="Pago conductor"
       min-width="200">
     </el-table-column>
 	<el-table-column
 	  sortable
+	  align="center"
       prop="pago_tercero"
       label="Pago tercero"
       min-width="200">
     </el-table-column>
 	<el-table-column
 	  sortable
+	  align="center"
       prop="pago_cabezote"
       label="Pago cabezote"
       min-width="200">
     </el-table-column>
     <el-table-column
 	  fixed="right"
+	  align="center"
       label="Comentarios"
       min-width="100"
-	  align="center">
+	>
 	  <template slot-scope="scope">
 		    <el-popover
-			:ref="scope.row.id"
+			:ref="'ruta_'+scope.row.id"
 			placement="left"
 			width="450"
 			trigger="click">
 			<el-table size="mini" :data="scope.row.comentario">
-				<el-table-column width="150" property="fecha" label="Fecha"></el-table-column>
+				<el-table-column min-width="180" property="fecha" label="Fecha"></el-table-column>
 				<el-table-column width="100" property="usuario" label="Usuario"></el-table-column>
 				<el-table-column width="300" property="comentario" label="Comentario"></el-table-column>
 			</el-table>
 			</el-popover>
-			<el-button size="mini" v-popover="scope.row.id"><i class="mdi mdi-eye"></i></el-button>
+			<el-button size="mini" v-popover="'ruta_'+scope.row.id"><i class="mdi mdi-eye"></i></el-button>
 	  </template>
     </el-table-column>
   </el-table>

@@ -19,9 +19,12 @@ export default {
         cuadresList: null,
         selectedVehiculo: null,
         selectedRuta: null,
+        selectedVehiculoEdit: null,
+        selectedRutaEdit: null,
         selectedCreateVehiculo: null,
         selectedCreateRuta: null,
         selectedCreateProducto: null,
+        selectedEditRuta: null,
         loading: false,
         dataReady: false,
         headings: [],  
@@ -81,11 +84,11 @@ export default {
                 console.log(err)
             })
         },
-        editCuadre({state}){
+        editCuadre({state}, cliente_id){
             HTTP().local.put('api/cuadre-viajes/'+state.cuadre.id+'/update', {
                 cliente_id: cliente_id,
-                ruta_id: state.selectedCreateRuta,
-                vehiculo_id: state.selectedCreateVehiculo,
+                ruta_id: state.selectedRutaEdit,
+                vehiculo_id: state.selectedVehiculoEdit,
                 flete: state.cuadre.flete,
                 anticipo: state.cuadre.anticipo,
                 ajuste: state.cuadre.ajuste,
@@ -119,11 +122,16 @@ export default {
                 console.log(err)
             })
         },
-        fetchCuadre({commit},pkg){
+        fetchCuadre({commit, dispatch},pkg){
             commit('setLoading', true)
             HTTP().local.get('api/cuadre-viajes/'+pkg.id)
             .then(d => {
                commit('setFullCuadre', d.data)
+               commit('setFlete', d.data.flete)
+               commit('rutas/setValorflete', d.data.valor_flete.toString(), {root: true})
+               commit('setSelectedRutaEdit', d.data.ruta_id)
+               commit('setSelectedVehiculoEdit', d.data.vehiculo_id)
+               dispatch('renderSelectedRuta', 'single')
                commit('setLoading', false)
             })
             .catch(err => {
@@ -139,8 +147,8 @@ export default {
                 commit('setCuadresList', d.data)
                 commit('setDataReady', true)
                 dispatch('renderTableHeadings')
-                dispatch('renderSelectedVehiculo')
-                dispatch('renderSelectedRuta')
+                dispatch('renderSelectedVehiculo', 'multiple')
+                dispatch('renderSelectedRuta', 'multiple')
                 commit('setLoading', false)
             })
             .catch(err => {
@@ -158,29 +166,39 @@ export default {
             }
             commit('setTableHeadings', pkg)
         },
-        renderSelectedRuta({ state, commit }){
+        renderSelectedRuta({ state, commit }, type){
             let obj = {}
-            for(let prop in state.cuadresList){
-                obj[state.cuadresList[prop]['ruta'][0]['id']] = (state.cuadresList[prop]['ruta'] !== [])
-                ? state.cuadresList[prop]['nombre_ruta']
-                : ''
-            }
-            console.log(obj)
-            commit('setSelectedRuta', obj)
-        },
-        renderSelectedVehiculo({ state, commit }){
-            let obj = {}
-
-            for(let prop in state.cuadresList){
-                for(let prop2 in state.cuadresList[prop].vehiculo){
-                    obj[state.cuadresList[prop]['vehiculo'][prop2]['placa']] = (state.cuadresList[prop]['vehiculo'] !== [])
-                    ? state.cuadresList[prop]['vehiculo'][prop2]['placa']
+            if(type == 'multiple'){
+                for(let prop in state.cuadresList){
+                    obj['r-'+state.cuadresList[prop]['ruta'][0]['id']] = (state.cuadresList[prop]['ruta'] !== [])
+                    ? state.cuadresList[prop]['nombre_ruta']
                     : ''
                 }
             }
+            if(type == 'single'){
+                obj['r-'+state.cuadre.id] = state.cuadre['ruta']
+            }
+           
+          
+            console.log(obj)
+            commit('setSelectedRuta', obj)
+        },
+        renderSelectedVehiculo({ state, commit }, type){
+            let obj = {}
+            if(type == 'multiple'){
+                for(let prop in state.cuadresList){
+                    for(let prop2 in state.cuadresList[prop].vehiculo){
+                        obj['v-'+state.cuadresList[prop]['vehiculo'][prop2]['placa']] = (state.cuadresList[prop]['vehiculo'] !== [])
+                        ? state.cuadresList[prop]['vehiculo'][prop2]['placa']
+                        : ''
+                    }
+                }
+            }
+            if(type == 'single'){
+                obj['v-'+state.cuadre.id] = state.cuadre.placa_vehiculo
+            }
             console.log(obj)
             commit('setSelectedVehiculo', obj)
-            console.log(state.selectedVehiculo)
         },
         
     },
@@ -217,6 +235,12 @@ export default {
         },
         setDebe(state, value){
             state.cuadre.debe = value
+        },
+        setSelectedVehiculoEdit(state, value){
+            state.selectedVehiculoEdit = value
+        },
+        setSelectedRutaEdit(state, value){
+            state.selectedRutaEdit = value
         },
         setSelectedVehiculo(state, value){
             state.selectedVehiculo = value

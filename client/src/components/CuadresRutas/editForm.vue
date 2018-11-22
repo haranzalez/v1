@@ -4,7 +4,7 @@
             <el-row>
                 <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
                     <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-                        <el-form-item label="Flete">
+                        <el-form-item label="Cuadre">
                             <el-input
                                 class="inputWidth"
                                 size="mini"
@@ -27,10 +27,11 @@
                     </el-col>
                     <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
                         <el-form-item label="Ruta">
+                        <template slot-scope="scope">
                             <el-select
                             class="selectWidth" 
                             size="mini" 
-                            :value.sync="selectedCreateRuta" 
+                            :value="selectedRutaEdit" 
                             placeholder="Seleccione.." 
                             @change="rutaChange">
                                 <el-option
@@ -40,6 +41,7 @@
                                     :value="item.id">
                                 </el-option>
                             </el-select>
+                        </template>
                         </el-form-item>
                     </el-col>
                     <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
@@ -47,9 +49,9 @@
                                 <el-select 
                                 class="selectWidth"
                                 size="mini" 
-                                :value.sync="selectedCreateVehiculo" 
+                                :value="selectedVehiculoEdit" 
                                 placeholder="Seleccione.." 
-                                @change="setSelectedCreateVehiculo">
+                                @change="setSelectedVehiculoEdit">
                                     <el-option
                                     v-for="item in vehiculosList"
                                     :key="item.id"
@@ -88,6 +90,7 @@ export default {
 		}
 	},
 	computed: {
+
         
         ...mapState('authentication', [
 			'permisos',
@@ -96,9 +99,8 @@ export default {
             'cuadre',
             'headings',
             'dataReady',
-            'selectedCreateVehiculo',
-            'selectedCreateRuta',
-            'selectedCreateProducto',
+            'selectedVehiculoEdit',
+            'selectedRutaEdit',
         ]),
          ...mapState('rutas', [
             'rutasList',
@@ -117,7 +119,7 @@ export default {
     methods: {
         back() {
 			router.push('/cuadre-viajes')
-		},
+        },
         ...mapMutations('cuadreViajes', [
             'setConsolidacionId',
             'setRutaId',
@@ -127,6 +129,10 @@ export default {
             'setSelectedCreateVehiculo',
             'setSelectedCreateRuta',
             'setSelectedCreateProducto',
+            'setSelectedRuta',
+            'setSelectedVehiculo',
+            'setSelectedVehiculoEdit',
+            'setSelectedRutaEdit',
         ]),
         ...mapActions('rutas', [
             'fetchRutasList',
@@ -134,9 +140,10 @@ export default {
         ]),
         ...mapActions('vehiculos', [
             'fetchVehiculosList',
+            'fetchVehiculo',
         ]),
          ...mapActions('cuadreViajes',[
-            'createCuadre',
+            'editCuadre',
         ]),
          ...mapActions('productos',[
             'fetchProductosList',
@@ -147,13 +154,14 @@ export default {
             field = field.charAt(0).toUpperCase() + field.slice(1)
             return field
         },
+       
         rutaChange(value){
             this.fetchRuta(value)
-            this.setSelectedCreateRuta(value)
+            this.setSelectedRutaEdit(value)
         },
-        productoChange(value){
-            this.fetchProducto(value)
-            this.setSelectedCreateProducto(value)
+        vehiculoChange(value){
+            this.fetchVehiculo({id: value})
+            this.setSelectedVehiculo(value)
         },
        
     },

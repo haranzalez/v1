@@ -109,7 +109,7 @@
        <template slot-scope="scope">
            <el-popover
 		    size="mini"
-            :ref="scope.row.ruta[0].id"
+            :ref="'cuadre_viaje_ruta_'+scope.row.ruta[0].id"
             placement="right"
             width="300"
             trigger="hover">
@@ -121,7 +121,7 @@
            <el-select 
 		   @change="assign_ruta({ruta_id:$event, cuadre_id:scope.row.id})"
 		   size="mini"
-           v-popover="scope.row.ruta[0].id" 
+           v-popover="'cuadre_viaje_ruta_'+scope.row.ruta[0].id" 
            v-model="selectedRuta[scope.row.ruta[0].id]" 
            placeholder="Seleccione..."
            >

@@ -78,6 +78,7 @@ Route.group(() => {
   Route.get('rutas', 'RutaController.get_all_rutas').middleware('auth')
   Route.get('rutas/:id', 'RutaController.get_ruta').middleware('auth')
   Route.get('rutas/comentario/:ruta_id', 'RutaController.get_comments').middleware('auth')
+  Route.get('rutas/:id/basic', 'RutaController.get_ruta_basic').middleware('auth')
   //POST
   Route.post('rutas/crear', 'RutaController.create_ruta').middleware('auth')
   Route.post('rutas/comentario', 'RutaController.create_comment').middleware('auth')

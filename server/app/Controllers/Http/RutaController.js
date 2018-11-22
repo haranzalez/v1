@@ -48,7 +48,10 @@ class RutaController {
         
         return rutas
     }
-
+    async get_ruta_basic({ params }){
+        const { id } = params;
+        return await Ruta.find(id)
+    }
     async get_ruta({ params }){
         const { id } = params;
         const ruta = await Ruta.find(id)

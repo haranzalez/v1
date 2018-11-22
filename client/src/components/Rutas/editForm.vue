@@ -1,8 +1,8 @@
 <template>
    <vue-scroll class="page-trailers-create">
-       <el-form label-position="right" ref="form" label-width="150px">
+       <el-form size="mini" label-position="top" ref="form" label-width="150px">
         <el-row>
-            <el-col :span="12" :md="12" :sm="24" :xs="24">
+            <el-col :span="8" :md="8" :sm="24" :xs="24">
                         <el-form-item label="Origen" label-width="200px">
                             <el-select 
                             size="mini" 
@@ -94,7 +94,7 @@
                 </el-form-item>
             </el-col>
         </el-col>
-            <el-col  :span="12" :md="12" :sm="24" :xs="24">
+            <el-col  :span="16" :md="16" :sm="24" :xs="24">
                 <el-col style="margin:0 !important;" :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                    
                         <el-card>
@@ -104,6 +104,7 @@
                             </div>
                             <div class="text item">
                                 <el-table
+                                height="300"
                                 size="mini"
                                 :data="comentarios_list"
                                 style="width: 100%">

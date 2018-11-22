@@ -33,7 +33,14 @@ class CuadroViajeController {
         const { id } = params;
         const cuadre = await CuadreViaje.find(id)
         const ruta = await cuadre.ruta().with('municipios').fetch()
-        cuadre['ruta'] = ruta.rows[0].$relations.municipios.rows[0].nombre_municipio + ' - ' + ruta.rows[0].$relations.municipios.rows[1].nombre_municipio
+        const vehiculo = await cuadre.vehiculo().fetch()
+        console.log(vehiculo.rows[0].placa)
+        cuadre['placa_vehiculo'] = vehiculo.rows[0].placa;
+        cuadre['vehiculo_id'] = vehiculo.rows[0].id;
+        cuadre['valor_flete'] =  ruta.rows[0].valor_flete;
+        cuadre['ruta_id'] = ruta.rows[0].id;
+        cuadre['ruta'] = ruta.rows[0].$relations.municipios.rows[0].nombre_municipio + ' - ' + ruta.rows[0].$relations.municipios.rows[1].nombre_municipio;
+        console.log(cuadre)
         return cuadre
     }
     async create_cuadre({ request }){

@@ -7,7 +7,7 @@
 	@current-change="handleCurrentTableChange"
 	size="mini"
 	stripe
-	max-height="250"
+	height="300"
     :data="filtered"
     style="width: 100%">
     <el-table-column
@@ -101,7 +101,7 @@ export default {
 				return
 			}
             this.fetchCuadre({id: val.id})
-            console.log(this.cuadre)
+            console.log(val)
 			this.$refs.clientsCuadreRutaTable.setCurrentRow(val);
 
 		},

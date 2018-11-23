@@ -1,7 +1,7 @@
 <template>
 <div>
 	<el-table
-	v-loading="loadingCuadreTable"
+	v-loading="loadingCuadreRutaTable"
     ref="clientsCuadreRutaTable"
     highlight-current-row
 	@current-change="handleCurrentTableChange"
@@ -76,7 +76,7 @@ export default {
 	computed: {
         ...mapState('clientes', [
 			'cruadreRutasList',
-			'loadingCuadreTable',
+			'loadingCuadreRutaTable',
             
         ]),
         ...mapState('cuadreViajes', [

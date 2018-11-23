@@ -23,19 +23,32 @@ export default {
         },
         clientesList: null,
         cruadreRutasList: null,
+        cuadreProductosList: null,
         dataReady: false,
         loading: false,
-        loadingCuadreTable: false,
+        loadingCuadreRutaTable: false,
+        loadingCuadreProductoTable: false,
         headings: [],   
     },
 
     actions: {
         fetchCuadresRutas({state, commit}){
-            commit('setLoadingCuadreTable', true)
+            commit('setLoadingCuadreRutaTable', true)
             HTTP().local.get('api/clientes/'+state.cliente.id+'/cuadre-viajes')
             .then(d => {
                 commit('setCuadreRutasList', d.data)
-                commit('setLoadingCuadreTable', false)
+                commit('setLoadingCuadreRutaTable', false)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
+        fetchCuadresProductos({state, commit}){
+            commit('setLoadingCuadreProductoTable', true)
+            HTTP().local.get('api/clientes/'+state.cliente.id+'/cuadre-productos')
+            .then(d => {
+                commit('setCuadreProductosList', d.data)
+                commit('setLoadingCuadreProductoTable', false)
             })
             .catch(err => {
                 console.log(err)
@@ -141,8 +154,11 @@ export default {
         },
     },
     mutations: {
-        setLoadingCuadreTable(state, value){
-            state.loadingCuadreTable = value
+        setLoadingCuadreRutaTable(state, value){
+            state.loadingCuadreRutaTable = value
+        },
+        setLoadingCuadreProductoTable(state, value){
+            state.loadingCuadreProductoTable = value
         },
         setLoading(state, value){
             state.loading = value
@@ -152,6 +168,9 @@ export default {
         },
         setCuadreRutasList(state, list){
             state.cruadreRutasList = list
+        },
+        setCuadreProductosList(state, list){
+            state.cuadreProductosList = list
         },
         setClientesList(state, list){
             state.clientesList = list

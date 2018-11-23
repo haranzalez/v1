@@ -28,6 +28,7 @@ class ClienteController {
         const res = await client.cuadre_producto().with('producto').fetch()
         for(let prop in res.rows){
             res.rows[prop]['producto'] = res.rows[prop].$relations.producto.rows[0].nombre
+            res.rows[prop]['precio_producto'] = res.rows[prop].$relations.producto.rows[0].precio
             delete res.rows[prop].$relations
         }
         return res

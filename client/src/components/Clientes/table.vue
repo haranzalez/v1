@@ -1,5 +1,23 @@
 <template>
 <div>
+	<!--cuadre prducto table -->
+	<el-dialog width="50%" top="5vh" :title="'Productos para ' + cliente.nombre_razon_social + ' NIT:' + cliente.nit" :visible.sync="cuadreProductoTableVisible">
+		<div style="text-align: right;">
+			<el-dropdown trigger="click" @command="handleAction">  
+				<el-button size="mini">
+					<i class="mdi mdi-settings"></i>
+				</el-button>
+				<el-dropdown-menu slot="dropdown">
+					<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="createProducto"><i class="mdi mdi-plus mr-10"></i></el-dropdown-item>
+					<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="editProducto"><i class="mdi mdi-lead-pencil mr-10"></i></el-dropdown-item>
+					<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="delProducto"><i class="mdi mdi-delete mr-10"></i></el-dropdown-item>
+				</el-dropdown-menu>
+			</el-dropdown>
+		</div>
+		
+		<cuadreProductoTable></cuadreProductoTable>
+		
+	</el-dialog>
 	<!--cuadre rutas table -->
 	<el-dialog width="50%" top="5vh" :title="'Rutas para ' + cliente.nombre_razon_social + ' NIT:' + cliente.nit" :visible.sync="cuadreViajeTableVisible">
 		<div style="text-align: right;">
@@ -83,8 +101,7 @@
 							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="edit"><i class="mdi mdi-lead-pencil mr-10"></i> Editar</el-dropdown-item>
 							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
 							<el-dropdown-item command="verCuadreRuta" divided><i class="mdi mdi-folder-open mr-10"></i> Ver cuadres de ruta</el-dropdown-item>
-							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="producto"><i class="mdi mdi-barrel mr-10"></i> Cuadrar producto</el-dropdown-item>
-							
+							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="verCuadreProducto"><i class="mdi mdi-barrel mr-10"></i> Ver cuadres de productos</el-dropdown-item>
 						</el-dropdown-menu>
 					</el-dropdown>
 				</el-row>
@@ -191,6 +208,7 @@ import ViajeCreateForm from '@/components/CuadresRutas/createForm'
 import ViajeEditForm from '@/components/CuadresRutas/editForm'
 import ProductoCreateForm from '@/components/CuadreProductos/createCuadreForm'
 import cuadreViajeTable from './cuadreRutaTable'
+import cuadreProductoTable from './cuadreProductoTable'
 
 export default {
 	name: 'ClientesTable',
@@ -202,6 +220,7 @@ export default {
 			createViajeFormVisible: false,
 			createProductoFormVisible: false,
 			cuadreViajeTableVisible: false,
+			cuadreProductoTableVisible: false,
 			createViajeEditFormVisible: false,
             selectTypeOfSearch: '',
 			filter: '',
@@ -251,6 +270,7 @@ export default {
 		ViajeEditForm,
 		ProductoCreateForm,
 		cuadreViajeTable,
+		cuadreProductoTable,
 	},
     methods: {
 //=============================//
@@ -264,6 +284,7 @@ export default {
 		
         ...mapActions('clientes',[
 			'fetchCuadresRutas',
+			'fetchCuadresProductos',
 			'fetchClientesList',
 			'createCliente',
 			'delCliente',
@@ -312,7 +333,6 @@ export default {
 			this.setFullCliente(val)
 			this.setDataReady(true)
 			this.$refs.clientsTable.setCurrentRow(val);
-			console.log(this.dataReady)
 		},
 		handleAction(e){
             if(e == 'create'){
@@ -354,6 +374,10 @@ export default {
 			if(e == 'verCuadreRuta'){
 				this.fetchCuadresRutas()
 				this.cuadreViajeTableVisible = true
+			}
+			if(e == 'verCuadreProducto'){
+				this.fetchCuadresProductos()
+				this.cuadreProductoTableVisible = true
 			}
 			if(e == 'viaje'){
 				this.createViajeFormVisible = true

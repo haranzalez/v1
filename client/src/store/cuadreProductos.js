@@ -60,6 +60,17 @@ export default {
                 console.log(err)
             })
         },
+        fetchCuadreProducto({commit}, pkg){
+            HTTP().local.get('api/cuadre-productos/'+pkg.id)
+            .then(d => {
+               commit('setFullCuadreProducto', d.data)
+               commit('setPrecioCuadre', d.data.precio)
+               commit('productos/setPrecioProducto', d.data.precio_producto.toString(), {root: true})
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
        
         fetchCuadreProductosList({commit, dispatch}){
             HTTP().local.get('api/cuadre-productos')

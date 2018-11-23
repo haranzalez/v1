@@ -122,7 +122,7 @@ export default {
                 console.log(err)
             })
         },
-        fetchCuadre({commit, dispatch},pkg){
+        fetchCuadreRuta({commit, dispatch},pkg){
             commit('setLoading', true)
             HTTP().local.get('api/cuadre-viajes/'+pkg.id)
             .then(d => {

@@ -13,22 +13,15 @@
     <el-table-column
 	  sortable
 	  fixed
-      prop="ruta"
-      label="Ruta"
-	  min-width="250">
+      prop="producto"
+      label="Producto"
+	  min-width="230">
     </el-table-column>
     <el-table-column
 	  sortable
 	  align="center"
-      prop="flete"
-      label="Flete"
-      min-width="100">
-    </el-table-column>
-	<el-table-column
-	  align="center"
-	  sortable
-      prop="anticipo"
-      label="Anticipo"
+      prop="precio"
+      label="Precio"
       min-width="100">
     </el-table-column>
 	<el-table-column
@@ -38,11 +31,11 @@
       label="Ajuste"
       min-width="100">
     </el-table-column>
-   <el-table-column
-      align="center"
+	 <el-table-column
 	  sortable
-      prop="debe"
-      label="Debe"
+	  align="center"
+      prop="cuadre"
+      label="Cuadre"
       min-width="100">
     </el-table-column>
 	
@@ -70,12 +63,12 @@ export default {
 	data () {
       	return {
               filter: '',
-              createViajeEditFormVisible: false,
+              productoEditFormVisible: false,
 		}
 	},
 	computed: {
         ...mapState('clientes', [
-			'cruadreRutasList',
+			'cuadreProductosList',
 			'loadingCuadreTable',
             
         ]),
@@ -86,14 +79,14 @@ export default {
         filtered(){
 			if(this.filter !== ''){
 				let type = this.selectTypeOfSearch.toLowerCase()
-				return this.cruadreRutasList.filter(cuadre => {
+				return this.cuadreProductosList.filter(cuadre => {
 					if(isNaN(cuadre[type])){
 						return cuadre[type].toLowerCase().includes(this.filter.toLowerCase())
 					}
 					return cuadre[type].toString().includes(this.filter.toString())
 				})
 			}
-			return this.cruadreRutasList
+			return this.cuadreProductosList
 		},
 
 	},
@@ -105,17 +98,16 @@ export default {
 				this.$refs.clientsCuadreRutaTable.setCurrentRow(val);
 				return
 			}
-            this.fetchCuadre({id: val.id})
-            console.log(val)
+            this.fetchCuadreRuta({id: val.id})
 			this.$refs.clientsCuadreRutaTable.setCurrentRow(val);
 
 		},
 
         ...mapActions('clientes', [
-            'fetchCuadresRutas',
+            'fetchCuadresProductos',
         ]),
-        ...mapActions('cuadreViajes', [
-            'fetchCuadre',
+        ...mapActions('cuadreProductos', [
+            'fetchCuadreProducto',
         ]),
 
 		back(){
@@ -127,7 +119,8 @@ export default {
 //=============================//
 //========== UI State Functions =========//
 //=============================//
-	
+	created(){
+	}
 
 }
 </script>

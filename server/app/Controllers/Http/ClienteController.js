@@ -17,8 +17,11 @@ class ClienteController {
         const client = await Cliente.find(id)
         const res = await client.cuadre_viaje().with('ruta.municipios').fetch()
         for(let prop in res.rows){
-            res.rows[prop]['ruta'] = res.rows[prop].$relations.ruta.rows[0].$relations.municipios.rows[0].nombre_municipio + ' - ' + res.rows[prop].$relations.ruta.rows[0].$relations.municipios.rows[1].nombre_municipio
-            delete res.rows[prop].$relations
+            if(res.rows[prop] !== undefined){
+                res.rows[prop]['ruta'] = res.rows[prop].$relations.ruta.rows[0].$relations.municipios.rows[0].nombre_municipio + ' - ' + res.rows[prop].$relations.ruta.rows[0].$relations.municipios.rows[1].nombre_municipio
+                delete res.rows[prop].$relations
+            }
+            
         }
         return res
     }

@@ -77,6 +77,7 @@ export default {
         ...mapState('clientes', [
 			'cruadreRutasList',
 			'loadingCuadreRutaTable',
+			
             
         ]),
         ...mapState('cuadreViajes', [
@@ -106,7 +107,6 @@ export default {
 				return
 			}
             this.fetchCuadre({id: val.id})
-            console.log(val)
 			this.$refs.clientsCuadreRutaTable.setCurrentRow(val);
 
 		},

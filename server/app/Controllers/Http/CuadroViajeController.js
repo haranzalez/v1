@@ -34,13 +34,13 @@ class CuadroViajeController {
         const cuadre = await CuadreViaje.find(id)
         const ruta = await cuadre.ruta().with('municipios').fetch()
         const vehiculo = await cuadre.vehiculo().fetch()
-        console.log(vehiculo.rows[0].placa)
-        cuadre['placa_vehiculo'] = vehiculo.rows[0].placa;
-        cuadre['vehiculo_id'] = vehiculo.rows[0].id;
-        cuadre['valor_flete'] =  ruta.rows[0].valor_flete;
-        cuadre['ruta_id'] = ruta.rows[0].id;
-        cuadre['ruta'] = ruta.rows[0].$relations.municipios.rows[0].nombre_municipio + ' - ' + ruta.rows[0].$relations.municipios.rows[1].nombre_municipio;
-        console.log(cuadre)
+        
+        cuadre['placa_vehiculo'] = (vehiculo.rows.length > 0)?vehiculo.rows[0].placa:'';
+        cuadre['vehiculo_id'] = (vehiculo.rows.length > 0)?vehiculo.rows[0].id:null;
+        cuadre['valor_flete'] =  (ruta.rows.length > 0)?ruta.rows[0].valor_flete:0;
+        cuadre['ruta_id'] = (ruta.rows.length > 0)?ruta.rows[0].id:null;
+        cuadre['ruta'] = (ruta.rows.length > 0)?ruta.rows[0].$relations.municipios.rows[0].nombre_municipio + ' - ' + ruta.rows[0].$relations.municipios.rows[1].nombre_municipio:'';
+       
         return cuadre
     }
     async create_cuadre({ request }){
@@ -96,9 +96,17 @@ class CuadroViajeController {
         cuadre.ajuste = ajuste
         cuadre.debe = debe
         if(ruta_id){
+            const rut = await cuadre.ruta().fetch()
+            if(rut.rows.length > 0){
+                await cuadre.ruta().detach([rut.rows[0]['id']])
+            }
             await cuadre.ruta().attach(ruta_id)
         }
         if(vehiculo_id){
+            const veh = await cuadre.vehiculo().fetch()
+            if(veh.rows.length > 0){
+                await cuadre.ruta().detach([veh.rows[0]['id']])
+            }
             await cuadre.vehiculo().attach(vehiculo_id)
         }
         cuadre.save()

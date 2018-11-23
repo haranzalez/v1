@@ -37,7 +37,7 @@
 		
 	</el-dialog>
 	    <!--edit viaje form -->
-		<el-dialog v-loading="loadingForm" center width="40%" top="15vh" title="Cuadre viaje" :visible.sync="createViajeEditFormVisible">
+		<el-dialog center width="40%" top="15vh" title="Cuadre viaje" :visible.sync="createViajeEditFormVisible">
 			<ViajeEditForm></ViajeEditForm>
 			<span slot="footer" class="dialog-footer">
 				<el-button size="mini" type="primary" @click="edit(cliente.id)">Actualizar</el-button>
@@ -299,10 +299,6 @@ export default {
 		...mapActions('cuadreProductos',[
 			'createCuadreProducto',
 		]),
-		...mapMutations('consolidaciones', [
-			'setClienteId',
-			'setCuadreViajeFormVisible',
-		]),
 		...mapMutations('cuadreViajes', [
 			'resetSelections',
 		]),
@@ -329,7 +325,6 @@ export default {
 				this.setDataReady(false)
 				return
 			}
-			this.setClienteId(val.id)
 			this.setFullCliente(val)
 			this.setDataReady(true)
 			this.$refs.clientsTable.setCurrentRow(val);

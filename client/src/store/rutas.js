@@ -183,10 +183,25 @@ export default {
            
             for(let prop2 in state.rutasList[0]){
  
-                if(prop2 != 'comentario'){
-                    prop2 = prop2.split('_').join(' ')
-                    prop2 = prop2.charAt(0).toUpperCase() + prop2.slice(1)
-                    pkg.push(prop2)
+                if(prop2 == 'comentario' || prop2 == 'created_at' || prop2 == 'updated_at' 
+                || prop2 == 'comentarios'
+                || prop2 == 'nombre_ruta'
+                || prop2 == 'municipios'
+                || prop2 == 'municipio_origen_id'
+                || prop2 == 'municipio_destino_id'){
+                    continue;
+                }else{
+                    if(prop2 == 'nombre_municipio_origen' || prop2 == 'nombre_municipio_destino'){
+                        prop2 = prop2.split('_')
+                        prop2 = prop2[2]
+                        prop2 = prop2.charAt(0).toUpperCase() + prop2.slice(1)
+                        pkg.push(prop2)
+                    }else{
+                        prop2 = prop2.split('_').join(' ')
+                        prop2 = prop2.charAt(0).toUpperCase() + prop2.slice(1)
+                        pkg.push(prop2)
+                    }
+                   
                 }
                 
             }

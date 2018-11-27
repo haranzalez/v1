@@ -6,7 +6,6 @@ class UsersLogService {
 
     async login(ip, token, userId){
         let check = await this.checkUserLogs(userId)
-        console.log(check)
         if(check == false){
             const res = await Logs.create({
                 user_id: userId,
@@ -43,7 +42,6 @@ class UsersLogService {
     async checkUserLogs(uid){
         const uLogs = await Logs.query().where('user_id', uid).fetch()
         const activeSess = {}
-            console.log(uLogs.rows)
         if(uLogs.rows.length > 0){
             for(let prop in uLogs.rows){
                 if(uLogs.rows[prop]['is_revoke'] == false){

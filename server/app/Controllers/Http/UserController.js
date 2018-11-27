@@ -237,7 +237,6 @@ class UserController {
       if(preq.rows.length > 0){
         const id = preq.rows[0].user_id
         const user = await User.find(id);
-        console.log(user.email)
         user.merge({password: password})
         user.save();
         preq.rows[0].merge({token: null})

@@ -110,13 +110,7 @@ export default {
         delCuadre({state}){
             HTTP().local.delete('api/cuadre-viajes/'+state.cuadre.id+'/delete')
             .then(d => {
-                if(d){
-                    Message({
-                        type: 'success',
-                        showClose: true,
-                        message: 'Cuadre eliminado exitosamente'
-                    })
-                }
+               return d
             })
             .catch(err => {
                 console.log(err)
@@ -264,6 +258,18 @@ export default {
             state.selectedCreateVehiculo = null;
             state.selectedCreateRuta = null;
             state.selectedCreateProducto = null;
+        },
+        resetCuadreRuta(state){
+            state.cuadre = {
+                id: null,
+                cliente_id: null,
+                flete: null,
+                ruta_id: null,
+                anticipo: null,
+                vehiculo_id: null,
+                ajuste: null,
+                debe: null,
+            }
         }
     },
 

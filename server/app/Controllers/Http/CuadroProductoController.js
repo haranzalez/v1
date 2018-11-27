@@ -15,7 +15,10 @@ class CuadroProductoController {
     async get_client_cuadres({ params }){
         const { id } = params;
         const cliente = await Cliente.query().where('id', id).with('cuadre_producto.producto').fetch()
-        return cliente.rows[0].$relations.cuadre_producto
+        const pkg = cliente.rows[0].$relations.cuadre_producto;
+        pkg['nombre_producto'] = cliente.rows[0].$relations.cuadre_producto.rows[0].$relations.producto.rows[0].nombre
+        pkg['precio_producto'] = cliente.rows[0].$relations.cuadre_producto.rows[0].$relations.producto.rows[0].precio
+        return pkg
     }
     async create_cuadre({ request }){
         const {

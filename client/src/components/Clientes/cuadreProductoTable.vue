@@ -1,8 +1,8 @@
 <template>
 <div>
 	<el-table
-	v-loading="loadingCuadreTablePoducto"
-    ref="clientsCuadreRutaTable"
+	v-loading="loadingCuadreProductoTable"
+    ref="clientsCuadreProductoTable"
     highlight-current-row
 	@current-change="handleCurrentTableChange"
 	size="mini"
@@ -20,7 +20,7 @@
     <el-table-column
 	  sortable
 	  align="center"
-      prop="precio"
+      prop="precio_producto"
       label="Precio"
       min-width="100">
     </el-table-column>
@@ -34,7 +34,7 @@
 	 <el-table-column
 	  sortable
 	  align="center"
-      prop="cuadre"
+      prop="precio"
       label="Cuadre"
       min-width="100">
     </el-table-column>
@@ -59,7 +59,7 @@ import exportService from '../../services/exportService'
 
 
 export default {
-	name: 'ClientesCuadreRutaTable',
+	name: 'ClientesCuadreProductoTable',
 	data () {
       	return {
               filter: '',
@@ -69,7 +69,7 @@ export default {
 	computed: {
         ...mapState('clientes', [
 			'cuadreProductosList',
-			'loadingCuadreTable',
+			'loadingCuadreProductoTable',
             
         ]),
         ...mapState('cuadreViajes', [
@@ -95,11 +95,11 @@ export default {
     methods: {
         handleCurrentTableChange(val) {
 			if(val == null){
-				this.$refs.clientsCuadreRutaTable.setCurrentRow(val);
+				this.$refs.clientsCuadreProductoTable.setCurrentRow(val);
 				return
 			}
-            this.fetchCuadreRuta({id: val.id})
-			this.$refs.clientsCuadreRutaTable.setCurrentRow(val);
+            this.fetchCuadreProducto({id: val.id})
+			this.$refs.clientsCuadreProductoTable.setCurrentRow(val);
 
 		},
 

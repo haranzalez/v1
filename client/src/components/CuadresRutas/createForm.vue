@@ -1,28 +1,8 @@
 <template>
    <vue-scroll class="page-cuadro-viaje-create">
-        <el-form :inline="false" label-position="top" ref="form" label-width="120px">
+        <el-form :inline="false" label-position="top" ref="createCuadreRutaForm" label-width="120px">
             <el-row>
                 <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-                    <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-                        <el-form-item label="Flete">
-                            <el-input
-                                class="inputWidth"
-                                size="mini"
-                                placeholder="$0"
-                                @input="setFlete">
-                            </el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-                        <el-form-item label="Anticipo">
-                            <el-input
-                                class="inputWidth"
-                                size="mini"
-                                placeholder="$0"
-                                @input="setAnticipo">
-                            </el-input>
-                        </el-form-item>
-                    </el-col>
                     <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
                         <el-form-item label="Ruta">
                             <el-select
@@ -57,8 +37,26 @@
                                 </el-select>
                             </el-form-item>
                     </el-col>
-                    
-                    
+                    <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+                        <el-form-item label="Cuadre">
+                            <el-input
+                                class="inputWidth"
+                                size="mini"
+                                placeholder="$0"
+                                @input="setFlete">
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+                        <el-form-item label="Anticipo">
+                            <el-input
+                                class="inputWidth"
+                                size="mini"
+                                placeholder="$0"
+                                @input="setAnticipo">
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
             </el-col>
             <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
                     <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">

@@ -278,7 +278,7 @@ export default {
 	name: 'RutasTable',
 	data () {
       	return {
-            selectTypeOfSearch: 'Municipios',
+            selectTypeOfSearch: 'Origen',
 			filter: '',
 			dialogTableVisible: false,
 			dialogFormVisible: false,
@@ -308,7 +308,15 @@ export default {
 				if(this.filter !== ''){
 					let type = this.selectTypeOfSearch.toLowerCase()
 					return this.rutasList.filter(ruta => {
+						if(type == 'origen'){
+							type = 'nombre_municipio_origen'
+						}
+						if(type == 'destino'){
+							type = 'nombre_municipio_destino'
+						}
+						
 						if(isNaN(ruta[type])){
+
 							return ruta[type].toLowerCase().includes(this.filter.toLowerCase())
 						}
 						return ruta[type].toString().includes(this.filter.toString())

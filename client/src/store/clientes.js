@@ -47,6 +47,7 @@ export default {
             commit('setLoadingCuadreProductoTable', true)
             HTTP().local.get('api/clientes/'+state.cliente.id+'/cuadre-productos')
             .then(d => {
+                console.log(d.data)
                 commit('setCuadreProductosList', d.data)
                 commit('setLoadingCuadreProductoTable', false)
             })
@@ -142,12 +143,14 @@ export default {
             let pkg = []
            
             for(let prop2 in state.clientesList[0]){
-                if(prop2 !== 'created_at' || prop2 !== 'updated_at'){
+                console.log(prop2)
+                if(prop2 == 'created_at' || prop2 == 'updated_at'){
+                    continue;
+                }else{
                     prop2 = prop2.split('_').join(' ')
                     prop2 = prop2.charAt(0).toUpperCase() + prop2.slice(1)
                     pkg.push(prop2)
                 }
-                
             }
             
             commit('setTableHeadings', pkg)

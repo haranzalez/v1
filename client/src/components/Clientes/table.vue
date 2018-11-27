@@ -3,6 +3,7 @@
 	<!--cuadre prducto table -->
 	<el-dialog width="50%" top="5vh" :title="'Productos para ' + cliente.nombre_razon_social + ' NIT:' + cliente.nit" :visible.sync="cuadreProductoTableVisible">
 		<div style="text-align: right;">
+			<el-button type="default" size="mini" @click="reloadTable('cuadreProductos')" style="margin-right:5px;"><i class="mdi mdi-reload"></i></el-button>
 			<el-dropdown trigger="click" @command="handleAction">  
 				<el-button size="mini">
 					<i class="mdi mdi-settings"></i>
@@ -21,6 +22,7 @@
 	<!--cuadre rutas table -->
 	<el-dialog width="50%" top="5vh" :title="'Rutas para ' + cliente.nombre_razon_social + ' NIT:' + cliente.nit" :visible.sync="cuadreViajeTableVisible">
 		<div style="text-align: right;">
+			<el-button type="default" size="mini" @click="reloadTable('cuadreRutas')" style="margin-right:5px;"><i class="mdi mdi-reload"></i></el-button>
 			<el-dropdown trigger="click" @command="handleAction">  
 				<el-button size="mini">
 					<i class="mdi mdi-settings"></i>
@@ -41,7 +43,7 @@
 			<ViajeEditForm></ViajeEditForm>
 			<span slot="footer" class="dialog-footer">
 				<el-button size="mini" type="primary" @click="edit(cliente.id)">Actualizar</el-button>
-				<el-button size="mini" type="primary" @click="createViajeEditFormVisible = false">Cerrar</el-button>
+				<el-button size="mini" type="primary" @click="createViajeEditFormVisible = false; fetchCuadresRutas()">Cerrar</el-button>
 			</span>
 		</el-dialog>
 	
@@ -90,7 +92,7 @@
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
 			<div style="padding: 3px 0;">
 				<el-row style="text-align: right;">
-					<el-button type="default" size="mini" @click="reloadTable" style="margin-right:5px;"><i class="mdi mdi-reload"></i></el-button>
+					<el-button type="default" size="mini" @click="reloadTable('clients')" style="margin-right:5px;"><i class="mdi mdi-reload"></i></el-button>
 					<el-button type="default" size="mini" @click="exportTable" style="margin-right:5px;"><i class="mdi mdi-file-excel"></i></el-button>
 					<el-dropdown trigger="click" @command="handleAction">  
 						<el-button size="mini">
@@ -301,6 +303,7 @@ export default {
 		]),
 		...mapMutations('cuadreViajes', [
 			'resetSelections',
+			'resetCuadreRuta',
 		]),
 		
 		...mapMutations('rutas',[
@@ -312,12 +315,26 @@ export default {
 //=============================//
 //======= UI Functions =====//
 //=============================//
+		clearForm(form){
+			if('createRuta'){
+				this.resetSelections()
+				this.rutaReset()
+			}
+		},
 
 		exportTable(){
 			exportService.toXLS(this.clientesList, 'Clientes', true)
 		},
-		reloadTable(){
-			this.fetchClientesList() 
+		reloadTable(table){
+			if(table == 'clientes'){
+				this.fetchClientesList() 
+			}
+			if(table == 'cuadreRutas'){
+				this.fetchCuadresRutas()
+			}
+			if(table == 'cuadreProductos'){
+				this.fetchCuadresProductos()
+			}
 		},
 		handleCurrentTableChange(val) {
 			if(val == null){
@@ -346,15 +363,6 @@ export default {
 					})
             	}
 			}
-			if(e == 'createViaje'){
-				this.createViajeFormVisible = true
-			}
-			if(e == 'editViaje'){
-				this.createViajeEditFormVisible = true
-			}
-			if(e == 'delViaje'){
-				this.pushToDelCuadre()
-			}
 			if(e == 'del'){
 				if(this.dataReady){
 					this.pushToDel()
@@ -366,6 +374,29 @@ export default {
 					})
             	}
 			}
+			if(e == 'createViaje'){
+				
+				this.createViajeFormVisible = true
+				this.clearForm('createRuta')
+			}
+			if(e == 'editViaje'){
+				this.createViajeEditFormVisible = true
+			}
+			if(e == 'delViaje'){
+				this.pushToDelCuadre()
+			}
+			if(e == 'createProducto'){
+				
+				this.createProductoFormVisible = true
+				this.clearForm('createRuta')
+			}
+			if(e == 'editProducto'){
+				this.createProductoEditFormVisible = true
+			}
+			if(e == 'delProducto'){
+				this.pushToDelCuadre()
+			}
+			
 			if(e == 'verCuadreRuta'){
 				this.fetchCuadresRutas()
 				this.cuadreViajeTableVisible = true
@@ -374,12 +405,7 @@ export default {
 				this.fetchCuadresProductos()
 				this.cuadreProductoTableVisible = true
 			}
-			if(e == 'viaje'){
-				this.createViajeFormVisible = true
-			}
-			if(e == 'producto'){
-				this.createProductoFormVisible = true
-			}
+			
 		},
 //=============================//
 //========== CRUD =========//
@@ -393,12 +419,11 @@ export default {
 		create_cuadre_viaje(id){
 			if(this.createCuadre(id)){
 				this.createViajeFormVisible = false
-				this.fetchCuadresRutas()
 				Notification({
 					type: 'success',
 					showClose: true,
 					message: 'Cuadre viaje creado.'
-            	})
+				})
 			}
 		},
 		create_cuadre_producto(id){
@@ -437,8 +462,16 @@ export default {
                 cancelButtonText: 'Cancelar',
                 type: 'warning'
             }).then(() => {
-				this.delCuadre()
-				this.fetchCuadresRutas()
+				if(this.delCuadre()){
+					
+                    Message({
+                        type: 'success',
+                        showClose: true,
+                        message: 'Cuadre eliminado exitosamente'
+                    })
+					this.fetchCuadresRutas()
+				}
+				
             }).catch(() => {
                 this.$message({
                     type: 'warning',

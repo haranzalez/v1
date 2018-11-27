@@ -11,6 +11,8 @@ export default {
             cliente_id: null,
             precio: null,
             ajuste: null,
+            producto: null,
+            precio_producto: null,
         },
         cuadreProductosList: null,
         selectedProductos: null,
@@ -64,8 +66,8 @@ export default {
             HTTP().local.get('api/cuadre-productos/'+pkg.id)
             .then(d => {
                commit('setFullCuadreProducto', d.data)
-               commit('setPrecioCuadre', d.data.precio)
-               commit('productos/setPrecioProducto', d.data.precio_producto.toString(), {root: true})
+               commit('setPrecioCuadreProducto', d.data.precio)
+               commit('productos/setPrecioProducto', d.data.precio_producto, {root: true})
             })
             .catch(err => {
                 console.log(err)
@@ -108,6 +110,9 @@ export default {
         },
         setClienteId(state, value){
             state.cuadre.cliente_id = value
+        },
+        setPrecioCuadreProducto(state, value){
+            state.cuadre.precio_producto = value
         },
         setPrecioProducto(state, value){
             state.cuadre.precio = value

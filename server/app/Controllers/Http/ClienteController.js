@@ -16,12 +16,13 @@ class ClienteController {
         const { id } = params;
         const client = await Cliente.find(id)
         const res = await client.cuadre_viaje().with('ruta.municipios').fetch()
-        for(let prop in res.rows){
-            if(res.rows[prop] !== undefined){
-                res.rows[prop]['ruta'] = res.rows[prop].$relations.ruta.rows[0].$relations.municipios.rows[0].nombre_municipio + ' - ' + res.rows[prop].$relations.ruta.rows[0].$relations.municipios.rows[1].nombre_municipio
-                delete res.rows[prop].$relations
+        if(res.rows.length > 0){
+            for(let prop in res.rows){
+                if(res.rows[prop].$relations.ruta.rows.length > 0){
+                    res.rows[prop]['ruta'] = res.rows[prop].$relations.ruta.rows[0].$relations.municipios.rows[0].nombre_municipio + ' - ' + res.rows[prop].$relations.ruta.rows[0].$relations.municipios.rows[1].nombre_municipio
+                    delete res.rows[prop].$relations
+                }
             }
-            
         }
         return res
     }
@@ -29,11 +30,13 @@ class ClienteController {
         const { id } = params;
         const client = await Cliente.find(id)
         const res = await client.cuadre_producto().with('producto').fetch()
-        for(let prop in res.rows){
-            res.rows[prop]['producto'] = res.rows[prop].$relations.producto.rows[0].nombre
-            res.rows[prop]['precio_producto'] = res.rows[prop].$relations.producto.rows[0].precio
-            delete res.rows[prop].$relations
-        }
+            for(let prop in res.rows){
+                if(res.rows[prop].$relations.producto.rows.length > 0){
+                    res.rows[prop]['producto'] = res.rows[prop].$relations.producto.rows[0].nombre
+                    res.rows[prop]['precio_producto'] = res.rows[prop].$relations.producto.rows[0].precio
+                }
+                delete res.rows[prop].$relations
+            }
         return res
     }
     async create_cliente({ request }){

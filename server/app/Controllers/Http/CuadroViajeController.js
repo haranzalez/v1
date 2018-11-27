@@ -53,7 +53,6 @@ class CuadroViajeController {
             ajuste,
             debe
         } = request.all()
-        
         const cuadre = await CuadreViaje.create({
             cliente_id,
             flete,

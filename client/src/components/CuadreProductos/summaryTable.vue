@@ -37,8 +37,8 @@ export default {
             'cuadre',
         ]),
         summary(){
-            let cuadre = Number(this.cuadre.precio)
-            let producto = Number(this.producto.precio)
+            let cuadre = (this.cuadre.precio != null)?Number(this.cuadre.precio):0
+            let producto = (this.producto.precio != null)?Number(this.producto.precio):0
             let ajuste = (cuadre > 0 && producto > 0)?cuadre - producto:0
             let total = producto + ajuste
             this.setAjuste(ajuste)

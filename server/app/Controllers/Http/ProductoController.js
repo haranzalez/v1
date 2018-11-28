@@ -21,11 +21,14 @@ class ProductoController {
            precio
         } = request.all()
 
-        return await Producto.create({
+        await Producto.create({
            nombre,
            descripcion,
            precio
         })
+        return {
+            message: 'success'
+        }
 
     }
     //UPDATE
@@ -43,7 +46,9 @@ class ProductoController {
         producto.precio = precio
         producto.save()
 
-        return producto
+        return {
+            message: 'success',
+        }
 
     }
 
@@ -51,7 +56,10 @@ class ProductoController {
      async delete_producto({ params }){
         const { id } = params
         const producto = await Producto.find(id)
-        return producto.delete()
+        producto.delete()
+        return {
+            message: 'success'
+        }
     }
 }
 

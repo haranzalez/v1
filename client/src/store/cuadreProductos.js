@@ -15,15 +15,16 @@ export default {
             precio_producto: null,
         },
         cuadreProductosList: null,
-        selectedProductos: null,
+        selectedProducto: null,
         headings: [],  
     },
     actions: {
         createCuadreProducto({state}, cliente_id){
             HTTP().local.post('api/cuadre-productos/crear', {
                 cliente_id: cliente_id,
+                producto_id: state.selectedProducto,
                 precio: state.cuadre.precio,
-                ajuste: state.cuadre.descuento,
+                ajuste: state.cuadre.ajuste,
             })
             .then(d => {
                 if(d.data.message == 'success'){
@@ -37,9 +38,10 @@ export default {
         },
         editCuadreProducto({state}){
             HTTP().local.put('api/cuadre-productos/'+state.cuadre.id+'/update', {
-                cliente_id: state.cuadre.cliente_id,
+                cliente_id: cliente_id,
+                producto_id: state.selectedProducto,
                 precio: state.cuadre.precio,
-                ajuste: state.cuadre.descuento,
+                ajuste: state.cuadre.ajuste,
             })
             .then(d => {
                 console.log(d)
@@ -119,6 +121,9 @@ export default {
         },
         setAjuste(state, value){
             state.cuadre.ajuste = value
+        },
+        setSelectedProducto(state, value){
+            state.selectedProducto = value
         },
     },
 

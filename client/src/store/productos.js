@@ -13,17 +13,20 @@ export default {
             descripcion: null,
             precio: null,
         },
+        loadingProductosTable: false,
         productosList: null,
         headings: [],   
     },
 
     actions: {
         fetchProductosList({state, commit, dispatch}){
+            commit('setLoadingProductosTable', true)
             HTTP().local.get('api/productos')
             .then(d => {
                 console.log(d.data)
                 commit('setProductosList', d.data)
                 dispatch('renderTableHeadings')
+                commit('setLoadingProductosTable', false)
             })
             .catch(err => {
                 console.log(err)
@@ -39,7 +42,7 @@ export default {
                 console.log(err)
             })
         },
-        createProducto({state}){
+        createProducto({state, dispatch}){
             HTTP().local.post('api/productos/crear', {
                 id: state.producto.id,
                 nombre: state.producto.nombre,
@@ -47,10 +50,15 @@ export default {
                 precio: state.producto.precio,
             })
             .then(d => {
-                Message({
-                    showClose: true,
-                    message: 'Producto creado.'
-                })
+                if(d.data.message == 'success'){
+                    Message({
+                        type: 'success',
+                        showClose: true,
+                        message: 'Producto creado.'
+                    })
+                    dispatch('fetchProductosList')
+                }
+                
                
             })
             .catch(err => {
@@ -65,25 +73,29 @@ export default {
                 precio: state.producto.precio,
             })
             .then(d => {
-                Message({
-                    showClose: true,
-                    message: 'Actualizacion exitosa.'
-                })
+                if(d.data.message == 'success'){
+                    Message({
+                        type: 'success',
+                        showClose: true,
+                        message: 'Producto actualizado.'
+                    })
+                    dispatch('fetchProductosList')
+                }
             })
             .catch(err => {
                 console.log(err)
             })
         },
-        delProducto({state}){
-            HTTP().local.delete('api/trailers/'+state.trailer.id+'/delete')
+        delProducto({state, dispatch}){
+            HTTP().local.delete('api/productos/'+state.producto.id+'/delete')
             .then(d => {
-                if(d){
+                if(d.data.message == 'success'){
                     Message({
                         type: 'success',
                         showClose: true,
-                        message: 'Trailer eliminado exitosamente'
+                        message: 'producto eliminado exitosamente'
                     })
-                    router.push('/Trailers')
+                    dispatch('fetchProductosList')
                 }
             })
             .catch(err => {
@@ -108,6 +120,9 @@ export default {
 
     },
     mutations: {
+        setLoadingProductosTable(state, value){
+            state.loadingProductosTable = value
+        },
         setFullProducto(state, value){
             state.producto = value
         },

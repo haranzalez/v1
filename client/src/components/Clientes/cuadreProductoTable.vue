@@ -32,6 +32,7 @@
       min-width="100">
     </el-table-column>
 	 <el-table-column
+	 style="color:green !important;font-weight:bold;"
 	  sortable
 	  align="center"
       prop="precio"

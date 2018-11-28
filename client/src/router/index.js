@@ -35,6 +35,9 @@ import ClientesEditForm from '../views/Clientes/EditForm.vue'
 import CuadroRutasTable from '../views/CuadresRutas/CuadresRutas.vue'
 import CuadroViajesCreateForm from '../views/CuadresRutas/CreateForm.vue'
 import CuadroViajesEditForm from '../views/CuadresRutas/EditForm.vue'
+//productos
+import ProductosTable from '../views/Productos/productosTable.vue'
+
 
 //pages
 import Login from '../views/pages/authentication/Login.vue'
@@ -118,6 +121,21 @@ const router = new Router({
 				tags: ['Logistica']
 			}
 		},
+		//=========================================================================
+		//Productos
+		//=========================================================================
+		{
+			path: '/Productos',
+			name: 'productos',
+			component: ProductosTable,
+			meta: {
+				auth: true,
+				layout: layouts.navLeft,
+				searchable: true,
+				tags: ['Logistica']
+			}
+		},
+		
 		//=========================================================================
 		//Vehiculos
 		//=========================================================================

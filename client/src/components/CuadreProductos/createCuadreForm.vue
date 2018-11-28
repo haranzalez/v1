@@ -18,7 +18,7 @@
                             <el-select
                             class="selectWidth" 
                             size="mini" 
-                            :value.sync="selectedCreateProducto" 
+                            :value.sync="selectedProducto" 
                             placeholder="Seleccione.." 
                             @change="productoChange">
                                 <el-option
@@ -60,12 +60,8 @@ export default {
         ...mapState('authentication', [
 			'permisos',
         ]),
-        ...mapState('cuadreViajes', [
-            'headings',
-            'dataReady',
-            'selectedCreateVehiculo',
-            'selectedCreateRuta',
-            'selectedCreateProducto',
+        ...mapState('cuadreProductos', [
+           'selectedProducto',
         ]),
          ...mapState('rutas', [
             'rutasList',
@@ -97,6 +93,7 @@ export default {
         ]),
         ...mapMutations('cuadreProductos', [
             'setPrecioProducto',
+            'setSelectedProducto',
         ]),
         ...mapActions('rutas', [
             'fetchRutasList',
@@ -107,7 +104,7 @@ export default {
         ]),
          ...mapActions('cuadreProductos',[
             'createCuadre',
-
+            
         ]),
          ...mapActions('productos',[
             'fetchProductosList',

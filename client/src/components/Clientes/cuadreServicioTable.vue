@@ -1,8 +1,8 @@
 <template>
 <div>
 	<el-table
-	v-loading="loadingCuadreRutaTable"
-    ref="clientsCuadreRutaTable"
+	v-loading="loadingCuadreServicioTable"
+    ref="clientsCuadreServicioTable"
     highlight-current-row
 	@current-change="handleCurrentTableChange"
 	size="mini"
@@ -13,22 +13,15 @@
     <el-table-column
 	  sortable
 	  fixed
-      prop="ruta"
-      label="Ruta"
-	  min-width="250">
+      prop="nombre_servicio"
+      label="Servicio"
+	  min-width="230">
     </el-table-column>
     <el-table-column
 	  sortable
 	  align="center"
-      prop="flete"
-      label="Flete"
-      min-width="100">
-    </el-table-column>
-	<el-table-column
-	  align="center"
-	  sortable
-      prop="anticipo"
-      label="Anticipo"
+      prop="precio_servicio"
+      label="Precio"
       min-width="100">
     </el-table-column>
 	<el-table-column
@@ -38,11 +31,12 @@
       label="Ajuste"
       min-width="100">
     </el-table-column>
-   <el-table-column
-      align="center"
+	 <el-table-column
+	 style="color:green !important;font-weight:bold;"
 	  sortable
-      prop="debe"
-      label="Debe"
+	  align="center"
+      prop="precio"
+      label="Cuadre"
       min-width="100">
     </el-table-column>
 	
@@ -66,35 +60,33 @@ import exportService from '../../services/exportService'
 
 
 export default {
-	name: 'ClientesCuadreRutaTable',
+	name: 'ClientesCuadreServicioTable',
 	data () {
       	return {
               filter: '',
-              createViajeEditFormVisible: false,
+              productoEditFormVisible: false,
 		}
 	},
 	computed: {
         ...mapState('clientes', [
-			'cruadreRutasList',
-			'loadingCuadreRutaTable',
-			
+			'cuadreServiciosList',
+			'loadingCuadreServicioTable',
             
         ]),
-        ...mapState('cuadreViajes', [
+        ...mapState('cuadreServicios', [
 			'cuadre',
-			'loading',
         ]),
         filtered(){
 			if(this.filter !== ''){
 				let type = this.selectTypeOfSearch.toLowerCase()
-				return this.cruadreRutasList.filter(cuadre => {
+				return this.cuadreServiciosList.filter(cuadre => {
 					if(isNaN(cuadre[type])){
 						return cuadre[type].toLowerCase().includes(this.filter.toLowerCase())
 					}
 					return cuadre[type].toString().includes(this.filter.toString())
 				})
 			}
-			return this.cruadreRutasList
+			return this.cuadreServiciosList
 		},
 
 	},
@@ -103,19 +95,19 @@ export default {
     methods: {
         handleCurrentTableChange(val) {
 			if(val == null){
-				this.$refs.clientsCuadreRutaTable.setCurrentRow(val);
+				this.$refs.clientsCuadreServicioTable.setCurrentRow(val);
 				return
 			}
-            this.fetchCuadreRuta({id: val.id})
-			this.$refs.clientsCuadreRutaTable.setCurrentRow(val);
+            this.fetchCuadreServicio({id: val.id})
+			this.$refs.clientsCuadreServicioTable.setCurrentRow(val);
 
 		},
 
         ...mapActions('clientes', [
-            'fetchCuadresRutas',
+            'fetchCuadresServicios',
         ]),
-        ...mapActions('cuadreViajes', [
-            'fetchCuadreRuta',
+        ...mapActions('cuadreServicios', [
+            'fetchCuadreServicio',
         ]),
 
 		back(){
@@ -127,7 +119,8 @@ export default {
 //=============================//
 //========== UI State Functions =========//
 //=============================//
-	
+	created(){
+	}
 
 }
 </script>

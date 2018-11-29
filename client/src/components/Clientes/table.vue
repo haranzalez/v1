@@ -1,5 +1,25 @@
 <template>
 <div>
+
+	<!--cuadre servicio table -->
+	<el-dialog width="50%" top="5vh" :title="'Servicios para ' + cliente.nombre_razon_social + ' NIT:' + cliente.nit" :visible.sync="cuadreServicioTableVisible">
+		<div style="text-align: right;">
+			<el-button type="default" size="mini" @click="reloadTable('cuadreServicios')" style="margin-right:5px;"><i class="mdi mdi-reload"></i></el-button>
+			<el-dropdown trigger="click" @command="handleAction">  
+				<el-button size="mini">
+					<i class="mdi mdi-settings"></i>
+				</el-button>
+				<el-dropdown-menu slot="dropdown">
+					<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" @click="testOnClick" command="createServicio"><i class="mdi mdi-plus mr-10"></i></el-dropdown-item>
+					<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="editServicio"><i class="mdi mdi-lead-pencil mr-10"></i></el-dropdown-item>
+					<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="delServicio"><i class="mdi mdi-delete mr-10"></i></el-dropdown-item>
+				</el-dropdown-menu>
+			</el-dropdown>
+		</div>
+		
+		<cuadreServicioTable></cuadreServicioTable>
+		
+	</el-dialog>
 	<!--cuadre prducto table -->
 	<el-dialog width="50%" top="5vh" :title="'Productos para ' + cliente.nombre_razon_social + ' NIT:' + cliente.nit" :visible.sync="cuadreProductoTableVisible">
 		<div style="text-align: right;">
@@ -61,6 +81,13 @@
 			<el-button size="mini" type="primary" @click="create_cuadre_producto(cliente.id)">Cuadrar Producto</el-button>
 		</span>
 	</el-dialog>
+	<!--Create servicio form -->
+	<el-dialog center width="40%" top="15vh" title="Cuadre servicio" :visible.sync="createServicioFormVisible">
+		<ServicioCreateForm></ServicioCreateForm>
+		<span slot="footer" class="dialog-footer">
+			<el-button size="mini" type="primary" @click="create_cuadre_servicio(cliente.id)">Cuadrar Servicio</el-button>
+		</span>
+	</el-dialog>
 	<!--Edit cliente dialog form -->
 	<el-dialog width="40%" top="5vh" :title="cliente.nombre_razon_social" :visible.sync="editFormVisible">
 		<ClientesEditForm></ClientesEditForm>
@@ -104,13 +131,14 @@
 							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
 							<el-dropdown-item command="verCuadreRuta" divided><i class="mdi mdi-folder-open mr-10"></i> Ver cuadres de ruta</el-dropdown-item>
 							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="verCuadreProducto"><i class="mdi mdi-barrel mr-10"></i> Ver cuadres de productos</el-dropdown-item>
+							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="verCuadreServicio"><i class="mdi mdi-worker mr-10"></i> Ver cuadres de servicios</el-dropdown-item>
 						</el-dropdown-menu>
 					</el-dropdown>
 				</el-row>
 			</div>
 		</el-col>
 	<el-table
-	v-loading.body="loading"
+	v-loading.sync="loadingClientesTable"
 	size="mini"
 	ref="clientsTable"
 	stripe
@@ -209,8 +237,10 @@ import ClientesCreateForm from '@/components/Clientes/createForm'
 import ViajeCreateForm from '@/components/CuadresRutas/createForm'
 import ViajeEditForm from '@/components/CuadresRutas/editForm'
 import ProductoCreateForm from '@/components/CuadreProductos/createCuadreForm'
+import ServicioCreateForm from '@/components/CuadreServicios/createCuadreForm'
 import cuadreViajeTable from './cuadreRutaTable'
 import cuadreProductoTable from './cuadreProductoTable'
+import cuadreServicioTable from './cuadreServicioTable'
 
 export default {
 	name: 'ClientesTable',
@@ -221,8 +251,10 @@ export default {
 			createFormVisible: false,
 			createViajeFormVisible: false,
 			createProductoFormVisible: false,
+			createServicioFormVisible: false,
 			cuadreViajeTableVisible: false,
 			cuadreProductoTableVisible: false,
+			cuadreServicioTableVisible: false,
 			createViajeEditFormVisible: false,
             selectTypeOfSearch: '',
 			filter: '',
@@ -240,14 +272,7 @@ export default {
 			'headings',
 			'dataReady',
 			'cliente',
-			'loading',
-			'loadingCuadreTable',
-		]),
-		...mapState('cuadreViajes', [
-	
-		]),
-		...mapState('productos', [
-			'productosList',
+			'loadingClientesTable',
 		]),
 //=============================//
 //========== Local Variables =========//
@@ -271,12 +296,14 @@ export default {
 		ViajeCreateForm,
 		ViajeEditForm,
 		ProductoCreateForm,
+		ServicioCreateForm,
 		cuadreViajeTable,
 		cuadreProductoTable,
+		cuadreServicioTable,
 	},
     methods: {
 //=============================//
-//========== Imports Functions =========//
+//========== Store Functions =========//
 //=============================//
 		...mapMutations('clientes', [
 			'setFullCliente',
@@ -287,20 +314,31 @@ export default {
         ...mapActions('clientes',[
 			'fetchCuadresRutas',
 			'fetchCuadresProductos',
+			'fetchCuadresServicios',
 			'fetchClientesList',
 			'createCliente',
 			'delCliente',
 			'editCliente',
 		]),
-	
+//=============================//
+//========== Components Functions =========//
+//=============================//
 		...mapActions('cuadreViajes',[
-			'createCuadre',
-			'editCuadre',
-			'delCuadre',
+			'createCuadreRuta',
+			'editCuadreRuta',
+			'delCuadreRuta',
 		]),
 		...mapActions('cuadreProductos',[
 			'createCuadreProducto',
+			'editCuadreProducto',
+			'delCuadreProducto',
 		]),
+		...mapActions('cuadreServicios',[
+			'createCuadreServicio',
+			'editCuadreServicio',
+			'delCuadreServicio'
+		]),
+
 		...mapMutations('cuadreViajes', [
 			'resetSelections',
 			'resetCuadreRuta',
@@ -312,13 +350,27 @@ export default {
 		...mapMutations('productos',[
 			'productoReset',
 		]),
+		...mapMutations('servicios',[
+			'servicioReset',
+		]),
 //=============================//
 //======= UI Functions =====//
 //=============================//
+		testOnClick(e){
+			console.log(e)
+		},
 		clearForm(form){
 			if('createRuta'){
 				this.resetSelections()
 				this.rutaReset()
+			}
+			if('createProducto'){
+				this.resetSelections()
+				this.productoReset()
+			}
+			if('createServicio'){
+				this.resetSelections()
+				this.servicioReset()
 			}
 		},
 
@@ -383,18 +435,30 @@ export default {
 				this.createViajeEditFormVisible = true
 			}
 			if(e == 'delViaje'){
-				this.pushToDelCuadre()
+				this.pushToDelCuadre('ruta')
 			}
 			if(e == 'createProducto'){
 				
 				this.createProductoFormVisible = true
-				this.clearForm('createRuta')
+				this.clearForm('createProducto')
 			}
 			if(e == 'editProducto'){
 				this.createProductoEditFormVisible = true
 			}
 			if(e == 'delProducto'){
-				this.pushToDelCuadre()
+				this.pushToDelCuadre('producto')
+			}
+
+			if(e == 'createServicio'){
+				
+				this.createServicioFormVisible = true
+				this.clearForm('createServicio')
+			}
+			if(e == 'editServicio'){
+				this.createServicioEditFormVisible = true
+			}
+			if(e == 'delServicio'){
+				this.pushToDelCuadre('servicio')
 			}
 			
 			if(e == 'verCuadreRuta'){
@@ -404,6 +468,10 @@ export default {
 			if(e == 'verCuadreProducto'){
 				this.fetchCuadresProductos()
 				this.cuadreProductoTableVisible = true
+			}
+			if(e == 'verCuadreServicio'){
+				this.fetchCuadresServicios()
+				this.cuadreServicioTableVisible = true
 			}
 			
 		},
@@ -456,20 +524,44 @@ export default {
             });
 			
 		},
-		pushToDelCuadre(){
+		pushToDelCuadre(cuadre){
 			this.$confirm('Esta operacion eliminara permanentemente este registro. Continuar?', 'Atencion!', {
                 confirmButtonText: 'OK',
                 cancelButtonText: 'Cancelar',
                 type: 'warning'
             }).then(() => {
-				if(this.delCuadre()){
-					
-                    Message({
-                        type: 'success',
-                        showClose: true,
-                        message: 'Cuadre eliminado exitosamente'
-                    })
-					this.fetchCuadresRutas()
+				if(cuadre == 'ruta'){
+					if(this.delCuadreRuta()){
+						
+						Message({
+							type: 'success',
+							showClose: true,
+							message: 'Cuadre eliminado exitosamente'
+						})
+						this.fetchCuadresRutas()
+					}
+				}
+				if(cuadre == 'producto'){
+					if(this.delCuadreProducto()){
+						
+						Message({
+							type: 'success',
+							showClose: true,
+							message: 'Cuadre eliminado exitosamente'
+						})
+						this.fetchCuadresProductos()
+					}
+				}
+				if(cuadre == 'servicio'){
+					if(this.delCuadreServicio()){
+						
+						Message({
+							type: 'success',
+							showClose: true,
+							message: 'Cuadre eliminado exitosamente'
+						})
+						this.fetchCuadresServicios()
+					}
 				}
 				
             }).catch(() => {

@@ -11,18 +11,18 @@ export default {
             cliente_id: null,
             precio: null,
             ajuste: null,
-            producto: null,
-            precio_producto: null,
+            servicio: null,
+            precio_servicio: null,
         },
-        cuadreProductosList: null,
-        selectedProducto: null,
+        cuadreServiciosList: null,
+        selectedServicio: null,
         headings: [],  
     },
     actions: {
-        createCuadreProducto({state}, cliente_id){
-            HTTP().local.post('api/cuadre-productos/crear', {
+        createCuadreServicio({state}, cliente_id){
+            HTTP().local.post('api/cuadre-servicios/crear', {
                 cliente_id: cliente_id,
-                producto_id: state.selectedProducto,
+                servicio_id: state.selectedServicio,
                 precio: state.cuadre.precio,
                 ajuste: state.cuadre.ajuste,
             })
@@ -36,10 +36,10 @@ export default {
                 console.log(err)
             })
         },
-        editCuadreProducto({state}){
-            HTTP().local.put('api/cuadre-productos/'+state.cuadre.id+'/update', {
+        editCuadreServicio({state}){
+            HTTP().local.put('api/cuadre-servicios/'+state.cuadre.id+'/update', {
                 cliente_id: cliente_id,
-                producto_id: state.selectedProducto,
+                servicio_id: state.selectedServicio,
                 precio: state.cuadre.precio,
                 ajuste: state.cuadre.ajuste,
             })
@@ -55,34 +55,33 @@ export default {
                 console.log(err)
             })
         },
-        delCuadreProducto({state, commit}){
-            HTTP().local.delete('api/cuadre-productos/'+state.cuadre.id+'/delete')
+        delCuadreServicio({state}){
+            HTTP().local.delete('api/cuadre-servicios/'+state.cuadre.id+'/delete')
             .then(d => {
-               if(d.data.message == 'success'){
-                   commit('cuadreProductosReset')
-                   return true
-               }
+                if(d.data.message == 'success'){
+                    return true
+                }
             })
             .catch(err => {
                 console.log(err)
             })
         },
-        fetchCuadreProducto({commit}, pkg){
-            HTTP().local.get('api/cuadre-productos/'+pkg.id)
+        fetchCuadreServicio({commit}, pkg){
+            HTTP().local.get('api/cuadre-servicios/'+pkg.id)
             .then(d => {
-                console.log(d.data)
-               commit('setFullCuadreProducto', d.data)
-               commit('setPrecioCuadreProducto', d.data.precio)
-               commit('productos/setPrecioProducto', d.data.precio_producto, {root: true})
+               commit('setFullCuadreServicio', d.data)
+               commit('setPrecioCuadreServicio', d.data.precio)
+               commit('servicios/setPrecioServicio', d.data.precio_servicio, {root: true})
             })
             .catch(err => {
                 console.log(err)
             })
         },
-        fetchCuadreProductosList({commit, dispatch}){
-            HTTP().local.get('api/cuadre-productos')
+       
+        fetchCuadreServiciosList({commit, dispatch}){
+            HTTP().local.get('api/cuadre-servicios')
             .then(d => {
-               commit('setCuadreProductosList', d.data)
+               commit('setCuadreServiciosList', d.data)
             })
             .catch(err => {
                 console.log(err)
@@ -90,7 +89,7 @@ export default {
         },
         renderTableHeadings({state, commit}){
             let pkg = []
-            for(let prop2 in state.cuadresList[0]){
+            for(let prop2 in state.cuadreServiciosList[0]){
                 if(prop2 !== 'created_at' || prop2 !== 'updated_at'){
                     prop2 = prop2.split('_').join(' ')
                     prop2 = prop2.charAt(0).toUpperCase() + prop2.slice(1)
@@ -104,11 +103,11 @@ export default {
         
     },
     mutations: {
-        setFullCuadreProducto(state, value){
+        setFullCuadreServicio(state, value){
             state.cuadre = value
         },
-        setCuadreProductosList(state, list){
-            state.cuadreProductosList = list
+        setCuadreServiciosList(state, list){
+            state.cuadreServiciosList = list
         },
         setTableHeadings(state, headings){
             state.headings = headings;
@@ -116,28 +115,18 @@ export default {
         setClienteId(state, value){
             state.cuadre.cliente_id = value
         },
-        setPrecioCuadreProducto(state, value){
-            state.cuadre.precio_producto = value
+        setPrecioCuadreServicio(state, value){
+            state.cuadre.precio_servicio = value
         },
-        setPrecioProducto(state, value){
+        setPrecioServicio(state, value){
             state.cuadre.precio = value
         },
         setAjuste(state, value){
             state.cuadre.ajuste = value
         },
-        setSelectedProducto(state, value){
-            state.selectedProducto = value
+        setSelectedServicio(state, value){
+            state.selectedServicio = value
         },
-        cuadreProductosReset(state){
-            state.cuadre = {
-                id: null,
-                cliente_id: null,
-                precio: null,
-                ajuste: null,
-                producto: null,
-                precio_producto: null,
-            }
-        }
     },
 
 };

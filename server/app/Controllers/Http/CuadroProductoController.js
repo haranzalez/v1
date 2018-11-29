@@ -51,21 +51,17 @@ class CuadroProductoController {
         const { id } = params;
         const cuadre = await CuadreProducto.find(id)
         const {
-            cliente_id,
             producto_id,
             precio,
-            descuento,
-            ganancia,
+            ajuste,
         } = request.all()
 
-        cuadre.cliente_id = cliente_id
         cuadre.precio = precio
+        cuadre.ajuste = ajuste
+        cuadre.save()
         if(producto_id){
             await cuadre.producto().attach(producto_id)
         }
-        cuadre.ganancia = ganancia
-        cuadre.descuento = descuento
-        cuadre.save()
         
         return {
             message: 'success',

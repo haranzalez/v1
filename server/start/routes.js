@@ -47,6 +47,31 @@ Route.group(() => {
   Route.post('roles/:role_id/subModulo/:sub_modulo_id/setPermisos', 'RoleController.setPermisos').middleware('auth');
   Route.patch('roles/:id/modulos/updatePermisos', 'RoleController.updatePermisos').middleware('auth');
   //======================================================================================================================================
+  //servicios
+  //======================================================================================================================================
+  //GET
+  Route.get('servicios', 'ServicioController.get_all').middleware('auth')
+  Route.get('servicios/:id', 'ServicioController.get_one').middleware('auth')
+  //POST
+  Route.post('servicios/crear', 'ServicioController.create_servicio').middleware('auth')
+  //PUT
+  Route.put('servicios/:id/update', 'ServicioController.update_servicio').middleware('auth')
+  //DELETE
+  Route.delete('servicios/:id/delete', 'ServicioController.delete_servicio').middleware('auth')
+  //======================================================================================================================================
+  //Cuadre servicios
+  //======================================================================================================================================
+  //GET
+  Route.get('cuadre-servicios', 'CuadroServicioController.get_all').middleware('auth')
+  Route.get('cuadre-servicios/:id', 'CuadroServicioController.get_one').middleware('auth')
+  Route.get('cuadre-servicios/client/:id', 'CuadroServicioController.get_client_cuadres').middleware('auth')
+  //POST
+  Route.post('cuadre-servicios/crear', 'CuadroServicioController.create_cuadre').middleware('auth')
+  //PUT
+  Route.put('cuadre-servicios/:id/update', 'CuadroServicioController.update_cuadre').middleware('auth')
+  //DELETE
+  Route.delete('cuadre-servicios/:id/delete', 'CuadroServicioController.delete_cuadre').middleware('auth')
+  //======================================================================================================================================
   //Productos
   //======================================================================================================================================
   //GET
@@ -152,6 +177,7 @@ Route.group(() => {
   Route.get('clientes/:id', 'ClienteController.get_cliente').middleware('auth')
   Route.get('clientes/:id/cuadre-viajes', 'ClienteController.get_cuadres_viajes').middleware('auth')
   Route.get('clientes/:id/cuadre-productos', 'ClienteController.get_cuadres_productos').middleware('auth')
+  Route.get('clientes/:id/cuadre-servicios', 'ClienteController.get_cuadres_servicios').middleware('auth')
   //POST
   Route.post('clientes/crear', 'ClienteController.create_cliente').middleware('auth')
   //PUT

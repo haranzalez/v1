@@ -39,6 +39,19 @@ class ClienteController {
             }
         return res
     }
+    async get_cuadres_servicios({ params }){
+        const { id } = params;
+        const client = await Cliente.find(id)
+        const res = await client.cuadre_servicio().with('servicio').fetch()
+            for(let prop in res.rows){
+                if(res.rows[prop].$relations.servicio.rows.length > 0){
+                    res.rows[prop]['servicio'] = res.rows[prop].$relations.servicio.rows[0].nombre
+                    res.rows[prop]['precio_servicio'] = res.rows[prop].$relations.servicio.rows[0].precio
+                }
+                delete res.rows[prop].$relations
+            }
+        return res
+    }
     async create_cliente({ request }){
         const { 
             nombre_razon_social, 

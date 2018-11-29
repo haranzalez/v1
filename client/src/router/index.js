@@ -37,6 +37,8 @@ import CuadroViajesCreateForm from '../views/CuadresRutas/CreateForm.vue'
 import CuadroViajesEditForm from '../views/CuadresRutas/EditForm.vue'
 //productos
 import ProductosTable from '../views/Productos/productosTable.vue'
+//servicios
+import ServiciosTable from '../views/Servicios/serviciosTable.vue'
 
 
 //pages
@@ -128,6 +130,20 @@ const router = new Router({
 			path: '/Productos',
 			name: 'productos',
 			component: ProductosTable,
+			meta: {
+				auth: true,
+				layout: layouts.navLeft,
+				searchable: true,
+				tags: ['Logistica']
+			}
+		},
+		//=========================================================================
+		//Servicios
+		//=========================================================================
+		{
+			path: '/Servicios',
+			name: 'servicios',
+			component: ServiciosTable,
 			meta: {
 				auth: true,
 				layout: layouts.navLeft,

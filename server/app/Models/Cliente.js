@@ -9,6 +9,9 @@ class Cliente extends Model {
     cuadre_producto(){
         return this.hasMany('App/Models/CuadreProducto')
     }
+    cuadre_servicio(){
+        return this.hasMany('App/Models/CuadreServicio')
+    }
     deposito(){
         return this.hasMany('App/Models/DepositoCliente')
     }

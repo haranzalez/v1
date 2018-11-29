@@ -1,54 +1,16 @@
 <template>
 <div>
-	<el-table
-	v-loading="loadingCuadreRutaTable"
-    ref="clientsCuadreRutaTable"
-    highlight-current-row
-	@current-change="handleCurrentTableChange"
-	size="mini"
-	stripe
-	height="300"
-    :data="filtered"
-    style="width: 100%">
-    <el-table-column
-	  sortable
-	  fixed
-      prop="ruta"
-      label="Ruta"
-	  min-width="250">
-    </el-table-column>
-    <el-table-column
-	  sortable
-	  align="center"
-      prop="flete"
-      label="Flete"
-      min-width="100">
-    </el-table-column>
-	<el-table-column
-	  align="center"
-	  sortable
-      prop="anticipo"
-      label="Anticipo"
-      min-width="100">
-    </el-table-column>
-	<el-table-column
-	  align="center"
-	  sortable
-      prop="ajuste"
-      label="Ajuste"
-      min-width="100">
-    </el-table-column>
-   <el-table-column
-      align="center"
-	  sortable
-      prop="debe"
-      label="Debe"
-      min-width="100">
-    </el-table-column>
-	
-  </el-table>
-
-
+	<el-tabs type="border-card">
+		<el-tab-pane label="Rutas">
+			<Rutas></Rutas>
+		</el-tab-pane>
+		<el-tab-pane label="Productos">
+			<Productos></productos>
+		</el-tab-pane>
+		<el-tab-pane label="Servicios">
+			<Servicios></Servicios>
+		</el-tab-pane>
+	</el-tabs>
 </div>
 	
 </template>
@@ -62,6 +24,10 @@ import router from '../../router'
 import { Notification, Message, Confirm } from 'element-ui'
 //servicios
 import exportService from '../../services/exportService'
+//componentes
+import Rutas from './cuadreRutaTable'
+import Productos from './cuadreProductoTable'
+import Servicios from './cuadreServicioTable'
 
 
 
@@ -99,6 +65,9 @@ export default {
 
 	},
 	components: {
+		Rutas,
+		Productos,
+		Servicios,
 	},
     methods: {
         handleCurrentTableChange(val) {
@@ -106,7 +75,7 @@ export default {
 				this.$refs.clientsCuadreRutaTable.setCurrentRow(val);
 				return
 			}
-            this.fetchCuadreRuta({id: val.id})
+            this.fetchCuadre({id: val.id})
 			this.$refs.clientsCuadreRutaTable.setCurrentRow(val);
 
 		},
@@ -115,7 +84,7 @@ export default {
             'fetchCuadresRutas',
         ]),
         ...mapActions('cuadreViajes', [
-            'fetchCuadreRuta',
+            'fetchCuadre',
         ]),
 
 		back(){

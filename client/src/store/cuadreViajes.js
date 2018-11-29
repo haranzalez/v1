@@ -65,7 +65,7 @@ export default {
                 console.log(err)
             })
         },
-        createCuadre({state}, cliente_id){
+        createCuadreRuta({state}, cliente_id){
             HTTP().local.post('api/cuadre-viajes/crear', {
                 cliente_id: cliente_id,
                 ruta_id: state.selectedCreateRuta,
@@ -85,7 +85,7 @@ export default {
                 console.log(err)
             })
         },
-        editCuadre({state}, cliente_id){
+        editCuadreRuta({state}, cliente_id){
             HTTP().local.put('api/cuadre-viajes/'+state.cuadre.id+'/update', {
                 cliente_id: cliente_id,
                 ruta_id: state.selectedRutaEdit,
@@ -107,7 +107,7 @@ export default {
                 console.log(err)
             })
         },
-        delCuadre({state}){
+        delCuadreRuta({state}){
             HTTP().local.delete('api/cuadre-viajes/'+state.cuadre.id+'/delete')
             .then(d => {
                return d
@@ -116,7 +116,7 @@ export default {
                 console.log(err)
             })
         },
-        fetchCuadre({commit, dispatch},pkg){
+        fetchCuadreRuta({commit, dispatch},pkg){
             commit('setLoading', true)
             HTTP().local.get('api/cuadre-viajes/'+pkg.id)
             .then(d => {
@@ -133,7 +133,7 @@ export default {
             })
         },
        
-        fetchCuadresList({commit, dispatch}){
+        fetchCuadresRutaList({commit, dispatch}){
             commit('setLoading', true)
             HTTP().local.get('api/cuadre-viajes')
             .then(d => {

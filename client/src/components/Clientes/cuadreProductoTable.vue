@@ -95,6 +95,7 @@ export default {
 	},
     methods: {
         handleCurrentTableChange(val) {
+			console.log(val)
 			if(val == null){
 				this.$refs.clientsCuadreProductoTable.setCurrentRow(val);
 				return

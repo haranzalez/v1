@@ -24,10 +24,12 @@ export default {
         clientesList: null,
         cruadreRutasList: null,
         cuadreProductosList: null,
+        cuadreServiciosList: null,
         dataReady: false,
-        loading: false,
+        loadingClientesTable: false,
         loadingCuadreRutaTable: false,
         loadingCuadreProductoTable: false,
+        loadingCuadreServicioTable: false,
         headings: [],   
     },
 
@@ -50,6 +52,18 @@ export default {
                 console.log(d.data)
                 commit('setCuadreProductosList', d.data)
                 commit('setLoadingCuadreProductoTable', false)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
+        fetchCuadresServicios({state, commit}){
+            commit('setLoadingCuadreServicioTable', true)
+            HTTP().local.get('api/clientes/'+state.cliente.id+'/cuadre-servicios')
+            .then(d => {
+                console.log(d.data)
+                commit('setCuadreServiciosList', d.data)
+                commit('setLoadingCuadreServicioTable', false)
             })
             .catch(err => {
                 console.log(err)
@@ -128,12 +142,12 @@ export default {
             })
         },
         fetchClientesList({commit, dispatch}){
-            commit('setLoading', true)
+            commit('setLoadingClientesTable', true)
             HTTP().local.get('api/clientes')
             .then(d => {
                 commit('setClientesList', d.data)
                 dispatch('renderTableHeadings')
-                commit('setLoading', false)
+                commit('setLoadingClientesTable', false)
             })
             .catch(err => {
                 console.log(err)
@@ -163,8 +177,11 @@ export default {
         setLoadingCuadreProductoTable(state, value){
             state.loadingCuadreProductoTable = value
         },
-        setLoading(state, value){
-            state.loading = value
+        setLoadingCuadreServicioTable(state, value){
+            state.loadingCuadreServicioTable = value
+        },
+        setLoadingClientesTable(state, value){
+            state.loadingClientesTable = value
         },
         setFullCliente(state, value){
             state.cliente = value
@@ -174,6 +191,9 @@ export default {
         },
         setCuadreProductosList(state, list){
             state.cuadreProductosList = list
+        },
+        setcuadreServiciosList(state, list){
+            state.cuadreServiciosList = list
         },
         setClientesList(state, list){
             state.clientesList = list

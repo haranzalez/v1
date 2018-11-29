@@ -1,24 +1,21 @@
 <template>
-   <vue-scroll class="page-productos-edit">
-       <el-form size="mini" label-position="top" ref="editProductoForm" label-width="120px">
+   <vue-scroll class="page-servicios-create">
+       <el-form size="mini" label-position="top" ref="createServicioForm" label-width="120px">
             <el-form-item label="Nombre">
-                <el-input
-                :value="producto.nombre"
-                @input="setNombreProducto"
+                <el-input 
+                @input="setNombreServicio"
                 placeholder="">
                 </el-input>
             </el-form-item>
             <el-form-item label="Precio">
                 <el-input 
-                :value="producto.precio"
-                @input="setPrecioProducto"
+                @input="setPrecioServicio"
                 placeholder="">
                 </el-input>
             </el-form-item>
              <el-form-item label="Descripcion">
                 <el-input 
-                :value="producto.descripcion"
-                @input="setDescripcionProducto"
+                @input="setDescripcionServicio"
                 placeholder="">
                 </el-input>
             </el-form-item>
@@ -33,7 +30,7 @@ import moment from 'moment-timezone'
 import router from '../../router'
 
 export default {
-	name: 'ProductoEditForm',
+	name: 'ServicioCreateForm',
 	data () {
       	return {
             
@@ -44,8 +41,8 @@ export default {
         ...mapState('authentication', [
 			'permisos',
         ]),
-        ...mapState('productos', [
-			'producto',
+        ...mapState('servicios', [
+			'servicio',
         ]),
 
 	},
@@ -56,18 +53,18 @@ export default {
         back() {
 			
 		},
-        ...mapMutations('productos', [
-            'setNombreProducto',
-            'setPrecioProducto',
-            'setDescripcionProducto',
+        ...mapMutations('servicios', [
+            'setNombreServicio',
+            'setPrecioServicio',
+            'setDescripcionServicio',
         ]),
         title(field){
             field = field.split('_').join(' ')
             field = field.charAt(0).toUpperCase() + field.slice(1)
             return field
         },
-        ...mapActions('productos',[
-            'editProducto',
+        ...mapActions('servicios',[
+            'createServicio',
         ]),
     },
     created: function(){

@@ -1,108 +1,123 @@
 <template>
 <div class="page-profile">
 		<div class="page-profile-edit">
-		<el-form ref="userCreateForm" label-width="120px" size="mini" :label-position="labelPosition">
-				
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-					<el-form-item label="Username">
-						<el-input  
-					    @input="setUsername"
-                        />
-					</el-form-item>
-				</el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-					<el-form-item label="Email">
-						<el-input  
-					    @input="setEmail"
-                        />
-					</el-form-item>
-				</el-col>
-			
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-					<el-form-item label="Nombre">
-						<el-input  
-					    @input="setNombre"
-                        />
-					</el-form-item>
-				</el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-					<el-form-item label="Apellido">
-						<el-input  
-					    @input="setApellido"
-                        />
-					</el-form-item>
-				</el-col>
-			
-                <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-					<el-form-item label="Cedula">
-						<el-input  
-					    @input="setCedula"
-                        />
-					</el-form-item>
-				</el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-					<el-form-item label="Fijo">
-						<el-input  
-					    @input="setTelFijo"
-                        />
-					</el-form-item>
-				</el-col>
-				
-			
-                <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-					<el-form-item label="Mobil">
-						<el-input  
-					    @input="setTelMobil"
-                        />
-					</el-form-item>
-				</el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-					<el-form-item label="Direccion">
-						<el-input  
-					    @input="setDireccion"
-                        />
-					</el-form-item>
-				</el-col>
-				
-				
-			
-                <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-					<el-form-item label="Roles">
-						<el-select
-							v-model="selectedRoles"
-							class="select-wide"
-                            filterable
-                            allow-create
-							multiple
-                            no-match-text
-							placeholder="Seleccione...">
-							<el-option
-							v-for="item in roles"
-							:key="item.id"
-							:label="item.nombre"
-							:value="item.id">
-							</el-option>
-						</el-select>
-					</el-form-item>
-				</el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-					<el-form-item label="Ciudad">
-						<el-input  
-					    @input="setCiudad"
-                        />
-					</el-form-item>
-				</el-col>
-			
-			
-			<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+		<el-form width="200px" ref="userCreateForm" label-width="120px" size="mini" :label-position="labelPosition">
+			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+				<h3>Informacion basica</h3>
+			</el-col>
+			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+				<el-form-item label="Nombre">
+					<el-input  
+					@input="setNombre"
+					/>
+				</el-form-item>
+			</el-col>
+			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+				<el-form-item label="Apellido">
+					<el-input  
+					@input="setApellido"
+					/>
+				</el-form-item>
+			</el-col>
+			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+				<el-form-item label="Cedula">
+					<el-input  
+					@input="setCedula"
+					/>
+				</el-form-item>
+			</el-col>
+			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+				<el-form-item label="Email">
+					<el-input  
+					@input="setEmail"
+					/>
+				</el-form-item>
+			</el-col>
+			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+				<el-form-item label="Fijo">
+					<el-input  
+					@input="setTelFijo"
+					/>
+				</el-form-item>
+			</el-col>
+			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+				<el-form-item label="Celular">
+					<el-input  
+					@input="setTelMobil"
+					/>
+				</el-form-item>
+			</el-col>
+			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+				<el-form-item label="Direccion">
+					<el-input  
+					@input="setDireccion"
+					/>
+				</el-form-item>
+			</el-col>
+			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+				<el-form-item label="Ciudad">
+					<el-input  
+					@input="setCiudad"
+					/>
+				</el-form-item>
+			</el-col>
+			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
 				<el-form-item label="Departamento">
 					<el-input  
-					    @input="setDepartamento"
-                        />
+						@input="setDepartamento"
+					/>
 				</el-form-item>
-				
 			</el-col>
-			<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+				
+			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+				<h3>Roles</h3>
+			</el-col>
+		
+			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+				<el-form-item>
+					<el-select
+						v-model="selectedRoles"
+						class="select-wide"
+						filterable
+						multiple
+						no-match-text
+						placeholder="Seleccione...">
+						<el-option
+						v-for="item in roles"
+						:key="item.id"
+						:label="item.nombre"
+						:value="item.id">
+						</el-option>
+					</el-select>
+				</el-form-item>
+			</el-col>
+		
+			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+				<h3>Credenciales</h3>
+			</el-col>
+			
+		
+			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+				<el-form-item label="Username">
+						<el-input  
+						@input="setUsername"
+						/>
+					</el-form-item>
+			</el-col>
+			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+				<el-form-item label="Contraseña">
+					<el-input :value="usuario.password" @imput="setPassword" class="input-with-select">
+						<el-button @click="genPass" slot="append">Generar</el-button>
+					</el-input>
+				</el-form-item>
+			</el-col>
+			
+			
+			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+				<h3>Estado</h3>
+			</el-col>
+		
+			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
 					<el-form-item>
 						<el-switch
 							active-text="Activo"
@@ -113,7 +128,7 @@
 							inactive-color="#ff4949">
 						</el-switch>
 					</el-form-item>
-				</el-col>
+			</el-col>
 			
 		</el-form>
 	</div>
@@ -142,9 +157,11 @@ export default {
 			'permisos',
 		]),
 	},
+
 	methods: {
-		back() {
-			router.push('/Usuarios')
+		genPass(){
+			var ran =  Math.random().toString(36).slice(-8)
+			this.setPassword(ran)
 		},
         ...mapMutations('users', [
             'setNombre',

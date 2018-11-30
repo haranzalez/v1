@@ -18,7 +18,7 @@ export default {
             ciudad: null,
             departamento: null,
             username: null,
-            password: '123',
+            password: null,
             roles: null,
             estado: false,
         },
@@ -131,9 +131,10 @@ export default {
                     router.push('/Usuarios')
                 }
             }).catch(err => {
+                console.log(err)
                 Notification.warning({
                     title: 'Atencion!',
-                    message: 'Se a producido un error tratando de crear el registro. Porfavor notifique al administrador',
+                    message: 'Se a producido un error tratando de crear el registro.',
                     position: 'bottom-right',
                 });
             })
@@ -282,6 +283,7 @@ export default {
             state.headings = headings;
         },
         setEstado(state, value){
+            console.log(value)
             state.usuario.estado = value
         },
         paramsReset(state){

@@ -9,7 +9,7 @@
 		</span>
 	</el-dialog>
 	<!--Create dialog form -->
-	<el-dialog :center="true" :width="dialogWidth" top="5vh" title="Nuevo Usuario" :visible.sync="createFormVisible">
+	<el-dialog fullscreen :width="dialogWidth" top="5vh" :visible.sync="createFormVisible">
 		<UsuariosCreateForm></UsuariosCreateForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button size="mini" @click="createFormVisible = false; paramsReset();">Cerrar</el-button>
@@ -159,7 +159,7 @@ export default {
 	name: 'UserTable',
 	data () {
       	return {
-			dialogWidth: '40%',
+			dialogWidth: '35%',
 			editFormVisible: false,
 			createFormVisible: false,  
 			selectTypeOfSearch: 'Nombre',
@@ -297,8 +297,10 @@ export default {
 <style lang="scss">
 @import '../../assets/scss/_variables';
 
-.serachBar-ctn{
-
+.el-dialog__footer{
+	margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
 }
 .page-table {
 	

@@ -79,11 +79,11 @@ class UserController {
 
     if(roles && roles.length > 0){
       await user.roles().attach(roles)
-      user.roles = await user.roles().fetch()
     }
     this.sendPassword(request.only(['email']))
-    return user;
-
+    return {
+      message: 'success'
+    };
   }
 
   /**

@@ -3,18 +3,18 @@
 	<div class="page-profile-edit">
 
 		<el-form size="mini" ref="userEditForm" label-width="120px" :label-position="labelPosition">
-			
-			<el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-					<el-form-item label="Username">
-						<el-input  
-                        :value="usuario.username"
-						v-model="usuario.username"
-					    @input="setUsername"
-                        />
+				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+					<el-form-item >
+						<float-label class="styled">
+							<v-text-field class="vtext"  
+							type="text" placeholder="Username" 
+							:value="usuario.username"
+							v-model="usuario.username"
+							@input="setUsername"></v-text-field>
+						</float-label>
 					</el-form-item>
 				</el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Email">
 						<el-input  
                         :value="usuario.email"
@@ -25,7 +25,7 @@
 				</el-col>
 			</el-col>
 			<el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Nombre">
 						<el-input  
                         :value="usuario.nombre"
@@ -34,7 +34,7 @@
                         />
 					</el-form-item>
 				</el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Apellido">
 						<el-input  
                         :value="usuario.apellido"
@@ -46,7 +46,7 @@
 			</el-col>
 			
 			<el-col>
-                <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Cedula">
 						<el-input  
                         :value="usuario.cedula"
@@ -55,7 +55,7 @@
                         />
 					</el-form-item>
 				</el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Fijo">
 						<el-input  
                         :value="usuario.tel_fijo"
@@ -67,7 +67,7 @@
 				
 			</el-col>
 			<el-col>
-                <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Mobil">
 						<el-input  
                         :value="usuario.tel_mobil"
@@ -76,7 +76,7 @@
                         />
 					</el-form-item>
 				</el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Direccion">
 						<el-input  
                         :value="usuario.direccion"
@@ -85,11 +85,8 @@
                         />
 					</el-form-item>
 				</el-col>
-				
-				
-			</el-col>
-			<el-col>
-                <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+		
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Roles">
 						<el-select
 						class="select-wide"
@@ -108,7 +105,7 @@
 						</el-select>
 					</el-form-item>
 				</el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
 					<el-form-item label="Ciudad">
 						<el-input 
 						v-model="usuario.ciudad" 
@@ -119,7 +116,7 @@
 				</el-col>
 			</el-col>
 			
-			<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
 				<el-form-item label="Departamento">
 					<el-input  
                         :value="usuario.departamento"
@@ -128,7 +125,7 @@
                         />
 				</el-form-item>
 			</el-col>
-			<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
 				<el-form-item>
 					<el-switch
 						active-text="Activo"
@@ -143,7 +140,7 @@
 			
 		</el-form>
 	</div>
-	</div>
+</div>
 	
 </template>
 

@@ -1,7 +1,7 @@
 <template>
 <div>
-	<el-tabs type="border-card">
-		<el-tab-pane label="Rutas">
+	<el-tabs v-model="currentTab" type="border-card">
+		<el-tab-pane value="ruta" label="Rutas">
 			<Rutas></Rutas>
 		</el-tab-pane>
 		<el-tab-pane label="Productos">
@@ -35,21 +35,23 @@ export default {
 	name: 'ClientesCuadreRutaTable',
 	data () {
       	return {
+			  currentTab: 0,
               filter: '',
               createViajeEditFormVisible: false,
 		}
 	},
 	computed: {
+	
         ...mapState('clientes', [
+			'cuadresActions',
 			'cruadreRutasList',
 			'loadingCuadreRutaTable',
-			
             
         ]),
         ...mapState('cuadreViajes', [
 			'cuadre',
 			'loading',
-        ]),
+		]),
         filtered(){
 			if(this.filter !== ''){
 				let type = this.selectTypeOfSearch.toLowerCase()
@@ -63,6 +65,19 @@ export default {
 			return this.cruadreRutasList
 		},
 
+	},
+	watch : {
+		'currentTab':function(val) { 
+			if(val == 0){
+				this.setCurrentCuadresTab('Ruta')
+			}
+			if(val == 1){
+				this.setCurrentCuadresTab('Producto')
+			}
+			if(val == 2){
+				this.setCurrentCuadresTab('Servicio')
+			}
+		},
 	},
 	components: {
 		Rutas,
@@ -79,7 +94,9 @@ export default {
 			this.$refs.clientsCuadreRutaTable.setCurrentRow(val);
 
 		},
-
+		...mapMutations('clientes', [
+            'setCurrentCuadresTab',
+        ]),
         ...mapActions('clientes', [
             'fetchCuadresRutas',
         ]),

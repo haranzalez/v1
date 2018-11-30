@@ -30,6 +30,7 @@ export default {
         loadingCuadreRutaTable: false,
         loadingCuadreProductoTable: false,
         loadingCuadreServicioTable: false,
+        currentCuadresTab: 'Rutas',
         headings: [],   
     },
 
@@ -192,7 +193,7 @@ export default {
         setCuadreProductosList(state, list){
             state.cuadreProductosList = list
         },
-        setcuadreServiciosList(state, list){
+        setCuadreServiciosList(state, list){
             state.cuadreServiciosList = list
         },
         setClientesList(state, list){
@@ -237,7 +238,10 @@ export default {
         setCelular(state, value){
             state.cliente.celular = value
         },
-        
+        setCurrentCuadresTab(state, value){
+            console.log(value)
+            state.currentCuadresTab = value
+        },
         paramsReset(state){
             state.cliente = {
                 id: null,

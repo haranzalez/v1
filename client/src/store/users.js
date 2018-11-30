@@ -104,10 +104,7 @@ export default {
                 });
             })
         },
-        pushToCreateUser({state,commit}){
-            state.usuario = {}
-            router.push('/creando-usuario')
-        },
+   
         createUser({ state, commit }, roles){
             HTTP().local.post('api/users/create',{
                 nombre: state.usuario.nombre,

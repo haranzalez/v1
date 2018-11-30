@@ -135,6 +135,7 @@ export default {
             'setEmail',
             'setTelefono',
             'setCelular',
+            'setCiudad',
             'setPersonaDeContacto',
             'setDireccionEnvioDeFactura',
             'setTipoContrato',

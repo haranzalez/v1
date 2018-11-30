@@ -25,8 +25,6 @@ export default {
         selectedCreateRuta: null,
         selectedCreateProducto: null,
         selectedEditRuta: null,
-        loading: false,
-        loadingForm: false,
         dataReady: false,
         headings: [],  
     },
@@ -65,7 +63,7 @@ export default {
                 console.log(err)
             })
         },
-        createCuadreRuta({state}, cliente_id){
+        createCuadreRuta({state, dispatch}, cliente_id){
             HTTP().local.post('api/cuadre-viajes/crear', {
                 cliente_id: cliente_id,
                 ruta_id: state.selectedCreateRuta,
@@ -77,6 +75,7 @@ export default {
             })
             .then(d => {
                 if(d.data.message == 'success'){
+                    dispatch('fetchCuadresList')
                     return true
                 }
                
@@ -117,24 +116,23 @@ export default {
             })
         },
         fetchCuadreRuta({commit, dispatch},pkg){
-            commit('setLoading', true)
+       
             HTTP().local.get('api/cuadre-viajes/'+pkg.id)
             .then(d => {
+                console.log(d.data)
                commit('setFullCuadre', d.data)
                commit('setFlete', d.data.flete)
                commit('rutas/setValorflete', d.data.valor_flete.toString(), {root: true})
                commit('setSelectedRutaEdit', d.data.ruta_id)
                commit('setSelectedVehiculoEdit', d.data.vehiculo_id)
                dispatch('renderSelectedRuta', 'single')
-               commit('setLoading', false)
             })
             .catch(err => {
                 console.log(err)
             })
         },
-       
         fetchCuadresRutaList({commit, dispatch}){
-            commit('setLoading', true)
+
             HTTP().local.get('api/cuadre-viajes')
             .then(d => {
                 console.log(d.data)
@@ -143,7 +141,7 @@ export default {
                 dispatch('renderTableHeadings')
                 dispatch('renderSelectedVehiculo', 'multiple')
                 dispatch('renderSelectedRuta', 'multiple')
-                commit('setLoading', false)
+
             })
             .catch(err => {
                 console.log(err)
@@ -172,9 +170,6 @@ export default {
             if(type == 'single'){
                 obj['r-'+state.cuadre.id] = state.cuadre['ruta']
             }
-           
-          
-            console.log(obj)
             commit('setSelectedRuta', obj)
         },
         renderSelectedVehiculo({ state, commit }, type){
@@ -197,14 +192,11 @@ export default {
         
     },
     mutations: {
-        setLoadingForm(state, value){
-            state.loadingForm = value
-        },
-        setLoading(state, value){
-            state.loading = value
-        },
+      
         setFullCuadre(state, value){
+            
             state.cuadre = value
+            console.log(state.cuadre)
         },
         setCuadresList(state, list){
             state.cuadresList = list

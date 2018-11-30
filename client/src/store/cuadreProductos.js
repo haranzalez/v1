@@ -56,6 +56,8 @@ export default {
             })
         },
         delCuadreProducto({state, commit}){
+            console.log(state.cuadre)
+            console.log(state.cuadre.id)
             HTTP().local.delete('api/cuadre-productos/'+state.cuadre.id+'/delete')
             .then(d => {
                if(d.data.message == 'success'){
@@ -71,7 +73,7 @@ export default {
             HTTP().local.get('api/cuadre-productos/'+pkg.id)
             .then(d => {
                 console.log(d.data)
-               commit('setFullCuadreProducto', d.data)
+               commit('setFullCuadreProducto', d.data[0])
                commit('setPrecioCuadreProducto', d.data.precio)
                commit('productos/setPrecioProducto', d.data.precio_producto, {root: true})
             })

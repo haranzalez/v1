@@ -1,71 +1,49 @@
 <template>
 <div>
-
-	<!--cuadre servicio table -->
-	<el-dialog width="50%" top="5vh" :title="'Servicios para ' + cliente.nombre_razon_social + ' NIT:' + cliente.nit" :visible.sync="cuadreServicioTableVisible">
-		<div style="text-align: right;">
-			<el-button type="default" size="mini" @click="reloadTable('cuadreServicios')" style="margin-right:5px;"><i class="mdi mdi-reload"></i></el-button>
-			<el-dropdown trigger="click" @command="handleAction">  
-				<el-button size="mini">
-					<i class="mdi mdi-settings"></i>
-				</el-button>
-				<el-dropdown-menu slot="dropdown">
-					<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" @click="testOnClick" command="createServicio"><i class="mdi mdi-plus mr-10"></i></el-dropdown-item>
-					<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="editServicio"><i class="mdi mdi-lead-pencil mr-10"></i></el-dropdown-item>
-					<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="delServicio"><i class="mdi mdi-delete mr-10"></i></el-dropdown-item>
-				</el-dropdown-menu>
-			</el-dropdown>
+	<!--cuadres table -->
+	<el-dialog fullscreen width="65%" top="10vh" :title="cliente.nombre_razon_social" :visible.sync="cuadresTableVisible">
+		<div style="text-align: right;margin-bottom: 10px;">
+		<el-button type="default" size="mini" @click="reloadTable('cuadre'+currentCuadresTab+'s')" style="margin-right:5px;"><i class="mdi mdi-reload"></i></el-button>
+		<el-dropdown trigger="click" @command="handleAction">  
+			<el-button size="mini">
+				<i class="mdi mdi-settings"></i>
+			</el-button>
+			<el-dropdown-menu slot="dropdown">
+				<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" :command="'create'+currentCuadresTab"><i class="mdi mdi-plus mr-10"></i>Crear</el-dropdown-item>
+				<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" :command="'edit'+currentCuadresTab"><i class="mdi mdi-lead-pencil mr-10"></i>Editar</el-dropdown-item>
+				<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" :command="'del'+currentCuadresTab"><i class="mdi mdi-delete mr-10"></i>Eliminar</el-dropdown-item>
+			</el-dropdown-menu>
+		</el-dropdown>
 		</div>
 		
-		<cuadreServicioTable></cuadreServicioTable>
+		<cuadresTable></cuadresTable>
 		
 	</el-dialog>
-	<!--cuadre prducto table -->
-	<el-dialog width="50%" top="5vh" :title="'Productos para ' + cliente.nombre_razon_social + ' NIT:' + cliente.nit" :visible.sync="cuadreProductoTableVisible">
-		<div style="text-align: right;">
-			<el-button type="default" size="mini" @click="reloadTable('cuadreProductos')" style="margin-right:5px;"><i class="mdi mdi-reload"></i></el-button>
-			<el-dropdown trigger="click" @command="handleAction">  
-				<el-button size="mini">
-					<i class="mdi mdi-settings"></i>
-				</el-button>
-				<el-dropdown-menu slot="dropdown">
-					<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="createProducto"><i class="mdi mdi-plus mr-10"></i></el-dropdown-item>
-					<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="editProducto"><i class="mdi mdi-lead-pencil mr-10"></i></el-dropdown-item>
-					<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="delProducto"><i class="mdi mdi-delete mr-10"></i></el-dropdown-item>
-				</el-dropdown-menu>
-			</el-dropdown>
-		</div>
-		
-		<cuadreProductoTable></cuadreProductoTable>
-		
+	
+	<!--edit viaje form -->
+	<el-dialog center width="40%" top="15vh" title="Cuadre ruta" :visible.sync="cuadreViajeEditFormVisible">
+		<ViajeEditForm></ViajeEditForm>
+		<span slot="footer" class="dialog-footer">
+			<el-button size="mini" type="primary" @click="editCuadreRuta(cliente.id)">Actualizar</el-button>
+			<el-button size="mini" type="primary" @click="cuadreViajeEditFormVisible = false; fetchCuadresRutas()">Cerrar</el-button>
+		</span>
 	</el-dialog>
-	<!--cuadre rutas table -->
-	<el-dialog width="50%" top="5vh" :title="'Rutas para ' + cliente.nombre_razon_social + ' NIT:' + cliente.nit" :visible.sync="cuadreViajeTableVisible">
-		<div style="text-align: right;">
-			<el-button type="default" size="mini" @click="reloadTable('cuadreRutas')" style="margin-right:5px;"><i class="mdi mdi-reload"></i></el-button>
-			<el-dropdown trigger="click" @command="handleAction">  
-				<el-button size="mini">
-					<i class="mdi mdi-settings"></i>
-				</el-button>
-				<el-dropdown-menu slot="dropdown">
-					<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="createViaje"><i class="mdi mdi-plus mr-10"></i></el-dropdown-item>
-					<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="editViaje"><i class="mdi mdi-lead-pencil mr-10"></i></el-dropdown-item>
-					<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="delViaje"><i class="mdi mdi-delete mr-10"></i></el-dropdown-item>
-				</el-dropdown-menu>
-			</el-dropdown>
-		</div>
-		
-		<cuadreViajeTable></cuadreViajeTable>
-		
+	<!--edit producto form -->
+	<el-dialog center width="40%" top="15vh" title="Cuadre producto" :visible.sync="cuadreProductoEditFormVisible">
+		<ProductoEditForm></ProductoEditForm>
+		<span slot="footer" class="dialog-footer">
+			<el-button size="mini" type="primary" @click="editCuadreProducto(cliente.id)">Actualizar</el-button>
+			<el-button size="mini" type="primary" @click="cuadreProductoEditFormVisible = false; fetchCuadresProductos()">Cerrar</el-button>
+		</span>
 	</el-dialog>
-	    <!--edit viaje form -->
-		<el-dialog center width="40%" top="15vh" title="Cuadre viaje" :visible.sync="createViajeEditFormVisible">
-			<ViajeEditForm></ViajeEditForm>
-			<span slot="footer" class="dialog-footer">
-				<el-button size="mini" type="primary" @click="edit(cliente.id)">Actualizar</el-button>
-				<el-button size="mini" type="primary" @click="createViajeEditFormVisible = false; fetchCuadresRutas()">Cerrar</el-button>
-			</span>
-		</el-dialog>
+	<!--edit viaje form -->
+	<el-dialog center width="40%" top="15vh" title="Cuadre servicio" :visible.sync="cuadreServicioEditFormVisible">
+		<ServicioEditForm></ServicioEditForm>
+		<span slot="footer" class="dialog-footer">
+			<el-button size="mini" type="primary" @click="editCuadreServicio(cliente.id)">Actualizar</el-button>
+			<el-button size="mini" type="primary" @click="cuadreServicioEditFormVisible = false; fetchCuadresServicios()">Cerrar</el-button>
+		</span>
+	</el-dialog>
 	
 	<!--Create viaje form -->
 	<el-dialog center width="40%" top="15vh" title="Cuadre ruta" :visible.sync="createViajeFormVisible">
@@ -88,6 +66,7 @@
 			<el-button size="mini" type="primary" @click="create_cuadre_servicio(cliente.id)">Cuadrar Servicio</el-button>
 		</span>
 	</el-dialog>
+
 	<!--Edit cliente dialog form -->
 	<el-dialog width="40%" top="5vh" :title="cliente.nombre_razon_social" :visible.sync="editFormVisible">
 		<ClientesEditForm></ClientesEditForm>
@@ -104,7 +83,8 @@
 			<el-button type="primary" @click="create_client">Crear</el-button>
 		</span>
 	</el-dialog>
-	<!--Table-->
+
+	<!--Table clientes-->
 	<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
 		<h1>Clientes</h1>
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
@@ -116,6 +96,7 @@
 				</el-input>
 			</div>
 		</el-col>
+
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
 			<div style="padding: 3px 0;">
 				<el-row style="text-align: right;">
@@ -129,16 +110,17 @@
 							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Crear cliente</el-dropdown-item>
 							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="edit"><i class="mdi mdi-lead-pencil mr-10"></i> Editar</el-dropdown-item>
 							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
-							<el-dropdown-item command="verCuadreRuta" divided><i class="mdi mdi-folder-open mr-10"></i> Ver cuadres de ruta</el-dropdown-item>
+							<el-dropdown-item command="verCuadres" divided><i class="mdi mdi-folder-open mr-10"></i> Ver cuadres</el-dropdown-item>
+							<!-- <el-dropdown-item command="verCuadreRuta" divided><i class="mdi mdi-folder-open mr-10"></i> Ver cuadres de ruta</el-dropdown-item>
 							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="verCuadreProducto"><i class="mdi mdi-barrel mr-10"></i> Ver cuadres de productos</el-dropdown-item>
-							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="verCuadreServicio"><i class="mdi mdi-worker mr-10"></i> Ver cuadres de servicios</el-dropdown-item>
+							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="verCuadreServicio"><i class="mdi mdi-worker mr-10"></i> Ver cuadres de servicios</el-dropdown-item> -->
 						</el-dropdown-menu>
 					</el-dropdown>
 				</el-row>
 			</div>
 		</el-col>
 	<el-table
-	v-loading.sync="loadingClientesTable"
+	v-loading="loadingClientesTable"
 	size="mini"
 	ref="clientsTable"
 	stripe
@@ -217,7 +199,9 @@
   </el-table>
 
   </el-col>
-
+  <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+	
+  </el-col>
 </div>
 	
 </template>
@@ -236,11 +220,14 @@ import ClientesEditForm from '@/components/Clientes/editForm'
 import ClientesCreateForm from '@/components/Clientes/createForm'
 import ViajeCreateForm from '@/components/CuadresRutas/createForm'
 import ViajeEditForm from '@/components/CuadresRutas/editForm'
+import ProductoEditForm from '@/components/CuadreProductos/editForm'
+import ServicioEditForm from '@/components/CuadreServicios/editForm'
 import ProductoCreateForm from '@/components/CuadreProductos/createCuadreForm'
 import ServicioCreateForm from '@/components/CuadreServicios/createCuadreForm'
 import cuadreViajeTable from './cuadreRutaTable'
 import cuadreProductoTable from './cuadreProductoTable'
 import cuadreServicioTable from './cuadreServicioTable'
+import cuadresTable from './cuadresTable'
 
 export default {
 	name: 'ClientesTable',
@@ -255,7 +242,10 @@ export default {
 			cuadreViajeTableVisible: false,
 			cuadreProductoTableVisible: false,
 			cuadreServicioTableVisible: false,
-			createViajeEditFormVisible: false,
+			cuadreViajeEditFormVisible: false,
+			cuadreProductoEditFormVisible: false,
+			cuadreServicioEditFormVisible: false,
+			cuadresTableVisible: false,
             selectTypeOfSearch: '',
 			filter: '',
 		}
@@ -273,6 +263,7 @@ export default {
 			'dataReady',
 			'cliente',
 			'loadingClientesTable',
+			'currentCuadresTab',
 		]),
 //=============================//
 //========== Local Variables =========//
@@ -295,11 +286,14 @@ export default {
 		ClientesCreateForm,
 		ViajeCreateForm,
 		ViajeEditForm,
+		ProductoEditForm,
+		ServicioEditForm,
 		ProductoCreateForm,
 		ServicioCreateForm,
 		cuadreViajeTable,
 		cuadreProductoTable,
 		cuadreServicioTable,
+		cuadresTable,
 	},
     methods: {
 //=============================//
@@ -323,6 +317,8 @@ export default {
 //=============================//
 //========== Components Functions =========//
 //=============================//
+
+//ACTIONS====================================
 		...mapActions('cuadreViajes',[
 			'createCuadreRuta',
 			'editCuadreRuta',
@@ -338,7 +334,7 @@ export default {
 			'editCuadreServicio',
 			'delCuadreServicio'
 		]),
-
+//MUTATIONS===================================
 		...mapMutations('cuadreViajes', [
 			'resetSelections',
 			'resetCuadreRuta',
@@ -387,6 +383,9 @@ export default {
 			if(table == 'cuadreProductos'){
 				this.fetchCuadresProductos()
 			}
+			if(table == 'cuadreServicios'){
+				this.fetchCuadresServicios()
+			}
 		},
 		handleCurrentTableChange(val) {
 			if(val == null){
@@ -397,6 +396,9 @@ export default {
 			this.setFullCliente(val)
 			this.setDataReady(true)
 			this.$refs.clientsTable.setCurrentRow(val);
+			this.fetchCuadresRutas()
+			this.fetchCuadresProductos()
+			this.fetchCuadresServicios()
 		},
 		handleAction(e){
             if(e == 'create'){
@@ -426,15 +428,15 @@ export default {
 					})
             	}
 			}
-			if(e == 'createViaje'){
+			if(e == 'createRuta'){
 				
 				this.createViajeFormVisible = true
 				this.clearForm('createRuta')
 			}
-			if(e == 'editViaje'){
-				this.createViajeEditFormVisible = true
+			if(e == 'editRuta'){
+				this.cuadreViajeEditFormVisible = true
 			}
-			if(e == 'delViaje'){
+			if(e == 'delRuta'){
 				this.pushToDelCuadre('ruta')
 			}
 			if(e == 'createProducto'){
@@ -443,7 +445,7 @@ export default {
 				this.clearForm('createProducto')
 			}
 			if(e == 'editProducto'){
-				this.createProductoEditFormVisible = true
+				this.cuadreProductoEditFormVisible = true
 			}
 			if(e == 'delProducto'){
 				this.pushToDelCuadre('producto')
@@ -455,7 +457,7 @@ export default {
 				this.clearForm('createServicio')
 			}
 			if(e == 'editServicio'){
-				this.createServicioEditFormVisible = true
+				this.cuadreServicioEditFormVisible = true
 			}
 			if(e == 'delServicio'){
 				this.pushToDelCuadre('servicio')
@@ -473,6 +475,9 @@ export default {
 				this.fetchCuadresServicios()
 				this.cuadreServicioTableVisible = true
 			}
+			if(e == 'verCuadres'){
+				this.cuadresTableVisible = true
+			}
 			
 		},
 //=============================//
@@ -485,12 +490,12 @@ export default {
 			this.fetchClientesList()
 		},
 		create_cuadre_viaje(id){
-			if(this.createCuadre(id)){
+			if(this.createCuadreRuta(id)){
 				this.createViajeFormVisible = false
 				Notification({
 					type: 'success',
 					showClose: true,
-					message: 'Cuadre viaje creado.'
+					message: 'Cuadre ruta creado.'
 				})
 			}
 		},
@@ -500,6 +505,15 @@ export default {
 				Notification({
 					showClose: true,
 					message: 'Cuadre producto creado.'
+            	})
+			}
+		},
+		create_cuadre_servicio(id){
+			if(this.createCuadreServicio(id)){
+				this.createServicioFormVisible = false
+				Notification({
+					showClose: true,
+					message: 'Cuadre servicio creado.'
             	})
 			}
 		},
@@ -536,7 +550,7 @@ export default {
 						Message({
 							type: 'success',
 							showClose: true,
-							message: 'Cuadre eliminado exitosamente'
+							message: 'Cuadre ruta eliminado exitosamente'
 						})
 						this.fetchCuadresRutas()
 					}
@@ -547,7 +561,7 @@ export default {
 						Message({
 							type: 'success',
 							showClose: true,
-							message: 'Cuadre eliminado exitosamente'
+							message: 'Cuadre producto eliminado exitosamente'
 						})
 						this.fetchCuadresProductos()
 					}
@@ -558,7 +572,7 @@ export default {
 						Message({
 							type: 'success',
 							showClose: true,
-							message: 'Cuadre eliminado exitosamente'
+							message: 'Cuadre servicio eliminado exitosamente'
 						})
 						this.fetchCuadresServicios()
 					}
@@ -572,10 +586,7 @@ export default {
             });
 			
 		},
-		 edit(id){
-            this.editCuadre(id)
-            this.fetchCuadresRutas()
-        },
+		
 		back(){
 			router.push('/')
 		},

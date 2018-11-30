@@ -69,6 +69,7 @@ class CuadroProductoController {
     }
     //DELETE
     async delete_cuadre({ params }){
+        console.log(params)
         const { id } = params
         const cuadre = await CuadreProducto.find(id)
         return cuadre.delete()

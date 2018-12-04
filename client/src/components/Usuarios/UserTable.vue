@@ -1,7 +1,7 @@
 <template>
 <div>
 	<!--Edit dialog form -->
-	<el-dialog fullscreen :center="true" :width="dialogWidth" top="5vh" :title="usuario.nombre + ' ' + usuario.apellido" :visible.sync="editFormVisible">
+	<el-dialog fullscreen :center="true" :width="dialogWidth" top="5vh" :visible.sync="editFormVisible">
 		<UsuariosEditForm></UsuariosEditForm>
 		<span slot="footer" class="dialog-footer animated fadeInUp">
 			<el-button size="mini" @click="editFormVisible = false;">Cerrar</el-button>
@@ -266,10 +266,6 @@ export default {
 			
 		},
 		
-	
-		del(nombre,apellido,id) {
-			
-		},
 		create(){
 			this.createUser()
 			this.createFormVisible = false

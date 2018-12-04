@@ -113,23 +113,6 @@
 			</el-col>
 			
 			
-			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-				<h3>Estado</h3>
-			</el-col>
-		
-			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-					<el-form-item>
-						<el-switch
-							active-text="Activo"
-							inactive-text="Inactivo"
-							:value="usuario.estado"
-							@change="setEstado"
-							active-color="#13ce66"
-							inactive-color="#ff4949">
-						</el-switch>
-					</el-form-item>
-			</el-col>
-			
 		</el-form>
 	</div>
 </div>

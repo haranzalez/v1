@@ -1,19 +1,57 @@
 <template>
 <div>
-	<el-col :xs="24" :sm="24" :md="15" :lg="15" :xl="15">
+	<!--Edit dialog form -->
+	<el-dialog center fullscreen :width="dialogWidth" top="5vh" :visible.sync="editFormVisible">
+		<RolesEditForm></RolesEditForm>
+		<span slot="footer" class="dialog-footer">
+			<el-button size="mini" @click="editFormVisible = false; paramsReset();">Cerrar</el-button>
+			<el-button size="mini" type="primary" @click="editRole">Actualizar</el-button>
+		</span>
+	</el-dialog>
+	<!--Create dialog form -->
+	<el-dialog fullscreen :width="dialogWidth" top="5vh" :visible.sync="createFormVisible">
+		<RolesCreateForm></RolesCreateForm>
+		<span slot="footer" class="dialog-footer">
+			<el-button size="mini" @click="createFormVisible = false; paramsReset();">Cerrar</el-button>
+			<el-button size="mini" type="primary" @click="createRole">Crear</el-button>
+		</span>
+	</el-dialog>
+	<!--Table-->
+	<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
 	<h1>Roles</h1>
 	<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
 		<div class="serachBar-ctn">
-			<el-input placeholder="Buscar" v-model="filter" class="input-with-select"></el-input>
+			<el-input size="mini" placeholder="Buscar" v-model="filter" class="input-with-select"></el-input>
 		</div>
 	</el-col>
 	<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-		<div style="text-align:right;">
-			<el-button @click="pushToCreateRole" :disabled="(permisos['Roles'].crear)? false:true">Crear</el-button>
-		</div>
+			<div style="padding: 3px 0;">
+				<el-row style="text-align: right;">
+					<el-button type="default" size="mini" @click="reloadTable" style="margin-right:5px;"><i class="mdi mdi-reload"></i></el-button>
+					<el-button type="default" size="mini" @click="exportTable" style="margin-right:5px;"><i class="mdi mdi-file-excel"></i></el-button>
+					<el-dropdown trigger="click" @command="handleAction">  
+						<el-button size="mini">
+							<i class="mdi mdi-settings"></i>
+						</el-button>
+						<el-dropdown-menu slot="dropdown">
+							<el-dropdown-item :disabled="(permisos['Usuarios'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Crear</el-dropdown-item>
+							<el-dropdown-item :disabled="(permisos['Usuarios'].crear)? false:true" command="edit"><i class="mdi mdi-lead-pencil mr-10"></i> Editar</el-dropdown-item>
+							<el-dropdown-item :disabled="(permisos['Usuarios'].crear)? false:true" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
+						</el-dropdown-menu>
+					</el-dropdown>
+				</el-row>
+			</div>
 	</el-col>
 
+
 	<el-table
+	v-loading.body="loading"
+	size="mini"
+	ref="rolesTable"
+	stripe
+	max-height="250"
+	highlight-current-row
+	@current-change="handleCurrentTableChange"
     :data="filtered"
 	:default-sort = "{prop: 'id', order: 'descending'}"
     style="width: 100%">
@@ -34,15 +72,7 @@
 	  sortable
       prop="description"
       label="Descripcion"
-      width="220">
-    </el-table-column>
-    <el-table-column
-      fixed="right"
-      label="Acciones"
-      width="120">
-      <template slot-scope="scope">
-        <el-button @click="pushToEditRole(scope.row.id)" type="text" size="small">Detalles</el-button>
-      </template>
+    >
     </el-table-column>
   </el-table>
 	</el-col>
@@ -57,6 +87,10 @@ import moment from 'moment-timezone'
 import rounter from '../../../router'
 import Papa from 'papaparse'
 import * as FS from 'file-saver'
+//componentes
+import RolesCreateForm from './CreateRole'
+import RolesEditForm from './RoleEdit'
+
 
 
 
@@ -68,6 +102,9 @@ export default {
       	return {
 			filter: '',
 			list: null,
+			createFormVisible: false,
+			editFormVisible: false,
+			dialogWidth: '45%',
 		}
 	},
 	computed: {
@@ -84,36 +121,77 @@ export default {
 		...mapState('roles',[
 		'rolesList',
 		'dataReady',
+		'loading',
 		]),
 		...mapState('authentication', [
 			'permisos',
 		])
 	},
+	components: {
+		RolesCreateForm,
+		RolesEditForm,
+	},
     methods: {
+		...mapMutations('roles', [
+			'paramsReset',
+			'setSelectedModules',
+		]),
 		...mapActions('roles',[
 			'fetchRoles',
-			'pushToEditRole',
+			'fetchRole',
+			'editRole',
+			'fetchAllModules',
+			'rederSelectedModulos',
+			'createRole',
 			'pushToCreateRole',
 			'delRole',
 			'extractPermisos',
 		]),
-		del(nombre,id) {
-			this.$confirm('El role '+nombre+' sera permanentemente eliminado de los registros. Continuar?', 'Atencion', {
-				confirmButtonText: 'OK',
-				cancelButtonText: 'Cancelar',
-				type: 'warning',
-				center: true
-			}).then(() => {
-				this.delRole(id)
-				this.fetchRoles();
-				this.$refs.table.refresh();
-			}).catch(() => {
-				this.$message({
-					type: 'info',
-					message: 'Eliminacion cancelada'
+		exportTable(){
+			exportService.toXLS(this.rolesList, 'Roles', true)
+		},
+		reloadTable(){
+			this.fetchRoles()
+		},
+		handleCurrentTableChange(val) {
+			if(val == null){
+				this.$refs.rolesTable.setCurrentRow(val);
+				return
+			}
+			this.fetchRole(val.id)
+			this.$refs.rolesTable.setCurrentRow(val);
+		},
+		handleAction(e){
+            if(e == 'create'){
+				this.paramsReset()
+				this.setSelectedModules(null)
+				this.createFormVisible = true;
+			}
+			if(e == 'edit'){
+				this.fetchAllModules()
+				this.rederSelectedModulos()
+				this.editFormVisible = true;
+			}
+			if(e == 'del'){
+				this.$confirm(this.role.nombre + ' sera permanentemente eliminado de los registros. Continuar?', 'Atencion', {
+					confirmButtonText: 'OK',
+					cancelButtonText: 'Cancelar',
+					type: 'warning',
+					center: true,
+				}).then(() => {
+					this.delRole()
+					this.fetchRoles();
+					this.$refs.rolesTable.refresh();
+				}).catch(() => {
+					this.$message({
+						type: 'info',
+						message: 'Eliminacion cancelada'
+					});
 				});
-			});
-		  },
+			}
+			
+		},
+		
 	},
 	created() {
     	this.fetchRoles()
@@ -136,6 +214,12 @@ export default {
 </style>
 <style lang="scss">
 @import '../../../assets/scss/_variables';
+
+.el-dialog__footer{
+	margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
 .page-table {
 	
 	.custom-action-row {

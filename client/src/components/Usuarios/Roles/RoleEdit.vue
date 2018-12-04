@@ -1,41 +1,27 @@
 <template>
-  <div>
-      <h1>Actualizando {{roleToEdit.nombre}}</h1>
-    <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-        <el-card class="box-card">
-            <div slot="header" class="clearfix">
-                <span>Modulos</span>
-                <el-button v-if="modulesAvailable" :disabled="(permisos['Roles'].editar)? false:true" @click="setModuleListDialogeVisible(true)" style="float: right; padding: 3px 0" type="text">Manejar modulos</el-button>
+    <el-row>
+        <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+            <h3>Info</h3>
+            <div>
+                <el-form size="mini" ref="form" :model="roleToEdit" label-position="top" label-width="120px">
+                    <el-form-item label="Nombre">
+                        <el-input @input="setRoleToEditNombre" :value="roleToEdit.nombre"></el-input>
+                    </el-form-item>
+                    <el-form-item label="Descripcion">
+                        <el-input  type="textarea" autosize @input="setRoleToEditDescription" :value="roleToEdit.description"></el-input>
+                    </el-form-item>
+                </el-form>
             </div>
-            <role-modulo-edit :role-name="roleToEdit.nombre" :op="true"></role-modulo-edit>
-        </el-card>
-       
-    </el-col>
-
-    <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-        <div class="form">
-            <el-form ref="form" :model="roleToEdit" label-width="120px">
-                <el-form-item label="Nombre">
-                    <el-input @input="setRoleToEditNombre" :value="roleToEdit.nombre"></el-input>
-                </el-form-item>
-                <el-form-item label="Descripcion">
-                    <el-input type="textarea" @input="setRoleToEditDescription" :value="roleToEdit.description"></el-input>
-                </el-form-item>
-                <el-form-item>
-                
-                </el-form-item>
-                <el-form-item>
-                     <el-button type="text" :disabled="(permisos['Roles'].eliminar)? false:true" @click="del">Eliminar</el-button>
-                    <el-button @click="pushToRoleTable">Cancelar</el-button>
-                     <el-button type="primary" :disabled="(permisos['Roles'].editar)? false:true" @click="actualizar">Actualizar</el-button>
-                </el-form-item>
-            </el-form>
-        </div>
-    </el-col>
-    
-     <modulo-select-list op="edit"></modulo-select-list>
-  </div>
-  
+        </el-col>
+        <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+            <h3>Permisos</h3>
+            <RoleModuloEdit :role-name="roleToEdit.nombre" :op="true"></RoleModuloEdit>
+        </el-col>
+        <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+            <h3>Modulos</h3>
+            <ModuloSelectList op="edit"></ModuloSelectList>
+        </el-col>
+    </el-row>
 </template>
 
 <script>

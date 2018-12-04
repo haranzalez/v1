@@ -19,18 +19,21 @@ export default {
         rolesList: null,
         dataReady: false,
         selectedPermisos: null,
-        selectedModulos: null,
+        selectedModulos: [],
         moduleListDialogeVisible: false,
         roleModuleDialogeVisible: false,
         modulesAvailable: false,
+        loading: false,
         
     },
     actions: {
         fetchRoles({commit}){
+            commit('setLoading', true)
             HTTP().local.get('api/roles')
             .then(r => {
                 commit('setRolesList', r.data)
                 commit('setDataReady', true)
+                commit('setLoading', false)
             }).catch(err => {
                 Notification.warning({
                     title: 'Atencion!',
@@ -39,16 +42,8 @@ export default {
                 });
             })
         },
-        pushToEditRole({state,commit, dispatch}, id){
-            dispatch('fetchRole', id)
-            router.push('/editando-role')
-        },
-        pushToCreateRole({state, commit}){
-            commit('setSelectedModules', null)
-            router.push('/creando-role')
-        },
-        create({state}){
-            console.log(state.roleToCreate)
+  
+        createRole({state}){
             let pkg = {
             nombre: state.roleToCreate.nombre,
             description: state.roleToCreate.description,
@@ -67,7 +62,7 @@ export default {
                 console.log(err)
             })
         },
-        edit({state, dispatch}){
+        editRole({state, dispatch}){
             let pkg = {
                nombre: state.roleToEdit.nombre,
                description: state.roleToEdit.description,
@@ -123,10 +118,27 @@ export default {
         fetchAllModules({commit}){
             HTTP().local.get('api/modulos')
             .then(d => {
-                commit('setAllModules', d.data)
+                var data = []
+                for (let prop in d.data) {
+                    data.push({
+                        key:d.data[prop]['id'],
+                        label: d.data[prop]['nombre'],
+                        disabled: false
+                    });
+                }
+                commit('setAllModules', data)
             }).catch(err => {
                 console.log(err)
             })
+        },
+        rederSelectedModulos({state, commit}){
+            console.log(state.roleToEdit.modulos)
+            var data = []
+            for(let prop in state.roleToEdit.modulos){
+                data.push(state.roleToEdit.modulos[prop]['id'])
+            }
+            console.log(data)
+            commit('setSelectedModules', data)
         },
         addModule({state},id){
             HTTP().local.patch('api/roles/update/'+id,state.selectedPermisos)
@@ -134,9 +146,9 @@ export default {
                 console.log(res)
             })
         },
-        delRole({state}, id){
+        delRole({state}){
            
-				HTTP().local.delete('api/roles/destroy/'+id)
+				HTTP().local.delete('api/roles/destroy/'+roleToEdit.id)
                 .then(res => {
                     Message({
                         showClose: true,
@@ -157,9 +169,7 @@ export default {
             state.rolesList = roles
         },
         setRoleToEdit(state, role){
-            
             state.roleToEdit = role
-            console.log(state.roleToEdit)
         },
         setModules(state, modules){
             state.modules = modules
@@ -184,7 +194,6 @@ export default {
         },
         setSelectedModules(state, modulos){
             state.selectedModulos = modulos
-            state.moduleListDialogeVisible = false
         },
         setSelectedPermisos(state, permisos){
             state.selectedPermisos = permisos
@@ -198,6 +207,16 @@ export default {
         setDataReady(state, bool){
             state.dataReady = bool
         },
+        paramsReset(state){
+            state.roleToCreate = {
+                id: null,
+                nombre: null,
+                descripcion: null,
+            }
+        },
+        setLoading(state, value){
+            state.loading = value
+        }
        
        
         

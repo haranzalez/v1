@@ -1,6 +1,6 @@
 <template>
     <div>
-        <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+        <!--<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
             
             <el-card class="box-card">
                 <div slot="header" class="clearfix">
@@ -9,7 +9,7 @@
                 </div>
                 <role-modulo-edit :role-name="roleToCreate.nombre"  :op="false"></role-modulo-edit>
             </el-card>
-        </el-col>
+        </el-col>-->
 
         <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
             <div class="form">

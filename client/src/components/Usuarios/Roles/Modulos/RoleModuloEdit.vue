@@ -1,43 +1,33 @@
 <template>
 <div v-if="op">
-        <el-collapse v-if="modulesAvailable">
-        <el-collapse-item  v-for="mod in roleToEdit.modulos" :key="mod.id" :title="mod.nombre">
-       
-            <el-tabs v-model="activeName[roleName][mod.nombre]"  :tab-position="tabPosition">
-                <el-tab-pane 
-                    v-for="sub in mod.subModulo" 
-                    :key="sub.id" 
-                    :label="sub.nombre" 
-                    :value="sub.nombre" 
-                    :name="sub.nombre"
-                >
-                    <p><b>Permisos {{sub.nombre}}</b></p>
-                    <div style="margin: 15px 0;"></div>
+        <el-collapse>
+            <el-collapse-item  v-for="mod in roleToEdit.modulos" :key="mod.id" :title="mod.nombre">
+        
+                <el-tabs v-model="activeName[roleName][mod.nombre]"  :tab-position="tabPosition">
+                    <el-tab-pane 
+                        v-for="sub in mod.subModulo" 
+                        :key="sub.id" 
+                        :label="sub.nombre" 
+                        :value="sub.nombre" 
+                        :name="sub.nombre"
+                    >
+                        <p><b>Permisos {{sub.nombre}}</b></p>
+                        <div style="margin: 15px 0;"></div>
+                        
+                    <permisos-checkboxes :checked="permisosSeleccionados[roleName][mod.nombre][sub.nombre]" :roleName="roleName" :subName="sub.nombre"></permisos-checkboxes>
                     
-                   <permisos-checkboxes :checked="permisosSeleccionados[roleName][mod.nombre][sub.nombre]" :roleName="roleName" :subName="sub.nombre"></permisos-checkboxes>
-                   
-                    <div class="btn-ctn">
-                        <el-button type="primary" :disabled="(permisos['Roles'].editar)? false:true" @click="actualizarPermisos(mod.nombre, sub.nombre, sub.id)" size="mini" round plain>Actualizar permisos</el-button>
-                    </div>
-                    
-                </el-tab-pane>
-            </el-tabs>
-            
-        </el-collapse-item>
+                        <div class="btn-ctn">
+                            <el-button type="primary" :disabled="(permisos['Roles'].editar)? false:true" @click="actualizarPermisos(mod.nombre, sub.nombre, sub.id)" size="mini" round plain>Actualizar permisos</el-button>
+                        </div>
+                        
+                    </el-tab-pane>
+                </el-tabs>
+                
+            </el-collapse-item>
         </el-collapse>
 
-        <div class="btn-ctn" v-else>
-            <el-button type="primary" :disabled="(permisos['Roles'].editar)? false:true" @click="setModuleListDialogeVisible(true)" size="mini" round plain>Agregar Modulos</el-button>
-        </div>
+    </div>
 
-    </div>
-    
-    <div v-else>
-        <div class="btn-ctn">
-            <el-button type="primary" @click="setModuleListDialogeVisible(true)" size="mini" round plain>Agregar Modulos</el-button>
-        </div>
-    </div>
-</div>
 </template>
 
 <script>

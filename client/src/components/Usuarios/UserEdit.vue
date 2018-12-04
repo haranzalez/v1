@@ -1,130 +1,131 @@
 <template>
 	<div class="page-profile">
 	<div class="page-profile-edit">
-
-		<el-form size="mini" ref="userEditForm" label-width="120px" :label-position="labelPosition">
-				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-					<el-form-item >
-						<float-label class="styled">
-							<v-text-field class="vtext"  
-							type="text" placeholder="Username" 
-							:value="usuario.username"
-							v-model="usuario.username"
-							@input="setUsername"></v-text-field>
-						</float-label>
-					</el-form-item>
-				</el-col>
-				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-					<el-form-item label="Email">
-						<el-input  
-                        :value="usuario.email"
-						v-model="usuario.email"
-					    @input="setEmail"
-                        />
-					</el-form-item>
-				</el-col>
+		<el-form width="200px" ref="userCreateForm" label-width="120px" size="mini" :label-position="labelPosition">
+			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+				<h3>Informacion basica</h3>
 			</el-col>
-			<el-col>
-				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-					<el-form-item label="Nombre">
-						<el-input  
-                        :value="usuario.nombre"
-						v-model="usuario.nombre"
-					    @input="setNombre"
-                        />
-					</el-form-item>
-				</el-col>
-				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-					<el-form-item label="Apellido">
-						<el-input  
-                        :value="usuario.apellido"
-						v-model="usuario.apellido"
-					    @input="setApellido"
-                        />
-					</el-form-item>
-				</el-col>
+			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+				<el-form-item label="Nombre">
+					<el-input  
+					:value="usuario.nombre"
+					@input="setNombre"
+					/>
+				</el-form-item>
 			</el-col>
-			
-			<el-col>
-                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-					<el-form-item label="Cedula">
-						<el-input  
-                        :value="usuario.cedula"
-						v-model="usuario.cedula"
-					    @input="setCedula"
-                        />
-					</el-form-item>
-				</el-col>
-				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-					<el-form-item label="Fijo">
-						<el-input  
-                        :value="usuario.tel_fijo"
-						v-model="usuario.tel_fijo"
-					    @input="setTelFijo"
-                        />
-					</el-form-item>
-				</el-col>
+			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+				<el-form-item label="Apellido">
+					<el-input  
+					:value="usuario.apellido"
+					@input="setApellido"
+					/>
+				</el-form-item>
+			</el-col>
+			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+				<el-form-item label="Cedula">
+					<el-input  
+					:value="usuario.cedula"
+					@input="setCedula"
+					/>
+				</el-form-item>
+			</el-col>
+			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+				<el-form-item label="Email">
+					<el-input  
+					:value="usuario.email"
+					@input="setEmail"
+					/>
+				</el-form-item>
+			</el-col>
+			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+				<el-form-item label="Fijo">
+					<el-input  
+					:value="usuario.tel_fijo"
+					@input="setTelFijo"
+					/>
+				</el-form-item>
+			</el-col>
+			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+				<el-form-item label="Celular">
+					<el-input  
+					:value="usuario.tel_mobil"
+					@input="setTelMobil"
+					/>
+				</el-form-item>
+			</el-col>
+			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+				<el-form-item label="Direccion">
+					<el-input  
+					:value="usuario.direccion"
+					@input="setDireccion"
+					/>
+				</el-form-item>
+			</el-col>
+			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+				<el-form-item label="Ciudad">
+					<el-input  
+					:value="usuario.ciudad"
+					@input="setCiudad"
+					/>
+				</el-form-item>
+			</el-col>
+			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+				<el-form-item label="Departamento">
+					<el-input  
+						:value="usuario.departamento"
+						@input="setDepartamento"
+					/>
+				</el-form-item>
+			</el-col>
 				
+			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+				<h3>Roles</h3>
 			</el-col>
-			<el-col>
-                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-					<el-form-item label="Mobil">
-						<el-input  
-                        :value="usuario.tel_mobil"
-					    @input="setTelMobil"
-						v-model="usuario.tel_mobil"
-                        />
-					</el-form-item>
-				</el-col>
-				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-					<el-form-item label="Direccion">
-						<el-input  
-                        :value="usuario.direccion"
-						v-model="usuario.direccion"
-					    @input="setDireccion"
-                        />
-					</el-form-item>
-				</el-col>
 		
-                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-					<el-form-item label="Roles">
-						<el-select
+			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+				<el-form-item>
+					<el-select
+						v-model="selectedRoles"
 						class="select-wide"
 						filterable
 						multiple
 						no-match-text
-						v-model="selectedRoles"
 						placeholder="Seleccione...">
-							<el-option
-							v-if="roles"
-							v-for="item in roles"
-							:key="item.id"
-							:label="item.nombre"
-							:value="item.id">
-							</el-option>
-						</el-select>
-					</el-form-item>
-				</el-col>
-				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-					<el-form-item label="Ciudad">
-						<el-input 
-						v-model="usuario.ciudad" 
-                        :value="usuario.ciudad"
-					    @input="setCiudad"
-                        />
-					</el-form-item>
-				</el-col>
-			</el-col>
-			
-			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-				<el-form-item label="Departamento">
-					<el-input  
-                        :value="usuario.departamento"
-						v-model="usuario.departamento"
-					    @input="setCiudad"
-                        />
+						<el-option
+						v-for="item in roles"
+						:key="item.id"
+						:label="item.nombre"
+						:value="item.id">
+						</el-option>
+					</el-select>
 				</el-form-item>
 			</el-col>
+		
+			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+				<h3>Credenciales</h3>
+			</el-col>
+			
+		
+			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+				<el-form-item label="Username">
+						<el-input  
+						:value="usuario.username"
+						@input="setUsername"
+						/>
+					</el-form-item>
+			</el-col>
+			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+				<el-form-item label="Contraseña">
+					<el-input :value="usuario.password" @imput="setPassword" class="input-with-select">
+						<el-button @click="genPass" slot="append">Generar</el-button>
+					</el-input>
+				</el-form-item>
+			</el-col>
+
+			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+				<h3>Estado</h3>
+			</el-col>
+
 			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
 				<el-form-item>
 					<el-switch
@@ -138,7 +139,9 @@
 				</el-form-item>
 			</el-col>
 			
+			
 		</el-form>
+
 	</div>
 </div>
 	

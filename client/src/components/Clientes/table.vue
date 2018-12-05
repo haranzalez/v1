@@ -68,19 +68,19 @@
 	</el-dialog>
 
 	<!--Edit cliente dialog form -->
-	<el-dialog width="40%" top="5vh" :title="cliente.nombre_razon_social" :visible.sync="editFormVisible">
+	<el-dialog fullscreen width="40%" top="5vh" :visible.sync="editFormVisible">
 		<ClientesEditForm></ClientesEditForm>
 		<span slot="footer" class="dialog-footer">
-			<el-button @click="editFormVisible = false;">Cancelar</el-button>
-			<el-button type="primary" @click="editCliente">Actualizar</el-button>
+			<el-button size="mini" @click="editFormVisible = false;">Cancelar</el-button>
+			<el-button size="mini" type="primary" @click="editCliente">Actualizar</el-button>
 		</span>
 	</el-dialog>
 	<!--Create cliente dialog form -->
-	<el-dialog width="40%" top="5vh" title="Nuevo cliente" :visible.sync="createFormVisible">
+	<el-dialog fullscreen width="40%" top="5vh" :visible.sync="createFormVisible">
 		<ClientesCreateForm></ClientesCreateForm>
 		<span slot="footer" class="dialog-footer">
-			<el-button @click="createFormVisible = false; paramsReset(); setDataReady(false);">Cancelar</el-button>
-			<el-button type="primary" @click="create_client">Crear</el-button>
+			<el-button size="mini" @click="createFormVisible = false; paramsReset(); setDataReady(false);">Cancelar</el-button>
+			<el-button size="mini" type="primary" @click="create_client">Crear</el-button>
 		</span>
 	</el-dialog>
 
@@ -100,7 +100,7 @@
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
 			<div style="padding: 3px 0;">
 				<el-row style="text-align: right;">
-					<el-button type="default" size="mini" @click="reloadTable('clients')" style="margin-right:5px;"><i class="mdi mdi-reload"></i></el-button>
+					<el-button type="default" size="mini" @click="reloadTable('clientes')" style="margin-right:5px;"><i class="mdi mdi-reload"></i></el-button>
 					<el-button type="default" size="mini" @click="exportTable" style="margin-right:5px;"><i class="mdi mdi-file-excel"></i></el-button>
 					<el-dropdown trigger="click" @command="handleAction">  
 						<el-button size="mini">
@@ -313,6 +313,7 @@ export default {
 			'createCliente',
 			'delCliente',
 			'editCliente',
+			'fetchCliente',
 		]),
 //=============================//
 //========== Components Functions =========//
@@ -393,7 +394,7 @@ export default {
 				this.setDataReady(false)
 				return
 			}
-			this.setFullCliente(val)
+			this.fetchCliente(val.id)
 			this.setDataReady(true)
 			this.$refs.clientsTable.setCurrentRow(val);
 			this.fetchCuadresRutas()

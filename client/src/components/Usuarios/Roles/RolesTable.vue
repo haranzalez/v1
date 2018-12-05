@@ -146,6 +146,7 @@ export default {
 			'pushToCreateRole',
 			'delRole',
 			'extractPermisos',
+			'fetchPermisos',
 		]),
 		exportTable(){
 			exportService.toXLS(this.rolesList, 'Roles', true)

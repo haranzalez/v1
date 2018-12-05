@@ -18,7 +18,9 @@ export default {
            celular: null,
            persona_de_contacto: null,
            direccion_envio_de_factura: null,
-           tipo_contrato: null,
+           contrato: null,
+           cupo: null,
+           dias: null,
            created_at: null,
         },
         clientesList: null,
@@ -31,7 +33,27 @@ export default {
         loadingCuadreProductoTable: false,
         loadingCuadreServicioTable: false,
         currentCuadresTab: 'Rutas',
-        headings: [],   
+        headings: [], 
+        selectedContrato: '',
+        selectedDias: '', 
+        contratoOptions: [{
+            tipo: 'tipo 1',
+        },
+        {
+            tipo: 'tipo 2',
+        },
+        {
+            tipo: 'tipo 3',
+        }],
+        diasOptions: [{
+            dias: '30 dias.',
+        },
+        {
+             dias: '60 dias.',
+        },
+        {
+             dias: '90 dias.',
+        }] 
     },
 
     actions: {
@@ -81,11 +103,12 @@ export default {
                 celular: state.cliente.celular,
                 persona_de_contacto: state.cliente.persona_de_contacto,
                 direccion_envio_de_factura: state.cliente.direccion_envio_de_factura,
-                tipo_contrato: state.cliente.tipo_contrato,
+                contrato: state.cliente.contrato,
+                cupo: state.cliente.cupo,
+                dias: state.cliente.dias,
             })
             .then(d => {
                 if(d.data.message == "success"){
-                    commit('setFullCliente', d.data.cliente)
                     Message({
                         type: 'success',
                         showClose: true,
@@ -112,7 +135,9 @@ export default {
                 celular: state.cliente.celular,
                 persona_de_contacto: state.cliente.persona_de_contacto,
                 direccion_envio_de_factura: state.cliente.direccion_envio_de_factura,
-                tipo_contrato: state.cliente.tipo_contrato,
+                contrato: state.cliente.contrato,
+                cupo: state.cliente.cupo,
+                dias: state.cliente.dias,
             })
             .then(d => {
                 console.log(d)
@@ -137,6 +162,17 @@ export default {
                     })
                     router.push('/Clientes')
                 }
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
+        fetchCliente({commit}, id){
+            HTTP().local.get('api/clientes/'+id)
+            .then(d => {
+                commit('setSelectedContrato', d.data.tipo_negociacion.contrato)
+                commit('setSelectedDias', d.data.tipo_negociacion.dias)
+                commit('setFullCliente', d.data)
             })
             .catch(err => {
                 console.log(err)
@@ -232,8 +268,17 @@ export default {
         setDireccionEnvioDeFactura(state, value){
             state.cliente.direccion_envio_de_factura = value
         },
-        setTipoContrato(state, value){
-            state.cliente.tipo_contrato = value
+        setSelectedContrato(state, value){
+            state.cliente.contrato = value
+            state.selectedContrato = value
+        },
+        
+        setSelectedDias(state, value){
+            state.cliente.dias = value
+            state.selectedDias = value
+        },
+        setCupo(state, value){
+            state.cliente.cupo = value
         },
         setCelular(state, value){
             state.cliente.celular = value

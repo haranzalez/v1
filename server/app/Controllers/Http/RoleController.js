@@ -24,7 +24,7 @@ class RoleController {
 
   async fetchOne ({ params }) {
     const { id } = params;
-    const role = await Role.query().with('modulos.subModulo.permisos').where('id', id).fetch();
+    const role = await Role.find(id);
     return role;
   }
 
@@ -119,6 +119,25 @@ class RoleController {
       builder.where('role_id', role_id)
     }).where('id', role_id).fetch();
     
+  }
+
+  async fetchPermisos({params}){
+    const { id } = params
+    var role = await Role.find(id)
+    role = await role.modulos().with('subModulo.permisos').fetch()
+    for(let prop in role.rows){
+      for(let prop2 in role.rows[prop].$relations.subModulo.rows){
+        if(role.rows[prop].$relations.subModulo.rows[prop2].$relations.permisos.rows[0] != null){
+          role.rows[prop].$relations.subModulo.rows[prop2].$relations.permisos = {
+            editar:role.rows[prop].$relations.subModulo.rows[prop2].$relations.permisos.rows[0]['editar'],
+            crear:role.rows[prop].$relations.subModulo.rows[prop2].$relations.permisos.rows[0]['crear'],
+            eliminar:role.rows[prop].$relations.subModulo.rows[prop2].$relations.permisos.rows[0]['eliminar'],
+          }
+          role.rows[prop].$relations.subModulo.rows[prop2].$relations.permisos
+        }
+      }
+    }
+    return role
   }
 }
 

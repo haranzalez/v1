@@ -3,7 +3,7 @@
         <div v-for="(per, key) in permisosDisponibles" :key="per" class="inputGroup">
             <input 
             :disabled="(permisos['Roles'].editar)? false:true"
-            :checked="permisosSeleccionados[per]"
+            :checked="checked[per]"
             type="checkbox" 
             @change="handleCheck($event)"
             :value="per"
@@ -33,7 +33,7 @@ export default {
 			'permisos',
 		]),
     },
-    props: ['checked', 'subName', 'roleName'],
+    props: ['permiso', 'subName', 'roleName'],
     methods: {
         ...mapMutations('roles', [
             'setSelectedPermisos',
@@ -41,12 +41,11 @@ export default {
         handleCheck(event){
             this.permisosSeleccionados[event.target.value] = event.target.checked
             this.setSelectedPermisos(this.permisosSeleccionados)
-            console.log(this.permisosSeleccionados)
         },
        
     },
      created(){
-            console.log(this.checked)
+         console.log(this.checked)
             this.permisosSeleccionados = this.checked
         }
    

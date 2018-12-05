@@ -1,5 +1,6 @@
 'use strict'
 const Cliente = use('App/Models/Cliente')
+const TipoNegociacion = use('App/Models/ClienteTipoNegociacion')
 class ClienteController {
     //READ
     async get_all_clientes({ params }){
@@ -7,10 +8,14 @@ class ClienteController {
     }
 
     async get_cliente({ params }){
+        console.log(params)
         const { id } = params;
-        return await Cliente.query()
-        .with('cuadre_viaje')
+        const client = await Cliente.query()
+        .with('tipo_negociacion')
+        .with('deposito')
         .where('id', id).fetch()
+        console.log(client.rows[0])
+        return (client.rows.length > 0)?client.rows[0]:[]
     }
     async get_cuadres_viajes({ params }){
         const { id } = params;
@@ -63,7 +68,9 @@ class ClienteController {
             celular,
             persona_de_contacto,
             direccion_envio_de_factura,
-            tipo_contrato 
+            contrato,
+            cupo,
+            dias,
         } = request.all()
             
         const cliente = await Cliente.create({
@@ -76,12 +83,17 @@ class ClienteController {
             celular,
             persona_de_contacto,
             direccion_envio_de_factura,
-            tipo_contrato,
+        })
+
+        await TipoNegociacion.create({
+            cliente_id: cliente.id,
+            contrato,
+            cupo,
+            dias,
         })
 
         return {
-            message: "success",
-            cliente: cliente,
+            message: "success"
         }
     }
     //UPDATE
@@ -98,7 +110,9 @@ class ClienteController {
             celular,
             persona_de_contacto,
             direccion_envio_de_factura,
-            tipo_contrato,
+            contrato,
+            cupo,
+            dias,
         } = request.all()
 
         cliente.nombre_razon_social = nombre_razon_social 
@@ -110,10 +124,27 @@ class ClienteController {
         cliente.celular = celular
         cliente.persona_de_contacto = persona_de_contacto
         cliente.direccion_envio_de_factura = direccion_envio_de_factura
-        cliente.tipo_contrato = tipo_contrato
         cliente.save()
 
-        return cliente
+        const neg = await cliente.tipo_negociacion().fetch()
+        if(neg !== null){
+            neg.contrato = contrato
+            neg.cupo = cupo
+            neg.dias = dias
+            neg.save()
+        }else{
+            await TipoNegociacion.create({
+                cliente_id: cliente.id,
+                contrato,
+                cupo,
+                dias,
+            })
+        }
+       
+
+        return {
+            message: 'success',
+        }
 
     }
 

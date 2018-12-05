@@ -13,7 +13,6 @@ export default {
             nombre: null,
             description: null,
         },
-      
         modules: null,
         allModules: null,
         rolesList: null,
@@ -100,17 +99,19 @@ export default {
                 console.log(err)
             })
         },
-        fetchRole({state, commit},id){
+        fetchRole({commit, dispatch},id){
             HTTP().local.get('api/roles/'+id)
             .then(d => {
-                commit('setRoleToEdit', d.data[0])
-                if(d.data[0].modulos.length > 0){
-                    commit('setModules', d.data[0].modulos)
-                    commit('setModulesAvailable', true)
-                }else{
-                    commit('setModulesAvailable', false)
-                }
-                
+                commit('setRoleToEdit', d.data)
+                dispatch('fetchPermisos')
+            }).catch(err => {
+                console.log(err)
+            })
+        },
+        fetchPermisos({state, commit}){
+            HTTP().local.get('api/roles/'+state.roleToEdit.id+'/permisos')
+            .then(d => {
+               commit('setModules', d.data)
             }).catch(err => {
                 console.log(err)
             })

@@ -35,7 +35,6 @@ import HTTP from '../../../../http';
     watch: {
         'selected' : function(value){
             this.setSelectedModules(value[0])
-            console.log(this.selectedModulos)
             return this.selectedModulos
         }
     },

@@ -1,11 +1,11 @@
 <template>
    <vue-scroll class="page-vehiculos-create">
-       <el-form label-position="top" ref="form" label-width="120px">
+       <el-form size="mini" label-position="top" ref="form" label-width="120px">
         <el-row>
-            <el-col :span="12" :md="12" :sm="24" :xs="24">
+            <h3>Info</h3>
 				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Nombre razon social">
-                        <el-input size="mini"
+                        <el-input size="mini" 
                         @input="setNombreRazonSocial"
                         placeholder="">
                         </el-input>
@@ -13,7 +13,7 @@
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="NIT">
-                        <el-input size="mini"
+                        <el-input size="mini" 
                         @input="setNit"
                         placeholder="">
                         </el-input>
@@ -21,7 +21,7 @@
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Direccion">
-                        <el-input size="mini"
+                        <el-input size="mini" 
                         @input="setDireccion"
                         placeholder="">
                         </el-input>
@@ -29,7 +29,7 @@
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Ciudad">
-                        <el-input size="mini"
+                        <el-input size="mini" 
                         @input="setCiudad"
                         placeholder="">
                         </el-input>
@@ -37,18 +37,15 @@
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Email">
-                        <el-input size="mini"
+                        <el-input size="mini" 
                         @input="setEmail"
                         placeholder="">
                         </el-input>
                     </el-form-item>
 				</el-col>
-            </el-col>
-
-            <el-col :span="12" :md="12" :sm="24" :xs="24">
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Telefono">
-                        <el-input size="mini"
+                        <el-input size="mini" 
                         @input="setTelefono"
                         placeholder="">
                         </el-input>
@@ -56,7 +53,7 @@
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Celular">
-                        <el-input size="mini"
+                        <el-input size="mini" 
                         @input="setCelular"
                         placeholder="">
                         </el-input>
@@ -64,7 +61,7 @@
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Persona de contacto">
-                        <el-input size="mini"
+                        <el-input size="mini" 
                         @input="setPersonaDeContacto"
                         placeholder="">
                         </el-input>
@@ -72,27 +69,55 @@
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Direccion envio de factura">
-                        <el-input size="mini"
+                        <el-input size="mini" 
                         @input="setDireccionEnvioDeFactura"
                         placeholder="">
                         </el-input>
                     </el-form-item>
 				</el-col>
+                <h3>Tipo de contrato</h3>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Tipo de contrato">
-                        <el-input size="mini"
-                        @input="setTipoContrato"
-                        placeholder="">
-                        </el-input>
-                    </el-form-item>
+                    <el-row>
+                        <el-col :span="8" :md="8" :sm="24" :xs="24">
+                            <el-form-item label="Contrato" >
+                                <el-select @change="setSelectedContrato" :value="selectedContrato" placeholder="Select">
+                                    <el-option
+                                    v-for="item in contratoOptions"
+                                   :key="item.tipo"
+                                    :label="item.tipo"
+                                    :value="item.tipo">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="8" :md="8" :sm="24" :xs="24">
+                            <el-form-item label="Dias" class="padding">
+                                <el-select @change="setSelectedDias" :value="selectedDias" placeholder="Select">
+                                    <el-option
+                                    v-for="item in diasOptions"
+                                   :key="item.dias"
+                                    :label="item.dias"
+                                    :value="item.dias">
+                                    </el-option>
+                                </el-select>
+                                
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="8" :md="8" :sm="24" :xs="24">
+                            <el-form-item label="Cupo">
+                                <el-input size="mini" 
+                                :value="cliente.cupo"
+                                @input="setCupo"
+                                placeholder="">
+                                </el-input>
+                            </el-form-item>
+                        </el-col>
+                         
+                    </el-row>
+                    
 				</el-col>
-            </el-col>
-
         </el-row>
-        
-        
-            
-        </el-form>
+    </el-form>
    </vue-scroll>
 </template>
 
@@ -106,7 +131,8 @@ export default {
 	name: 'RutasCreateForm',
 	data () {
       	return {
-             
+            selectedContrato: '',
+            selectedDias: '',
 		}
 	},
 	computed: {
@@ -116,9 +142,21 @@ export default {
         ]),
         ...mapState('clientes', [
             'cliente',
+            'contratoOptions',
+            'diasOptions',
+            'selectedContrato',
+            'selectedDias',
         ]),
 
-	},
+    },
+     watch: {
+        'selectedContrato': function(value){
+            this.setContrato(value)
+        },
+        'selectedDias': function(value){
+            this.setDias(value)
+        },
+    },
 	components: {
 	},
     methods: {
@@ -140,6 +178,9 @@ export default {
             'setDireccionEnvioDeFactura',
             'setTipoContrato',
             'setCelular',
+            'setSelectedContrato',
+            'setSelectedDias',
+            'setCupo',
         ]),
        
     },
@@ -152,6 +193,9 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../assets/scss/_variables';
+.padding{
+    padding:0px 5px;
+}
 .page-vehiculos-create {
 	.label-switch-box {
 		display: block;

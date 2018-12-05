@@ -1,8 +1,8 @@
 <template>
    <vue-scroll class="page-trailers-create">
-       <el-form label-position="top" ref="form" label-width="120px">
+       <el-form size="mini" label-position="top" ref="form" label-width="120px">
         <el-row>
-            <el-col :span="12" :md="12" :sm="24" :xs="24">
+            <h3>Info</h3>
 				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Nombre razon social">
                         <el-input size="mini" 
@@ -48,9 +48,6 @@
                         </el-input>
                     </el-form-item>
 				</el-col>
-            </el-col>
-
-            <el-col :span="12" :md="12" :sm="24" :xs="24">
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Telefono">
                         <el-input size="mini" 
@@ -87,16 +84,48 @@
                         </el-input>
                     </el-form-item>
 				</el-col>
+                <h3>Tipo de contrato</h3>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Tipo de contrato">
-                        <el-input size="mini" 
-                        :value="cliente.tipo_contrato"
-                        @input="setTipoContrato"
-                        placeholder="">
-                        </el-input>
-                    </el-form-item>
+                    <el-row>
+                        <el-col :span="8" :md="8" :sm="24" :xs="24">
+                            <el-form-item label="Contrato">
+                                <el-select @change="setSelectedContrato" :value="selectedContrato" placeholder="Select">
+                                    <el-option
+                                    v-for="item in contratoOptions"
+                                   :key="item.tipo"
+                                    :label="item.tipo"
+                                    :value="item.tipo">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="8" :md="8" :sm="24" :xs="24">
+                            <el-form-item label="Dias" class="padding">
+                                <el-select @change="setSelectedDias" :value="selectedDias" placeholder="Select">
+                                    <el-option
+                                    v-for="item in diasOptions"
+                                   :key="item.dias"
+                                    :label="item.dias"
+                                    :value="item.dias">
+                                    </el-option>
+                                </el-select>
+                                
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="8" :md="8" :sm="24" :xs="24">
+                            <el-form-item label="Cupo">
+                                <el-input size="mini" 
+                                :value="(cliente.tipo_negociacion !== null)?cliente.tipo_negociacion.cupo:0"
+                                @input="setCupo"
+                                placeholder="">
+                                </el-input>
+                            </el-form-item>
+                        </el-col>
+                         
+                    </el-row>
+                    
 				</el-col>
-            </el-col>
+      
 
         </el-row>
         
@@ -116,9 +145,9 @@ export default {
 	name: 'RutasEditForm',
 	data () {
       	return {
-             
+
 		}
-	},
+    },
 	computed: {
         
         ...mapState('authentication', [
@@ -126,6 +155,10 @@ export default {
         ]),
         ...mapState('clientes', [
             'cliente',
+            'contratoOptions',
+            'diasOptions',
+            'selectedContrato',
+            'selectedDias',
         ]),
 
 	},
@@ -163,8 +196,10 @@ export default {
             'setCelular',
             'setPersonaDeContacto',
             'setDireccionEnvioDeFactura',
-            'setTipoContrato',
+            'setCupo',
             'setCelular',
+            'setSelectedDias',
+            'setSelectedContrato'
         ]),
         title(field){
             field = field.split('_').join(' ')
@@ -182,6 +217,9 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../assets/scss/_variables';
+.padding{
+    padding:0px 5px;
+}
 .page-trailers-create {
 	.label-switch-box {
 		display: block;

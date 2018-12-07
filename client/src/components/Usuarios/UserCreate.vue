@@ -106,7 +106,7 @@
 			</el-col>
 			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
 				<el-form-item label="Contraseña">
-					<el-input :value="usuario.password" @imput="setPassword" class="input-with-select">
+					<el-input :value="usuario.password" @input="setPassword" class="input-with-select">
 						<el-button @click="genPass" slot="append">Generar</el-button>
 					</el-input>
 				</el-form-item>
@@ -128,13 +128,23 @@ export default {
 	data() {
 		return {
 			labelPosition: 'top',
-			selectedRoles: [],
 		}
 	},
 	computed:{
+		selectedRoles: {
+			get: function(value){
+				console.log(value)
+				return this.selected
+			},
+			set: function(value){
+				console.log(value)
+				this.setSelectedRoles(value)
+			}
+		},
 		...mapState('users', [
 			'usuario',
 			'roles',
+			'selected',
 		]),
 		...mapState('authentication', [
 			'permisos',
@@ -160,6 +170,7 @@ export default {
 			'setPassword',
 			'setRoles',
 			'setEstado',
+			'setSelectedRoles',
         ]),
          ...mapActions('users', [
             'fetchRolesList',

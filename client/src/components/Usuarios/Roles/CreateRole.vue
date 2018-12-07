@@ -36,7 +36,7 @@
 <script>
 import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
 import RoleModuloEdit from './Modulos/RoleModuloEdit'
-import ModuloSelectList from './Modulos/ModuloSelectList'
+import ModuloTransfer from './Modulos/ModuloTransfer'
 export default {
     name: 'RoleCreate',
     computed: {
@@ -50,7 +50,7 @@ export default {
     },
     components: {
         RoleModuloEdit,
-        ModuloSelectList,
+        ModuloTransfer,
     },
     methods: {
         ...mapMutations('roles',[

@@ -10,6 +10,7 @@ const Encryption = require('crypto');
 const PasswordRequest = use('App/Models/PasswordRequest')
 const UserLogService = use('App/Services/UsersLogService');
 const Logs = use('App/Models/UserLog')
+const Database = use('Database')
 
 
 class UserController {
@@ -34,12 +35,15 @@ class UserController {
   async login ({ auth, request }) {
     var log = new UserLogService()
     const { username, password } = request.all();
+    console.log(username, password)
     const token = await auth.attempt(username,password);
+    console.log(token)
     const user = await User.query()
     .with('roles.modulos.subModulo.permisos')
     .where('username', username).fetch();
     const userId = user.rows[0].id
     const logResult = await log.login(request.ip(),token.token, userId)
+    console.log(user)
     return {
       user,
       token,
@@ -62,24 +66,37 @@ class UserController {
    * GET users/create
    */
   async create ({ request }) {
-    const { roles } = request.all();
-    const user = await User.create(request.only([
-      'nombre', 
-      'apellido',
-      'cedula', 
-      'tel_fijo',
-      'tel_mobil',
-      'direccion',
-      'ciudad',
-      'departamento',
-      'username', 
-      'email', 
-      'password', 
-    ])) 
+    const { roles,
+      nombre,
+      apellido,
+      cedula,
+      tel_fijo,
+      tel_mobil,
+      direccion,
+      ciudad,
+      departamento,
+      username,
+      email,
+      password } = request.all();
+   
+    const user = await User.create({
+      nombre,
+      apellido,
+      cedula,
+      tel_fijo,
+      tel_mobil,
+      direccion,
+      ciudad,
+      departamento,
+      username,
+      email,
+      password,
+    }) 
 
-    if(roles && roles.length > 0){
+    if(roles.length > 0){
       await user.roles().attach(roles)
     }
+
     this.sendPassword(request.only(['email']))
     return {
       message: 'success'
@@ -95,11 +112,15 @@ class UserController {
     const { roles } = request.all();
     const user = await User.find(id);
     const old = await User.find(id);
-    old.roles = await old.roles().fetch()
-
-    if(roles && roles.length > 0){
+    const oldRoles = await old.roles().fetch()
+    console.log(roles)
+    if(roles.length > 0){
+      if(oldRoles.rows.length > 0){
+        for(var prop in oldRoles.rows){
+          await user.roles().detach(oldRoles.rows[prop].id)
+        }
+      }
       await user.roles().attach(roles)
-      user.roles = await user.roles().fetch()
     }
 
     user.merge(request.only([
@@ -112,16 +133,12 @@ class UserController {
       'ciudad',
       'departamento',
       'username', 
-      'email', 
-      'password', 
       'estado',
     ]))
     user.save();
 
     return {
-      message: 'Updated!',
-      old: old,
-      new: user
+      message: 'success'
     }
 
   }
@@ -268,9 +285,10 @@ class UserController {
       const { id } = params
       const { estado } = request.all()
 
-      const user = await User.find(id)
-      user.estado = estado
-      user.save()
+      await Database
+      .table('users')
+      .where('id', id)
+      .update('estado', estado)
       return {
         message: 'success'
       }

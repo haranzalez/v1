@@ -1,11 +1,11 @@
 <template>
     <div>
-        <div v-for="(per, key) in permisosDisponibles" :key="per" class="inputGroup">
+        <div v-for="(per, key) in availablePermisos" :key="per" class="inputGroup">
             <input 
             :disabled="(permisos['Roles'].editar)? false:true"
-            :checked="checked[per]"
+            :checked="permisosOps[roleToEdit.nombre][modName][subName][per]"
             type="checkbox" 
-            @change="handleCheck($event)"
+            @change="handleCheck($event, permisosOps[roleToEdit.nombre][modName][subName]['subId'])"
             :value="per"
             >
             <label :for="per">{{per}}</label>
@@ -20,34 +20,43 @@ import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
 export default {
     data(){
         return {
-            permisosDisponibles: ['editar', 'crear', 'eliminar'],
-            permisosSeleccionados: null,
+            
+            permisosSeleccionados: {},
             pkg: {},
         }
     },
     computed: {
+        permisosDisponibles(){
+            console.log(this.availablePermisos[this.roleToEdit.nombre])
+            return ['editar', 'crear', 'eliminar']
+        },
         ...mapState('roles',[
-            'rolePermisos',
+            'roleToEdit',
+            'permisosOps',
+            'availablePermisos',
         ]),
          ...mapState('authentication', [
 			'permisos',
 		]),
     },
-    props: ['permiso', 'subName', 'roleName'],
+    props: ['modName', 'subName'],
     methods: {
         ...mapMutations('roles', [
             'setSelectedPermisos',
         ]),
-        handleCheck(event){
-            this.permisosSeleccionados[event.target.value] = event.target.checked
-            this.setSelectedPermisos(this.permisosSeleccionados)
+         ...mapActions('roles', [
+            'setPermisos',
+        ]),
+        handleCheck(event, subid){
+            this.setSelectedPermisos({
+                op:event.target.value,
+                value: event.target.checked
+            })
+            this.setPermisos(subid)
+            console.log(event.target.checked, subid)
         },
-       
     },
-     created(){
-         console.log(this.checked)
-            this.permisosSeleccionados = this.checked
-        }
+ 
    
 
 }

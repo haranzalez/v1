@@ -1,9 +1,8 @@
 <template>
 <div v-if="op">
-        <el-collapse>
-            <el-collapse-item  v-for="mod in modules" :key="mod.id" :title="mod.nombre">
-        
-                <el-tabs   :tab-position="tabPosition">
+        <el-collapse v-model="selectedMod" @change="handleSelectedModChange">
+            <el-collapse-item :name="roleToEdit.nombre + '-' + mod.nombre"  v-for="mod in modules" :key="roleToEdit.nombre + '-' + mod.nombre" :title="mod.nombre">
+                <el-tabs v-model="activeTabs[mod.nombre]" :tab-position="tabPosition">
                     <el-tab-pane 
                         v-for="sub in mod.subModulo" 
                         :key="sub.id" 
@@ -14,19 +13,26 @@
                         <p><b>Permisos {{sub.nombre}}</b></p>
                         <div style="margin: 15px 0;"></div>
                         
-                    <permisos-checkboxes :permiso="permisosOps[sub.nombre]" :roleName="roleName" :subName="sub.nombre"></permisos-checkboxes>
-                    
-                        <div class="btn-ctn">
-                            <el-button type="primary" :disabled="(permisos['Roles'].editar)? false:true" @click="actualizarPermisos(mod.nombre, sub.nombre, sub.id)" size="mini" round plain>Actualizar permisos</el-button>
-                        </div>
+                     <div v-for="(per, key) in availablePermisos[roleToEdit.nombre][mod.nombre][sub.nombre]" :key="roleToEdit.nombre + '-' + mod.nombre + '-' + mod.nombre + '-' +per" class="inputGroup">
+                  
+                        <input 
+                            :disabled="(permisos['Roles'].editar)? false:true"
+                            :checked="permisosOperation[roleToEdit.nombre][mod.nombre][sub.nombre][per]"
+                            type="checkbox" 
+                            @change="handlePermisosCheck($event, permisosOperation[roleToEdit.nombre][mod.nombre][sub.nombre]['subId'])"
+                            :value="roleToEdit.nombre + '-' + mod.nombre + '-' + sub.nombre + '-' + per"
+                            :name="roleToEdit.nombre + '-' + mod.nombre + '-' + sub.nombre + '-' + per"
+                        >
+                        <label :for="roleToEdit.nombre + '-' + mod.nombre + '-' + mod.nombre + '-' +per">{{per}}</label>
+  
+                    </div>
+                    {{permisosOperation[roleToEdit.nombre]}}
                         
                     </el-tab-pane>
                 </el-tabs>
-                
             </el-collapse-item>
         </el-collapse>
-
-    </div>
+</div>
 
 </template>
 
@@ -39,11 +45,12 @@ import PermisosCheckboxes from './PermisosCheckBoxes'
     data() {
       return {
         activo: ['1'],
+        selectedMod: '',
         checkAll: {},
         activeName: {},
-        permisosOps: {},
         isIndeterminate: {},
         tabPosition: 'top',
+       
       };
     },
     components:{
@@ -51,45 +58,69 @@ import PermisosCheckboxes from './PermisosCheckBoxes'
     },
     props: ['role-name', 'op'],
     computed: {
+        permisosOperation:{
+           cache: false,
+           get: function(){
+               return this.permisosOps
+           }
+        },
         ...mapState('roles', [
+            'permisosReady',
             'modules',
             'roleToEdit',
             'roleModuleDialogeVisible',
             'modulesAvailable',
+            'permisosOps',
+            'activeTabs',
+            'availablePermisos',
+            'renderReady',
         ]),
         ...mapState('authentication', [
 			'permisos',
-		]),
+        ]),
+        
         
     },
     methods: {
+        availablePermisosMethod(role, mod, sub){
+           this.fetchPermisos('ns')
+           return availablePermisos[role][mod][sub]
+        },
         ...mapMutations('roles', [
             'setSelectedPermisos',
             'setModuleListDialogeVisible',
+            'setPermisosOps',
         ]),
         ...mapActions('roles', [
             'edit',
             'setPermisos',
+            'fetchPermisos',
+            'renderPermisos',
         ]),
       actualizarPermisos(modName,subName, subId) {
         this.setPermisos(subId)
       },
-      handleCheckAllChange(event, subName) {
-        for(let prop in this.permisosSeleccionados[subName]){
-            this.permisosSeleccionados[subName][prop] = event
-        }
-        this.isIndeterminate[subName] = false;
+      handleSelectedModChange(value){
+          console.log(value)
+          this.selectedMod = value
       },
-      handleCheckedPermisoChange(event, subName,modName, op) {
-        this.permisosSeleccionados[this.roleName][modName][subName][op] = event;
-      },
+      handlePermisosCheck(event, subid){
+        var value = event.target.value
+        value = value.split('-')
+        value = value[3]
+        this.setSelectedPermisos({
+            op:value,
+            value: event.target.checked
+        })
+        this.setPermisos(subid)
+        console.log(event.target.checked, subid)
+    },
      
     },
     created(){
-        for(let prop in this.modulos.subModulo){
-            this.permisosOps[this.modulos.subModulo[prop].nombre] = this.modulos.subModulo[prop].permisos
-        }
+       
     }
+ 
   }
 </script>
 

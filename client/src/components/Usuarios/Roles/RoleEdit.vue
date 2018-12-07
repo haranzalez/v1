@@ -14,28 +14,29 @@
             </div>
         </el-col>
         <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+            <h3>Modulos</h3>
+            <ModuloTransfer op="edit"></ModuloTransfer>
+        </el-col>
+        <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
             <h3>Permisos</h3>
             <RoleModuloEdit :role-name="roleToEdit.nombre" :op="true"></RoleModuloEdit>
         </el-col>
-        <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
-            <h3>Modulos</h3>
-            <ModuloSelectList op="edit"></ModuloSelectList>
-        </el-col>
+        
     </el-row>
 </template>
 
 <script>
 import router from '../../../router'
 import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
+//components
 import RoleModuloEdit from './Modulos/RoleModuloEdit'
-import ModuloSelectList from './Modulos/ModuloSelectList'
+import ModuloTransfer from './Modulos/ModuloTransfer'
+
 export default {
     name: 'RoleEdit',
     computed: {
         ...mapState('roles', [
             'roleToEdit',
-            'modules',
-            'modulesAvailable',
         ]),
         ...mapState('authentication', [
             'permisos'
@@ -43,59 +44,15 @@ export default {
     },
     components: {
         RoleModuloEdit,
-        ModuloSelectList,
+        ModuloTransfer,
     },
     methods: {
         ...mapMutations('roles',[
             'setRoleToEditNombre',
             'setRoleToEditDescription',
-            'setModuleListDialogeVisible',
-            'setRoleModuleDialogeVisible',
-            'setSelectedModules',
         ]),
-        ...mapActions('roles', [
-            'edit',
-            'fetchAllModules',
-            'fetchRole',
-            'delRole',
-        ]),
-        del(){
-            this.$confirm('El role '+this.roleToEdit.nombre+' sera permanentemente eliminado de los registros. Continuar?', 'Atencion', {
-				confirmButtonText: 'OK',
-				cancelButtonText: 'Cancelar',
-				type: 'warning',
-				center: true
-			}).then(() => {
-                this.delRole(this.roleToEdit.id)
-                this.$message({
-					type: 'success',
-					message: 'Role eliminado'
-                });
-                router.push('/Roles')
-			}).catch(() => {
-				this.$message({
-					type: 'info',
-					message: 'Eliminacion cancelada'
-				});
-			});
-        },
-        actualizar(){
-            this.edit()
-            this.$forceUpdate()
-        },
-        pushToRoleTable(){
-            router.push('/Roles')
-        }
 
     },
-    created(){
-        this.fetchAllModules()
-        let selected = []
-        for(let prop in this.roleToEdit.modulos){
-            selected.push(this.roleToEdit.modulos[prop]['id'])
-        }
-        this.setSelectedModules(selected)
-    }
 }
 </script>
 

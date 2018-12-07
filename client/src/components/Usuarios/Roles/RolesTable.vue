@@ -169,8 +169,6 @@ export default {
 				this.createFormVisible = true;
 			}
 			if(e == 'edit'){
-				this.fetchAllModules()
-				this.rederSelectedModulos()
 				this.editFormVisible = true;
 			}
 			if(e == 'del'){

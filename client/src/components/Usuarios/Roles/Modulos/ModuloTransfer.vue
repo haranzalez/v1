@@ -2,19 +2,20 @@
 <div>
     <div v-if="op == 'edit'">
             <el-transfer
+                @change="handleTransfer"
                 size="mini"
-                v-model="selected"
+                v-model="selectedMods"
                 :data="allModules"
-                :titles="['Todos', roleToEdit.nombre]"
+                :titles="['Disponibles', roleToEdit.nombre]"
             >
             </el-transfer>
     </div>
     <div v-else>
             <el-transfer
                 :disabled="(permisos['Roles'].editar)? false:true"
-                v-model="selected"
+                v-model="selectedMods"
                 :data="allModules"
-                :titles="['Todos', 'Nuevo Role']"
+                :titles="['Disponibles', 'Nuevo Role']"
             >
             </el-transfer>
     </div>
@@ -32,14 +33,15 @@ import HTTP from '../../../../http';
       };
     },
     props: ['op'],
-    watch: {
-        'selected' : function(value){
-            this.setSelectedModules(value[0])
-            return this.selectedModulos
-        }
-    },
     computed: {
-      
+        selectedMods: {
+            get: function(value){
+                return this.selectedModulos
+            },
+            set: function(value){
+                this.setSelectedModules(value)
+            }
+        },
         ...mapState('roles', [
             'allModules',
             'selectedModulos',
@@ -55,6 +57,9 @@ import HTTP from '../../../../http';
             'setModuleListDialogeVisible',
             'setSelectedModules',
         ]),
+        handleTransfer(e){
+            console.log(e)
+        }
        
     },
 

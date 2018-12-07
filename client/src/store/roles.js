@@ -23,7 +23,9 @@ export default {
         roleModuleDialogeVisible: false,
         modulesAvailable: false,
         loading: false,
-        
+        permisosOps: {},
+        activeTabs:[],
+        availablePermisos: null,
     },
     actions: {
         fetchRoles({commit}){
@@ -71,7 +73,6 @@ export default {
             HTTP().local.patch('api/roles/update/'+state.roleToEdit.id, pkg)
             .then(d => {
                 if(d.status == 200){
-                    dispatch('fetchRole',state.roleToEdit.id)
                     Message({
                         showClose: true,
                         message: 'Role actualizado correctamente.',
@@ -82,7 +83,7 @@ export default {
                 console.log(err)
             })
         },
-        setPermisos({state}, subId){
+        setPermisos({state, dispatch}, subId){
             console.log(subId,state.selectedPermisos)
             HTTP().local.post('api/roles/'+
             state.roleToEdit.id+'/subModulo/'+
@@ -91,15 +92,18 @@ export default {
                 if(d.status == 200){
                     Message({
                         showClose: true,
-                        message: 'Permisos actualizados.',
+                        message: 'Permiso para '+state.selectedPermisos.op+' actualizado.',
                         type: 'success'
                     })
+                    dispatch('fetchPermisos', 'ns')
                 }
             }).catch(err => {
                 console.log(err)
             })
         },
+
         fetchRole({commit, dispatch},id){
+            console.log('Fetching role..')
             HTTP().local.get('api/roles/'+id)
             .then(d => {
                 commit('setRoleToEdit', d.data)
@@ -108,15 +112,44 @@ export default {
                 console.log(err)
             })
         },
-        fetchPermisos({state, commit}){
+        fetchPermisos({state, commit, dispatch}, type){
+            console.log('Fetching permisos..')
             HTTP().local.get('api/roles/'+state.roleToEdit.id+'/permisos')
             .then(d => {
                commit('setModules', d.data)
+               console.log(state.modules)
+               dispatch('renderPermisos', type)
             }).catch(err => {
                 console.log(err)
             })
         },
-        fetchAllModules({commit}){
+        renderPermisos({state, commit, dispatch}, type){
+            console.log('Rendering permisos..')
+            var pkg = {}
+            var availablePermisos = {}
+            pkg[state.roleToEdit.nombre] = {}
+            availablePermisos[state.roleToEdit.nombre] = {}
+            for(let prop in state.modules){
+                pkg[state.roleToEdit.nombre][state.modules[prop].nombre] = {}
+                for(let prop2 in state.modules[prop].subModulo){
+                    pkg[state.roleToEdit.nombre][state.modules[prop].nombre][state.modules[prop].subModulo[prop2].nombre] = state.modules[prop].subModulo[prop2].permisos
+                }
+                availablePermisos[state.roleToEdit.nombre][state.modules[prop].nombre] = {}
+                for(let prop2 in state.modules[prop].subModulo){
+                    availablePermisos[state.roleToEdit.nombre][state.modules[prop].nombre][state.modules[prop].subModulo[prop2].nombre] = ['editar', 'crear', 'eliminar']
+                }
+                
+            }
+            commit('setAvailablePermisos', availablePermisos)
+            console.log(state.availablePermisos)
+            commit('setPermisosOps',pkg)
+            if(!type){
+                dispatch('fetchAllModules')
+            }
+
+        },
+        fetchAllModules({commit, dispatch}){
+            console.log('Fetching modules..')
             HTTP().local.get('api/modulos')
             .then(d => {
                 var data = []
@@ -128,19 +161,31 @@ export default {
                     });
                 }
                 commit('setAllModules', data)
+                dispatch('rederSelectedModulos')
             }).catch(err => {
                 console.log(err)
             })
         },
-        rederSelectedModulos({state, commit}){
-            console.log(state.roleToEdit.modulos)
+        rederSelectedModulos({state, commit, dispatch}){
+            console.log('Rendering modules..')
             var data = []
-            for(let prop in state.roleToEdit.modulos){
-                data.push(state.roleToEdit.modulos[prop]['id'])
+            for(let prop in state.modules){
+                data.push(state.modules[prop]['id'])
             }
-            console.log(data)
+         
+     
             commit('setSelectedModules', data)
+            dispatch('renderActiveTabs')
         },
+        renderActiveTabs({state, commit}){
+            var pkg = []
+            for(let prop in state.modules){
+                var keys = Object.keys(state.permisosOps[state.roleToEdit.nombre][state.modules[prop]['nombre']])
+                pkg[state.modules[prop]['nombre']] = keys[0]
+            }
+            commit('setActiveTabs', pkg)
+        },
+
         addModule({state},id){
             HTTP().local.patch('api/roles/update/'+id,state.selectedPermisos)
             .then(res => {
@@ -148,7 +193,6 @@ export default {
             })
         },
         delRole({state}){
-           
 				HTTP().local.delete('api/roles/destroy/'+roleToEdit.id)
                 .then(res => {
                     Message({
@@ -173,6 +217,7 @@ export default {
             state.roleToEdit = role
         },
         setModules(state, modules){
+            state.modules = null
             state.modules = modules
         },
         setRoleToEditNombre(state, nombre){
@@ -217,6 +262,18 @@ export default {
         },
         setLoading(state, value){
             state.loading = value
+        },
+        setPermisosOps(state, value){
+            state.permisosOps = value
+        },
+        setActiveTabs(state, value){
+            state.activeTabs = value
+        },
+        setAvailablePermisos(state, value){
+            state.availablePermisos = value
+        },
+        setRenderReady(state, value){
+            state.renderReady = value
         }
        
        

@@ -33,15 +33,24 @@ export default {
     },
 
     actions: {
-        fetchUser({ commit },id){
+        fetchUser({ commit, dispatch },id){
             HTTP().local.get('api/users/'+id)
             .then(d => {
-                console.log(d.data)
+                console.log(d.data[0])
                 commit('setFullUser', d.data[0])
+                dispatch('renderSelectedRoles')
             })
             .catch(err => {
                 console.log(err)
             })
+        },
+        renderSelectedRoles({state, commit}){
+            var pkg = []
+            for(var prop in state.usuario.roles){
+                pkg.push(state.usuario.roles[prop].id)
+            }
+            commit('setSelectedRoles', pkg)
+
         },
         fetchUsersList({commit, dispatch}){
             commit('setLoading', true)
@@ -85,8 +94,7 @@ export default {
                 direccion: state.usuario.direccion,
                 ciudad: state.usuario.ciudad,
                 departamento: state.usuario.departamento,
-                username: state.usuario.username,
-                roles: roles,
+                roles: state.selected,
                 estado: state.usuario.estado,
                 }).then(d => {
                 if(d.request.status == 200){
@@ -106,7 +114,8 @@ export default {
             })
         },
    
-        createUser({ state, commit }, roles){
+        createUser({ state, commit }){
+            console.log(state.usuario)
             HTTP().local.post('api/users/create',{
                 nombre: state.usuario.nombre,
                 apellido: state.usuario.apellido,
@@ -119,7 +128,7 @@ export default {
                 departamento: state.usuario.departamento,
                 username: state.usuario.username,
                 password: state.usuario.password,
-                roles: roles,
+                roles: state.selected,
                 estado: state.usuario.estado,
             })
             .then(d => {
@@ -217,6 +226,7 @@ export default {
         },
         
         
+        
 
     },
     mutations: {
@@ -302,6 +312,7 @@ export default {
                 password: null,
                 roles: null,
             }
+            state.selected = []
         }
         
     },

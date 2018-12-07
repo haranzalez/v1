@@ -97,27 +97,24 @@ class RoleController {
 
   async setPermisos({ params, request }) {
     const { role_id, sub_modulo_id } = params;
-    const { editar, crear, eliminar } = request.all();
-    const payload = {
-      role_id: role_id,
-      sub_modulo_id: sub_modulo_id,
-      editar: editar,
-      crear: crear,
-      eliminar: eliminar,
+    const { op, value } = request.all();
+    const role = await Role.find(role_id)
+    const permisos = await role.permisos().where('sub_modulo_id', sub_modulo_id).fetch()
+    if(permisos.rows.length <= 0){
+      await Permisos.create({
+        role_id,
+        sub_modulo_id,
+        [op]: value
+      })
+    }else{
+      const permisosTable = await Permisos.find(permisos.rows[0].id)
+      permisosTable[op] = value
+      permisosTable.save()
     }
-
-    const role = await Permisos.query().where('role_id', role_id).where('sub_modulo_id', sub_modulo_id).fetch()    
-    if(role.rows.length == 0){
-      await Permisos.query().insert(payload)
+    
+    return {
+      message: 'success'
     }
-    await Permisos.query()
-    .where('role_id', role_id)
-    .where('sub_modulo_id', sub_modulo_id)
-    .update(payload)
-
-    return await Role.query().with('permisos', (builder) => {
-      builder.where('role_id', role_id)
-    }).where('id', role_id).fetch();
     
   }
 
@@ -129,6 +126,7 @@ class RoleController {
       for(let prop2 in role.rows[prop].$relations.subModulo.rows){
         if(role.rows[prop].$relations.subModulo.rows[prop2].$relations.permisos.rows[0] != null){
           role.rows[prop].$relations.subModulo.rows[prop2].$relations.permisos = {
+            subId: role.rows[prop].$relations.subModulo.rows[prop2].id,
             editar:role.rows[prop].$relations.subModulo.rows[prop2].$relations.permisos.rows[0]['editar'],
             crear:role.rows[prop].$relations.subModulo.rows[prop2].$relations.permisos.rows[0]['crear'],
             eliminar:role.rows[prop].$relations.subModulo.rows[prop2].$relations.permisos.rows[0]['eliminar'],

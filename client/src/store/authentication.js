@@ -102,13 +102,27 @@ export default {
                         dispatch('extractPermisos')
                         const menu = []
                         for(let prop in data.user[0].roles){
-                            for(let pro in data.user[0].roles[prop].modulos){
-                                menu.push(data.user[0].roles[prop].modulos[pro])
+                            if(data.user[0].roles[prop].modulos.length > 0){
+                                for(let pro in data.user[0].roles[prop].modulos){
+                                    menu.push(data.user[0].roles[prop].modulos[pro])
+                                }
+                            }else{
+                                continue;
                             }
+                        }
+                        console.log(menu)
+                        if(menu.length == 0){
+                            Notification.warning({
+                                title: 'Atencion!',
+                                message: 'Aun no se an asignado modulos a uno o mas de sus roles en el sistema. Porfavor notifique al administrador',
+                                position: 'bottom-right',
+                            });
+                            return
                         }
                         let final = UserServices.removeDuplicatesFromObj(menu, 'id')
                         commit('setMenu', final)
                         commit('setIsLogged', true)
+
                         router.push('/'+final[1]['subModulo'][0]['nombre'])
                         return;
                     }

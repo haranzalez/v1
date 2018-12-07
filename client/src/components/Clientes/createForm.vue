@@ -80,7 +80,7 @@
                     <el-row>
                         <el-col :span="8" :md="8" :sm="24" :xs="24">
                             <el-form-item label="Contrato" >
-                                <el-select @change="setSelectedContrato" :value="selectedContrato" placeholder="Select">
+                                <el-select v-model="selectedContrato" placeholder="Select">
                                     <el-option
                                     v-for="item in contratoOptions"
                                    :key="item.tipo"
@@ -92,7 +92,7 @@
                         </el-col>
                         <el-col :span="8" :md="8" :sm="24" :xs="24">
                             <el-form-item label="Dias" class="padding">
-                                <el-select @change="setSelectedDias" :value="selectedDias" placeholder="Select">
+                                <el-select v-model="selectedDias" placeholder="Select">
                                     <el-option
                                     v-for="item in diasOptions"
                                    :key="item.dias"
@@ -106,7 +106,6 @@
                         <el-col :span="8" :md="8" :sm="24" :xs="24">
                             <el-form-item label="Cupo">
                                 <el-input size="mini" 
-                                :value="cliente.cupo"
                                 @input="setCupo"
                                 placeholder="">
                                 </el-input>
@@ -144,17 +143,16 @@ export default {
             'cliente',
             'contratoOptions',
             'diasOptions',
-            'selectedContrato',
-            'selectedDias',
+          
         ]),
 
     },
      watch: {
         'selectedContrato': function(value){
-            this.setContrato(value)
+            this.setSelectedContrato(value)
         },
         'selectedDias': function(value){
-            this.setDias(value)
+            this.setSelectedDias(value)
         },
     },
 	components: {
@@ -185,6 +183,8 @@ export default {
        
     },
     created(){
+        this.selectedDias = ''
+        this.selectedContrato = ''
     }
 
 

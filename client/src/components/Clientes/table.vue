@@ -397,9 +397,7 @@ export default {
 			this.fetchCliente(val.id)
 			this.setDataReady(true)
 			this.$refs.clientsTable.setCurrentRow(val);
-			this.fetchCuadresRutas()
-			this.fetchCuadresProductos()
-			this.fetchCuadresServicios()
+			
 		},
 		handleAction(e){
             if(e == 'create'){
@@ -488,7 +486,6 @@ export default {
 		create_client(){
 			this.createCliente()
 			this.createFormVisible = false
-			this.fetchClientesList()
 		},
 		create_cuadre_viaje(id){
 			if(this.createCuadreRuta(id)){

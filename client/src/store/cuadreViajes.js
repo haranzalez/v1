@@ -75,7 +75,7 @@ export default {
             })
             .then(d => {
                 if(d.data.message == 'success'){
-                    dispatch('fetchCuadresList')
+                    dispatch('fetchCuadresRutaList')
                     return true
                 }
                
@@ -95,7 +95,6 @@ export default {
                 debe: state.cuadre.debe,
             })
             .then(d => {
-                console.log(d)
                 Message({
                     showClose: true,
                     typr: "success",

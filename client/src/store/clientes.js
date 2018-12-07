@@ -92,7 +92,7 @@ export default {
                 console.log(err)
             })
         },
-        createCliente({state, commit}){
+        createCliente({state, dispatch}){
             HTTP().local.post('api/clientes/crear', {
                 nombre_razon_social: state.cliente.nombre_razon_social,
                 nit: state.cliente.nit,
@@ -114,17 +114,15 @@ export default {
                         showClose: true,
                         message: 'Cliente creado.'
                     })
-                    router.push('/Clientes')
+                    dispatch('fetchClientesList')
                 }
                 return false
-                
-                
             })
             .catch(err => {
                 console.log(err)
             })
         },
-        editCliente({state}){
+        editCliente({state, dispatch}){
             HTTP().local.put('api/clientes/'+state.cliente.id+'/update', {
                 nombre_razon_social: state.cliente.nombre_razon_social,
                 nit: state.cliente.nit,
@@ -140,18 +138,18 @@ export default {
                 dias: state.cliente.dias,
             })
             .then(d => {
-                console.log(d)
                 Message({
                     type: 'success',
                     showClose: true,
                     message: 'Actualizacion exitosa.'
                 })
+                dispatch('fetchClientesList')
             })
             .catch(err => {
                 console.log(err)
             })
         },
-        delCliente({state}){
+        delCliente({state, dispatch}){
             HTTP().local.delete('api/clientes/'+state.cliente.id+'/delete')
             .then(d => {
                 if(d){
@@ -160,19 +158,22 @@ export default {
                         showClose: true,
                         message: 'Cliente eliminado exitosamente'
                     })
-                    router.push('/Clientes')
+                    dispatch('fetchClientesList')
                 }
             })
             .catch(err => {
                 console.log(err)
             })
         },
-        fetchCliente({commit}, id){
+        fetchCliente({commit, dispatch}, id){
             HTTP().local.get('api/clientes/'+id)
             .then(d => {
                 commit('setSelectedContrato', d.data.tipo_negociacion.contrato)
                 commit('setSelectedDias', d.data.tipo_negociacion.dias)
                 commit('setFullCliente', d.data)
+                dispatch('fetchCuadresRutas')
+                dispatch('fetchCuadresProductos')
+                dispatch('fetchCuadresServicios')
             })
             .catch(err => {
                 console.log(err)

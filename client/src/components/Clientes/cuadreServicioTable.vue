@@ -7,7 +7,7 @@
 	@current-change="handleCurrentTableChange"
 	size="mini"
 	stripe
-	height="300"
+	height="400"
     :data="filtered"
     style="width: 100%">
     <el-table-column

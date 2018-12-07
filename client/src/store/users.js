@@ -114,8 +114,7 @@ export default {
             })
         },
    
-        createUser({ state, commit }){
-            console.log(state.usuario)
+        createUser({ state, dispatch }){
             HTTP().local.post('api/users/create',{
                 nombre: state.usuario.nombre,
                 apellido: state.usuario.apellido,
@@ -138,7 +137,7 @@ export default {
                         message: 'Usuario creado.',
                         position: 'bottom-right',
                     });
-                    router.push('/Usuarios')
+                    dispatch('fetchUsersList')
                 }
             }).catch(err => {
                 console.log(err)

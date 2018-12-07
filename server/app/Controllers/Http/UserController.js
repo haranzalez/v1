@@ -109,12 +109,21 @@ class UserController {
    */
   async update ({ params, request }) {
     const { id } = params;
-    const { roles } = request.all();
+    const { roles,
+      nombre, 
+      apellido,
+      cedula, 
+      tel_fijo,
+      tel_mobil,
+      direccion,
+      ciudad,
+      departamento,
+      username, 
+      estado, } = request.all();
     const user = await User.find(id);
-    const old = await User.find(id);
-    const oldRoles = await old.roles().fetch()
-    console.log(roles)
+   
     if(roles.length > 0){
+      const oldRoles = await user.roles().fetch()
       if(oldRoles.rows.length > 0){
         for(var prop in oldRoles.rows){
           await user.roles().detach(oldRoles.rows[prop].id)
@@ -122,20 +131,21 @@ class UserController {
       }
       await user.roles().attach(roles)
     }
-
-    user.merge(request.only([
-      'nombre', 
-      'apellido',
-      'cedula', 
-      'tel_fijo',
-      'tel_mobil',
-      'direccion',
-      'ciudad',
-      'departamento',
-      'username', 
-      'estado',
-    ]))
-    user.save();
+    await Database
+    .table('users')
+    .where('id', id)
+    .update({
+      nombre, 
+      apellido,
+      cedula, 
+      tel_fijo,
+      tel_mobil,
+      direccion,
+      ciudad,
+      departamento,
+      username, 
+      estado,
+    })
 
     return {
       message: 'success'

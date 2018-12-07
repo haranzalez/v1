@@ -30,13 +30,13 @@
 					<el-button type="default" size="mini" @click="reloadTable" style="margin-right:5px;"><i class="mdi mdi-reload"></i></el-button>
 					<el-button type="default" size="mini" @click="exportTable" style="margin-right:5px;"><i class="mdi mdi-file-excel"></i></el-button>
 					<el-dropdown trigger="click" @command="handleAction">  
-						<el-button size="mini">
+						<el-button size="mini" @click="NotificationServices.checkIfRecordSelected(btnsDisable)">
 							<i class="mdi mdi-settings"></i>
 						</el-button>
 						<el-dropdown-menu slot="dropdown">
 							<el-dropdown-item :disabled="(permisos['Usuarios'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Crear</el-dropdown-item>
-							<el-dropdown-item :disabled="(permisos['Usuarios'].crear)? false:true" command="edit"><i class="mdi mdi-lead-pencil mr-10"></i> Editar</el-dropdown-item>
-							<el-dropdown-item :disabled="(permisos['Usuarios'].crear)? false:true" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
+							<el-dropdown-item :disabled="btnsDisable" command="edit"><i class="mdi mdi-lead-pencil mr-10"></i> Editar</el-dropdown-item>
+							<el-dropdown-item :disabled="btnsDisable" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
 						</el-dropdown-menu>
 					</el-dropdown>
 				</el-row>
@@ -90,6 +90,10 @@ import * as FS from 'file-saver'
 //componentes
 import RolesCreateForm from './CreateRole'
 import RolesEditForm from './RoleEdit'
+//UI
+import { Notification } from 'element-ui'
+//services
+import NotificationServices from '../../../services/NotificationServices'
 
 
 
@@ -105,6 +109,8 @@ export default {
 			createFormVisible: false,
 			editFormVisible: false,
 			dialogWidth: '45%',
+			btnsDisable: true,
+			NotificationServices: NotificationServices,
 		}
 	},
 	computed: {
@@ -153,19 +159,23 @@ export default {
 		},
 		reloadTable(){
 			this.fetchRoles()
+			this.btnsDisable = true
 		},
 		handleCurrentTableChange(val) {
 			if(val == null){
 				this.$refs.rolesTable.setCurrentRow(val);
+				this.btnsDisable = true
 				return
 			}
 			this.fetchRole(val.id)
 			this.$refs.rolesTable.setCurrentRow(val);
+			this.btnsDisable = false
 		},
 		handleAction(e){
+			
             if(e == 'create'){
 				this.paramsReset()
-				this.setSelectedModules(null)
+				this.setSelectedModules([])
 				this.createFormVisible = true;
 			}
 			if(e == 'edit'){

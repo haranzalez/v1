@@ -12,6 +12,7 @@
     </div>
     <div v-else>
             <el-transfer
+                @change="handleTransfer"
                 :disabled="(permisos['Roles'].editar)? false:true"
                 v-model="selectedMods"
                 :data="allModules"

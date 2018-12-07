@@ -34,14 +34,14 @@
 					<el-button type="default" size="mini" @click="reloadTable" style="margin-right:5px;"><i class="mdi mdi-reload"></i></el-button>
 					<el-button type="default" size="mini" @click="exportTable" style="margin-right:5px;"><i class="mdi mdi-file-excel"></i></el-button>
 					<el-dropdown trigger="click" @command="handleAction">  
-						<el-button size="mini">
+						<el-button size="mini" @click="NotificationServices.checkIfRecordSelected(btnsDisable)">
 							<i class="mdi mdi-settings"></i>
 						</el-button>
 						<el-dropdown-menu slot="dropdown">
-							<el-dropdown-item :disabled="(permisos['Usuarios'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Nuevo usuario</el-dropdown-item>
-							<el-dropdown-item :disabled="(permisos['Usuarios'].crear)? false:true" command="edit"><i class="mdi mdi-lead-pencil mr-10"></i> Editar</el-dropdown-item>
-							<el-dropdown-item :disabled="(permisos['Usuarios'].crear)? false:true" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
-							<el-dropdown-item :disabled="(permisos['Usuarios'].crear)? false:true" command="logs" divided><i class="mdi mdi-briefcase mr-10"></i> Ver logs</el-dropdown-item>
+							<el-dropdown-item command="create"><i class="mdi mdi-plus mr-10"></i> Nuevo usuario</el-dropdown-item>
+							<el-dropdown-item :disabled="btnsDisable" command="edit"><i class="mdi mdi-lead-pencil mr-10"></i> Editar</el-dropdown-item>
+							<el-dropdown-item :disabled="btnsDisable" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
+							<el-dropdown-item :disabled="btnsDisable" command="logs" divided><i class="mdi mdi-briefcase mr-10"></i> Ver logs</el-dropdown-item>
 						</el-dropdown-menu>
 					</el-dropdown>
 				</el-row>
@@ -146,6 +146,7 @@ import Papa from 'papaparse'
 import * as FS from 'file-saver'
 //servicios
 import exportService from '../../services/exportService'
+import NotificationServices from '../../services/NotificationServices'
 //componentes
 import UsuariosEditForm from '@/components/Usuarios/UserEdit'
 import UsuariosCreateForm from '@/components/Usuarios/UserCreate'
@@ -164,7 +165,9 @@ export default {
 			createFormVisible: false,  
 			selectTypeOfSearch: 'Nombre',
 			filter: '',
-            list: null,
+			list: null,
+			btnsDisable: true,
+			NotificationServices: NotificationServices,
 		}
 	},
 	computed: {
@@ -228,13 +231,16 @@ export default {
 			exportService.toXLS(this.usersList, 'Usuarios', true)
 		},
 		reloadTable(){
+			this.btnsDisable = true
 			this.fetchUsersList()
 		},
 		handleCurrentTableChange(val) {
 			if(val == null){
 				this.$refs.usersTable.setCurrentRow(val);
+				this.btnsDisable = true
 				return
 			}
+			this.btnsDisable = false
 			this.fetchUser(val.id)
 			this.fetchRolesList('edit')
 			this.$refs.usersTable.setCurrentRow(val);

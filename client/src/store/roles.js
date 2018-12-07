@@ -23,18 +23,20 @@ export default {
         roleModuleDialogeVisible: false,
         modulesAvailable: false,
         loading: false,
-        permisosOps: {},
+        
         activeTabs:[],
+        permisosOps: {},
         availablePermisos: null,
     },
     actions: {
-        fetchRoles({commit}){
+        fetchRoles({commit, dispatch}){
             commit('setLoading', true)
             HTTP().local.get('api/roles')
             .then(r => {
                 commit('setRolesList', r.data)
                 commit('setDataReady', true)
                 commit('setLoading', false)
+                dispatch('fetchAllModules', 'ns')
             }).catch(err => {
                 Notification.warning({
                     title: 'Atencion!',
@@ -148,7 +150,7 @@ export default {
             }
 
         },
-        fetchAllModules({commit, dispatch}){
+        fetchAllModules({commit, dispatch}, type){
             console.log('Fetching modules..')
             HTTP().local.get('api/modulos')
             .then(d => {
@@ -161,7 +163,10 @@ export default {
                     });
                 }
                 commit('setAllModules', data)
-                dispatch('rederSelectedModulos')
+                if(type == null){
+                    dispatch('rederSelectedModulos')
+                }
+                
             }).catch(err => {
                 console.log(err)
             })
@@ -229,7 +234,7 @@ export default {
         setRoleToCreateNombre(state, nombre){
             state.roleToCreate.nombre = nombre
         },
-        setRoleTocreateDescription(state, description){
+        setRoleToCreateDescription(state, description){
             state.roleToCreate.description = description
         },
         setAllModules(state, modules){

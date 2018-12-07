@@ -13,14 +13,15 @@
                 </el-form>
             </div>
         </el-col>
+         <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+            <h3>Permisos</h3>
+            <RoleModuloEdit :role-name="roleToEdit.nombre" :op="true"></RoleModuloEdit>
+        </el-col>
         <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
             <h3>Modulos</h3>
             <ModuloTransfer op="edit"></ModuloTransfer>
         </el-col>
-        <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
-            <h3>Permisos</h3>
-            <RoleModuloEdit :role-name="roleToEdit.nombre" :op="true"></RoleModuloEdit>
-        </el-col>
+       
         
     </el-row>
 </template>

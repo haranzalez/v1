@@ -26,7 +26,7 @@
                         <label :for="roleToEdit.nombre + '-' + mod.nombre + '-' + mod.nombre + '-' +per">{{per}}</label>
   
                     </div>
-                    {{permisosOperation[roleToEdit.nombre]}}
+                    <!-- {{permisosOperation[roleToEdit.nombre]}} -->
                         
                     </el-tab-pane>
                 </el-tabs>
@@ -39,7 +39,6 @@
 <script>
 
 import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
-import PermisosCheckboxes from './PermisosCheckBoxes'
 
  export default {
     data() {
@@ -54,7 +53,6 @@ import PermisosCheckboxes from './PermisosCheckBoxes'
       };
     },
     components:{
-        PermisosCheckboxes,
     },
     props: ['role-name', 'op'],
     computed: {

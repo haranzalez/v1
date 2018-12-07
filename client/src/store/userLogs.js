@@ -1,13 +1,13 @@
 import HTTP from '../http';
 import router from '../router'
-import UserServices from '../services/UserServices'
 import { Notification } from 'element-ui'
 import { mapGetters } from 'vuex';
-
+import TableServices from '../services/TableServices'
 export default {
     namespaced: true,
     state: {
         logsList: null, 
+        headings: [],
     },
 
     actions: {
@@ -24,15 +24,21 @@ export default {
                 }
                 console.log(pkg)
                 commit('setLogsList', pkg)
+                commit('setTableHeadings', pkg)
+               
             })
             .catch(err => {
                 console.log(err)
             })
         },
+        
     },
     mutations: {
       setLogsList(state, logs){
           state.logsList = logs
+      },
+      setTableHeadings(state, value){
+        state.headings =  TableServices.renderTableHeadings(value)
       }
         
     },

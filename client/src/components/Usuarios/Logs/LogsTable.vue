@@ -1,20 +1,22 @@
 <template>
-<vue-scroll>
+
 <el-row>
+	<vue-scroll>
 	<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
 	<h1>Historial de entradas y salidad</h1>
 	<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
 		<div class="serachBar-ctn">
-			<el-input placeholder="Buscar" v-model="filter" class="input-with-select"></el-input>
-		</div>
-	</el-col>
-	<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-		<div style="text-align:right;">
-			<el-button :disabled="(permisos['Roles'].crear)? false:true">Crear</el-button>
+			<el-input size="mini" placeholder="Buscar" v-model="filter" class="input-with-select">
+				<el-select v-model="selectTypeOfSearch" slot="prepend" placeholder="Seleccione">
+				<el-option v-for="col in headings" :key="col" :label="col" :value="col"></el-option>
+				</el-select>
+			</el-input>
 		</div>
 	</el-col>
 
 	<el-table
+	size="mini"
+	max-height="350"
     :data="filtered"
 	:default-sort = "{prop: 'id', order: 'descending'}"
     style="width: 100%">
@@ -47,18 +49,25 @@
 	  sortable
       prop="entrada"
       label="Entrada"
-      width="120">
+    >
+		<template slot-scope="scope">
+			{{formatDate(scope.row.entrada)}}
+		</template>
     </el-table-column>
 	<el-table-column
 	  sortable
       prop="salida"
       label="Salida"
-      width="120">
+    >
+		<template slot-scope="scope">
+			{{formatDate(scope.row.salida)}}
+		</template>
     </el-table-column>
   </el-table>
 	</el-col>
+	</vue-scroll>
 </el-row>
-</vue-scroll>
+
 </template>
 
 <script>
@@ -69,45 +78,53 @@ import rounter from '../../../router'
 import Papa from 'papaparse'
 import * as FS from 'file-saver'
 
-
-
-
-
 export default {
-	name: 'RolesTable',
+	name: 'LogsTable',
 	data () {
       	return {
             filter: '',
             dataReady: false,
 			list: null,
+			selectTypeOfSearch: '',
 		}
 	},
 	computed: {
         filtered(){
 			if(this.dataReady){
 				if(this.filter !== ''){
+					let type = this.selectTypeOfSearch.toLowerCase()
 					return this.logsList.filter(log => {
-						console.log(Log)
-						return log['ip'].toLowerCase().includes(this.filter.toLowerCase())
+						if(isNaN(log[type])){
+							return log[type].toLowerCase().includes(this.filter.toLowerCase())
+						}
+						return log[type].toString().includes(this.filter.toString())
 					})
 				}
 				return this.logsList
 			}
+			
 		},
 		...mapState('authentication', [
 			'permisos',
         ]),
         ...mapState('logs', [
 			'logsList',
+			'headings',
 		])
     },	
     methods: {
         ...mapActions('logs', [
             'fetchLogs',
-        ]),
+		]),
+		formatDate(d){
+			var event = new Date(d);
+			var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+			return event.toLocaleDateString('es-ES', options);
+		}
     },
     created(){
-        this.fetchLogs()
+		this.fetchLogs()
+		console.log(this.headings)
         this.dataReady = true
     }
    

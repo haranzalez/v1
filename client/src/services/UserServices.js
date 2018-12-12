@@ -1,9 +1,9 @@
 
 export default {
-    removeDuplicatesFromObj(a){
+    removeDuplicatesFromObj(o){
         var obj = {};
-        for ( var i=0, len=a.length; i < len; i++ ){
-            obj[a[i]['id']] = a[i];
+        for ( var i=0; i < o.length; i++ ){
+            obj[o[i]['id']] = o[i];
         }
         return obj
     },

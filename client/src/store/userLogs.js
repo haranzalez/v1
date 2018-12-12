@@ -8,10 +8,12 @@ export default {
     state: {
         logsList: null, 
         headings: [],
+        tableLoading: false,
     },
 
     actions: {
         fetchLogs({commit, dispatch}){
+            commit('setTableLoading', true)
             HTTP().local.get('api/userLogs')
             .then(d => {
                 
@@ -25,6 +27,7 @@ export default {
                 console.log(pkg)
                 commit('setLogsList', pkg)
                 commit('setTableHeadings', pkg)
+                commit('setTableLoading', false)
                
             })
             .catch(err => {
@@ -38,7 +41,18 @@ export default {
           state.logsList = logs
       },
       setTableHeadings(state, value){
-        state.headings =  TableServices.renderTableHeadings(value)
+        var h = value[0]
+        h = {
+            usuario: h.usuario,
+            entrada: h.entrada,
+            salida: h.salida,
+            ip: h.ip,
+            token: h.token
+        }
+        state.headings =  TableServices.renderTableHeadings(h)
+      },
+      setTableLoading(state, value){
+          state.tableLoading = value
       }
         
     },

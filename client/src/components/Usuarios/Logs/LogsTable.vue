@@ -14,7 +14,16 @@
 		</div>
 	</el-col>
 
+	<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+		<div style="padding: 3px 0;">
+			<el-row style="text-align: right;">
+				<el-button type="default" size="mini" @click="reloadTable" style="margin-right:5px;"><i class="mdi mdi-reload"></i></el-button>
+			</el-row>
+		</div>
+	</el-col>
+	
 	<el-table
+	v-loading.body="tableLoading"
 	size="mini"
 	max-height="350"
     :data="filtered"
@@ -31,7 +40,7 @@
 	  sortable
       prop="ip"
       label="IP"
-      width="120">
+      width="100">
     </el-table-column>
     <el-table-column
 	  sortable
@@ -43,7 +52,7 @@
 	  sortable
       prop="token"
       label="Token"
-      width="320">
+      max-width="410">
     </el-table-column>
 	 <el-table-column
 	  sortable
@@ -51,7 +60,7 @@
       label="Entrada"
     >
 		<template slot-scope="scope">
-			{{formatDate(scope.row.entrada)}}
+			<p style="width:78%;">{{formatDate(scope.row.entrada)}}</p>
 		</template>
     </el-table-column>
 	<el-table-column
@@ -60,7 +69,7 @@
       label="Salida"
     >
 		<template slot-scope="scope">
-			{{formatDate(scope.row.salida)}}
+			<p style="width:78%;">{{(scope.row.salida == null)?'':formatDate(scope.row.entrada)}}</p>
 		</template>
     </el-table-column>
   </el-table>
@@ -110,16 +119,33 @@ export default {
         ...mapState('logs', [
 			'logsList',
 			'headings',
+			'tableLoading'
 		])
     },	
     methods: {
         ...mapActions('logs', [
             'fetchLogs',
 		]),
+		reloadTable(){
+			this.fetchLogs()
+		},
 		formatDate(d){
 			var event = new Date(d);
-			var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-			return event.toLocaleDateString('es-ES', options);
+			var options = { year: 'numeric', month: 'long', day: 'numeric' };
+			var hours = event.getHours()
+			var minutes = event.getMinutes()
+			var type = 'AM'
+			if (minutes < 10) {
+				minutes = "0" + minutes;
+			}
+			console.log(hours)
+			if(hours > 11 || hours < 24){
+				type = 'PM'
+			}else{
+				type = 'AM'
+			}
+			var timestamp = hours + ':' + minutes + ' ' +type;
+			return 'Fecha: ' + event.toLocaleDateString('es-ES', options) + ' Hora: ' + timestamp;
 		}
     },
     created(){

@@ -10,8 +10,8 @@
 			</el-button>
 			<el-dropdown-menu slot="dropdown">
 				<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" :command="'create'+currentCuadresTab"><i class="mdi mdi-plus mr-10"></i>Crear</el-dropdown-item>
-				<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" :command="'edit'+currentCuadresTab"><i class="mdi mdi-lead-pencil mr-10"></i>Editar</el-dropdown-item>
-				<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" :command="'del'+currentCuadresTab"><i class="mdi mdi-delete mr-10"></i>Eliminar</el-dropdown-item>
+				<el-dropdown-item :disabled="(permisos['Clientes'].editar)? false:true" :command="'edit'+currentCuadresTab"><i class="mdi mdi-lead-pencil mr-10"></i>Editar</el-dropdown-item>
+				<el-dropdown-item :disabled="(permisos['Clientes'].eliminar)? false:true" :command="'del'+currentCuadresTab"><i class="mdi mdi-delete mr-10"></i>Eliminar</el-dropdown-item>
 			</el-dropdown-menu>
 		</el-dropdown>
 		</div>
@@ -108,12 +108,9 @@
 						</el-button>
 						<el-dropdown-menu slot="dropdown">
 							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Crear cliente</el-dropdown-item>
-							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="edit"><i class="mdi mdi-lead-pencil mr-10"></i> Editar</el-dropdown-item>
-							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
+							<el-dropdown-item :disabled="(permisos['Clientes'].editar)? false:true" command="edit"><i class="mdi mdi-lead-pencil mr-10"></i> Editar</el-dropdown-item>
+							<el-dropdown-item :disabled="(permisos['Clientes'].eliminar)? false:true" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
 							<el-dropdown-item command="verCuadres" divided><i class="mdi mdi-folder-open mr-10"></i> Ver cuadres</el-dropdown-item>
-							<!-- <el-dropdown-item command="verCuadreRuta" divided><i class="mdi mdi-folder-open mr-10"></i> Ver cuadres de ruta</el-dropdown-item>
-							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="verCuadreProducto"><i class="mdi mdi-barrel mr-10"></i> Ver cuadres de productos</el-dropdown-item>
-							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="verCuadreServicio"><i class="mdi mdi-worker mr-10"></i> Ver cuadres de servicios</el-dropdown-item> -->
 						</el-dropdown-menu>
 					</el-dropdown>
 				</el-row>

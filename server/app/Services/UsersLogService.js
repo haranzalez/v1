@@ -24,10 +24,12 @@ class UsersLogService {
     async logout(request){
         const token = request.header('Authorization').split(' ')[1]
         const v = await Logs.query().where('token', token).fetch()
+        console.log(v.rows[0])
         if(v.rows.length > 0){
-            await Logs.query()
+            await Database
+            .table('user_logs')
             .where('token', token)
-            .update({ salida: moment().format(), is_revoke: true})
+            .update({ salida: new Date(), is_revoke: true})
 
             return {
                 mess: 'Su session cerro exitosamente!.'

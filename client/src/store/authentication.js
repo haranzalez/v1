@@ -51,7 +51,7 @@ export default {
 					
 				}
             }
-           
+           console.log(state.usuario.roles)
             commit('setExtractedPermisos', pkg)
         },
         setTimer({dispatch}){
@@ -122,8 +122,8 @@ export default {
                         let final = UserServices.removeDuplicatesFromObj(menu, 'id')
                         commit('setMenu', final)
                         commit('setIsLogged', true)
-
-                        router.push('/'+final[1]['subModulo'][0]['nombre'])
+                        console.log(final)
+                        router.push('/'+final[Object.keys(final)[0]]['subModulo'][0]['nombre'])
                         return;
                     }
                     Notification.warning({
@@ -297,7 +297,6 @@ export default {
             state.usuario.departamento = departamento
         },
         setExtractedPermisos(state, permisos){
-
             state.permisos = permisos
         },
    

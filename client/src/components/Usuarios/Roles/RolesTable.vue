@@ -5,7 +5,7 @@
 		<RolesEditForm></RolesEditForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button size="mini" @click="editFormVisible = false; paramsReset();">Cerrar</el-button>
-			<el-button size="mini" type="primary" @click="editRole">Actualizar</el-button>
+			<el-button :loading="loadingActualizarBtn" size="mini" type="primary" @click="editRole">Actualizar</el-button>
 		</span>
 	</el-dialog>
 	<!--Create dialog form -->
@@ -13,7 +13,7 @@
 		<RolesCreateForm></RolesCreateForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button size="mini" @click="createFormVisible = false; paramsReset();">Cerrar</el-button>
-			<el-button size="mini" type="primary" @click="createRole">Crear</el-button>
+			<el-button :loading="loadingCrearBtn" size="mini" type="primary" @click="createRole">Crear</el-button>
 		</span>
 	</el-dialog>
 	<!--Table-->
@@ -108,7 +108,7 @@ export default {
 			list: null,
 			createFormVisible: false,
 			editFormVisible: false,
-			dialogWidth: '45%',
+			dialogWidth: '50%',
 			btnsDisable: true,
 			NotificationServices: NotificationServices,
 		}
@@ -128,6 +128,9 @@ export default {
 		'rolesList',
 		'dataReady',
 		'loading',
+		'loadingActualizarBtn',
+		'loadingCrearBtn',
+		'roleToEdit',
 		]),
 		...mapState('authentication', [
 			'permisos',
@@ -182,19 +185,18 @@ export default {
 				this.editFormVisible = true;
 			}
 			if(e == 'del'){
-				this.$confirm(this.role.nombre + ' sera permanentemente eliminado de los registros. Continuar?', 'Atencion', {
+			
+				this.$confirm(this.roleToEdit.nombre + ' sera permanentemente eliminado de los registros. Continuar?', 'Atencion', {
 					confirmButtonText: 'OK',
 					cancelButtonText: 'Cancelar',
 					type: 'warning',
 					center: true,
 				}).then(() => {
 					this.delRole()
-					this.fetchRoles();
-					this.$refs.rolesTable.refresh();
 				}).catch(() => {
 					this.$message({
 						type: 'info',
-						message: 'Eliminacion cancelada'
+						message: 'Proceso cancelado'
 					});
 				});
 			}

@@ -1,38 +1,33 @@
 <template>
-<div v-if="op">
+<div>
+        <!-- DIALOG -->
+        <el-dialog center width="20%" :modal="false" :title="'Permisos para ' + activeSubModName" :visible.sync="permisosDialogVisible">
+            <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">Todos</el-checkbox>
+            <div style="margin: 15px 0;"></div>
+            
+            <el-checkbox-group v-model="checkedPermisosHandler">
+                <el-checkbox v-for="per in permisosList" :key="per" :label="per">{{per}}</el-checkbox>
+            </el-checkbox-group>
+            <span slot="footer" class="dialog-footer">
+                <el-button :loading="loadingAutorizarBtn" type="primary" size="mini" @click="handleSetPermisosBtn">Autorizar</el-button>
+                 <el-button size="mini" @click="setPermisosDialogVisible(false)">Cerrar</el-button>
+            </span>
+        </el-dialog>
+        <!-- COLLAPSE -->
         <el-collapse v-model="selectedMod" @change="handleSelectedModChange">
-            <el-collapse-item :name="roleToEdit.nombre + '-' + mod.nombre"  v-for="mod in modules" :key="roleToEdit.nombre + '-' + mod.nombre" :title="mod.nombre">
-                <el-tabs v-model="activeTabs[mod.nombre]" :tab-position="tabPosition">
-                    <el-tab-pane 
-                        v-for="sub in mod.subModulo" 
-                        :key="sub.id" 
-                        :label="sub.nombre" 
-                        :value="sub.nombre" 
-                        :name="sub.nombre"
-                    >
-                        <p><b>Permisos {{sub.nombre}}</b></p>
-                        <div style="margin: 15px 0;"></div>
-                        
-                     <div v-for="(per, key) in availablePermisos[roleToEdit.nombre][mod.nombre][sub.nombre]" :key="roleToEdit.nombre + '-' + mod.nombre + '-' + mod.nombre + '-' +per" class="inputGroup">
-                  
-                        <input 
-                            :disabled="(permisos['Roles'].editar)? false:true"
-                            :checked="permisosOperation[roleToEdit.nombre][mod.nombre][sub.nombre][per]"
-                            type="checkbox" 
-                            @change="handlePermisosCheck($event, permisosOperation[roleToEdit.nombre][mod.nombre][sub.nombre]['subId'])"
-                            :value="roleToEdit.nombre + '-' + mod.nombre + '-' + sub.nombre + '-' + per"
-                            :name="roleToEdit.nombre + '-' + mod.nombre + '-' + sub.nombre + '-' + per"
-                        >
-                        <label :for="roleToEdit.nombre + '-' + mod.nombre + '-' + mod.nombre + '-' +per">{{per}}</label>
-  
-                    </div>
-                    <!-- {{permisosOperation[roleToEdit.nombre]}} -->
-                        
-                    </el-tab-pane>
-                </el-tabs>
+            <el-collapse-item :name="roleToEdit.nombre + '-' + mod.nombre"  v-for="mod in modules" :key="roleToEdit.nombre + '-' + mod.nombre" >
+                <div slot="title">{{mod.nombre}} <i class="mdi mdi-view-module"></i></div>
+                <el-row :gutter="0" style="text-align: left;">
+                    <el-col :xs="12" :sm="6" :md="6" :lg="6" :xl="6" v-for="sub in mod.subModulo" :key="sub.id">
+                        <el-button :loading="loadingBtnsList[sub.id]" @click="handleBtnPermisoClick(sub.id, sub.nombre)" style="margin:10px 0px;" ><i :class="sub.icono"></i> {{sub.nombre}}</el-button>
+                    </el-col>
+                </el-row>
             </el-collapse-item>
         </el-collapse>
 </div>
+       
+       
+
 
 </template>
 
@@ -43,19 +38,37 @@ import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
  export default {
     data() {
       return {
+        permisosList: ['editar', 'crear', 'eliminar'],
         activo: ['1'],
         selectedMod: '',
-        checkAll: {},
         activeName: {},
-        isIndeterminate: {},
         tabPosition: 'top',
-       
+        isIndeterminate: false,
+        checkAll: false,
+        activeSubMod: null,
+        activeSubModName: null, 
       };
     },
     components:{
     },
     props: ['role-name', 'op'],
+  
     computed: {
+        checkedPermisosHandler: {
+            get: function(){
+                if(this.checkedPermisos.length == 3){
+                    this.checkAll = true
+
+                }else{
+                    this.checkAll = false
+                }
+                return this.checkedPermisos
+            },
+            set: function(value){
+                console.log(value)
+                this.setCheckedPermisos(value)
+            }
+        },
         permisosOperation:{
            cache: false,
            get: function(){
@@ -63,6 +76,8 @@ import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
            }
         },
         ...mapState('roles', [
+            'loadingBtnsList',
+            'permisosDialogVisible',
             'permisosReady',
             'modules',
             'roleToEdit',
@@ -72,6 +87,9 @@ import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
             'activeTabs',
             'availablePermisos',
             'renderReady',
+            'checkedPermisos',
+            'loadingAutorizarBtn',
+            
         ]),
         ...mapState('authentication', [
 			'permisos',
@@ -80,43 +98,53 @@ import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
         
     },
     methods: {
+       
+        handleBtnPermisoClick(subid, subname){
+            this.activeSubMod = subid
+            this.activeSubModName = subname
+            this.fetchPermisosv2(subid)
+        },
+        handleCheckAllChange(value){
+            console.log(value)
+            if(value){
+                this.setCheckedPermisos(['editar', 'crear', 'eliminar'])
+                this.checkAll = value
+                return
+            }
+            this.setCheckedPermisos([])
+            this.checkAll = value
+            
+        },
+        handleSetPermisosBtn(){
+            this.setPermisos(this.activeSubMod)
+        },
         availablePermisosMethod(role, mod, sub){
-           this.fetchPermisos('ns')
            return availablePermisos[role][mod][sub]
         },
         ...mapMutations('roles', [
             'setSelectedPermisos',
             'setModuleListDialogeVisible',
             'setPermisosOps',
+            'setCheckedPermisos',
+            'setSubModSelected',
+            'setPermisosDialogVisible'
         ]),
         ...mapActions('roles', [
             'edit',
             'setPermisos',
-            'fetchPermisos',
+            'fetchPermisosv2',
             'renderPermisos',
         ]),
       actualizarPermisos(modName,subName, subId) {
         this.setPermisos(subId)
       },
       handleSelectedModChange(value){
-          console.log(value)
           this.selectedMod = value
       },
-      handlePermisosCheck(event, subid){
-        var value = event.target.value
-        value = value.split('-')
-        value = value[3]
-        this.setSelectedPermisos({
-            op:value,
-            value: event.target.checked
-        })
-        this.setPermisos(subid)
-        console.log(event.target.checked, subid)
-    },
+     
      
     },
     created(){
-       
     }
  
   }

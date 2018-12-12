@@ -1,7 +1,7 @@
 import HTTP from '../http';
 import router from '../router'
 import { Notification, Message } from 'element-ui'
-
+import { Loading } from 'element-ui';
 export default {
     namespaced: true,
     state: {
@@ -23,10 +23,18 @@ export default {
         roleModuleDialogeVisible: false,
         modulesAvailable: false,
         loading: false,
-        
         activeTabs:[],
+        activeSubMod: {},
         permisosOps: {},
+        permisosRoleName: '',
         availablePermisos: null,
+
+        checkedPermisos: [],
+        permisosDialogVisible: false,
+        loadingBtnsList: {},
+        loadingAutorizarBtn: false,
+        loadingActualizarBtn: false,
+        loadingCrearBtn: false,
     },
     actions: {
         fetchRoles({commit, dispatch}){
@@ -46,7 +54,8 @@ export default {
             })
         },
   
-        createRole({state}){
+        createRole({state, commit}){
+            commit('setLoadingCrear', true)
             let pkg = {
             nombre: state.roleToCreate.nombre,
             description: state.roleToCreate.description,
@@ -60,12 +69,14 @@ export default {
                         message: 'Role '+state.roleToCreate.nombre+' creado exitosamente.',
                         type: 'success'
                     })
+                    commit('setLoadingCrear', false)
                 }
             }).catch(err => {
                 console.log(err)
             })
         },
-        editRole({state, dispatch}){
+        editRole({state, commit, dispatch}){
+            commit('setLoadingActualizar', true)
             let pkg = {
                nombre: state.roleToEdit.nombre,
                description: state.roleToEdit.description,
@@ -80,24 +91,26 @@ export default {
                         message: 'Role actualizado correctamente.',
                         type: 'success'
                     })
+                    dispatch('fetchRoles')
+                    commit('setLoadingActualizar', false)
                 }
             }).catch(err => {
                 console.log(err)
             })
         },
-        setPermisos({state, dispatch}, subId){
-            console.log(subId,state.selectedPermisos)
+        setPermisos({state, commit}, subId){
+            commit('setLoadingAutorizar', true)
             HTTP().local.post('api/roles/'+
             state.roleToEdit.id+'/subModulo/'+
-            subId+'/setPermisos', state.selectedPermisos)
+            subId+'/setPermisos', {pkg:state.checkedPermisos})
             .then(d => {
                 if(d.status == 200){
                     Message({
                         showClose: true,
-                        message: 'Permiso para '+state.selectedPermisos.op+' actualizado.',
+                        message: 'Permiso actualizados.',
                         type: 'success'
                     })
-                    dispatch('fetchPermisos', 'ns')
+                    commit('setLoadingAutorizar', false)
                 }
             }).catch(err => {
                 console.log(err)
@@ -108,48 +121,54 @@ export default {
             console.log('Fetching role..')
             HTTP().local.get('api/roles/'+id)
             .then(d => {
+
                 commit('setRoleToEdit', d.data)
-                dispatch('fetchPermisos')
+                dispatch('fetchModulos')
             }).catch(err => {
                 console.log(err)
             })
         },
-        fetchPermisos({state, commit, dispatch}, type){
+        fetchModulos({state, commit, dispatch}){
             console.log('Fetching permisos..')
             HTTP().local.get('api/roles/'+state.roleToEdit.id+'/permisos')
             .then(d => {
-               commit('setModules', d.data)
-               console.log(state.modules)
-               dispatch('renderPermisos', type)
+                var pkg = {}
+                for(var prop in d.data){
+                    for(var prop2 in d.data[prop].subModulo){
+                        pkg[d.data[prop].subModulo[prop2].id] = false
+                    }
+                }
+                commit('setLoadingBtnsList', pkg)
+                console.log(d.data)
+                commit('setModules', d.data)
+                dispatch('fetchAllModules')
             }).catch(err => {
                 console.log(err)
             })
         },
-        renderPermisos({state, commit, dispatch}, type){
-            console.log('Rendering permisos..')
-            var pkg = {}
-            var availablePermisos = {}
-            pkg[state.roleToEdit.nombre] = {}
-            availablePermisos[state.roleToEdit.nombre] = {}
-            for(let prop in state.modules){
-                pkg[state.roleToEdit.nombre][state.modules[prop].nombre] = {}
-                for(let prop2 in state.modules[prop].subModulo){
-                    pkg[state.roleToEdit.nombre][state.modules[prop].nombre][state.modules[prop].subModulo[prop2].nombre] = state.modules[prop].subModulo[prop2].permisos
-                }
-                availablePermisos[state.roleToEdit.nombre][state.modules[prop].nombre] = {}
-                for(let prop2 in state.modules[prop].subModulo){
-                    availablePermisos[state.roleToEdit.nombre][state.modules[prop].nombre][state.modules[prop].subModulo[prop2].nombre] = ['editar', 'crear', 'eliminar']
+        fetchPermisosv2({state, commit, dispatch}, subid){
+            commit('setLoadingBtn', {key:subid,value:true})
+            console.log('Fetching permisos V2..')
+            HTTP().local.get('api/roles/'+state.roleToEdit.id+'/subMod/'+subid)
+            .then(d => {
+                console.log(d.data)
+                var pkg = []
+                for(let prop in d.data){
+                    if(d.data[prop]){
+                        pkg.push(prop)
+                    }
                 }
                 
-            }
-            commit('setAvailablePermisos', availablePermisos)
-            console.log(state.availablePermisos)
-            commit('setPermisosOps',pkg)
-            if(!type){
-                dispatch('fetchAllModules')
-            }
-
+                console.log(pkg)
+                commit('setCheckedPermisos', pkg)
+                commit('setLoadingBtn', {key:subid,value:false})
+                commit('setPermisosDialogVisible', true)
+            })
+            .catch(err => {
+                console.log(err)
+            })
         },
+       
         fetchAllModules({commit, dispatch}, type){
             console.log('Fetching modules..')
             HTTP().local.get('api/modulos')
@@ -180,15 +199,6 @@ export default {
          
      
             commit('setSelectedModules', data)
-            dispatch('renderActiveTabs')
-        },
-        renderActiveTabs({state, commit}){
-            var pkg = []
-            for(let prop in state.modules){
-                var keys = Object.keys(state.permisosOps[state.roleToEdit.nombre][state.modules[prop]['nombre']])
-                pkg[state.modules[prop]['nombre']] = keys[0]
-            }
-            commit('setActiveTabs', pkg)
         },
 
         addModule({state},id){
@@ -197,14 +207,18 @@ export default {
                 console.log(res)
             })
         },
-        delRole({state}){
-				HTTP().local.delete('api/roles/destroy/'+roleToEdit.id)
+        delRole({state, dispatch}){
+				HTTP().local.delete('api/roles/destroy/'+state.roleToEdit.id)
                 .then(res => {
-                    Message({
-                        showClose: true,
-                        message: 'Role eliminado.',
-                        type: 'success'
-                    })
+                    if(res.data.message == 'success'){
+                        Message({
+                            showClose: true,
+                            message: 'Role eliminado.',
+                            type: 'success'
+                        })
+                        dispatch('fetchRoles')
+                    }
+                    
                 }).catch(err => {
                     console.log(err)
                 })
@@ -219,10 +233,10 @@ export default {
             state.rolesList = roles
         },
         setRoleToEdit(state, role){
+            console.log(role)
             state.roleToEdit = role
         },
         setModules(state, modules){
-            state.modules = null
             state.modules = modules
         },
         setRoleToEditNombre(state, nombre){
@@ -269,19 +283,46 @@ export default {
             state.loading = value
         },
         setPermisosOps(state, value){
+            console.log(value)
             state.permisosOps = value
         },
         setActiveTabs(state, value){
-            state.activeTabs = value
+            state.activeTabs[value.modId + '-' + value.subId] = value.data
         },
         setAvailablePermisos(state, value){
             state.availablePermisos = value
         },
         setRenderReady(state, value){
             state.renderReady = value
-        }
-       
-       
+        },
+ 
+        setCheckedPermisos(state, value){
+            state.checkedPermisos = value
+        },
+        setSelectedSubMod(state, value){
+            state.selectedSubMod = value
+        },
+        setActiveSubMod(state, value){
+            state.activeSubMod[value.modId] = value.subId
+        },
+        setPermisosDialogVisible(state, value){
+            state.permisosDialogVisible = value
+        },
+        setLoadingBtnsList(state, value){
+            state.loadingBtnsList = value
+        },
+        setLoadingBtn(state, pkg){
+            state.loadingBtnsList[pkg.key] = pkg.value
+        },
+        setLoadingAutorizar(state, value){
+            state.loadingAutorizarBtn = value
+        },
+        setLoadingActualizar(state, value){
+            state.loadingActualizarBtn = value
+        },
+        setLoadingCrear(state, value){
+            state.loadingCrearBtn = value
+        },
         
     },
 }

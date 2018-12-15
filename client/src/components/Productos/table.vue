@@ -38,10 +38,9 @@
 					<i class="mdi mdi-settings"></i>
 				</el-button>
 				<el-dropdown-menu slot="dropdown">
-					<el-dropdown-item command="create"><i class="mdi mdi-plus mr-10"></i> Crear</el-dropdown-item>
-                    <el-dropdown-item command="edit"><i class="mdi mdi-pencil mr-10"></i> Editar</el-dropdown-item>
-                    <el-dropdown-item command="del"><i class="mdi mdi-garbage mr-10"></i> Eliminar</el-dropdown-item>
-					<el-dropdown-item command="export" divided><i class="mdi mdi-file-excel mr-10"></i> Exportar</el-dropdown-item>
+					<el-dropdown-item :disabled="(permisos['Productos'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Crear</el-dropdown-item>
+                    <el-dropdown-item :disabled="(permisos['Productos'].editar)? false:true" command="edit"><i class="mdi mdi-pencil mr-10"></i> Editar</el-dropdown-item>
+                    <el-dropdown-item :disabled="(permisos['Productos'].eliminar)? false:true" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
 				</el-dropdown-menu>
     		</el-dropdown>
 			</div>

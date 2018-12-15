@@ -120,6 +120,15 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../assets/scss/_variables';
+.tabsCtn {
+	background-color: red !important;
+}
+.el-tabs__item{
+	color:white;
+}
+.el-tabs__item:hover{
+	color:black;
+}
 .page-table {
 	&.overflow {
 		overflow: auto;

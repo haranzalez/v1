@@ -26,10 +26,11 @@ export default {
         selectedTrailer: null,
         vehiculosDataReady: false,
         headings: [], 
-        assignVehicleId: null,  
+        assignVehicleId: null, 
+        loadingVehiculosTable: false, 
     },
     actions: {
-        createVehiculo({state}){
+        createVehiculo({state, dispatch}){
             HTTP().local.post('api/vehiculos/crear', {
                 placa: state.vehiculo.placa,
                 numero_chasis: state.vehiculo.numero_chasis,
@@ -51,13 +52,13 @@ export default {
                     showClose: true,
                     message: 'Vehiculo creado.'
                 })
-                router.push('/Vehiculos')
+                dispatch('fetchVehiculosList')
             })
             .catch(err => {
                 console.log(err)
             })
         },
-        editVehiculo({state}){
+        editVehiculo({state, dispatch}){
             HTTP().local.put('api/vehiculos/'+state.vehiculo.id+'/update', {
                 placa: state.vehiculo.placa,
                 numero_chasis: state.vehiculo.numero_chasis,
@@ -80,12 +81,13 @@ export default {
                     showClose: true,
                     message: 'Actualizacion Exitosa.'
                 })
+                dispatch('fetchVehiculosList')
             })
             .catch(err => {
                 console.log(err)
             })
         },
-        delVehiculo({state}){
+        delVehiculo({state, dispatch}){
             HTTP().local.delete('api/vehiculos/'+state.vehiculo.id+'/delete')
             .then(d => {
                 if(d){
@@ -94,7 +96,7 @@ export default {
                         showClose: true,
                         message: 'Vehiculo eliminado exitosamente'
                     })
-                    router.push('/Vehiculos')
+                    dispatch('fetchVehiculosList')
                 }
             })
             .catch(err => {
@@ -132,6 +134,7 @@ export default {
             })
         },
         fetchVehiculosList({commit, dispatch}, resource){
+            commit('setLoadingVehiculosTable', true)
             HTTP().local.get('api/vehiculos')
             .then(d => {
                 console.log(d.data)
@@ -142,7 +145,7 @@ export default {
                     dispatch('renderTableHeadings')
                 }
                 commit('setDataReady', true)
-                
+                commit('setLoadingVehiculosTable', false)
             })
             .catch(err => {
                 console.log(err)
@@ -243,6 +246,9 @@ export default {
         },
         setCapasidadCarga(state, value){
             state.vehiculo.capasidad_carga = value
+        },
+        setLoadingVehiculosTable(state, value){
+            state.loadingVehiculosTable = value
         }
         
     },

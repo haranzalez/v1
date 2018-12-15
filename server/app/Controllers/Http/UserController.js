@@ -37,12 +37,17 @@ class UserController {
     const { username, password } = request.all();
     
     const token = await auth.attempt(username,password);
-    const user = await User.query()
-    .with('roles.modulos.subModulo.permisos')
-    .where('username', username).fetch();
+    var user = await User.query().where('username', username).fetch()
+    var res = await User.find(user.rows[0].id)
+    res = await res.roles().fetch()
+    console.log(res.rows[0].id)
+    user = await User.query()
+    .where('username', username).with('roles.modulos.subModulo.permisos', (builder) => {
+      builder.where('role_id', res.rows[0].id)
+      
+    }).fetch();
     const userId = user.rows[0].id
     await log.login(request.ip(),token.token, userId)
-   
     return {
       user,
       token,
@@ -120,8 +125,8 @@ class UserController {
       username, 
       estado, } = request.all();
     const user = await User.find(id);
-   
-    if(roles.length > 0){
+    console.log(roles)
+    if(roles){
       const oldRoles = await user.roles().fetch()
       if(oldRoles.rows.length > 0){
         for(var prop in oldRoles.rows){

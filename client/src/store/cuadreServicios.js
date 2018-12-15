@@ -14,9 +14,18 @@ export default {
             servicio: null,
             precio_servicio: null,
         },
+        cuadreServicioEdit:{
+            id: null,
+            cliente_id: null,
+            precio: null,
+            ajuste: null,
+            servicio: null,
+            precio_servicio: null,
+        },
         cuadreServiciosList: null,
         selectedServicio: null,
         headings: [],  
+        summaryType: 'create',
     },
     actions: {
         createCuadreServicio({state}, cliente_id){
@@ -36,12 +45,12 @@ export default {
                 console.log(err)
             })
         },
-        editCuadreServicio({state}){
+        editCuadreServicio({state}, cliente_id){
             HTTP().local.put('api/cuadre-servicios/'+state.cuadre.id+'/update', {
                 cliente_id: cliente_id,
                 servicio_id: state.selectedServicio,
-                precio: state.cuadre.precio,
-                ajuste: state.cuadre.ajuste,
+                precio: state.cuadreServicioEdit.precio,
+                ajuste: state.cuadreServicioEdit.ajuste,
             })
             .then(d => {
                 console.log(d)
@@ -56,7 +65,7 @@ export default {
             })
         },
         delCuadreServicio({state}){
-            HTTP().local.delete('api/cuadre-servicios/'+state.cuadre.id+'/delete')
+            HTTP().local.delete('api/cuadre-servicios/'+state.cuadreServicioEdit.id+'/delete')
             .then(d => {
                 if(d.data.message == 'success'){
                     return true
@@ -69,9 +78,11 @@ export default {
         fetchCuadreServicio({commit}, pkg){
             HTTP().local.get('api/cuadre-servicios/'+pkg.id)
             .then(d => {
-               commit('setFullCuadreServicio', d.data)
-               commit('setPrecioCuadreServicio', d.data.precio)
-               commit('servicios/setPrecioServicio', d.data.precio_servicio, {root: true})
+                console.log(d.data)
+               commit('setFullCuadreServicio', d.data[0])
+               commit('setPrecioCuadreServicio', d.data[0].precio)
+               commit('servicios/setPrecioServicio', d.data[0].servicio[0].precio, {root: true})
+               commit('setSelectedServicio', d.data[0].servicio[0].nombre)
             })
             .catch(err => {
                 console.log(err)
@@ -104,7 +115,7 @@ export default {
     },
     mutations: {
         setFullCuadreServicio(state, value){
-            state.cuadre = value
+            state.cuadreServicioEdit = value
         },
         setCuadreServiciosList(state, list){
             state.cuadreServiciosList = list
@@ -121,12 +132,40 @@ export default {
         setPrecioServicio(state, value){
             state.cuadre.precio = value
         },
+        setPrecioServicioEdit(state, value){
+            state.cuadreServicioEdit.precio = value
+        },
         setAjuste(state, value){
             state.cuadre.ajuste = value
+        },
+        setAjusteEdit(state, value){
+            state.cuadreServicioEdit.ajuste = value
         },
         setSelectedServicio(state, value){
             state.selectedServicio = value
         },
+        setSummaryType(state, value){
+            state.summaryType = value
+        },
+        resetCuadreServicio(state){
+            state.cuadre = {
+                id: null,
+                cliente_id: null,
+                precio: null,
+                ajuste: null,
+                servicio: null,
+                precio_servicio: null,
+            }
+            state.cuadreServicioEdit = {
+                id: null,
+                cliente_id: null,
+                precio: null,
+                ajuste: null,
+                servicio: null,
+                precio_servicio: null,
+            }
+            state.selectedServicio = ''
+        }
     },
 
 };

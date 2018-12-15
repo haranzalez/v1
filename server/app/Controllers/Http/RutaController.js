@@ -157,6 +157,7 @@ class RutaController {
 //===================================================================
 //UPDATE
 //===================================================================
+
     async update_ruta({ auth, request, params }){
         const user = auth.user
         const { id } = params;

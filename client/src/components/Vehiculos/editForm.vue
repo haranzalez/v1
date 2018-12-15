@@ -1,164 +1,125 @@
 <template>
    <vue-scroll class="page-vehiculos-create">
        <el-form label-position="top" ref="form" label-width="120px">
-        <el-row>
-            <el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+         <el-row>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <h3>Informacion basica</h3>
+                </el-col>
+				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Placa">
                         <el-input size="mini"
-                        @input="setPlaca"
-                        placeholder="Placa"
                         :value="vehiculo.placa"
-                        v-model="vehiculo.placa"
-                        >
-                        
+                        @input="setPlaca"
+                        placeholder="Placa">
                         </el-input>
                     </el-form-item>
 				</el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Numero chasis">
-                        <el-input size="mini"
-                        :value="vehiculo.numero_chasis"
-                        v-model="vehiculo.numero_chasis"
-                        @input="setNumeroChasis"
-                        placeholder="No. Chasis">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
-			</el-col>
-
-            <el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Tipo de vehiculo">
-                        <el-input size="mini"
-                        :value="vehiculo.tipo_de_vehiculo"
-                        v-model="vehiculo.tipo_de_vehiculo"
-                        @input="setTipoDeVehiculo"
-                        placeholder="Tipo">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Tipo configuracion">
-                        <el-input size="mini"
-                        :value="vehiculo.tipo_configuracion"
-                        v-model="vehiculo.tipo_configuracion"
-                        @input="setTipoConfiguracion"
-                        placeholder="Configuracion">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
-			</el-col>
-
-            <el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Modelo">
                         <el-input size="mini"
                         :value="vehiculo.modelo"
-                        v-model="vehiculo.modelo"
                         @input="setModelo"
                         placeholder="Peter Jackson..">
                         </el-input>
                     </el-form-item>
 				</el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Numero Motor">
-                        <el-input size="mini"
-                        :value="vehiculo.numero_motor"
-                        v-model="vehiculo.numero_motor"
-                        @input="setNumeroMotor"
-                        placeholder="No. Motor">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
-			</el-col>
-
-            <el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Tipo de flota">
-                        <el-input size="mini"
-                        :value="vehiculo.tipo_de_flota"
-                        v-model="vehiculo.tipo_de_flota"
-                        @input="setTipoDeFlota"
-                        placeholder="flota">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Marca cabezote">
                         <el-input size="mini"
                         :value="vehiculo.marca_cabezote"
-                        v-model="vehiculo.marca_cabezote"
                         @input="setMarcaCabezote"
                         placeholder="">
                         </el-input>
                     </el-form-item>
 				</el-col>
-			</el-col>
-
-            <el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Linea cabezote">
-                        <el-input size="mini"
-                        :value="vehiculo.linea_cabezote"
-                        v-model="vehiculo.linea_cabezote"
-                        @input="setLineaCabezote"
-                        placeholder="">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Tipo de combustible">
-                        <el-input size="mini"
-                        :value="vehiculo.tipo_de_combustible"
-                        v-model="vehiculo.tipo_de_combustible"
-                        @input="setTipoDeCombustible"
-                        placeholder="Diesel..">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
-			</el-col>
-
-            <el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Color">
                         <el-input size="mini"
                         :value="vehiculo.color"
-                        v-model="vehiculo.color"
                         @input="setColor"
                         placeholder="Negro..">
                         </el-input>
                     </el-form-item>
 				</el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-col :span="12" :md="12" :sm="24" :xs="24">
-                        <el-form-item label="Peso (Toneladas)">
-                        <el-input-number
-                        size="mini" 
-                        :value="vehiculo.peso"
-                        v-model="vehiculo.peso" 
-                        controls-position="right" 
-                        @change="setPeso" 
-                        :min="1" 
-                        :max="50">
-                        </el-input-number>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="12" :md="12" :sm="24" :xs="24">
-                        <el-form-item label="Capasidad de carga (Toneladas)">
-                        <el-input-number
-                        size="mini" 
-                        :value="vehiculo.capasidad_carga"
-                        v-model="vehiculo.capasidad_carga" 
-                        controls-position="right" 
-                        @change="setCapasidadCarga" 
-                        :min="1" 
-                        :max="50">
-                        </el-input-number>
-                        </el-form-item>
-                    </el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <h3>Informacion adicional</h3>
+                </el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Linea cabezote">
+                        <el-input size="mini"
+                        :value="vehiculo.linea_cabezote"
+                        @input="setLineaCabezote"
+                        placeholder="">
+                        </el-input>
+                    </el-form-item>
 				</el-col>
-			</el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Numero Motor">
+                        <el-input size="mini"
+                        :value="vehiculo.numero_motor"
+                        @input="setNumeroMotor"
+                        placeholder="No. Motor">
+                        </el-input>
+                    </el-form-item>
+				</el-col>
+				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Numero chasis">
+                        <el-input size="mini"
+                        :value="vehiculo.numero_chasis"
+                        @input="setNumeroChasis"
+                        placeholder="No. Chasis">
+                        </el-input>
+                    </el-form-item>
+				</el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <h3>Configuraciones</h3>
+                </el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Peso">
+                    <el-input-number :value="vehiculo.peso" size="mini" v-model="pesoNum" controls-position="right" @change="setPeso" :min="1" :max="1000"></el-input-number>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Capasidad de carga">
+                    <el-input-number :value="vehiculo.capasidad_carga" size="mini" v-model="capacidadNum" controls-position="right" @change="setCapasidadCarga" :min="1" :max="1000"></el-input-number>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Tipo de vehiculo">
+                        <el-input size="mini"
+                        :value="vehiculo.tipo_de_vehiculo"
+                        @input="setTipoDeVehiculo"
+                        placeholder="Tipo">
+                        </el-input>
+                    </el-form-item>
+				</el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Tipo de flota">
+                        <el-input size="mini"
+                        :value="vehiculo.tipo_de_flota"
+                        @input="setTipoDeFlota"
+                        placeholder="flota">
+                        </el-input>
+                    </el-form-item>
+				</el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Tipo configuracion">
+                        <el-input size="mini"
+                        :value="vehiculo.tipo_configuracion"
+                        @input="setTipoConfiguracion"
+                        placeholder="Configuracion">
+                        </el-input>
+                    </el-form-item>
+				</el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Tipo de combustible">
+                        <el-input size="mini"
+                        :value="vehiculo.tipo_de_combustible"
+                        @input="setTipoDeCombustible"
+                        placeholder="Diesel..">
+                        </el-input>
+                    </el-form-item>
+				</el-col>
 
         </el-row>
         

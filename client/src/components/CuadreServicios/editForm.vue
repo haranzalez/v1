@@ -3,21 +3,10 @@
         <el-form :inline="false" label-position="top" ref="form" label-width="120px">
             <el-row>
                 <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-                    <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-                        <el-form-item label="Precio">
-                            <el-input
-                                :value="servicio.precio_servicio"
-                                class="inputWidth"
-                                size="mini"
-                                placeholder="$0"
-                                @input="setPrecioServicio">
-                            </el-input>
-                        </el-form-item>
-                    </el-col>
+                   
                     <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
-                        <el-form-item label="Producto">
+                        <el-form-item label="Servicio">
                             <el-select
-                            class="selectWidth" 
                             size="mini" 
                             :value.sync="selectedServicio" 
                             placeholder="Seleccione.." 
@@ -29,6 +18,16 @@
                                 :value="item.id">
                                 </el-option>
                             </el-select>
+                        </el-form-item>
+                    </el-col>
+                     <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+                        <el-form-item label="Precio">
+                            <el-input
+                                :value="cuadreServicioEdit.precio"
+                                size="mini"
+                                placeholder="$0"
+                                @input="setPrecioServicioEdit">
+                            </el-input>
                         </el-form-item>
                     </el-col>
             </el-col>
@@ -50,7 +49,7 @@ import router from '../../router'
 import summaryTable from './summaryTable.vue'
 
 export default {
-	name: 'CuadreServicioCreateForm',
+	name: 'CuadreServicioEditForm',
 	data () {
       	return {
              
@@ -62,7 +61,7 @@ export default {
 			'permisos',
         ]),
         ...mapState('cuadreServicios', [
-           'servicio',
+           'cuadreServicioEdit',
            'selectedServicio',
         ]),
         ...mapState('servicios', [
@@ -74,18 +73,10 @@ export default {
         summaryTable,
 	},
     methods: {
-        back() {
-			
-		},
-     
         ...mapMutations('cuadreServicios', [
-            'setPrecioServicio',
+            'setPrecioServicioEdit',
             'setSelectedServicio',
-        ]),
-       
-         ...mapActions('cuadreServicios',[
-            'createCuadreServicio',
-            
+            'setSummaryType',
         ]),
          ...mapActions('servicios',[
             'fetchServiciosList',
@@ -101,12 +92,14 @@ export default {
             this.setSelectedCreateRuta(value)
         },
         servicioChange(value){
+            console.log(value)
             this.fetchServicio(value)
             this.setSelectedServicio(value)
         },
        
     },
     created: function(){
+       this.setSummaryType('edit')
        this.fetchServiciosList()
 	}
 

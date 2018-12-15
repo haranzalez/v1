@@ -1,7 +1,14 @@
 <template>
 <div>
 	<!--cuadres table -->
-	<el-dialog fullscreen width="65%" top="10vh" :title="cliente.nombre_razon_social" :visible.sync="cuadresTableVisible">
+	<el-dialog fullscreen width="65%" top="10vh" :visible.sync="cuadresTableVisible">
+		<div slot="title">
+			<p style="margin-bottom: 2px;">
+				<b style="font-size:20px;">{{cliente.nombre_razon_social}} </b>
+				<br>
+				<span>cuadres disponibles</span>
+			</p>
+		</div>
 		<div style="text-align: right;margin-bottom: 10px;">
 		<el-button type="default" size="mini" @click="reloadTable('cuadre'+currentCuadresTab+'s')" style="margin-right:5px;"><i class="mdi mdi-reload"></i></el-button>
 		<el-dropdown trigger="click" @command="handleAction">  
@@ -21,54 +28,55 @@
 	</el-dialog>
 	
 	<!--edit viaje form -->
-	<el-dialog center width="40%" top="15vh" title="Cuadre ruta" :visible.sync="cuadreViajeEditFormVisible">
+	<el-dialog center width="30%" top="15vh" title="Cuadre ruta" :visible.sync="cuadreViajeEditFormVisible">
 		<ViajeEditForm></ViajeEditForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button size="mini" type="primary" @click="editCuadreRuta(cliente.id)">Actualizar</el-button>
-			<el-button size="mini" type="primary" @click="cuadreViajeEditFormVisible = false; fetchCuadresRutas()">Cerrar</el-button>
+			<el-button size="mini" @click="cuadreViajeEditFormVisible = false; fetchCuadresRutas()">Cerrar</el-button>
 		</span>
 	</el-dialog>
 	<!--edit producto form -->
-	<el-dialog center width="40%" top="15vh" title="Cuadre producto" :visible.sync="cuadreProductoEditFormVisible">
+	<el-dialog center width="30%" top="15vh" title="Cuadre producto" :visible.sync="cuadreProductoEditFormVisible">
 		<ProductoEditForm></ProductoEditForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button size="mini" type="primary" @click="editCuadreProducto(cliente.id)">Actualizar</el-button>
-			<el-button size="mini" type="primary" @click="cuadreProductoEditFormVisible = false; fetchCuadresProductos()">Cerrar</el-button>
+			<el-button size="mini" @click="cuadreProductoEditFormVisible = false; fetchCuadresProductos()">Cerrar</el-button>
 		</span>
 	</el-dialog>
-	<!--edit viaje form -->
-	<el-dialog center width="40%" top="15vh" title="Cuadre servicio" :visible.sync="cuadreServicioEditFormVisible">
+	<!--edit servicio form -->
+	<el-dialog center width="30%" top="15vh" title="Cuadre servicio edit" :visible.sync="cuadreServicioEditFormVisible">
 		<ServicioEditForm></ServicioEditForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button size="mini" type="primary" @click="editCuadreServicio(cliente.id)">Actualizar</el-button>
-			<el-button size="mini" type="primary" @click="cuadreServicioEditFormVisible = false; fetchCuadresServicios()">Cerrar</el-button>
+			<el-button size="mini"  @click="cuadreServicioEditFormVisible = false; fetchCuadresServicios()">Cerrar</el-button>
 		</span>
 	</el-dialog>
 	
 	<!--Create viaje form -->
-	<el-dialog center width="40%" top="15vh" title="Cuadre ruta" :visible.sync="createViajeFormVisible">
+	<el-dialog center width="30%" top="15vh" title="Cuadre ruta" :visible.sync="createViajeFormVisible">
 		<ViajeCreateForm></ViajeCreateForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button size="mini" type="primary" @click="create_cuadre_viaje(cliente.id)">Crear cuadre</el-button>
 		</span>
 	</el-dialog>
 	<!--Create producto form -->
-	<el-dialog center width="40%" top="15vh" title="Cuadre producto" :visible.sync="createProductoFormVisible">
+	<el-dialog center width="30%" top="15vh" title="Cuadre producto" :visible.sync="createProductoFormVisible">
 		<ProductoCreateForm></ProductoCreateForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button size="mini" type="primary" @click="create_cuadre_producto(cliente.id)">Cuadrar Producto</el-button>
 		</span>
 	</el-dialog>
 	<!--Create servicio form -->
-	<el-dialog center width="40%" top="15vh" title="Cuadre servicio" :visible.sync="createServicioFormVisible">
+	<el-dialog center width="30%" top="15vh" title="Cuadre servicio" :visible.sync="createServicioFormVisible">
 		<ServicioCreateForm></ServicioCreateForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button size="mini" type="primary" @click="create_cuadre_servicio(cliente.id)">Cuadrar Servicio</el-button>
+			<el-button size="mini" @click="createServicioFormVisible = false; fetchCuadresServicios()">Cerrar</el-button>
 		</span>
 	</el-dialog>
 
 	<!--Edit cliente dialog form -->
-	<el-dialog fullscreen width="40%" top="5vh" :visible.sync="editFormVisible">
+	<el-dialog fullscreen width="30%" top="5vh" :visible.sync="editFormVisible">
 		<ClientesEditForm></ClientesEditForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button size="mini" @click="editFormVisible = false;">Cancelar</el-button>
@@ -76,7 +84,7 @@
 		</span>
 	</el-dialog>
 	<!--Create cliente dialog form -->
-	<el-dialog fullscreen width="40%" top="5vh" :visible.sync="createFormVisible">
+	<el-dialog fullscreen width="30%" top="5vh" :visible.sync="createFormVisible">
 		<ClientesCreateForm></ClientesCreateForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button size="mini" @click="createFormVisible = false; paramsReset(); setDataReady(false);">Cancelar</el-button>
@@ -337,6 +345,12 @@ export default {
 			'resetSelections',
 			'resetCuadreRuta',
 		]),
+		...mapMutations('cuadreProductos', [
+			'resetCuadreProducto',
+		]),
+		...mapMutations('cuadreServicios', [
+			'resetCuadreServicio',
+		]),
 		
 		...mapMutations('rutas',[
 			'rutaReset',
@@ -361,10 +375,12 @@ export default {
 			if('createProducto'){
 				this.resetSelections()
 				this.productoReset()
+				this.resetCuadreProducto()
 			}
 			if('createServicio'){
 				this.resetSelections()
 				this.servicioReset()
+				this.resetCuadreServicio()
 			}
 		},
 
@@ -425,51 +441,34 @@ export default {
             	}
 			}
 			if(e == 'createRuta'){
-				
 				this.createViajeFormVisible = true
 				this.clearForm('createRuta')
+			}
+			if(e == 'createServicio'){
+				this.createServicioFormVisible = true
+				this.clearForm('createServicio')
+			}
+			if(e == 'createProducto'){
+				this.createProductoFormVisible = true
+				this.clearForm('createProducto')
 			}
 			if(e == 'editRuta'){
 				this.cuadreViajeEditFormVisible = true
 			}
-			if(e == 'delRuta'){
-				this.pushToDelCuadre('ruta')
-			}
-			if(e == 'createProducto'){
-				
-				this.createProductoFormVisible = true
-				this.clearForm('createProducto')
+			if(e == 'editServicio'){
+				this.cuadreServicioEditFormVisible = true
 			}
 			if(e == 'editProducto'){
 				this.cuadreProductoEditFormVisible = true
 			}
+			if(e == 'delRuta'){
+				this.pushToDelCuadre('ruta')
+			}
 			if(e == 'delProducto'){
 				this.pushToDelCuadre('producto')
 			}
-
-			if(e == 'createServicio'){
-				
-				this.createServicioFormVisible = true
-				this.clearForm('createServicio')
-			}
-			if(e == 'editServicio'){
-				this.cuadreServicioEditFormVisible = true
-			}
 			if(e == 'delServicio'){
 				this.pushToDelCuadre('servicio')
-			}
-			
-			if(e == 'verCuadreRuta'){
-				this.fetchCuadresRutas()
-				this.cuadreViajeTableVisible = true
-			}
-			if(e == 'verCuadreProducto'){
-				this.fetchCuadresProductos()
-				this.cuadreProductoTableVisible = true
-			}
-			if(e == 'verCuadreServicio'){
-				this.fetchCuadresServicios()
-				this.cuadreServicioTableVisible = true
 			}
 			if(e == 'verCuadres'){
 				this.cuadresTableVisible = true
@@ -552,7 +551,6 @@ export default {
 				}
 				if(cuadre == 'producto'){
 					if(this.delCuadreProducto()){
-						
 						Message({
 							type: 'success',
 							showClose: true,

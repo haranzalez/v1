@@ -1,19 +1,22 @@
 <template>
 <div>
 	<!--Edit dialog form -->
-	<el-dialog width="60%" top="5vh" :title="trailer.placa" :visible.sync="editFormVisible">
+	<el-dialog fullscreen center width="30%" top="5vh" :title="trailer.placa" :visible.sync="editFormVisible">
 		<TrailersEditForm></TrailersEditForm>
 		<span slot="footer" class="dialog-footer">
-			<el-button @click="editFormVisible = false">Cancelar</el-button>
-			<el-button type="primary" @click="editTrailer">Actualizar</el-button>
+			<el-button size="mini" @click="editFormVisible = false">Cancelar</el-button>
+			<el-button size="mini" type="primary" @click="editTrailer">Actualizar</el-button>
 		</span>
 	</el-dialog>
 	<!--Create dialog form -->
-	<el-dialog width="60%" top="5vh" title="Nuevo trailer" :visible.sync="createFormVisible">
+	<el-dialog fullscreen center width="30%" top="5vh" :visible.sync="createFormVisible">
+		<div slot="title">
+			<h2>{{(trailer.placa !== null)?trailer.placa:'Nuevo Trailer'}}</h2>
+		</div>
 		<TrailersCreateForm></TrailersCreateForm>
 		<span slot="footer" class="dialog-footer">
-			<el-button @click="createFormVisible = false">Cancelar</el-button>
-			<el-button type="primary" @click="create">Crear</el-button>
+			<el-button size="mini" @click="createFormVisible = false">Cancelar</el-button>
+			<el-button size="mini" type="primary" @click="create">Crear</el-button>
 		</span>
 	</el-dialog>
 	<!-- searchbar -->
@@ -21,7 +24,7 @@
 		<h1>Trailers</h1>
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
 			<div class="serachBar-ctn">
-				<el-input placeholder="Buscar" v-model="filter" class="input-with-select">
+				<el-input size="mini" placeholder="Buscar" v-model="filter" class="input-with-select">
 					<el-select v-model="selectTypeOfSearch" slot="prepend" placeholder="Seleccione">
 					<el-option v-for="col in headings" :key="col" :label="col" :value="col"></el-option>
 					</el-select>
@@ -29,15 +32,17 @@
 			</div>
 		</el-col>
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-			
 			<div style="text-align:right;">
+                <el-button type="default" size="mini" @click="reloadTable" style="margin-right:5px;"><i class="mdi mdi-reload"></i></el-button>
+				<el-button type="default" size="mini" @click="exportTable" style="margin-right:5px;"><i class="mdi mdi-file-excel"></i></el-button>
 				<el-dropdown  trigger="click" @command="handleAction">  
 				<el-button size="mini">
 					<i class="mdi mdi-settings"></i>
 				</el-button>
 				<el-dropdown-menu slot="dropdown">
-					<el-dropdown-item :disabled="(permisos['Trailers'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Nuevo</el-dropdown-item>
-					<el-dropdown-item command="export"><i class="mdi mdi-file-excel mr-10"></i> Exportar</el-dropdown-item>
+					<el-dropdown-item :disabled="(permisos['Trailers'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Crear</el-dropdown-item>
+                    <el-dropdown-item :disabled="(permisos['Trailers'].editar)? false:true" command="edit"><i class="mdi mdi-pencil mr-10"></i> Editar</el-dropdown-item>
+                    <el-dropdown-item :disabled="(permisos['Trailers'].eliminar)? false:true" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
 				</el-dropdown-menu>
     		</el-dropdown>
 			</div>
@@ -46,21 +51,22 @@
 		
 	
 	<el-table
+	v-loading.body="loadingTrailersTable"
+	stripe
+	max-height="250"
+	highlight-current-row
+	@current-change="handleCurrentTableChange"
+	ref="trailersTable"
+	size="mini"
     :data="filtered"
 	:default-sort = "{prop: 'id', order: 'descending'}"
     style="width: 100%">
     <el-table-column
 	  sortable
-      fixed
-      prop="id"
-      label="ID"
-      width="50">
-    </el-table-column>
-    <el-table-column
-	  sortable
+	  fixed
       prop="placa"
       label="Placa"
-      width="120">
+      width="80">
     </el-table-column>
     <el-table-column
 	  sortable
@@ -145,15 +151,6 @@
           disable-transitions>{{(scope.row.radica_rndc)?'Si':'No'}}</el-tag>
 	  </template>
     </el-table-column>
-    <el-table-column
-      fixed="right"
-      label="Acciones"
-      width="120">
-      <template slot-scope="scope">
-        <el-button @click="pushToEdit(scope.row)" type="text" size="medium"><i class="mdi mdi-lead-pencil mr-10"></i></el-button>
-		<el-button @click="pushToDel(scope.row)" type="text" size="medium"><i class="mdi mdi-delete mr-10"></i></el-button>
-      </template>
-    </el-table-column>
   </el-table>
 
   </el-col>
@@ -188,6 +185,7 @@ export default {
 			'permisos',
         ]),
         ...mapState('trailers', [
+			'loadingTrailersTable',
 			'trailer',
 			'trailersList',
 			'headings',
@@ -212,19 +210,36 @@ export default {
 		TrailersCreateForm,
 	},
     methods: {
+		reloadTable(){
+			this.fetchTrailersList() 
+        },
+        exportTable(){
+			exportService.toXLS(this.trailersList, 'Vehiculos', true)
+		},
 		handleAction(e, row){
             if(e == 'create'){
+				this.resetTrailerVars()
+        		
 				this.createFormVisible = true;
-			}
-			if(e == 'export'){
-				exportService.toXLS(this.trailersList, 'Trailers', true)
             }
+             if(e == 'edit'){
+				this.editFormVisible = true;
+            }
+             if(e == 'del'){
+                 this.pushToDel(row)
+			}
         },
-		back(){
-			router.push('/Vehiculos')
+        handleCurrentTableChange(val) {
+			if(val == null){
+				this.$refs.trailersTable.setCurrentRow(val);
+				return
+			}
+			this.setFullTrailer(val)
+			this.$refs.trailersTable.setCurrentRow(val);
 		},
 		...mapMutations('trailers', [
 			'setFullTrailer',
+			'resetTrailerVars',
 		]),
         ...mapActions('trailers',[
 			'fetchTrailersList',
@@ -247,7 +262,7 @@ export default {
                 cancelButtonText: 'Cancelar',
                 type: 'warning'
             }).then(() => {
-				this.setFullTrailer(row)
+				
 				this.delTrailer()
 				this.editFormVisible = false
 				this.fetchTrailersList()

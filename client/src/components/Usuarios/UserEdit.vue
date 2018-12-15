@@ -86,9 +86,9 @@
 				<el-form-item>
 					<el-select
 						v-model="selectedRoles"
+						@change="handleSelectedRole"
 						class="select-wide"
 						filterable
-						multiple
 						no-match-text
 						placeholder="Seleccione...">
 						<el-option
@@ -157,6 +157,9 @@ export default {
 		]),
 	},
 	methods: {
+		handleSelectedRole(e){
+			console.log(e)
+		},
 		del(id) {
 			this.$confirm('Esta accion eliminara permanentemente el registro. Continuar?', 'Atencion', {
 				confirmButtonText: 'OK',

@@ -1,149 +1,149 @@
 <template>
    <vue-scroll class="page-trailers-create">
-       <el-form label-position="top" ref="form" label-width="120px">
+       <el-form label-position="top" ref="trailersCreateForm" label-width="120px">
         <el-row>
-            <el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Placa">
-                        <el-input 
-                        @input="setPlaca"
-                        placeholder="">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Tipo de vehiculo">
-                        <el-select 
-                        v-model="trailer.tipo_de_vehiculo" 
-                        placeholder="Select"
-                        @change="setTipoDeVehiculo">
-                            <el-option
-                            v-for="item in tipoVehiculoOptions"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-				</el-col>
-			</el-col>
-
-            <el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Tipo de configuracion">
-                        <el-input 
-                        @input="setTipoDeConfiguracion"
-                        placeholder="">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Tenedor">
-                        <el-input 
-                        @input="setTenedor"
-                        placeholder="">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
-			</el-col>
-
-            <el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Modelo">
-                        <el-input 
-                        @input="setModelo"
-                        placeholder="">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Propietario">
-                        <el-input 
-                        @input="setPropietario"
-                        placeholder="">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
-			</el-col>
-
-            <el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Tipo de flota">
-                        <el-input 
-                        @input="setTipoDeFlota"
-                        placeholder="">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Poseedor">
-                        <el-input 
-                        @input="setPoseedor"
-                        placeholder="">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
-			</el-col>
-
-            <el-col>
-                <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Carroceria">
-                        <el-input 
-                        @input="setTipoCarroceria"
-                        placeholder="">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Color">
-                        <el-input 
-                        @input="setColor"
-                        placeholder="">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
-			</el-col>
-
-            <el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Marca">
-                        <el-input 
-                        @input="setMarcaTrailer"
-                        placeholder="">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
-                <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Peso">
-                        <el-input 
-                        @input="setPeso"
-                        placeholder="">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
-			</el-col>
-
-            <el-col>
-				
-                <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Estado">
-                        <el-input 
-                        @input="setEstado"
-                        placeholder="">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
-
-                <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Radica RNDC">
-                         <el-checkbox @change="radicaChange" v-model="radicaRn"></el-checkbox>
-                    </el-form-item>
-				</el-col>
-			</el-col>
-             <el-col>
-                
-			</el-col>
-
+            <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                <h3>Informacion basica</h3>
+            </el-col>
+            <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                <el-form-item label="Placa">
+                    <el-input 
+                    size="mini"
+                    @input="setPlaca"
+                    placeholder="">
+                    </el-input>
+                </el-form-item>
+            </el-col>
+            <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                <el-form-item label="Modelo">
+                    <el-input 
+                    size="mini"
+                    @input="setModelo"
+                    placeholder="">
+                    </el-input>
+                </el-form-item>
+            </el-col>
+            <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                <el-form-item label="Marca">
+                    <el-input 
+                    size="mini"
+                    @input="setMarcaTrailer"
+                    placeholder="">
+                    </el-input>
+                </el-form-item>
+            </el-col>
+            <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                <el-form-item label="Color">
+                    <el-input 
+                    size="mini"
+                    @input="setColor"
+                    placeholder="">
+                    </el-input>
+                </el-form-item>
+            </el-col>
+            <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                <el-form-item label="Propietario">
+                    <el-input 
+                    size="mini"
+                    @input="setPropietario"
+                    placeholder="">
+                    </el-input>
+                </el-form-item>
+            </el-col>
+            <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                <el-form-item label="Poseedor">
+                    <el-input 
+                    size="mini"
+                    @input="setPoseedor"
+                    placeholder="">
+                    </el-input>
+                </el-form-item>
+            </el-col>
+            <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                <el-form-item label="Radica RNDC">
+                    <el-switch
+                    v-model="radicaRn"
+                    @change="radicaChange"
+                    active-color="#13ce66"
+                    inactive-color="#ff4949"
+                    active-text="Si"
+                    inactive-text="No">
+                    </el-switch>
+                </el-form-item>
+            </el-col>
+            <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                <h3>Informacion adicional</h3>
+            </el-col>
+            <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                <el-form-item label="Tipo de vehiculo">
+                    <el-select 
+                     size="mini"
+                    v-model="trailer.tipo_de_vehiculo" 
+                    placeholder="Select"
+                    @change="setTipoDeVehiculo">
+                        <el-option
+                        v-for="item in tipoVehiculoOptions"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+            </el-col>
+             <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                <el-form-item label="Tipo de flota">
+                    <el-input 
+                    size="mini"
+                    @input="setTipoDeFlota"
+                    placeholder="">
+                    </el-input>
+                </el-form-item>
+            </el-col>
+            <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                <el-form-item label="Tipo de configuracion">
+                    <el-input 
+                    size="mini"
+                    @input="setTipoDeConfiguracion"
+                    placeholder="">
+                    </el-input>
+                </el-form-item>
+            </el-col>
+            <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                <el-form-item label="Tenedor">
+                    <el-input 
+                    size="mini"
+                    @input="setTenedor"
+                    placeholder="">
+                    </el-input>
+                </el-form-item>
+            </el-col>
+             <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                <el-form-item label="Carroceria">
+                    <el-input 
+                    size="mini"
+                    @input="setTipoCarroceria"
+                    placeholder="">
+                    </el-input>
+                </el-form-item>
+            </el-col>
+            <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                <el-form-item label="Peso">
+                    <el-input 
+                    size="mini"
+                    @input="setPeso"
+                    placeholder="">
+                    </el-input>
+                </el-form-item>
+            </el-col>
+            <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                <el-form-item label="Estado">
+                    <el-input 
+                    size="mini"
+                    @input="setEstado"
+                    placeholder="">
+                    </el-input>
+                </el-form-item>
+            </el-col>
         </el-row>
         
         
@@ -178,6 +178,8 @@ export default {
 		}
 	},
 	computed: {
+
+        
         
         ...mapState('authentication', [
 			'permisos',
@@ -223,7 +225,7 @@ export default {
         ]),
     },
     created: function(){
-       
+       this.$refs.trailersCreateForm.resetFields();
 	}
 
 }

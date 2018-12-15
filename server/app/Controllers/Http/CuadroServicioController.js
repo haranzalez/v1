@@ -8,17 +8,18 @@ class CuadroServicioController {
     async get_one({ params }){
         const { id } = params;
         return await CuadreServicio.query()
-        .where('id', id).fetch()
+        .where('id', id).with('servicio').fetch()
     }
     async get_client_cuadres({ params }){
         const { id } = params;
         const cliente = await Cliente.query().where('id', id).with('cuadre_servicio.servicio').fetch()
         const pkg = cliente.rows[0].$relations.cuadre_servicio;
-        pkg['nombre_servicio'] = cliente.rows[0].$relations.cuadre_servicio.rows[0].$relations.servicio.rows[0].nombre
-        pkg['precio_servicio'] = cliente.rows[0].$relations.cuadre_servicio.rows[0].$relations.servicio.rows[0].precio
+        pkg['nombre_servicio'] = cliente.rows[0].$relations.cuadre_servicio.rows[0].$relations.servicio.rows[0].nombre;
+        pkg['precio_servicio'] = cliente.rows[0].$relations.cuadre_servicio.rows[0].$relations.servicio.rows[0].precio;
+        console.log(pkg)
         return pkg
     }
-    async crearCuadre({ request }){
+    async create_cuadre({ request }){
         const {
             cliente_id,
             servicio_id,

@@ -27,7 +27,7 @@ export default {
         dataReady: false,
         conductoresDataReady: false,
         headings: [],
-        loading: false,
+        loadingConductoresTable: false,
     },
 
     actions: {
@@ -88,7 +88,7 @@ export default {
             })
         },
         fetchConductoresList({state, commit, dispatch}){
-            commit('setLoading', true)
+            commit('setLoadingConductoresTable', true)
             HTTP().local.get('api/conductores')
             .then(d => {
                 commit('setConductorList', d.data)
@@ -96,7 +96,7 @@ export default {
                     commit('setDataReady', true)
                     dispatch('renderTableHeadings')
                 }
-                commit('setLoading', false)
+                commit('setLoadingConductoresTable', false)
                 
             })
             .catch(err => {
@@ -193,8 +193,8 @@ export default {
         setFullConductor(state, value){
             state.conductor = value
         },
-        setLoading(state, value){
-            state.loading = value
+        setLoadingConductoresTable(state, value){
+            state.loadingConductoresTable = value
         }
         
     },

@@ -20,7 +20,7 @@ import moment from 'moment-timezone'
 import router from '../../router'
 
 export default {
-	name: 'summaryViaje',
+	name: 'summaryServicio',
 	data () {
       	return {
              
@@ -32,19 +32,41 @@ export default {
         ]),
         ...mapState('cuadreServicios', [
             'cuadre',
+            'cuadreServicioEdit',
+            'summaryType',
         ]),
         summary(){
-            let cuadre = (this.cuadre.precio != null)?Number(this.cuadre.precio):0
-            let servicio = (this.servicio.precio != null)?Number(this.servicio.precio):0
-            let ajuste = (cuadre > 0 && servicio > 0)?cuadre - servicio:0
-            let total = servicio + ajuste
-            this.setAjuste(ajuste)
-            return {
-                servicio,
-                ajuste,
-                cuadre,
-                total
+            if(this.summaryType == 'edit'){
+                console.log(this.cuadreServicioEdit, this.servicio)
+                let cuadre = (this.cuadreServicioEdit.precio != null)?Number(this.cuadreServicioEdit.precio):0
+                let servicio = (this.servicio.precio != null)?Number(this.servicio.precio):0
+                let ajuste = (cuadre > 0 && servicio > 0)?cuadre - servicio:0
+                let total = servicio + ajuste
+                this.setAjusteEdit(ajuste)
+                console.log(ajuste)
+                return {
+                    servicio,
+                    ajuste,
+                    cuadre,
+                    total
+                }
             }
+            if(this.summaryType == 'create'){
+                console.log(this.cuadre, this.servicio)
+                let cuadre = (this.cuadre.precio != null)?Number(this.cuadre.precio):0
+                let servicio = (this.servicio.precio != null)?Number(this.servicio.precio):0
+                let ajuste = (cuadre > 0 && servicio > 0)?cuadre - servicio:0
+                let total = servicio + ajuste
+                this.setAjuste(ajuste)
+                console.log(ajuste)
+                return {
+                    servicio,
+                    ajuste,
+                    cuadre,
+                    total
+                }
+            }
+            
         }
 	},
 	components: {
@@ -52,6 +74,7 @@ export default {
     methods: {
         ...mapMutations('cuadreServicios', [
             'setAjuste',
+            'setAjusteEdit',
         ])
     },
 }

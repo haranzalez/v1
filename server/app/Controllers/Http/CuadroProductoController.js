@@ -10,7 +10,7 @@ class CuadroProductoController {
     async get_cuadre({ params }){
         const { id } = params;
         return await CuadreProducto.query()
-        .where('id', id).fetch()
+        .where('id', id).with('producto').fetch()
     }
     async get_client_cuadres({ params }){
         const { id } = params;
@@ -59,6 +59,7 @@ class CuadroProductoController {
         cuadre.precio = precio
         cuadre.ajuste = ajuste
         cuadre.save()
+        console.log(producto_id)
         if(producto_id){
             await cuadre.producto().attach(producto_id)
         }

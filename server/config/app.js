@@ -190,7 +190,7 @@ module.exports = {
     file: {
       driver: 'file',
       name: 'cst-app',
-      filename: 'adonis.log',
+      filename: 'hq.log',
       level: 'info'
     }
   }

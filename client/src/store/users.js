@@ -24,7 +24,7 @@ export default {
         },
         estados: null,
         roles: null,
-        selected: [],
+        selected: '',
         usersList: null,
         dataReady: false,
         loading: false,
@@ -33,24 +33,16 @@ export default {
     },
 
     actions: {
-        fetchUser({ commit, dispatch },id){
+        fetchUser({ commit, state },id){
             HTTP().local.get('api/users/'+id)
             .then(d => {
                 console.log(d.data[0])
                 commit('setFullUser', d.data[0])
-                dispatch('renderSelectedRoles')
+                commit('setSelectedRoles', state.usuario.roles[0].nombre)
             })
             .catch(err => {
                 console.log(err)
             })
-        },
-        renderSelectedRoles({state, commit}){
-            var pkg = []
-            for(var prop in state.usuario.roles){
-                pkg.push(state.usuario.roles[prop].id)
-            }
-            commit('setSelectedRoles', pkg)
-
         },
         fetchUsersList({commit, dispatch}){
             commit('setLoading', true)
@@ -181,10 +173,10 @@ export default {
                     
                     let final = []
                     for(let prop in allRoles){
-                        final.push(allRoles[prop].id)
+                        final.push(allRoles[prop].nombre)
                     }
                 
-                    commit('setSelectedRoles', final)
+                    commit('setSelectedRoles', final[0])
                     commit('setRoles', JSON.parse(d.request.response))
                 }else{
                     commit('setRoles', JSON.parse(d.request.response))
@@ -280,8 +272,8 @@ export default {
         setRoles(state, roles){
             state.roles = roles
         },
-        setSelectedRoles(state, roles){
-            state.selected = roles
+        setSelectedRoles(state, role){
+            state.selected = role
         },
         setUsersList(state, list){
             state.usersList = list

@@ -36,7 +36,7 @@ export default {
                 console.log(err)
             })
         },
-        editCuadreProducto({state}){
+        editCuadreProducto({state}, cliente_id){
             HTTP().local.put('api/cuadre-productos/'+state.cuadre.id+'/update', {
                 cliente_id: cliente_id,
                 producto_id: state.selectedProducto,
@@ -44,10 +44,9 @@ export default {
                 ajuste: state.cuadre.ajuste,
             })
             .then(d => {
-                console.log(d)
                 Message({
                     showClose: true,
-                    typr: "success",
+                    type: "success",
                     message: 'Actualizacion Exitosa.'
                 })
             })
@@ -72,10 +71,12 @@ export default {
         fetchCuadreProducto({commit}, pkg){
             HTTP().local.get('api/cuadre-productos/'+pkg.id)
             .then(d => {
-                console.log(d.data)
                commit('setFullCuadreProducto', d.data[0])
-               commit('setPrecioCuadreProducto', d.data.precio)
-               commit('productos/setPrecioProducto', d.data.precio_producto, {root: true})
+               commit('setPrecioCuadreProducto', d.data[0].precio)
+               commit('productos/setPrecioProducto', d.data[0].producto[0].precio, {root: true})
+               console.log(d.data[0])
+               console.log(d.data[0].producto)
+               commit('setSelectedProducto', d.data[0].producto[0].id)
             })
             .catch(err => {
                 console.log(err)
@@ -130,7 +131,7 @@ export default {
         setSelectedProducto(state, value){
             state.selectedProducto = value
         },
-        cuadreProductosReset(state){
+        resetCuadreProducto(state){
             state.cuadre = {
                 id: null,
                 cliente_id: null,
@@ -139,6 +140,7 @@ export default {
                 producto: null,
                 precio_producto: null,
             }
+            state.selectedProducto = '';
         }
     },
 

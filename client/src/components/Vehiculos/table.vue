@@ -1,19 +1,22 @@
 <template>
 <div>
 	<!--Edit dialog form -->
-	<el-dialog width="50%" top="10vh" :title="'Placa: '+vehiculo.placa" :visible.sync="editFormVisible">
+	<el-dialog center fullscreen width="30%" top="10vh" :visible.sync="editFormVisible">
+		<div slot="title">
+			<h2>{{vehiculo.placa}}</h2>
+		</div>
 		<VehiculosEditForm></VehiculosEditForm>
 		<span slot="footer" class="dialog-footer">
-			<el-button @click="editFormVisible = false">Cancelar</el-button>
-			<el-button type="primary" @click="editVehiculo">Actualizar</el-button>
+			<el-button size="mini" @click="editFormVisible = false">Cancelar</el-button>
+			<el-button size="mini" type="primary" @click="editVehiculo">Actualizar</el-button>
 		</span>
 	</el-dialog>
 	<!--Create dialog form -->
-	<el-dialog width="50%" top="10vh" title="Nuevo vehiculo" :visible.sync="createFormVisible">
+	<el-dialog center fullscreen width="30%" top="10vh" title="Nuevo vehiculo" :visible.sync="createFormVisible">
 		<VehiculosCreateForm></VehiculosCreateForm>
 		<span slot="footer" class="dialog-footer">
-			<el-button @click="createFormVisible = false">Cancelar</el-button>
-			<el-button type="primary" @click="create">Crear</el-button>
+			<el-button size="mini" @click="createFormVisible = false">Cancelar</el-button>
+			<el-button size="mini" type="primary" @click="create">Crear</el-button>
 		</span>
 	</el-dialog>
 	<!--Table-->
@@ -21,7 +24,7 @@
 		<h1>Vehiculos</h1>
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
 			<div class="serachBar-ctn">
-				<el-input placeholder="Buscar" v-model="filter" class="input-with-select">
+				<el-input size="mini" placeholder="Buscar" v-model="filter" class="input-with-select">
 					<el-select v-model="selectTypeOfSearch" slot="prepend" placeholder="Seleccione">
 					<el-option v-for="col in headings" :key="col" :label="col" :value="col"></el-option>
 					</el-select>
@@ -30,18 +33,28 @@
 		</el-col>
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
 			<div style="text-align:right;">
-				<el-dropdown style="float: right; padding: 3px 0" trigger="click" @command="handleAction">  
-					<el-button size="mini">
-						<i class="mdi mdi-settings"></i>
-					</el-button>
-					<el-dropdown-menu slot="dropdown">
-						<el-dropdown-item :disabled="(permisos['Vehiculos'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Nuevo</el-dropdown-item>
-						<el-dropdown-item command="export"><i class="mdi mdi-file-excel mr-10"></i> Exportar</el-dropdown-item>
-					</el-dropdown-menu>
-				</el-dropdown>
+                <el-button type="default" size="mini" @click="reloadTable" style="margin-right:5px;"><i class="mdi mdi-reload"></i></el-button>
+				<el-button type="default" size="mini" @click="exportTable" style="margin-right:5px;"><i class="mdi mdi-file-excel"></i></el-button>
+				<el-dropdown  trigger="click" @command="handleAction">  
+				<el-button size="mini">
+					<i class="mdi mdi-settings"></i>
+				</el-button>
+				<el-dropdown-menu slot="dropdown">
+					<el-dropdown-item :disabled="(permisos['Vehiculos'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Crear</el-dropdown-item>
+                    <el-dropdown-item :disabled="(permisos['Vehiculos'].editar)? false:true" command="edit"><i class="mdi mdi-pencil mr-10"></i> Editar</el-dropdown-item>
+                    <el-dropdown-item :disabled="(permisos['Vehiculos'].eliminar)? false:true" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
+				</el-dropdown-menu>
+    		</el-dropdown>
 			</div>
 		</el-col>
 	<el-table
+	v-loading.body="loadingVehiculosTable"
+	stripe
+	max-height="250"
+	highlight-current-row
+	@current-change="handleCurrentTableChange"
+	ref="vehiculosTable"
+	size="mini"
     :data="filtered"
 	:default-sort = "{prop: 'id', order: 'descending'}"
     style="width: 100%">
@@ -82,6 +95,7 @@
 				</div>
             </el-popover>
            <el-select 
+		   size="mini"
            v-popover="scope.row.placa" 
            v-model="selectedConductor[scope.row.placa]" 
            placeholder="Seleccione.."
@@ -116,7 +130,7 @@
             </div>
             </el-popover>
            <el-select 
-		   
+		   size="mini"
            v-popover="scope.row.placa+'-trailer'" 
            v-model="selectedTrailer[scope.row.placa]" 
            placeholder="Seleccione.."
@@ -164,16 +178,6 @@
           disable-transitions>{{scope.row.estado}}</el-tag>
       </template>
     </el-table-column>
-	
-    <el-table-column
-      fixed="right"
-      label="Acciones"
-      width="120">
-      <template slot-scope="scope">
-		<el-button @click="pushToEdit(scope.row)" type="text" size="medium"><i class="mdi mdi-lead-pencil mr-10"></i></el-button>
-		<el-button @click="pushToDel(scope.row)" type="text" size="medium"><i class="mdi mdi-delete mr-10"></i></el-button>
-      </template>
-    </el-table-column>
 
   </el-table>
 
@@ -216,6 +220,7 @@ export default {
 			'permisos',
         ]),
         ...mapState('vehiculos', [
+			'loadingVehiculosTable',
 			'vehiculo',
             'headings',
             'vehiculosList',
@@ -259,14 +264,31 @@ export default {
 		VehiculosCreateForm,
 	},
     methods: {
+		reloadTable(){
+			this.fetchVehiculosList() 
+        },
+        exportTable(){
+			exportService.toXLS(this.vehiculosList, 'Vehiculos', true)
+		},
 		handleAction(e, row){
             if(e == 'create'){
 				this.createFormVisible = true;
-			}
-			if(e == 'export'){
-				exportService.toXLS(this.vehiculosList, 'Vehiculos', true)
             }
+             if(e == 'edit'){
+				this.editFormVisible = true;
+            }
+             if(e == 'del'){
+                 this.pushToDel(row)
+			}
         },
+        handleCurrentTableChange(val) {
+			if(val == null){
+				this.$refs.vehiculosTable.setCurrentRow(val);
+				return
+			}
+			this.setFullVehiculo(val)
+			this.$refs.vehiculosTable.setCurrentRow(val);
+		},
 		pushTo(resource){
 			router.push('/'+resource)
 		},
@@ -331,7 +353,7 @@ export default {
                 cancelButtonText: 'Cancelar',
                 type: 'warning'
             }).then(() => {
-				this.setFullVehiculo(row)
+				
 				this.delVehiculo()
 				this.editFormVisible = false
 				this.fetchVehiculosList()

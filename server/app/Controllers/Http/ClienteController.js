@@ -50,7 +50,7 @@ class ClienteController {
         const res = await client.cuadre_servicio().with('servicio').fetch()
             for(let prop in res.rows){
                 if(res.rows[prop].$relations.servicio.rows.length > 0){
-                    res.rows[prop]['servicio'] = res.rows[prop].$relations.servicio.rows[0].nombre
+                    res.rows[prop]['nombre_servicio'] = res.rows[prop].$relations.servicio.rows[0].nombre
                     res.rows[prop]['precio_servicio'] = res.rows[prop].$relations.servicio.rows[0].precio
                 }
                 delete res.rows[prop].$relations

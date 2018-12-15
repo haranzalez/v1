@@ -2,10 +2,13 @@
    <vue-scroll class="page-trailers-create">
        <el-form label-position="top" ref="form" label-width="120px">
         <el-row>
-            <el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <h3>Informacion basica</h3>
+                </el-col>
+				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Placa">
                         <el-input 
+                        size="mini"
                         :value="trailer.placa"
                         v-model="trailer.placa"
                         @input="setPlaca"
@@ -13,9 +16,80 @@
                         </el-input>
                     </el-form-item>
 				</el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Modelo">
+                        <el-input 
+                        size="mini"
+                        :value="trailer.modelo"
+                        v-model="trailer.modelo"
+                        @input="setModelo"
+                        placeholder="">
+                        </el-input>
+                    </el-form-item>
+				</el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Marca">
+                        <el-input 
+                        size="mini"
+                        :value="trailer.marca_trailer"
+                        v-model="trailer.marca_trailer"
+                        @input="setMarcaTrailer"
+                        placeholder="">
+                        </el-input>
+                    </el-form-item>
+				</el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Color">
+                        <el-input 
+                        size="mini"
+                        :value="trailer.color"
+                        v-model="trailer.color"
+                        @input="setColor"
+                        placeholder="">
+                        </el-input>
+                    </el-form-item>
+				</el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Propietario">
+                        <el-input 
+                        size="mini"
+                        :value="trailer.propietario"
+                        v-model="trailer.propietario"
+                        @input="setPropietario"
+                        placeholder="">
+                        </el-input>
+                    </el-form-item>
+				</el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Poseedor">
+                        <el-input
+                        size="mini" 
+                        :value="trailer.poseedor"
+                        v-model="trailer.poseedor"
+                        @input="setPoseedor"
+                        placeholder="">
+                        </el-input>
+                    </el-form-item>
+				</el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Radica RNDC">
+                        <el-switch
+                        v-model="radicaRn"
+                        @change="radicaChange"
+                        active-color="#13ce66"
+                        inactive-color="#ff4949"
+                        active-text="Si"
+                        inactive-text="No">
+                        </el-switch>
+                    </el-form-item>
+				</el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <h3>Informacion adicional</h3>
+                </el-col>
+				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Tipo de vehiculo">
                         <el-select 
+                        size="mini"
                         :value="trailer.tipo_de_vehiculo"
                         v-model="trailer.tipo_de_vehiculo" 
                         placeholder="Select"
@@ -29,58 +103,10 @@
                         </el-select>
                     </el-form-item>
 				</el-col>
-			</el-col>
-
-            <el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Tipo de configuracion">
-                        <el-input 
-                        :value="trailer.tipo_de_configuracion"
-                        v-model="trailer.tipo_de_configuracion"
-                        @input="setTipoDeConfiguracion"
-                        placeholder="">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Tenedor">
-                        <el-input 
-                        :value="trailer.tenedor"
-                        v-model="trailer.tenedor"
-                        @input="setTenedor"
-                        placeholder="">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
-			</el-col>
-
-            <el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Modelo">
-                        <el-input 
-                        :value="trailer.modelo"
-                        v-model="trailer.modelo"
-                        @input="setModelo"
-                        placeholder="">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Propietario">
-                        <el-input 
-                        :value="trailer.propietario"
-                        v-model="trailer.propietario"
-                        @input="setPropietario"
-                        placeholder="">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
-			</el-col>
-
-            <el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Tipo de flota">
                         <el-input 
+                        size="mini"
                         :value="trailer.tipo_de_flota"
                         v-model="trailer.tipo_de_flota"
                         @input="setTipoDeFlota"
@@ -88,22 +114,32 @@
                         </el-input>
                     </el-form-item>
 				</el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Poseedor">
+				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Tipo de configuracion">
                         <el-input 
-                        :value="trailer.poseedor"
-                        v-model="trailer.poseedor"
-                        @input="setPoseedor"
+                        size="mini"
+                        :value="trailer.tipo_de_configuracion"
+                        v-model="trailer.tipo_de_configuracion"
+                        @input="setTipoDeConfiguracion"
                         placeholder="">
                         </el-input>
                     </el-form-item>
 				</el-col>
-			</el-col>
-
-            <el-col>
-                <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Carroceria">
+				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Tenedor">
                         <el-input 
+                        size="mini"
+                        :value="trailer.tenedor"
+                        v-model="trailer.tenedor"
+                        @input="setTenedor"
+                        placeholder="">
+                        </el-input>
+                    </el-form-item>
+				</el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Carroceria">
+                        <el-input
+                        size="mini" 
                         :value="trailer.tipo_carroceria"
                         v-model="trailer.tipo_carroceria"
                         @input="setTipoCarroceria"
@@ -111,32 +147,10 @@
                         </el-input>
                     </el-form-item>
 				</el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Color">
-                        <el-input 
-                        :value="trailer.color"
-                        v-model="trailer.color"
-                        @input="setColor"
-                        placeholder="">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
-			</el-col>
-
-            <el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Marca">
-                        <el-input 
-                        :value="trailer.marca_trailer"
-                        v-model="trailer.marca_trailer"
-                        @input="setMarcaTrailer"
-                        placeholder="">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
-                <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Peso">
-                        <el-input 
+                        <el-input
+                        size="mini" 
                         :value="trailer.peso"
                         v-model="trailer.peso"
                         @input="setPeso"
@@ -144,13 +158,10 @@
                         </el-input>
                     </el-form-item>
 				</el-col>
-			</el-col>
-
-            <el-col>
-				
-                <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Estado">
                         <el-input 
+                        size="mini"
                         :value="trailer.estado"
                         v-model="trailer.estado"
                         @input="setEstado"
@@ -158,18 +169,6 @@
                         </el-input>
                     </el-form-item>
 				</el-col>
-
-                <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Radica RNDC">
-                         <el-checkbox @change="setRadicaRndc" v-model="trailer.radica_rndc"></el-checkbox>
-                    </el-form-item>
-				</el-col>
-			</el-col>
-             <el-col>
-				
-                
-			</el-col>
-
         </el-row>
         
         

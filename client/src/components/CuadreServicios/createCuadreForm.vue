@@ -3,18 +3,9 @@
         <el-form :inline="false" label-position="top" ref="form" label-width="120px">
             <el-row>
                 <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-                    <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-                        <el-form-item label="Precio">
-                            <el-input
-                                class="inputWidth"
-                                size="mini"
-                                placeholder="$0"
-                                @input="setPrecioServicio">
-                            </el-input>
-                        </el-form-item>
-                    </el-col>
+                   
                     <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
-                        <el-form-item label="Producto">
+                        <el-form-item label="Servicio">
                             <el-select
                             class="selectWidth" 
                             size="mini" 
@@ -28,6 +19,16 @@
                                 :value="item.id">
                                 </el-option>
                             </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+                        <el-form-item label="Precio">
+                            <el-input
+                            :value="cuadre.precio"
+                                size="mini"
+                                placeholder="$0"
+                                @input="setPrecioServicio">
+                            </el-input>
                         </el-form-item>
                     </el-col>
             </el-col>
@@ -61,7 +62,9 @@ export default {
 			'permisos',
         ]),
         ...mapState('cuadreServicios', [
+           'cuadre',
            'selectedServicio',
+           'summaryType',
         ]),
         ...mapState('servicios', [
             'serviciosList',
@@ -79,6 +82,8 @@ export default {
         ...mapMutations('cuadreServicios', [
             'setPrecioServicio',
             'setSelectedServicio',
+            'setSummaryType',
+            'servicioReset',
         ]),
        
          ...mapActions('cuadreServicios',[
@@ -105,6 +110,7 @@ export default {
        
     },
     created: function(){
+       this.setSummaryType('create')
        this.fetchServiciosList()
 	}
 

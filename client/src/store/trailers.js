@@ -21,11 +21,12 @@ export default {
             peso: null,
             tipo_carroceria: null,
             estado: null,
-            radica_rndc: null,
+            radica_rndc: false,
         },
         trailersList: null,
         trailersDataReady: false,
         headings: [],   
+        loadingTrailersTable: false,
     },
 
     actions: {
@@ -102,12 +103,12 @@ export default {
             })
         },
         fetchTrailersList({state, commit, dispatch}){
+            commit('setLoadingTrailersTable', true)
             HTTP().local.get('api/trailers')
             .then(d => {
                 commit('setTrailerList', d.data)
                 commit('setDataReady', true)
                 dispatch('renderTableHeadings')
-              
             })
             .catch(err => {
                 console.log(err)
@@ -126,6 +127,7 @@ export default {
             }
             
             commit('setTableHeadings', pkg)
+            commit('setLoadingTrailersTable', false)
         },
 
     },
@@ -184,6 +186,27 @@ export default {
         setRadicaRndc(state, value){
             state.trailer.radica_rndc = value
         },
+        setLoadingTrailersTable(state, value){
+            state.loadingTrailersTable = value
+        },
+        resetTrailerVars(state, value){
+            state.trailer = {
+                placa: null,
+                tipo_de_vehiculo: null,
+                tipo_de_configuracion: null,
+                tenedor: null,
+                modelo: null,
+                propietario: null,
+                tipo_de_flota: null,
+                poseedor: null,
+                color: null,
+                marca_trailer: null,
+                peso: null,
+                tipo_carroceria: null,
+                estado: null,
+                radica_rndc: null,
+            }
+        }
         
         
     },

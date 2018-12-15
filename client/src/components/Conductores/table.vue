@@ -21,7 +21,7 @@
 		<h1>Conductores</h1>
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
 			<div class="serachBar-ctn pb-10">
-				<el-input placeholder="Buscar" v-model="filter" class="input-with-select">
+				<el-input size="mini" placeholder="Buscar" v-model="filter" class="input-with-select">
 					<el-select v-model="selectTypeOfSearch" slot="prepend" placeholder="Seleccione">
 					<el-option v-for="col in headings" :key="col" :label="col" :value="col"></el-option>
 					</el-select>
@@ -29,27 +29,37 @@
 			</div>
 		</el-col>
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-			
-		
-		<el-dropdown style="float: right; padding: 3px 0" trigger="click" @command="handleAction">  
-			<el-button size="mini">
-				<i class="mdi mdi-settings"></i>
-			</el-button>
-			<el-dropdown-menu slot="dropdown">
-				<el-dropdown-item :disabled="(permisos['Conductores'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Nuevo</el-dropdown-item>
-				<el-dropdown-item command="export"><i class="mdi mdi-file-excel mr-10"></i> Exportar</el-dropdown-item>
-			</el-dropdown-menu>
-    	</el-dropdown>
+			<div style="text-align:right;">
+                <el-button type="default" size="mini" @click="reloadTable" style="margin-right:5px;"><i class="mdi mdi-reload"></i></el-button>
+				<el-button type="default" size="mini" @click="exportTable" style="margin-right:5px;"><i class="mdi mdi-file-excel"></i></el-button>
+				<el-dropdown  trigger="click" @command="handleAction">  
+				<el-button size="mini">
+					<i class="mdi mdi-settings"></i>
+				</el-button>
+				<el-dropdown-menu slot="dropdown">
+					<el-dropdown-item :disabled="(permisos['Conductores'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Crear</el-dropdown-item>
+                    <el-dropdown-item :disabled="(permisos['Conductores'].editar)? false:true" command="edit"><i class="mdi mdi-pencil mr-10"></i> Editar</el-dropdown-item>
+                    <el-dropdown-item :disabled="(permisos['Conductores'].eliminar)? false:true" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
+				</el-dropdown-menu>
+    		</el-dropdown>
+			</div>
 		</el-col>
 		
 		
 	
 	<el-table
+	v-loading.body="loadingConductoresTable"
+	stripe
+	max-height="250"
+	highlight-current-row
+	@current-change="handleCurrentTableChange"
+	ref="conductoresTable"
+	size="mini"
 	id="conductores_table"
     :data="filtered"
 	:default-sort = "{prop: 'id', order: 'descending'}"
     style="width: 100%"
-	v-loading.body="loading">
+	>
     <el-table-column
 	  sortable
       fixed
@@ -111,16 +121,7 @@
       label="Transportadora"
       width="150">
     </el-table-column>
-    <el-table-column
-      fixed="right"
-      label="Acciones"
-      width="120">
-      <template slot-scope="scope">
-		  
-        <el-button @click="pushToEdit(scope.row)" type="text" size="medium"><i class="mdi mdi-lead-pencil mr-10"></i></el-button>
-		<el-button @click="pushToDel(scope.row)" type="text" size="medium"><i class="mdi mdi-delete mr-10"></i></el-button>
-      </template>
-    </el-table-column>
+    
   </el-table>
 
   </el-col>
@@ -160,7 +161,7 @@ export default {
 			'headings',
             'conductoresList',
 			'conductoresDataReady',
-			'loading',
+			'loadingConductoresTable',
 		]),
         filtered(){
 			
@@ -183,16 +184,32 @@ export default {
 	},
     methods: {
 		
+		reloadTable(){
+			this.fetchConductoresList() 
+        },
+        exportTable(){
+			exportService.toXLS(this.conductoresList, 'Vehiculos', true)
+		},
 		handleAction(e, row){
             if(e == 'create'){
+				this.resetConductoresVars()
+        		
 				this.createFormVisible = true;
-			}
-			if(e == 'export'){
-				exportService.toXLS(this.conductoresList, 'Conductores', true)
             }
+             if(e == 'edit'){
+				this.editFormVisible = true;
+            }
+             if(e == 'del'){
+                 this.pushToDel(row)
+			}
         },
-		back(){
-			router.push('/Vehiculos')
+        handleCurrentTableChange(val) {
+			if(val == null){
+				this.$refs.conductoresTable.setCurrentRow(val);
+				return
+			}
+			this.setFullConductor(val)
+			this.$refs.conductoresTable.setCurrentRow(val);
 		},
 		...mapMutations('conductores', [
 			'setFullConductor',
@@ -204,10 +221,7 @@ export default {
 			'editConductor',
             'delConductor',
 		]),
-		pushToEdit(row){
-			this.setFullConductor(row)
-			this.editFormVisible = true
-		},
+	
 		create(){
 			this.createConductor()
 			this.createFormVisible = false
@@ -219,7 +233,7 @@ export default {
                 cancelButtonText: 'Cancelar',
                 type: 'warning'
             }).then(() => {
-				this.setFullConductor(row)
+				
 				this.delConductor()
 				this.editFormVisible = false
 				this.fetchConductoresList()

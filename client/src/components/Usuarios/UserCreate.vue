@@ -79,7 +79,6 @@
 						v-model="selectedRoles"
 						class="select-wide"
 						filterable
-						multiple
 						no-match-text
 						placeholder="Seleccione...">
 						<el-option

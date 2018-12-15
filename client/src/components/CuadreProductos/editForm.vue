@@ -3,18 +3,7 @@
         <el-form :inline="false" label-position="top" ref="form" label-width="120px">
             <el-row>
                 <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-                    <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-                        <el-form-item label="Precio">
-                            <el-input
-                                :value="producto.precio_producto"
-                                class="inputWidth"
-                                size="mini"
-                                placeholder="$0"
-                                @input="setPrecioProducto">
-                            </el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+                     <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
                         <el-form-item label="Producto">
                             <el-select
                             class="selectWidth" 
@@ -31,6 +20,18 @@
                             </el-select>
                         </el-form-item>
                     </el-col>
+                    <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+                        <el-form-item label="Cuadre">
+                            <el-input
+                                :value="cuadre.precio"
+                                class="inputWidth"
+                                size="mini"
+                                placeholder="$0"
+                                @input="setPrecioProducto">
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                   
             </el-col>
             <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
                     <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
@@ -63,7 +64,7 @@ export default {
         ]),
         ...mapState('cuadreProductos', [
            'selectedProducto',
-           'producto',
+           'cuadre',
         ]),
          ...mapState('rutas', [
             'rutasList',

@@ -7,10 +7,12 @@ class Consolidacion extends Model {
         return this.belongsTo('App/Models/Cliente')
     }
     cuadre_producto(){
-        return this.hasOne('App/Models/CuadreProducto')
+        return this.belongsToMany('App/Models/CuadreProducto')
+        .pivotModel(use('App/Models/PivotConsolidacionCuadreProductos'));
     }
     cuadre_servicio(){
-        return this.hasOne('App/Models/CuadreServicio')
+        return this.belongsToMany('App/Models/CuadreServicio')
+        .pivotModel(use('App/Models/PivotConsolidacionCuadreServicios'));
     }
     cuadre_ruta(){
         return this.belongsToMany('App/Models/CuadreViaje')

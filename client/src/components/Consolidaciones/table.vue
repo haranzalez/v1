@@ -121,8 +121,6 @@
       label="Cliente"
       width="120">
     </el-table-column>
-   
-	
 	<el-table-column
 	  sortable
 	  align="center"

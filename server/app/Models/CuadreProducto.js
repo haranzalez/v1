@@ -11,7 +11,8 @@ class CuadreProducto extends Model {
         return this.belongsTo('App/Models/Cliente')
     }
     consolidacion(){
-        return this.belongsTo('App/Models/Consolidacion')
+        return this.belongsToMany('App/Models/Consolidacion')
+        .pivotModel(use('App/Models/PivotConsolidacionCuadreProductos'));
     }
 }
 

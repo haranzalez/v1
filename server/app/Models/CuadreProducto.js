@@ -10,6 +10,9 @@ class CuadreProducto extends Model {
     cliente(){
         return this.belongsTo('App/Models/Cliente')
     }
+    consolidacion(){
+        return this.belongsTo('App/Models/Consolidacion')
+    }
 }
 
 module.exports = CuadreProducto

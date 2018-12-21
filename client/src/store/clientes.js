@@ -23,8 +23,9 @@ export default {
            dias: null,
            created_at: null,
         },
+        clienteConsolidacion:null,
         clientesList: null,
-        cruadreRutasList: null,
+        cuadreRutasList: null,
         cuadreProductosList: null,
         cuadreServiciosList: null,
         dataReady: false,
@@ -32,6 +33,7 @@ export default {
         loadingCuadreRutaTable: false,
         loadingCuadreProductoTable: false,
         loadingCuadreServicioTable: false,
+        loadingConsolidacionTableBtnsPkg: null,
         currentCuadresTab: 'Rutas',
         headings: [], 
         selectedContrato: '',
@@ -57,10 +59,13 @@ export default {
     },
 
     actions: {
-        fetchCuadresRutas({state, commit}){
+        fetchCuadresRutas({state, commit}, id){
+            console.log(id)
             commit('setLoadingCuadreRutaTable', true)
-            HTTP().local.get('api/clientes/'+state.cliente.id+'/cuadre-viajes')
+            id = (id)?id:state.cliente.id
+            HTTP().local.get('api/clientes/'+id+'/cuadre-viajes')
             .then(d => {
+                console.log(d.data[0])
                 commit('setCuadreRutasList', d.data)
                 commit('setLoadingCuadreRutaTable', false)
             })
@@ -68,9 +73,10 @@ export default {
                 console.log(err)
             })
         },
-        fetchCuadresProductos({state, commit}){
+        fetchCuadresProductos({state, commit}, id){
             commit('setLoadingCuadreProductoTable', true)
-            HTTP().local.get('api/clientes/'+state.cliente.id+'/cuadre-productos')
+            id = (id)?id:state.cliente.id
+            HTTP().local.get('api/clientes/'+id+'/cuadre-productos')
             .then(d => {
                 console.log(d.data)
                 commit('setCuadreProductosList', d.data)
@@ -80,13 +86,29 @@ export default {
                 console.log(err)
             })
         },
-        fetchCuadresServicios({state, commit}){
+        fetchCuadresServicios({state, commit}, id){
             commit('setLoadingCuadreServicioTable', true)
-            HTTP().local.get('api/clientes/'+state.cliente.id+'/cuadre-servicios')
+            id = (id)?id:state.cliente.id
+            HTTP().local.get('api/clientes/'+id+'/cuadre-servicios')
             .then(d => {
                 console.log(d.data)
                 commit('setCuadreServiciosList', d.data)
                 commit('setLoadingCuadreServicioTable', false)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
+        create_consolidacion({ state }){
+            HTTP().local.get('api/consolidaciones/'+state.cliente.id+'/crear')
+            .then(d => {
+                if(d.data.message == "success"){
+                    Message({
+                        type: 'success',
+                        showClose: true,
+                        message: 'Consolidacion creada.'
+                    })
+                }
             })
             .catch(err => {
                 console.log(err)
@@ -165,9 +187,22 @@ export default {
                 console.log(err)
             })
         },
-        fetchCliente({commit, dispatch}, id){
+        fetchClienteConsolidacion({commit, dispatch}, id){
+            console.log(id)
             HTTP().local.get('api/clientes/'+id)
             .then(d => {
+                console.log(d.data)
+                commit('setFullCliente', d.data)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
+        fetchCliente({commit, dispatch}, id){
+            console.log(id)
+            HTTP().local.get('api/clientes/'+id)
+            .then(d => {
+                console.log(d.data)
                 commit('setSelectedContrato', d.data.tipo_negociacion.contrato)
                 commit('setSelectedDias', d.data.tipo_negociacion.dias)
                 commit('setFullCliente', d.data)
@@ -225,7 +260,7 @@ export default {
             state.cliente = value
         },
         setCuadreRutasList(state, list){
-            state.cruadreRutasList = list
+            state.cuadreRutasList = list
         },
         setCuadreProductosList(state, list){
             state.cuadreProductosList = list
@@ -303,6 +338,13 @@ export default {
                 tipo_contrato: null,
                 created_at: null,
             }
+        },
+        setFullCLienteConsolidacion(state, value){
+            state.clienteConsolidacion = value
+        },
+        setLoadingConsolidacionTableBtnsPkg(state, value){
+            console.log(value)
+            state.loadingConsolidacionTableBtnsPkg = value
         }
         
     },

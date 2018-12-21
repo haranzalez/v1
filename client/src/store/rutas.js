@@ -130,7 +130,6 @@ export default {
                         showClose: true,
                         message: 'Ruta eliminada exitosamente'
                     })
-                    router.push('/Rutas')
                 }
             })
             .catch(err => {

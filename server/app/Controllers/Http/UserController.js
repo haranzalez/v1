@@ -125,7 +125,6 @@ class UserController {
       username, 
       estado, } = request.all();
     const user = await User.find(id);
-    console.log(roles)
     if(roles){
       const oldRoles = await user.roles().fetch()
       if(oldRoles.rows.length > 0){

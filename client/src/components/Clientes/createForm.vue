@@ -2,7 +2,9 @@
    <vue-scroll class="page-vehiculos-create">
        <el-form size="mini" label-position="top" ref="form" label-width="120px">
         <el-row>
-            <h3>Info</h3>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <h3>Info</h3>
+                </el-col>
 				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Nombre razon social">
                         <el-input size="mini" 
@@ -75,46 +77,41 @@
                         </el-input>
                     </el-form-item>
 				</el-col>
-                <h3>Tipo de contrato</h3>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                    <el-row>
-                        <el-col :span="8" :md="8" :sm="24" :xs="24">
-                            <el-form-item label="Contrato" >
-                                <el-select v-model="selectedContrato" placeholder="Select">
-                                    <el-option
-                                    v-for="item in contratoOptions"
-                                   :key="item.tipo"
-                                    :label="item.tipo"
-                                    :value="item.tipo">
-                                    </el-option>
-                                </el-select>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="8" :md="8" :sm="24" :xs="24">
-                            <el-form-item label="Dias" class="padding">
-                                <el-select v-model="selectedDias" placeholder="Select">
-                                    <el-option
-                                    v-for="item in diasOptions"
-                                   :key="item.dias"
-                                    :label="item.dias"
-                                    :value="item.dias">
-                                    </el-option>
-                                </el-select>
-                                
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="8" :md="8" :sm="24" :xs="24">
-                            <el-form-item label="Cupo">
-                                <el-input size="mini" 
-                                @input="setCupo"
-                                placeholder="">
-                                </el-input>
-                            </el-form-item>
-                        </el-col>
-                         
-                    </el-row>
-                    
-				</el-col>
+                    <h3>Tipo de contrato</h3>
+                </el-col>
+                   <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                        <el-form-item label="Contrato">
+                            <el-select @change="setSelectedContrato" :value="selectedContrato" placeholder="Select">
+                                <el-option
+                                v-for="item in contratoOptions"
+                                :key="item.tipo"
+                                :label="item.tipo"
+                                :value="item.tipo">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                        <el-form-item label="Dias" class="padding">
+                            <el-select @change="setSelectedDias" :value="selectedDias" placeholder="Select">
+                                <el-option
+                                v-for="item in diasOptions"
+                                :key="item.dias"
+                                :label="item.dias"
+                                :value="item.dias">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                        <el-form-item label="Cupo">
+                            <el-input size="mini" 
+                            @input="setCupo"
+                            placeholder="">
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
         </el-row>
     </el-form>
    </vue-scroll>

@@ -63,8 +63,8 @@ const router = new Router({
 		//=========================================================================
 		{
 			path: '/',
-			alias: '/Consolidaciones',
-			name: 'Consolidaciones',
+			alias: '/cuadro-de-viajes',
+			name: 'Cuadro de viajes',
 			component: Consolidaciones,
 			meta: {
 				auth: true,

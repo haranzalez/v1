@@ -1,19 +1,73 @@
 <template>
 <div>
+	<!-- select producto dialog -->
+	<el-dialog
+		title="Productos"
+		:visible.sync="selectProductoDialogVisible"
+		width="30%"
+	>
+		<el-select @change="handleProductChange" :value="selectedEditProducto" placeholder="Select">
+			<el-option
+			v-for="item in cuadreProductosList"
+			:key="item.id"
+			:label="item.producto"
+			:value="item.id">
+			</el-option>
+		</el-select>
+	<span slot="footer" class="dialog-footer">
+		<el-button size="mini" @click="selectProductoDialogVisible = false">Cerrar</el-button>
+	</span>
+	</el-dialog>
+	<!-- select servicio dialog -->
+	<el-dialog
+		title="Servicios"
+		:visible.sync="selectServicioDialogVisible"
+		width="30%"
+	>
+		<el-select @change="handleServicioChange" :value="selectedEditServicio" placeholder="Select">
+			<el-option
+			v-for="item in cuadreServiciosList"
+			:key="item.id"
+			:label="item.nombre_servicio"
+			:value="item.id">
+			</el-option>
+		</el-select>
+	<span slot="footer" class="dialog-footer">
+		<el-button size="mini" @click="selectServicioDialogVisible = false">Cerrar</el-button>
+	</span>
+	</el-dialog>
+	<!-- select ruta dialog -->
+	<el-dialog
+		title="Rutas"
+		:visible.sync="selectRutaDialogVisible"
+		width="30%"
+	>
+		<el-select @change="handleRutaChange" :value="selectedEditRuta" placeholder="Select">
+			<el-option
+			v-for="item in cuadreRutasList"
+			:key="item.id"
+			:label="item.ruta"
+			:value="item.id">
+			</el-option>
+		</el-select>
+		<span slot="footer" class="dialog-footer">
+			<el-button size="mini" @click="selectRutaDialogVisible = false; this.consolidacionesClearParams()">Cerrar</el-button>
+		</span>
+	</el-dialog>
 	<!--Edit dialog form -->
 	<el-dialog width="60%" top="15vh" :visible.sync="editFormVisible">
-		<CuadroViajesEditForm></CuadroViajesEditForm>
+		
 		<span slot="footer" class="dialog-footer">
 			<el-button @click="editFormVisible = false">Cancelar</el-button>
-			<el-button type="primary" @click="editCuadre">Actualizar</el-button>
+			<el-button type="primary" @click="">Actualizar</el-button>
 		</span>
 	</el-dialog>
 	<!--Create dialog form -->
 	<el-dialog width="60%" top="10vh" title="Nuevo cuadre" :visible.sync="createFormVisible">
-		<CuadroViajesCreateForm></CuadroViajesCreateForm>
+		
 		<span slot="footer" class="dialog-footer">
 			<el-button @click="createFormVisible = false">Cancelar</el-button>
-			<el-button type="primary" @click="create">Crear</el-button>
+			<el-button type="primary" @click="">Crear</el-button>
 		</span>
 	</el-dialog>
 	<!--Table-->
@@ -21,7 +75,7 @@
 		<h1>Cuadro de viajes</h1>
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
 			<div class="serachBar-ctn">
-				<el-input placeholder="Buscar" v-model="filter" class="input-with-select">
+				<el-input size="mini" placeholder="Buscar" v-model="filter" class="input-with-select">
 					<el-select v-model="selectTypeOfSearch" slot="prepend" placeholder="Seleccione">
 					<el-option v-for="col in headings" :key="col" :label="col" :value="col"></el-option>
 					</el-select>
@@ -35,17 +89,25 @@
 						<i class="mdi mdi-settings"></i>
 					</el-button>
 					<el-dropdown-menu slot="dropdown">
-						<el-dropdown-item :disabled="(permisos['Conductores'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Nuevo</el-dropdown-item>
+						<el-dropdown-item  command="create"><i class="mdi mdi-plus mr-10"></i> Nuevo</el-dropdown-item>
 						<el-dropdown-item command="export"><i class="mdi mdi-file-excel mr-10"></i> Exportar</el-dropdown-item>
 					</el-dropdown-menu>
 				</el-dropdown>
 			</div>
 		</el-col>
 	<el-table
+	v-loading="loadingConsolidacionesTable"
+	size="mini"
+	ref="consolidacionesTable"
+	stripe
+	min-height="300"
+	highlight-current-row
+	@current-change="handleCurrentTableChange"
     :data="filtered"
 	:default-sort = "{prop: 'id', order: 'descending'}"
     style="width: 100%">
     <el-table-column
+	  align="center"
 	  sortable
       fixed
       prop="id"
@@ -53,115 +115,131 @@
       width="70">
     </el-table-column>
     <el-table-column
+	  align="center"
 	  sortable
-      prop="nombre_cliente"
+      prop="nombre_razon_social"
       label="Cliente"
       width="120">
     </el-table-column>
    
+	
 	<el-table-column
 	  sortable
-      label="Vehiculo"
-      width="170">
-       <template slot-scope="scope">
-           <el-popover
-            :ref="scope.row.vehiculo[0].placa"
-            placement="right"
-            width="400"
-            trigger="hover">
-            <div v-for="(item, key) in scope.row.vehiculo[0]" :key="item.id">
-                <el-row v-if="key !== 'created_at' || 
-				key !== 'updated_at' || 
-				key !== 'pivot'">
-                    <el-col :xs="10" :sm="10" :md="10" :lg="10" :xl="10"><b>{{title(key)}}</b></el-col>
-                    <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12">{{item}}</el-col>
-                </el-row>
-            </div>
-            </el-popover>
-           <el-select 
-           v-popover="scope.row.vehiculo[0].placa" 
-           v-model="selectedVehiculo[scope.row.vehiculo[0].placa]" 
-           placeholder="Seleccione..."
-           >
-                <el-option
-                v-for="item in vehiculosList"
-                :key="item.placa" 
-                :label="item.placa"
-                :value="item.id">
-                </el-option>
-            </el-select>
-      </template>
-    </el-table-column>
-	<el-table-column
-	  sortable
+	  align="center"
       label="Ruta"
-      width="170">
+      width="220">
        <template slot-scope="scope">
            <el-popover
-            :ref="scope.row.ruta[0].id"
+		   	v-if="scope.row.cuadre_ruta != null"
+            :ref="scope.row.id+'-ruta'"
             placement="right"
             width="400"
             trigger="hover">
-            <div v-for="(item, key) in scope.row.ruta[0]" :key="item.id">
-                <el-row v-if="key != 'created_at' || 
-				key != 'updated_at' || 
-				key != 'pivot'">
-                    <el-col :xs="10" :sm="10" :md="10" :lg="10" :xl="10"><b>{{title(key)}}</b></el-col>
-                    <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12">{{(key == 'municipios') ? item.nombre_municipio : item}}</el-col>
+            <div  v-for="(item, key) in scope.row.cuadre_ruta" :key="item.id">
+                <el-row>
+					<el-col :xs="10" :sm="10" :md="10" :lg="10" :xl="10"><b>{{title(key)}}</b></el-col>
+					<el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12">{{ (key != 'created_at' || key != 'updated_at' || key != 'pivot' || key != 'ruta') ? item : '' }}</el-col>
                 </el-row>
             </div>
-            </el-popover>
-           <el-select 
-           v-popover="scope.row.ruta[0].id" 
-           v-model="selectedRuta[scope.row.ruta[0].id]" 
-           placeholder="Seleccione..."
-           >
-                <el-option
-                v-for="item in rutasList"
-                :key="item.id" 
-                :label="item.nombre_municipio"
-                :value="item.id">
-                </el-option>
-            </el-select>
+           </el-popover>
+           <el-button size="mini" :type="(scope.row.ruta !== null)?'text':'default'" @click="setRutaSelect(scope.row.cliente_id, scope.row.ruta)" v-popover="scope.row.id+'-ruta'">{{(scope.row.ruta !== null)?scope.row.ruta.nombre:'Seleccionar'}}</el-button>
       </template>
     </el-table-column>
 	<el-table-column
 	  sortable
+	  align="center"
+      label="Producto"
+      width="170">
+       <template slot-scope="scope">
+           <el-popover
+		    v-if="scope.row.cuadre_producto != null"
+            :ref="scope.row.id+'-producto'"
+            placement="right"
+            width="400"
+            trigger="hover">
+            <div  v-for="(item, key) in scope.row.cuadre_producto" :key="item.id">
+                <el-row>
+					<el-col :xs="10" :sm="10" :md="10" :lg="10" :xl="10"><b>{{title(key)}}</b></el-col>
+					<el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12">{{ (key != 'created_at' || key != 'updated_at' || key != 'pivot' || key != 'producto') ? item : '' }}</el-col>
+                </el-row>
+            </div>
+           </el-popover>
+          <el-button size="mini" :type="(scope.row.producto !== null)?'text':'default'" @click="setProductoSelect(scope.row, scope.row.producto)" v-popover="scope.row.id+'-producto'">{{(scope.row.producto !== null)?scope.row.producto.nombre:'Seleccionar'}}</el-button>
+      </template>
+    </el-table-column>
+	<el-table-column
+	  align="center"
+	  sortable
+      label="Servicio"
+      width="170">
+       <template slot-scope="scope">
+           <el-popover
+		    v-if="scope.row.cuadre_servicio != null"
+            :ref="scope.row.id+'-servicio'"
+            placement="right"
+            width="400"
+            trigger="hover">
+            <div v-for="(item, key) in scope.row.cuadre_servicio" :key="item.id">
+                <el-row>
+					<el-col :xs="10" :sm="10" :md="10" :lg="10" :xl="10"><b>{{title(key)}}</b></el-col>
+					<el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12">{{ (key != 'created_at' || key != 'updated_at' || key != 'pivot' || key != 'producto') ? item : '' }}</el-col>
+                </el-row>
+            </div>
+           </el-popover>
+
+		   <el-button size="mini" :type="(scope.row.servicio !== null)?'text':'default'" @click="setServicioSelect(scope.row.cliente_id, scope.row.servicio)" v-popover="scope.row.id+'-servicio'">{{(scope.row.servicio !== null)?scope.row.servicio.nombre:'Seleccionar'}}</el-button>
+      </template>
+    </el-table-column>
+	
+	<el-table-column
+	  sortable
+	  align="center"
       prop="flete"
       label="Flete"
       width="120">
+	  <template slot-scope="scope">
+		  {{(scope.row.flete == null)?'0':scope.row.flete }}
+	  </template>
     </el-table-column>
 	<el-table-column
 	  sortable
+	  align="center"
       prop="anticipo"
       label="Anticipo"
       width="120">
+	   <template slot-scope="scope">
+		  {{(scope.row.anticipo == null)?'0':scope.row.anticipo }}
+	  </template>
     </el-table-column>
 	<el-table-column
 	  sortable
+	  align="center"
       prop="descuento"
       label="Descuento"
       width="120">
+	   <template slot-scope="scope">
+		  {{(scope.row.descuento == null)?'0':scope.row.descuento }}
+	  </template>
     </el-table-column>
 	<el-table-column
 	  sortable
+	  align="center"
       prop="ganancia"
       label="Ganancia"
       width="120">
+	   <template slot-scope="scope">
+		  {{(scope.row.ganancia == null)?'0':scope.row.ganancia }}
+	  </template>
     </el-table-column>
 	<el-table-column
 	  sortable
+	  align="center"
       prop="debe"
       label="Debe"
       width="120">
-    </el-table-column>
-    <el-table-column
-      fixed="right"
-      label="Acciones"
-      width="120">
-      <template slot-scope="scope">
-        <el-button @click="pushToEditVehicle(scope.row)" type="text" size="small">Detalles/editar</el-button>
-      </template>
+	   <template slot-scope="scope">
+		  {{(scope.row.debe == null)?'0':scope.row.debe }}
+	  </template>
     </el-table-column>
 
   </el-table>
@@ -188,52 +266,110 @@ export default {
       	return {
 			editFormVisible: false,
 			createFormVisible: false,
-            selectTypeOfSearch: 'id',
+			selectTypeOfSearch: 'id',
+			selectedEditProducto: '',
+			selectedEditServicio: '',
+			selectedEditRuta: '',
+			selectProductoDialogVisible: false,
+			selectServicioDialogVisible: false,
+			selectRutaDialogVisible: false,
             filter: '',
 		}
 	},
 	computed: {
         ...mapState('authentication', [
 			'permisos',
-        ]),
-        ...mapState('cuadreViajes', [
-			'cuadresList',
-			'headings',
-			'dataReady',
-			'selectedVehiculo',
-			'selectedRuta',
 		]),
-		...mapState('vehiculos', [
-			'vehiculosList',
+		...mapState('consolidaciones', [
+			'consolidacionesList',
+			'selectedRuta',
+			'selectedProducto',
+			'selectedServicio',
+			'headings',
+			'loadingConsolidacionesTable',
+			'dataReady',
 			
 		]),
-		...mapState('rutas', [
-			'rutasList',
+		...mapState('clientes', [
+			'cuadreProductosList',
+			'cuadreRutasList',
+			'cuadreServiciosList',
+			'loadingConsolidacionTableBtnsPkg',
 		]),
+
         filtered(){
 			if(this.dataReady){
-				console.log(this.cuadresList, this.selectTypeOfSearch)
 				if(this.filter !== ''){
 					let type = this.selectTypeOfSearch.toLowerCase()
 					console.log(type)
 					type = type.replace(' ', '_')
 					type = type.replace(' ', '_')
 					
-					return this.cuadresList.filter(cuadre => {
+					return this.consolidacionesList.filter(cuadre => {
 						if(isNaN(cuadre[type])){
 							return cuadre[type].toLowerCase().includes(this.filter.toLowerCase())
 						}
 						return cuadre[type].toString().includes(this.filter.toString())
 					})
 				}
-				return this.cuadresList
+				return this.consolidacionesList
 			}
         },
 	},
 	components: {
-	
 	},
     methods: {
+		handleProductChange(val){
+			this.setProducto(val)
+			this.selectedEditProducto = val
+		},
+		handleServicioChange(val){
+			console.log(val)
+			this.setServicio(val)
+			this.selectedEditServicio = val
+		},
+		handleRutaChange(val){
+			console.log(val)
+			this.setRuta(val)
+			this.selectedEditRuta = val
+		},
+		setProductoSelect(row, producto){
+			this.fetchCuadresProductos(row.cliente_id)
+			if(producto){
+				this.selectedEditProducto = producto.id
+			}else{
+				this.selectedEditProducto = ''
+			}
+			this.selectProductoDialogVisible = true
+		},
+		setServicioSelect(cliente, servicio){
+			this.fetchCuadresServicios(cliente)
+			if(servicio){
+				this.selectedEditServicio = servicio.id
+			}else{
+				this.selectedEditServicio = ''
+			}
+			
+			this.selectServicioDialogVisible = true
+		},
+		setRutaSelect(cliente, ruta){
+			this.fetchCuadresRutas(cliente)
+			if(ruta){
+				this.selectedEditRuta = ruta.id
+			}else{
+				this.selectedEditRuta = ''
+			}
+			
+			this.selectRutaDialogVisible = true
+		},
+		handleCurrentTableChange(val) {
+			if(val == null){
+				this.$refs.consolidacionesTable.setCurrentRow(val);
+				return
+			}
+			this.fetchConsolidacion(val.id)
+			this.$refs.consolidacionesTable.setCurrentRow(val);
+		},
 		handleAction(e, row){
             if(e == 'create'){
 				this.createFormVisible = true;
@@ -242,15 +378,7 @@ export default {
 				exportService.toXLS(this.cuadresList, 'Cuadro_de_viajes', true)
             }
 		},
-		pushToEdit(row){
-			this.setFullConductor(row)
-			this.editFormVisible = true
-		},
-		create(){
-			this.createCuadre()
-			this.createFormVisible = false
-			this.fetchCuadresList()
-		},
+		
 		pushToDel(row){
 			this.$confirm('Esta operacion eliminara permanentemente este registro. Continuar?', 'Atencion!', {
                 confirmButtonText: 'OK',
@@ -269,65 +397,35 @@ export default {
             });
 			
 		},
-		pushTo(resource){
-			router.push('/'+resource)
-		},
-		determineEstado(row){
-			
-			if(row == 'ocupado'){
-				return 'danger'
-			}
-			if(row == 'disponible'){
-				return 'success'
-			}
-			return 'warning'
-		},
-		filterTag(value, row) {
-        	return row.estado === value;
-      	},
-        ...mapMutations('cuadreViajes', [
-			
-		]),
-		
         title(field){
             field = field.split('_').join(' ')
             field = field.charAt(0).toUpperCase() + field.slice(1)
             return field
-        },
-        ...mapActions('cuadreViajes',[
-			'fetchCuadresList',
-			'editCuadre',
-			'delCuadre',
-			'createCuadre',
-		]),
-		...mapActions('vehiculos',[
-			'fetchVehiculosList',
-		]),
-		...mapActions('rutas',[
-			'fetchRutasList',
-        ]),
-        
-        pushToCreateVehicle({state,commit}){
-            router.push('/vehiculos-crear')
 		},
-		pushToEditVehicle(row){
-			this.setFullVehicle(row)
-			router.push('/vehiculos-editar')
-		},
+		...mapMutations('consolidaciones', [
+			'consolidacionesClearParams',
+		]),
+		...mapActions('consolidaciones',[
+			'fetchConsolidacionesList',
+			'fetchConsolidacion',
+			'setRuta',
+			'setProducto',
+			'setServicio',
+		]),
+		...mapActions('clientes',[
+			'fetchCuadresProductos',
+			'fetchCuadresServicios',
+			'fetchCuadresRutas',
+			'fetchClienteConsolidacion',
+		]),
 		
-        assignConductorToVehicle(e,id){
-            this.setVehicleId(id)
-            this.assignConductor(e)
-        },
-        assignTrailerToVehicle(e,id){
-            this.setVehicleId(id)
-            this.assignTrailer(e)
-        },
+        
+
+		
+      
     },
     created: function(){
-		this.fetchCuadresList()
-		this.fetchVehiculosList('cuadre_viajes')
-		this.fetchRutasList()
+		this.fetchConsolidacionesList()
 	}
 }
 </script>

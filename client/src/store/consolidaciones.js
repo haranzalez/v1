@@ -13,53 +13,63 @@ export default {
             descuento: 0,
             precio_final: 0,
         },
-        viaje:{
-            flete: 0,
-            anticipo: 0,
-            ruta_id: null,
-        },
-        vehiculo:{
-            id: null,
-        },
-        ruta: {
-            id: null,
-        },
         consolidacionesList: null,
-        selectedViaje: null,
+        selectedRuta: null,
         selectedProducto: null,
-        selectedServicio: '',
+        selectedServicio: null,
         dataReady: false,
         headings: [],  
+        loadingConsolidacionesTable: false,
+        dataReady: false,
     },
     actions: {
-        createConsolidacion({state, commit}){
-            if(state.consolidacion.cliente_id != null){
-                HTTP().local.get('api/consolidaciones/'+state.consolidacion.cliente_id+'/crear')
-                .then(d => {
-                    console.log(d.data.pkg)
-                    
-                    if(d.data.message == 'success'){
-                        commit('setFullConsolidacion', d.data.pkg)
-                        Notification({
-                            type: "info",
-                            showClose: true,
-                            message: 'Se a creado una nueva consolidacion para el NIT: '+d.data.pkg.cliente.nit+'.'
-                        })
-                        return true
-                    }
-                    
-                })
-                .catch(err => {
-                    console.log(err)
-                })
-            }else{
-                Message({
-                    type: "warning",
-                    showClose: true,
-                    message: 'Porfavor seleccione cliente.'
-                })
-            }
-            
+        setRuta({ state, dispatch }, cuadre_ruta_id){
+            HTTP().local.get('api/consolidaciones/'+state.consolidacion.id+'/add-cuadre-ruta/'+cuadre_ruta_id)
+            .then(d => {
+                if(d.data.message == 'success'){
+                    Message({
+                        type: 'success',
+                        showClose: true,
+                        message: 'Cambio exitoso'
+                    })
+                    dispatch('fetchConsolidacionesList')
+                }
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
+        setProducto({ state, dispatch }, cuadre_producto_id){
+            HTTP().local.get('api/consolidaciones/'+state.consolidacion.id+'/add-cuadre-producto/'+cuadre_producto_id)
+            .then(d => {
+                if(d.data.message == 'success'){
+                    Message({
+                        type: 'success',
+                        showClose: true,
+                        message: 'Cambio exitoso'
+                    })
+                    dispatch('fetchConsolidacionesList')
+                }
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
+        setServicio({ state, dispatch }, cuadre_servicio_id){
+            HTTP().local.get('api/consolidaciones/'+state.consolidacion.id+'/add-cuadre-servicio/'+cuadre_servicio_id)
+            .then(d => {
+                if(d.data.message == 'success'){
+                    Message({
+                        type: 'success',
+                        showClose: true,
+                        message: 'Cambio exitoso'
+                    })
+                    dispatch('fetchConsolidacionesList')
+                }
+            })
+            .catch(err => {
+                console.log(err)
+            })
         },
         
         delConsolidacion({state}){
@@ -77,14 +87,31 @@ export default {
                 console.log(err)
             })
         },
-       
+        fetchConsolidacion({commit, dispatch},id){
+            console.log(id)
+            HTTP().local.get('api/consolidaciones/'+id)
+            .then(d => {
+                console.log(d.data[0])
+                commit('setFullConsolidacion', d.data[0])
+                
+                dispatch('clientes/fetchClienteConsolidacion', d.data[0].cliente_id, {root: true})
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
         fetchConsolidacionesList({commit, dispatch}){
+            commit('setDataReady', false)
+            commit('setLoadingConsolidacionesTable', true)
             HTTP().local.get('api/consolidaciones')
             .then(d => {
+                console.log(d.data)
                 commit('setConsolidacionesList', d.data)
                 dispatch('renderTableHeadings')
-                dispatch('renderSelectedVehiculo')
                 dispatch('renderSelectedRuta')
+                commit('setDataReady', true)
+                commit('setLoadingConsolidacionesTable', false)
+               
             })
             .catch(err => {
                 console.log(err)
@@ -92,7 +119,7 @@ export default {
         },
         renderTableHeadings({state, commit}){
             let pkg = []
-            for(let prop2 in state.cuadresList[0]){
+            for(let prop2 in state.consolidacionesList[0]){
                 if(prop2 !== 'created_at' || prop2 !== 'updated_at'){
                     prop2 = prop2.split('_').join(' ')
                     prop2 = prop2.charAt(0).toUpperCase() + prop2.slice(1)
@@ -101,42 +128,78 @@ export default {
             }
             commit('setTableHeadings', pkg)
         },
-        renderSelectedRuta({ state, commit }){
+        renderSelectedRuta({ state, commit, dispatch }){
             let obj = {}
-            for(let prop in state.cuadresList){
-                for(let prop2 in state.cuadresList[prop].ruta){
-                    obj[state.cuadresList[prop]['ruta'][prop2]['id']] = (state.cuadresList[prop]['ruta'] !== [])
-                    ? state.cuadresList[prop]['ruta'][prop2]['nombre_municipio']
-                    : ''
-                }
+            for(let prop in state.consolidacionesList){
+                obj[state.consolidacionesList[prop].id] = (state.consolidacionesList[prop].ruta !== null)
+                ? state.consolidacionesList[prop].ruta.id
+                : ''
             }
             console.log(obj)
             commit('setSelectedRuta', obj)
+            
+            dispatch('renderSelectedProducto')
         },
-        renderSelectedVehiculo({ state, commit }){
+        renderSelectedProducto({ state, commit, dispatch }){
             let obj = {}
-
-            for(let prop in state.cuadresList){
-                for(let prop2 in state.cuadresList[prop].vehiculo){
-                    obj[state.cuadresList[prop]['vehiculo'][prop2]['placa']] = (state.cuadresList[prop]['vehiculo'] !== [])
-                    ? state.cuadresList[prop]['vehiculo'][prop2]['placa']
-                    : ''
-                }
+            console.log(state.consolidacionesList)
+            for(let prop in state.consolidacionesList){
+                obj[state.consolidacionesList[prop].id] = (state.consolidacionesList[prop].producto !== null)
+                ? state.consolidacionesList[prop].producto.id
+                : ''
             }
-            console.log(obj)
-            commit('setSelectedVehiculo', obj)
-            console.log(state.selectedVehiculo)
+            commit('setSelectedProducto', obj)
+            dispatch('renderSelectedServicio')
+        },
+        renderSelectedServicio({ state, commit }){
+            let obj = {}
+            for(let prop in state.consolidacionesList){
+                obj[state.consolidacionesList[prop].id] = (state.consolidacionesList[prop].servicio !== null)
+                ? state.consolidacionesList[prop].servicio.id
+                : ''
+            }
+            commit('setSelectedServicio', obj)
+            console.log('Finnished...')
         },
         
     },
     mutations: {
+        setDataReady(state, value){
+            state.dataReady = value
+        },
+        setTableHeadings(state, value){
+            state.headings = value
+        },
         setFullConsolidacion(state, value){
             state.consolidacion = value
         },
         setClienteId(state, value){
             state.consolidacion.cliente_id = value
         },
-        
+        setConsolidacionesList(state, value){
+            state.consolidacionesList = value
+        },
+        setSelectedProducto(state, value){
+            state.selectedProducto = value
+        },
+        setSelectedServicio(state, value){
+            state.selectedServicio = value
+        },
+        setSelectedRuta(state, value){
+            state.selectedRuta = value
+        },
+        setLoadingConsolidacionesTable(state, value){
+            state.loadingConsolidacionesTable = value
+        },
+        consolidacionesClearParams(state){
+            state.consolidacion = {
+                id: null,
+                cliente_id: null,
+                precio_real: 0,
+                descuento: 0,
+                precio_final: 0,
+            }
+        }
     },
 
 };

@@ -75,7 +75,7 @@ export default {
 	},
 	computed: {
         ...mapState('clientes', [
-			'cruadreRutasList',
+			'cuadreRutasList',
 			'loadingCuadreRutaTable',
 			
             
@@ -87,14 +87,15 @@ export default {
         filtered(){
 			if(this.filter !== ''){
 				let type = this.selectTypeOfSearch.toLowerCase()
-				return this.cruadreRutasList.filter(cuadre => {
+				return this.cuadreRutasList.filter(cuadre => {
 					if(isNaN(cuadre[type])){
 						return cuadre[type].toLowerCase().includes(this.filter.toLowerCase())
 					}
 					return cuadre[type].toString().includes(this.filter.toString())
 				})
 			}
-			return this.cruadreRutasList
+		
+			return this.cuadreRutasList
 		},
 
 	},

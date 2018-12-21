@@ -34,6 +34,7 @@ class ClienteController {
     async get_cuadres_productos({ params }){
         const { id } = params;
         const client = await Cliente.find(id)
+        console.log(id, client)
         const res = await client.cuadre_producto().with('producto').fetch()
             for(let prop in res.rows){
                 if(res.rows[prop].$relations.producto.rows.length > 0){

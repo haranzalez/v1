@@ -28,7 +28,7 @@
 	</el-dialog>
 	
 	<!--edit viaje form -->
-	<el-dialog center width="30%" top="15vh" title="Cuadre ruta" :visible.sync="cuadreViajeEditFormVisible">
+	<el-dialog center width="50%" top="15vh" title="Cuadre ruta" :visible.sync="cuadreViajeEditFormVisible">
 		<ViajeEditForm></ViajeEditForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button size="mini" type="primary" @click="editCuadreRuta(cliente.id)">Actualizar</el-button>
@@ -53,7 +53,7 @@
 	</el-dialog>
 	
 	<!--Create viaje form -->
-	<el-dialog center width="30%" top="15vh" title="Cuadre ruta" :visible.sync="createViajeFormVisible">
+	<el-dialog center width="50%" top="15vh" title="Cuadre ruta" :visible.sync="createViajeFormVisible">
 		<ViajeCreateForm></ViajeCreateForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button size="mini" type="primary" @click="create_cuadre_viaje(cliente.id)">Crear cuadre</el-button>
@@ -119,6 +119,7 @@
 							<el-dropdown-item :disabled="(permisos['Clientes'].editar)? false:true" command="edit"><i class="mdi mdi-lead-pencil mr-10"></i> Editar</el-dropdown-item>
 							<el-dropdown-item :disabled="(permisos['Clientes'].eliminar)? false:true" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
 							<el-dropdown-item command="verCuadres" divided><i class="mdi mdi-folder-open mr-10"></i> Ver cuadres</el-dropdown-item>
+							<el-dropdown-item command="crearViaje"><i class="mdi mdi-plus mr-10"></i> Crear Viaje</el-dropdown-item>
 						</el-dropdown-menu>
 					</el-dropdown>
 				</el-row>
@@ -319,6 +320,7 @@ export default {
 			'delCliente',
 			'editCliente',
 			'fetchCliente',
+			'create_consolidacion',
 		]),
 //=============================//
 //========== Components Functions =========//
@@ -472,6 +474,9 @@ export default {
 			}
 			if(e == 'verCuadres'){
 				this.cuadresTableVisible = true
+			}
+			if(e == 'crearViaje'){
+				this.create_consolidacion()
 			}
 			
 		},

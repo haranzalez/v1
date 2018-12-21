@@ -192,8 +192,12 @@ Route.group(() => {
   Route.get('consolidaciones', 'ConsolidacionController.get_all_consolidaciones').middleware('auth')
   Route.get('consolidaciones/:id', 'ConsolidacionController.get_consolidacion').middleware('auth')
   Route.get('consolidaciones/:cliente_id/crear', 'ConsolidacionController.create_consolidacion').middleware('auth')
-  Route.get('consolidaciones/:consolidacion_id/add-viaje/cuadre_viaje_id', 'ConsolidacionController.add_viaje').middleware('auth')
+  Route.get('consolidaciones/:consolidacion_id/add-cuadre-ruta/:cuadre_ruta_id', 'ConsolidacionController.add_ruta').middleware('auth')
   Route.get('consolidaciones/:consolidacion_id/add-cuadre-producto/:cuadre_producto_id', 'ConsolidacionController.add_producto').middleware('auth')
+  Route.get('consolidaciones/:consolidacion_id/add-cuadre-servicio/:cuadre_servicio_id', 'ConsolidacionController.add_servicio').middleware('auth')
+  Route.get('consolidaciones/:consolidacion_id/get-cuadre-ruts', 'ConsolidacionController.get_ruta').middleware('auth')
+  Route.get('consolidaciones/:consolidacion_id/get-cuadre-producto', 'ConsolidacionController.get_producto').middleware('auth')
+  Route.get('consolidaciones/:consolidacion_id/get-cuadre-servicio', 'ConsolidacionController.get_servicio').middleware('auth')
   
   //PUT
   Route.put('consolidaciones/:id/update', 'ConsolidacionController.update_consolidacion').middleware('auth')

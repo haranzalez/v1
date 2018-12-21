@@ -2,69 +2,76 @@
    <vue-scroll class="page-trailers-create">
        <el-form size="mini" label-position="top" ref="form" label-width="150px">
         <el-row>
-            <el-col :span="8" :md="8" :sm="24" :xs="24">
-                        <el-form-item label="Origen" label-width="200px">
-                            <el-select 
-                            size="mini" 
-                            @change="setMunicipioOrigenId" 
-                            filterable 
-                            :value="ruta.municipio_origen_id" 
-                            placeholder="Seleccione.."
-                            >
-                                <el-option
-                                v-for="item in municipios_list"
-                                :key="item.id"
-                                :label="item.nombre_municipio"
-                                :value="item.id">
-                                </el-option>
-                            </el-select>
-                        </el-form-item>
-                        <el-form-item label="Destino" label-width="200px">
-                            <el-select 
-                            size="mini" 
-                            @change="setMunicipioDestinoId" 
-                            filterable :value="ruta.municipio_destino_id" 
-                            placeholder="Seleccione.."
-                            >
-                                <el-option
-                                v-for="item in municipios_list"
-                                :key="item.id"
-                                :label="item.nombre_municipio"
-                                :value="item.id">
-                                </el-option>
-                            </el-select>
-                        </el-form-item>
-				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Kilometros">
-                        <el-input size="mini" 
-                        :value="ruta.kilometros"
-                        @input="setKilometros"
-                        placeholder="">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
-                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Valor flete">
-                        <el-input size="mini" 
-                        :value="ruta.valor_flete"
-                        @input="setValorflete"
-                        placeholder="">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
-                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Anticipo sugerido">
-                        <el-input size="mini" 
-                        :value="ruta.anticipo_sugerido"
-                        @input="setAnticipoSugerido"
-                        placeholder="">
-                        </el-input>
-                   
-                    </el-form-item>
-				</el-col>
+            <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                <h3>Info</h3>
+            </el-col>
+            <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+                <el-form-item label="Origen" label-width="200px">
+                    <el-select 
+                    size="mini" 
+                    @change="setMunicipioOrigenId" 
+                    filterable 
+                    :value="ruta.municipio_origen_id" 
+                    placeholder="Seleccione.."
+                    >
+                        <el-option
+                        v-for="item in municipios_list"
+                        :key="item.id"
+                        :label="item.nombre_municipio"
+                        :value="item.id">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+            </el-col>
+            <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+                <el-form-item label="Destino" label-width="200px">
+                    <el-select 
+                    size="mini" 
+                    @change="setMunicipioDestinoId" 
+                    filterable :value="ruta.municipio_destino_id" 
+                    placeholder="Seleccione.."
+                    >
+                        <el-option
+                        v-for="item in municipios_list"
+                        :key="item.id"
+                        :label="item.nombre_municipio"
+                        :value="item.id">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+            </el-col>
 
             <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Pago conductor HQ">
+                <el-form-item label="Kilometros">
+                    <el-input size="mini" 
+                    :value="ruta.kilometros"
+                    @input="setKilometros"
+                    placeholder="">
+                    </el-input>
+                </el-form-item>
+            </el-col>
+            <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                <el-form-item label="Valor flete">
+                    <el-input size="mini" 
+                    :value="ruta.valor_flete"
+                    @input="setValorflete"
+                    placeholder="">
+                    </el-input>
+                </el-form-item>
+            </el-col>
+            <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                <el-form-item label="Anticipo sugerido">
+                    <el-input size="mini" 
+                    :value="ruta.anticipo_sugerido"
+                    @input="setAnticipoSugerido"
+                    placeholder="">
+                    </el-input>
+                
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                <el-form-item label="Pago conductor HQ">
                     <el-input 
                     :value="ruta.pago_conductor_HQ"
                     size="mini"
@@ -73,6 +80,7 @@
                     </el-input>
                 </el-form-item>
             </el-col>
+
             <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                 <el-form-item label="Pago tercero">
                     <el-input 
@@ -83,6 +91,7 @@
                     </el-input>
                 </el-form-item>
             </el-col>
+
             <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                 <el-form-item label="Pago cabezote">
                     <el-input 
@@ -93,41 +102,40 @@
                     </el-input>
                 </el-form-item>
             </el-col>
-        </el-col>
-            <el-col  :span="16" :md="16" :sm="24" :xs="24">
-                <el-col style="margin:0 !important;" :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+            <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                <h3>Comentarios</h3>
+                <el-button @click="comentar" style="font-size: 25px;float: right; padding: 3px 0" type="text"><i class="mdi mdi-comment-plus-outline"></i></el-button>
+            </el-col>
+            <el-col style="margin:0 !important;" :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                
+             
                    
-                        <el-card>
-                            <div slot="header" class="clearfix">
-                                <span>Comentarios</span>
-                                <el-button @click="comentar" style="float: right; padding: 3px 0" type="text">Nuevo</el-button>
-                            </div>
-                            <div class="text item">
-                                <el-table
-                                height="300"
-                                size="mini"
-                                :data="comentarios_list"
-                                style="width: 100%">
-                                <el-table-column type="expand">
-                                <template slot-scope="props">
-                                    <p>{{ props.row.comentario }}</p>
-                                    
-                                </template>
-                                </el-table-column>
-                                <el-table-column
-                                label="Fecha"
-                                prop="fecha">
-                                </el-table-column>
-                                <el-table-column
-                                label="Usuario"
-                                prop="usuario">
-                                </el-table-column>
-                                </el-table>
-                            </div>
-                        </el-card>
-
-				</el-col>
+                        
+            
+                    <div class="text item">
+                        <el-table
+                        height="300"
+                        size="mini"
+                        :data="comentarios_list"
+                        style="width: 100%">
+                        <el-table-column type="expand">
+                        <template slot-scope="props">
+                            <p>{{ props.row.comentario }}</p>
+                            
+                        </template>
+                        </el-table-column>
+                        <el-table-column
+                        label="Fecha"
+                        prop="fecha">
+                        </el-table-column>
+                        <el-table-column
+                        label="Usuario"
+                        prop="usuario">
+                        </el-table-column>
+                        </el-table>
+                    </div>
                
+
             </el-col>
 
         </el-row>

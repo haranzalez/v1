@@ -26,85 +26,99 @@
 	<!-- dialog create ruta -->
 	<el-dialog 
 	top="5vh"
-	width="30%"
+	width="38%"
 	title="Nueva ruta" 
 	:visible.sync="dialogFormVisible"
 	:close-on-press-escape="true"
+	fullscreen
 	center>
 		<el-form label-position="top">
-			<el-form-item label="Kilometros" :label-width="formLabelWidth">
-				<el-input 
-					size="mini" 
-					@input="setKilometros"
-					auto-complete="off">
-				</el-input>
-			</el-form-item>
+			
 			<el-row>
-				<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-					<el-form-item label="Origen" :label-width="formLabelWidth">
-						<el-select size="mini" @change="setMunicipioOrigenId" filterable :value="ruta.municipio_origen_id" placeholder="Seleccione..">
-							<el-option
-							v-for="item in municipios_list"
-							:key="item.id"
-							:label="item.nombre_municipio"
-							:value="item.id">
-							</el-option>
-						</el-select>
-					</el-form-item>
-				</el-col>
-				<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-					<el-form-item label="Destino" :label-width="formLabelWidth">
-						<el-select size="mini" @change="setMunicipioDestinoId" filterable :value="ruta.municipio_destino_id" placeholder="Seleccione..">
-							<el-option
-							v-for="item in municipios_list"
-							:key="item.id"
-							:label="item.nombre_municipio"
-							:value="item.id">
-							</el-option>
-						</el-select>
-					</el-form-item>
-				</el-col>
-			</el-row>
-			<el-form-item label="Valor flete">
-				<el-input 
-				style="color:green;"
-				size="mini"
-				@input="setValorflete"
-				placeholder="">
-				</el-input>
-			</el-form-item>
-			<el-form-item label="Anticipo sugerido">
-				<el-input 
-				style="color:yellow;"
-				size="mini"
-				@input="setAnticipoSugerido"
-				placeholder="">
-				</el-input>
-			</el-form-item>
-			<el-form-item label="Pago conductor HQ">
-				<el-input 
-				size="mini"
-				style="color:red;"
-				@input="setPagoConductor"
-				placeholder="">
-				</el-input>
-			</el-form-item>
-			<el-form-item label="Pago tercero">
-				<el-input 
-				size="mini"
-				style="color:red;"
-				@input="setPagoTercero"
-				placeholder="">
-				</el-input>
-			</el-form-item>
-			<el-form-item label="Pago cabezote">
-				<el-input 
-				size="mini"
-				style="color:red;"
-				@input="setPagoCabezote"
-				placeholder="">
-				</el-input>
-			</el-form-item>
+			<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+				<el-form-item label="Origen" :label-width="formLabelWidth">
+					<el-select size="mini" @change="setMunicipioOrigenId" filterable :value="ruta.municipio_origen_id" placeholder="Seleccione..">
+						<el-option
+						v-for="item in municipios_list"
+						:key="item.id"
+						:label="item.nombre_municipio"
+						:value="item.id">
+						</el-option>
+					</el-select>
+				</el-form-item>
+			</el-col>
+			<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+				<el-form-item label="Destino" :label-width="formLabelWidth">
+					<el-select size="mini" @change="setMunicipioDestinoId" filterable :value="ruta.municipio_destino_id" placeholder="Seleccione..">
+						<el-option
+						v-for="item in municipios_list"
+						:key="item.id"
+						:label="item.nombre_municipio"
+						:value="item.id">
+						</el-option>
+					</el-select>
+				</el-form-item>
+			</el-col>
+			<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+				<el-form-item label="Kilometros" :label-width="formLabelWidth">
+					<el-input 
+						size="mini" 
+						@input="setKilometros"
+						auto-complete="off">
+					</el-input>
+				</el-form-item>
+			</el-col>
+			<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+				<el-form-item label="Valor flete">
+					<el-input 
+					style="color:green;"
+					size="mini"
+					@input="setValorflete"
+					placeholder="">
+					</el-input>
+				</el-form-item>
+			</el-col>
+			<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+				<el-form-item label="Anticipo sugerido">
+					<el-input 
+					style="color:yellow;"
+					size="mini"
+					@input="setAnticipoSugerido"
+					placeholder="">
+					</el-input>
+				</el-form-item>
+			</el-col>
+			<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+				<el-form-item label="Pago conductor HQ">
+					<el-input 
+					size="mini"
+					style="color:red;"
+					@input="setPagoConductor"
+					placeholder="">
+					</el-input>
+				</el-form-item>
+			</el-col>
+			<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+				<el-form-item label="Pago tercero">
+					<el-input 
+					size="mini"
+					style="color:red;"
+					@input="setPagoTercero"
+					placeholder="">
+					</el-input>
+				</el-form-item>
+			</el-col>
+			<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+				<el-form-item label="Pago cabezote">
+					<el-input 
+					size="mini"
+					style="color:red;"
+					@input="setPagoCabezote"
+					placeholder="">
+					</el-input>
+				</el-form-item>
+			</el-col>
+		</el-row>
 		</el-form>
 		<span slot="footer" class="dialog-footer">
 			<el-button size="medium" @click="dialogFormVisible = false; setAnticipoSugerido(0); setValorflete(0); rutaReset()">Cerrar</el-button>
@@ -115,10 +129,11 @@
 	<!-- dialog edit ruta -->
 	<el-dialog 
 	top="5vh"
-	width="60%"
+	width="38%"
 	title="Actualizando ruta" 
 	:visible.sync="dialogFormEditVisible"
 	:close-on-press-escape="true"
+	fullscreen
 	center>
 		<RutasEditForm></RutasEditForm>
 		<span slot="footer" class="dialog-footer">

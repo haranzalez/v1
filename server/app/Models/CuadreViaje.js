@@ -14,6 +14,10 @@ class CuadreViaje extends Model {
     cliente(){
         return this.belongsTo('App/Models/Cliente')
     }
+    consolidacion(){
+        return this.belongsToMany('App/Models/Consolidacion')
+        .pivotModel(use('App/Models/PivotConsolidacionCuadreRutas'));
+    }
 
 }
 

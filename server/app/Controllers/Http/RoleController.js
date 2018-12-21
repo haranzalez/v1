@@ -38,6 +38,19 @@ class RoleController {
       nombre, 
       description
     }) 
+    for(let prop in modulos){
+      const mod = await Modulo.find(modulos[prop])
+      const sub = await mod.subModulo().fetch()
+      for(let prop2 in sub.rows){
+        await Permisos.create({
+          role_id: role.id,
+          sub_modulo_id: sub.rows[prop2].id,
+          crear: false,
+          editar: false,
+          eliminar: false
+        });
+      }
+    }
     if(modulos && modulos.length > 0){
       await role.modulos().attach(modulos);
       role.modulos = await role.modulos().fetch();

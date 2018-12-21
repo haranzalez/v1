@@ -19,6 +19,7 @@ import cuadreProductos from './cuadreProductos'
 import cuadreServicios from './cuadreServicios'
 import productos from './productos'
 import servicios from './servicios'
+import consolidaciones from './consolidaciones'
 
 
 Vue.use(Vuex)
@@ -46,6 +47,7 @@ export default new Vuex.Store({
 		cuadreServicios,
 		productos,
 		servicios,
+		consolidaciones,
 	},
 	mutations: {
 	},

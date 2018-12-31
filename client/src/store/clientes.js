@@ -23,6 +23,7 @@ export default {
            dias: null,
            created_at: null,
         },
+        dataready:false,
         clienteConsolidacion:null,
         clientesList: null,
         cuadreRutasList: null,
@@ -39,22 +40,34 @@ export default {
         selectedContrato: '',
         selectedDias: '', 
         contratoOptions: [{
-            tipo: 'tipo 1',
+            tipo: 'Mandato',
         },
         {
-            tipo: 'tipo 2',
+            tipo: 'Contrato',
         },
         {
-            tipo: 'tipo 3',
-        }],
+            tipo: 'Factura',
+        },
+        {
+            tipo: 'Contado',
+        },],
         diasOptions: [{
+            dias: '5 dias.',
+        },
+        {
+            dias: '8 dias.',
+        },
+        {
+            dias: '15 dias.',
+        },
+        {
             dias: '30 dias.',
         },
         {
-             dias: '60 dias.',
+             dias: '45 dias.',
         },
         {
-             dias: '90 dias.',
+             dias: '60 dias.',
         }] 
     },
 
@@ -221,6 +234,7 @@ export default {
                 commit('setClientesList', d.data)
                 dispatch('renderTableHeadings')
                 commit('setLoadingClientesTable', false)
+                commit('setDataready', true)
             })
             .catch(err => {
                 console.log(err)
@@ -345,6 +359,9 @@ export default {
         setLoadingConsolidacionTableBtnsPkg(state, value){
             console.log(value)
             state.loadingConsolidacionTableBtnsPkg = value
+        },
+        setDataready(state, value){
+            state.dataready = value
         }
         
     },

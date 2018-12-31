@@ -1,7 +1,43 @@
 <template>
 <div>
+	<!-- licencia create form -->
+	<el-dialog width="30%" top="5vh" :visible.sync="LicenciaCreateFormVisible">
+		<h3 style="text-align:center;" slot="title">{{conductor.nombres + ' ' + conductor.primer_apellido}}</h3>
+		<LicenciaCreateForm></LicenciaCreateForm>
+		<span slot="footer" class="dialog-footer">
+			<el-button size="mini" @click="LicenciaCreateFormVisible = false">Cerrar</el-button>
+			<el-button size="mini" type="primary" @click="create_licencia">Crear</el-button>
+		</span>
+	</el-dialog>
+	<!-- licencia edit form -->
+	<el-dialog width="30%" top="5vh" :visible.sync="LicenciaEditFormVisible">
+		<h3 style="text-align:center;" slot="title">{{conductor.nombres + ' ' + conductor.primer_apellido}}</h3>
+		<LicenciaEditForm></LicenciaEditForm>
+		<span slot="footer" class="dialog-footer">
+			<el-button size="mini" @click="LicenciaEditFormVisible = false">Cerrar</el-button>
+			<el-button size="mini" type="primary" @click="update_licencia">Actualizar</el-button>
+		</span>
+	</el-dialog>
+	<!--datos bancarios create form -->
+	<el-dialog fullscreen width="30%" top="5vh" :visible.sync="DatosBancariosCreateFormVisible">
+		<h3 style="text-align:center;" slot="title">{{conductor.nombres + ' ' + conductor.primer_apellido}}</h3>
+		<DatosBancariosCreateForm></DatosBancariosCreateForm>
+		<span slot="footer" class="dialog-footer">
+			<el-button size="mini" @click="DatosBancariosCreateFormVisible = false">Cerrar</el-button>
+			<el-button size="mini" type="primary" @click="create_datos_bancarios">Crear</el-button>
+		</span>
+	</el-dialog>
+	<!--datos bancarios edit form -->
+	<el-dialog fullscreen width="30%" top="5vh"  :visible.sync="DatosBancariosEditFormVisible">
+		<h3 style="text-align:center;" slot="title">{{conductor.nombres + ' ' + conductor.primer_apellido + ' ' + conductor.segundo_apellido}}</h3>
+		<DatosBancariosEditForm></DatosBancariosEditForm>
+		<span slot="footer" class="dialog-footer">
+			<el-button @click="DatosBancariosEditFormVisible = false">Cerrar</el-button>
+			<el-button type="primary" @click="update_datos_bancarios">Actualizar</el-button>
+		</span>
+	</el-dialog>
 	<!--Edit dialog form -->
-	<el-dialog width="50%" top="5vh" :title="conductor.nombres + ' ' + conductor.primer_apellido + ' ' + conductor.segundo_apellido" :visible.sync="editFormVisible">
+	<el-dialog fullscreen width="30%" top="5vh" :title="conductor.nombres + ' ' + conductor.primer_apellido + ' ' + conductor.segundo_apellido" :visible.sync="editFormVisible">
 		<ConductoresEditForm></ConductoresEditForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button @click="editFormVisible = false">Cancelar</el-button>
@@ -9,7 +45,7 @@
 		</span>
 	</el-dialog>
 	<!--Create dialog form -->
-	<el-dialog width="50%" top="10vh" title="Nuevo conductor" :visible.sync="createFormVisible">
+	<el-dialog fullscreen width="30%" top="10vh" title="Nuevo conductor" :visible.sync="createFormVisible">
 		<ConductoresCreateForm></ConductoresCreateForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button @click="createFormVisible = false">Cancelar</el-button>
@@ -40,6 +76,8 @@
 					<el-dropdown-item :disabled="(permisos['Conductores'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Crear</el-dropdown-item>
                     <el-dropdown-item :disabled="(permisos['Conductores'].editar)? false:true" command="edit"><i class="mdi mdi-pencil mr-10"></i> Editar</el-dropdown-item>
                     <el-dropdown-item :disabled="(permisos['Conductores'].eliminar)? false:true" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
+					<el-dropdown-item :disabled="(permisos['Conductores'].eliminar)? false:true" command="registrarCuentaBancaria" divided><i class="mdi mdi-bank mr-10"></i> Datos bancarios</el-dropdown-item>
+					<el-dropdown-item :disabled="(permisos['Conductores'].eliminar)? false:true" command="registrarLicencia" ><i class="mdi mdi-account-card-details mr-10"></i> Licencias</el-dropdown-item>
 				</el-dropdown-menu>
     		</el-dropdown>
 			</div>
@@ -135,16 +173,23 @@ import HTTP from '../../http';
 import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
 import moment from 'moment-timezone'
 import router from '../../router'
+import { Notification, Message } from 'element-ui'
 //servicios
 import exportService from '../../services/exportService'
 //componentes
 import ConductoresEditForm from '@/components/Conductores/editForm'
 import ConductoresCreateForm from '@/components/Conductores/createForm'
+import DatosBancariosCreateForm from '@/components/Conductores/datosBancariosCreateForm'
+import DatosBancariosEditForm from '@/components/Conductores/datosBancariosEditForm'
+import LicenciaCreateForm from '@/components/Conductores/licenciasCreateForm'
+import LicenciaEditForm from '@/components/Conductores/licenciasEditForm'
 
 export default {
 	name: 'ConductorTable',
 	data () {
       	return {
+			LicenciaCreateFormVisible: false,
+			LicenciaEditFormVisible: false,
 			editFormVisible: false,
 			createFormVisible: false,
 			selectTypeOfSearch: 'Nombre',
@@ -153,15 +198,35 @@ export default {
 		}
 	},
 	computed: {
+		DatosBancariosCreateFormVisible: {
+			get(){
+				return this.datosBancariosCreateFormVisible
+			},
+			set(value){
+				this.setDatosBancariosCreateFormVisible(value)
+			}
+		},
+		DatosBancariosEditFormVisible: {
+			get(){
+				return this.datosBancariosEditFormVisible
+			},
+			set(value){
+				this.setDatosBancariosEditFormVisible(value)
+			}
+		},
         ...mapState('authentication', [
 			'permisos',
         ]),
         ...mapState('conductores', [
 			'conductor',
+			'datosBancarios',
+			'licencia',
 			'headings',
             'conductoresList',
 			'conductoresDataReady',
 			'loadingConductoresTable',
+			'datosBancariosCreateFormVisible',
+			'datosBancariosEditFormVisible',
 		]),
         filtered(){
 			
@@ -181,6 +246,10 @@ export default {
 	components: {
 		ConductoresEditForm,
 		ConductoresCreateForm,
+		DatosBancariosCreateForm,
+		DatosBancariosEditForm,
+		LicenciaCreateForm,
+		LicenciaEditForm,
 	},
     methods: {
 		
@@ -191,9 +260,48 @@ export default {
 			exportService.toXLS(this.conductoresList, 'Vehiculos', true)
 		},
 		handleAction(e, row){
+			if(e == 'registrarCuentaBancaria'){
+				if(this.datosBancarios.length == 0){
+					this.$confirm(this.conductor.nombres + ' ' + this.conductor.primer_apellido + ' aun no tiene datos bancarios registrados en el sistema. Desea crear un nuevo registro para este conductor?', 'Atencion!', {
+						confirmButtonText: 'Si',
+						cancelButtonText: 'No',
+						type: 'warning'
+					}).then(() => {
+						this.DatosBancariosCreateFormVisible = true
+					}).catch(() => {
+						this.$message({
+							type: 'warning',
+							message: 'Operacion cancelada'
+						});          
+					});
+					
+				}else{
+					this.DatosBancariosEditFormVisible = true
+				}
+			}
+			if(e == 'registrarLicencia'){
+				if(this.licencia.length == 0){
+					this.resetLicencia()
+					this.$confirm(this.conductor.nombres + ' ' + this.conductor.primer_apellido + ' aun no tiene licencias registradas en el sistema. Desea crear un nuevo registro para este conductor?', 'Atencion!', {
+						confirmButtonText: 'Si',
+						cancelButtonText: 'No',
+						type: 'warning'
+					}).then(() => {
+						this.LicenciaCreateFormVisible = true
+					}).catch(() => {
+						this.$message({
+							type: 'warning',
+							message: 'Operacion cancelada'
+						});          
+					});
+					
+				}else{
+					this.LicenciaEditFormVisible = true
+				}
+			}
             if(e == 'create'){
 				this.resetConductoresVars()
-        		
+				this.resetDatosBancarios()
 				this.createFormVisible = true;
             }
              if(e == 'edit'){
@@ -208,23 +316,35 @@ export default {
 				this.$refs.conductoresTable.setCurrentRow(val);
 				return
 			}
-			this.setFullConductor(val)
+			console.log(val.id)
+			this.fetchConductor(val.id)
 			this.$refs.conductoresTable.setCurrentRow(val);
 		},
 		...mapMutations('conductores', [
 			'setFullConductor',
 			'setDataReady',
+			'resetConductoresVars',
+			'resetDatosBancarios',
+			'resetLicencia',
+			'setDatosBancariosCreateFormVisible',
+			'setDatosBancariosEditFormVisible',
 		]),
         ...mapActions('conductores',[
+			'fetchConductor',
 			'fetchConductoresList',
 			'createConductor',
 			'editConductor',
-            'delConductor',
+			'delConductor',
+			'create_datos_bancarios',
+			'update_datos_bancarios',
+			'fetchDatosBancarios',
+			'create_licencia',
+			'update_licencia',
 		]),
-	
 		create(){
 			this.createConductor()
 			this.createFormVisible = false
+			this.datosBancariosCreateFormVisible = true
 			this.fetchConductoresList()
 		},
 		pushToDel(row){

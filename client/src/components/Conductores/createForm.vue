@@ -3,8 +3,8 @@
    <vue-scroll class="page-conductores-create">
        <el-form label-position="top" ref="form" :status-icon="true" :show-message="false" label-width="120px" clearValidate> 
         <el-row>
-            <el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+           
+				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Codigo" prop="codigo">
                         <el-input size="mini" 
                         @input="setCodigo"
@@ -12,7 +12,7 @@
                         </el-input>
                     </el-form-item>
 				</el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Tipo de identificacion" prop="tipo_de_identificacion">
                         <el-select size="mini" 
                         v-model="conductor.tipo_de_identificacion" 
@@ -27,10 +27,8 @@
                         </el-select>
                     </el-form-item>
 				</el-col>
-			</el-col>
-
-            <el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+			
+				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Cedula" prop="cedula">
                         <el-input size="mini" 
                         @input="setCedula"
@@ -38,7 +36,7 @@
                         </el-input>
                     </el-form-item>
 				</el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Municipio documento" prop="municipio_documento">
                         <el-input size="mini" 
                         @input="setMunicipioDocumento"
@@ -46,10 +44,8 @@
                         </el-input>
                     </el-form-item>
 				</el-col>
-			</el-col>
-
-            <el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+		
+				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Nombres" prop="nombres">
                         <el-input size="mini" 
                         @input="setNombres"
@@ -57,7 +53,7 @@
                         </el-input>
                     </el-form-item>
 				</el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Primer apellido" prop="primer_apellido">
                         <el-input size="mini" 
                         @input="setPrimerApellido"
@@ -65,10 +61,8 @@
                         </el-input>
                     </el-form-item>
 				</el-col>
-			</el-col>
-
-            <el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+		
+				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Segundo apellido" prop="segundo_apellido"> 
                         <el-input size="mini" 
                         @input="setSegundoApellido"
@@ -76,7 +70,7 @@
                         </el-input>
                     </el-form-item>
 				</el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Tipo de conductor" prop="tipo_conductor">
                         <el-input size="mini" 
                         @input="setTipoDeConductor"
@@ -84,10 +78,8 @@
                         </el-input>
                     </el-form-item>
 				</el-col>
-			</el-col>
-
-            <el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+		
+				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Direccion" prop="direccion">
                         <el-input size="mini" 
                         @input="setDireccion"
@@ -95,7 +87,7 @@
                         </el-input>
                     </el-form-item>
 				</el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Municipio" prop="municipio">
                         <el-input size="mini" 
                         @input="setMunicipio"
@@ -103,10 +95,8 @@
                         </el-input>
                     </el-form-item>
 				</el-col>
-			</el-col>
-
-            <el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+		
+				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Telefono 1" prop="telefono_1"> 
                         <el-input size="mini" 
                         @input="setTelefono1"
@@ -114,7 +104,7 @@
                         </el-input>
                     </el-form-item>
 				</el-col>
-                <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Telefono 2" prop="telefono_2">
                         <el-input size="mini" 
                         @input="setTelefono2"
@@ -122,10 +112,8 @@
                         </el-input>
                     </el-form-item>
 				</el-col>
-			</el-col>
-
-            <el-col>
-				<el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+		
+				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Celular" prop="celular">
                         <el-input size="mini" 
                         @input="setCelular"
@@ -133,7 +121,7 @@
                         </el-input>
                     </el-form-item>
 				</el-col>
-                <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Transportadora" prop="transportadora">
                         <el-input size="mini" 
                         @input="setTransportadora"
@@ -141,7 +129,6 @@
                         </el-input>
                     </el-form-item>
 				</el-col>
-			</el-col>
 
         </el-row>
         

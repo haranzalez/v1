@@ -1,5 +1,36 @@
 <template>
 <div>
+	<!--report -->
+	<el-dialog width="45%" :center="true" top="5vh" :visible.sync="reportDialogVisible">
+		<el-form size="mini" label-position="left" ref="form" label-width="120px">
+			<el-row>
+				<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+					<el-form-item label="Fecha creacion">
+						<el-date-picker
+						v-model="datePickerValue"
+						type="daterange"
+						align="right"
+						unlink-panels
+						range-separator="A"
+						start-placeholder="Fecha inicio"
+						end-placeholder="Fecha final"
+						>
+						</el-date-picker>
+					</el-form-item>
+				</el-col>
+				<el-col :xs="24" :sm="24" :md="8" :lg="8" :xl="8">
+					<el-form-item label="NIT">
+						<el-input size="mini" width="60"></el-input>
+					</el-form-item>
+				</el-col>
+			</el-row>
+		</el-form>
+		
+		<span slot="footer" class="dialog-footer animated fadeInUp">
+			<el-button size="mini" @click="reportDialogVisible = false;">Cerrar</el-button>
+			<el-button size="mini" type="primary">OK</el-button>
+		</span>
+	</el-dialog>
 	<!--cuadres table -->
 	<el-dialog fullscreen width="65%" top="10vh" :visible.sync="cuadresTableVisible">
 		<div slot="title">
@@ -205,9 +236,7 @@
   </el-table>
 
   </el-col>
-  <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
-	
-  </el-col>
+
 </div>
 	
 </template>
@@ -234,12 +263,14 @@ import cuadreViajeTable from './cuadreRutaTable'
 import cuadreProductoTable from './cuadreProductoTable'
 import cuadreServicioTable from './cuadreServicioTable'
 import cuadresTable from './cuadresTable'
+import JsonExcel from 'json-to-excel';
 
 export default {
 	name: 'ClientesTable',
 	data () {
       	return {
 			currentRow: null,
+			reportDialogVisible: false,
 			editFormVisible: false,
 			createFormVisible: false,
 			createViajeFormVisible: false,
@@ -254,6 +285,8 @@ export default {
 			cuadresTableVisible: false,
             selectTypeOfSearch: '',
 			filter: '',
+
+			
 		}
 	},
 	computed: {
@@ -270,10 +303,19 @@ export default {
 			'cliente',
 			'loadingClientesTable',
 			'currentCuadresTab',
+			'dataready',
 		]),
 //=============================//
 //========== Local Variables =========//
 //=============================//
+		datePickerValue: {
+			get(value){
+				return ''
+			},
+			set(value){
+				console.log(value)
+			}
+		},
         filtered(){
 			if(this.filter !== ''){
 				let type = this.selectTypeOfSearch.toLowerCase()
@@ -300,6 +342,7 @@ export default {
 		cuadreProductoTable,
 		cuadreServicioTable,
 		cuadresTable,
+		JsonExcel,
 	},
     methods: {
 //=============================//
@@ -366,9 +409,7 @@ export default {
 //=============================//
 //======= UI Functions =====//
 //=============================//
-		testOnClick(e){
-			console.log(e)
-		},
+		
 		clearForm(form){
 			if('createRuta'){
 				this.resetSelections()
@@ -387,7 +428,8 @@ export default {
 		},
 
 		exportTable(){
-			exportService.toXLS(this.clientesList, 'Clientes', true)
+			this.reportDialogVisible = true
+			//exportService.toXLS(this.clientesList, 'Clientes')
 		},
 		reloadTable(table){
 			if(table == 'clientes'){

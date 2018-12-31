@@ -4,8 +4,8 @@ const { LogicalException } = require('@adonisjs/generic-exceptions')
 
 class InvalidAccessException extends LogicalException {
   handle (error, { response }) {
-    return response.status(404).json({
-      error: 'Invalid access to resource',
+    return response.status(401).json({
+      error: 'Acceso invalido a recurso',
     })
   }
 }

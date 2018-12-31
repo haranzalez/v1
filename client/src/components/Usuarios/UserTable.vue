@@ -1,5 +1,13 @@
 <template>
 <div>
+	<!--report -->
+	<el-dialog fullscreen :center="true" :width="dialogWidth" top="5vh" :visible.sync="reportDialogVisible">
+		
+		<span slot="footer" class="dialog-footer animated fadeInUp">
+			<el-button size="mini" @click="reportDialogVisible = false;">Cerrar</el-button>
+			<el-button size="mini" type="primary" @click="editUser">Actualizar</el-button>
+		</span>
+	</el-dialog>
 	<!--Edit dialog form -->
 	<el-dialog fullscreen :center="true" :width="dialogWidth" top="5vh" :visible.sync="editFormVisible">
 		<UsuariosEditForm></UsuariosEditForm>
@@ -228,7 +236,7 @@ export default {
 			
 		},	
 		exportTable(){
-			exportService.toXLS(this.usersList, 'Usuarios', true)
+			exportService.toXLS(this.usersList, 'Usuarios')
 		},
 		reloadTable(){
 			this.btnsDisable = true

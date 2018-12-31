@@ -4,12 +4,48 @@ import XLSX from 'xlsx'
 import { Notification, Message } from 'element-ui'
 
 export default {
-  toXLS: (JSONData, ReportTitle, ShowLabel) => {
+  toXLS: (JSONData, ReportTitle) => {
+    //If JSONData is not an object then JSON.parse will parse the JSON string in an Object
+    var arrData = typeof JSONData != 'object' ? JSON.parse(JSONData) : JSONData;
+    var table =  document.createElement('table')
+    var thead = document.createElement('thead')
+    thead.style.backgroundColor = 'red'
+    var head = document.createElement('tr')
+    var tbody = document.createElement('tbody')
+    for(let prop in arrData[0]){
+        var th = document.createElement('th')
+        th.innerHTML = prop
+        head.appendChild(th)
+    }
+    thead.appendChild(head)
+    table.appendChild(thead)
+    for(let prop in arrData){
+        var row = document.createElement('tr')
+        for(let prop2 in arrData[prop]){
+            var td = document.createElement('td')
+            td.innerHTML = arrData[prop][prop2]
+            row.appendChild(td)
+        }
+        tbody.appendChild(row)
+    }
+
+    table.appendChild(tbody)
+
+   console.log(table)
+ 
+
     
-      //If JSONData is not an object then JSON.parse will parse the JSON string in an Object
-      var arrData = typeof JSONData != 'object' ? JSON.parse(JSONData) : JSONData;
-      
-      var CSV = '';    
+    tableToExcel(table, ReportTitle);
+    
+
+
+
+
+
+
+
+
+     /* var CSV = '';    
       //Set Report title in first row or line
       
       CSV += ReportTitle + '\r\n\n';
@@ -75,8 +111,37 @@ export default {
       //this part will append the anchor tag and remove it after automatic click
       document.body.appendChild(link);
       link.click();
-      document.body.removeChild(link);
-  }
+      document.body.removeChild(link);*/
+  },
 
     
 }
+var tableToExcel = (function() {
+    var uri = 'data:application/vnd.ms-excel;base64,'
+    , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+    , base64 = function (s) { return window.btoa(unescape(encodeURIComponent(s))) }
+    , format = function (s, c) { return s.replace(/{(\w+)}/g, function (m, p) { return c[p]; }) }
+return function (table, name) {
+    var ctx = { worksheet: name || 'Worksheet', table: table.innerHTML }
+    var blob = new Blob([format(template, ctx)]);
+    var blobURL = window.URL.createObjectURL(blob);
+     //this trick will generate a temp <a /> tag
+     var link = document.createElement("a");    
+     link.href = uri + base64(format(template, ctx))
+     
+     //set the visibility hidden so it will not effect on your web-layout
+     link.style = "visibility:hidden";
+     link.download = name + ".xls";
+     
+     //this part will append the anchor tag and remove it after automatic click
+     document.body.appendChild(link);
+     link.click();
+     document.body.removeChild(link);
+   
+    
+}
+    
+     
+    
+
+})();

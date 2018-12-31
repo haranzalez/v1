@@ -13,10 +13,7 @@ class ConductorController {
 
     async get_conductor({ params }){
         const { id } = params;
-        return await Conductor.query()
-        .with('datos_bancarios')
-        .with('licencias')
-        .where('id', id).fetch()
+        return await Conductor.find(id)
     }
     
     //CREATE
@@ -56,6 +53,63 @@ class ConductorController {
         })
 
     }
+    async create_datos_bancarios({ request, params }){
+        const { id } = params
+        const {
+            titular,
+            tipo_de_id,
+            numero_cuenta_bancaria,
+            tipo_cuenta_bancaria,
+            banco,
+            cuenta_propia,
+            radica_rndc
+        } = request.all()
+        var res = await Database
+        .table('datos_bancarios_conductores')
+        .insert({
+            conductor_id: id,
+            titular,
+            tipo_de_id,
+            numero_cuenta_bancaria,
+            tipo_cuenta_bancaria,
+            banco,
+            cuenta_propia,
+            radica_rndc
+        })
+        console.log(res)
+        return {
+            message: 'success'
+        }
+
+    }
+    async update_datos_bancarios({ request, params }){
+        const { id } = params
+        var res = await Database
+        .table('datos_bancarios_conductores')
+        .where('conductor_id', id)
+        .update({
+          titular,
+          tipo_de_id,
+          numero_cuenta_bancaria,
+          tipo_cuenta_bancaria,
+          banco,
+          cuenta_propia,
+          radica_rndc
+        } = request.all())
+        console.log(res)
+        return {
+            message: 'success'
+        }
+
+    }
+    async get_datos_bancarios({ request, params}){
+        const { id } = params
+        return await Database.from('datos_bancarios_conductores').where('conductor_id', id)
+    }
+    async get_licencias({ request, params}){
+        const { id } = params
+        return await Database.from('licencias_conductores').where('conductor_id', id)
+    }
 
     async create_licence({ request, params }){
         const { id } = params
@@ -65,40 +119,43 @@ class ConductorController {
             fecha_de_vencimiento
         } = request.all()
 
-        return await Database.table('licencias_conductores')
+        await Database.table('licencias_conductores')
         .insert({
-            conductore_id: id,
+            conductor_id: id,
             numero_de_licencia,
             categoria,
             fecha_de_vencimiento
         })
+        return {
+            message: 'success'
+        }
 
     }
 
-    async create_bank_account({ request, params }){
-        const { id } = params;
+    async update_licence({ request, params }){
+        const { id } = params
         const {
-            titular,
-            tipo_de_id,
-            numero_cuenta,
-            tipo_cuenta,
-            banco,
-            cuenta_propia,
-            radica_rndc
-        } = request.all();
-        
-        return await Database.table('datos_bancarios_conductores')
-        .insert({
-            conductore_id: id,
-            titular,
-            tipo_de_id,
-            numero_cuenta,
-            tipo_cuenta,
-            banco,
-            cuenta_propia,
-            radica_rndc
-        });
+            numero_de_licencia,
+            categoria,
+            fecha_de_vencimiento
+        } = request.all()
+
+        var res = await Database.table('licencias_conductores').where('id', id)
+        .update({
+            numero_de_licencia,
+            categoria,
+            fecha_de_vencimiento
+        })
+        if(res){
+            return {
+                message: 'success'
+            }
+        }
+
     }
+
+
+   
     
     //UPDATE
     async update_conductor({ request, params }){
@@ -140,50 +197,11 @@ class ConductorController {
 
     }
 
-    async update_conductor_licence({ request, params }){
-        const { id } = params;
-        const licence = await Database.table('licencias_conductores')
-        .query().where('conductore_id', id).fetch()
-        const {
-            numero_de_licencia,
-            categoria,
-            fecha_de_vencimiento
-        } = request.all()
-
-        licence.numero_de_licencia = numero_de_licencia
-        licence.categoria = categoria
-        licence.fecha_de_vencimiento = fecha_de_vencimiento
-        licence.save()
-        return licence
-
-    }
+   
 
     
 
-    async update_conductor_bank_account({ request, params }){
-        const { id } = params;
-        const {
-            titular,
-            tipo_de_id,
-            numero_cuenta,
-            tipo_cuenta,
-            banco,
-            cuenta_propia,
-            radica_rndc
-        } = request.all();
-        const bank = await Database.table('datos_bancarios_conductores')
-        .query().where('conductore_id', id).fetch()
-
-        bank.titular = titular
-        bank.tipo_de_id = tipo_de_id
-        bank.numero_cuenta = numero_cuenta
-        bank.tipo_cuenta = tipo_cuenta
-        bank.banco = banco
-        bank.cuenta_propia = cuenta_propia
-        bank.radica_rndc = radica_rndc    
-        bank.save()
-        return bank    
-    }
+    
     
     //DELETE
     async delete_conductor({ params }){

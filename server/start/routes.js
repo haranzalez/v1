@@ -132,6 +132,8 @@ Route.group(() => {
   Route.get('vehiculos/:id', 'VehiculoController.get_vehicle').middleware('auth')
   Route.get('vehiculos/:vehiculo_id/assign/trailer/:trailer_id', 'VehiculoController.assign_trailer').middleware('auth')
   Route.get('vehiculos/:vehiculo_id/assign/conductor/:conductor_id', 'VehiculoController.assign_conductor').middleware('auth')
+
+  
   //POST
   Route.post('vehiculos/crear', 'VehiculoController.create_vehicle').middleware('auth')
   //PUT
@@ -157,15 +159,17 @@ Route.group(() => {
   //GET
   Route.get('conductores', 'ConductorController.get_all_conductores').middleware('auth')
   Route.get('conductores/:id', 'ConductorController.get_conductor').middleware('auth')
+  Route.get('conductores/:id/datos-bancarios', 'ConductorController.get_datos_bancarios').middleware('auth')
+  Route.get('conductores/:id/licencias', 'ConductorController.get_licencias').middleware('auth')
   Route.get('conductores/:conductor_id/assign/:vehicle_id', 'ConductorController.assign_vehicle').middleware('auth')
   //POST
   Route.post('conductores/crear', 'ConductorController.create_conductor').middleware('auth')
   Route.post('conductores/:id/licencia/crear', 'ConductorController.create_licence').middleware('auth')
-  Route.post('conductores/:id/datos-bancarios/crear', 'ConductorController.create_bank_account').middleware('auth')
+  Route.post('conductores/:id/datos-bancarios/crear', 'ConductorController.create_datos_bancarios').middleware('auth')
   //PUT
   Route.put('conductores/:id/update', 'ConductorController.update_conductor').middleware('auth')
-  Route.put('conductores/:id/licencia/update', 'ConductorController.update_conductor_licence').middleware('auth')
-  Route.put('conductores/:id/datos-bancarios/update', 'ConductorController.update_conductor_bank_account').middleware('auth')
+  Route.put('conductores/licencia/:id/update', 'ConductorController.update_licence').middleware('auth')
+  Route.put('conductores/:id/datos-bancarios/update', 'ConductorController.update_datos_bancarios').middleware('auth')
   //DELETE
   Route.delete('conductores/:id/delete', 'ConductorController.delete_conductor').middleware('auth')
   Route.delete('conductores/datos-bancarios/:id/delete', 'ConductorController.delete_conductor_bank_account').middleware('auth')

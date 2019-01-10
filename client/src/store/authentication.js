@@ -51,7 +51,7 @@ export default {
 					
 				}
             }
-           console.log(state.usuario.roles)
+          
             commit('setExtractedPermisos', pkg)
         },
         setTimer({dispatch}){

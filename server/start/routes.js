@@ -48,9 +48,16 @@ Route.group(() => {
   Route.post('roles/:role_id/subModulo/:sub_modulo_id/setPermisos', 'RoleController.setPermisosV2').middleware('auth');
   Route.patch('roles/:id/modulos/updatePermisos', 'RoleController.updatePermisos').middleware('auth');
   //======================================================================================================================================
+  //Backups
+  //======================================================================================================================================
+  Route.get('backup', 'BackupsController.backup').middleware('auth');
+  Route.get('backups-list', 'BackupsController.backups_list').middleware('auth');
+  Route.post('program-backup', 'BackupsController.program_backup').middleware('auth');
+  Route.post('program-preset', 'BackupsController.program_preset_backup').middleware('auth');
+  Route.post('download-backup', 'BackupsController.downloadBackup').middleware('auth');
+  //======================================================================================================================================
   //servicios
   //======================================================================================================================================
-  //GET
   Route.get('servicios', 'ServicioController.get_all').middleware('auth')
   Route.get('servicios/:id', 'ServicioController.get_one').middleware('auth')
   //POST
@@ -189,6 +196,12 @@ Route.group(() => {
   Route.put('clientes/:id/update', 'ClienteController.update_cliente').middleware('auth')
   //DELETE
   Route.delete('clientes/:id/delete', 'ClienteController.delete_cliente').middleware('auth')
+  //DEPOSITOS
+  Route.get('clientes/:id/depositos', 'ClienteController.fetch_depositos').middleware('auth')
+  Route.get('clientes/:id/depositos/:deposito_id', 'ClienteController.fetch_deposito').middleware('auth')
+  Route.post('clientes/:id/createDeposito', 'ClienteController.create_deposito').middleware('auth')
+  Route.put('clientes/:id/updateDeposito/:deposito_id', 'ClienteController.update_deposito').middleware('auth')
+
   //======================================================================================================================================
   //Consolidaciones
   //======================================================================================================================================
@@ -199,9 +212,11 @@ Route.group(() => {
   Route.get('consolidaciones/:consolidacion_id/add-cuadre-ruta/:cuadre_ruta_id', 'ConsolidacionController.add_ruta').middleware('auth')
   Route.get('consolidaciones/:consolidacion_id/add-cuadre-producto/:cuadre_producto_id', 'ConsolidacionController.add_producto').middleware('auth')
   Route.get('consolidaciones/:consolidacion_id/add-cuadre-servicio/:cuadre_servicio_id', 'ConsolidacionController.add_servicio').middleware('auth')
+  Route.get('consolidaciones/:consolidacion_id/add-vehiculo/:vehiculo_id', 'ConsolidacionController.add_vehiculo').middleware('auth')
   Route.get('consolidaciones/:consolidacion_id/get-cuadre-ruts', 'ConsolidacionController.get_ruta').middleware('auth')
   Route.get('consolidaciones/:consolidacion_id/get-cuadre-producto', 'ConsolidacionController.get_producto').middleware('auth')
   Route.get('consolidaciones/:consolidacion_id/get-cuadre-servicio', 'ConsolidacionController.get_servicio').middleware('auth')
+  Route.get('consolidaciones/:consolidacion_id/get-vehiculo', 'ConsolidacionController.get_vehiculo').middleware('auth')
   
   //PUT
   Route.put('consolidaciones/:id/update', 'ConsolidacionController.update_consolidacion').middleware('auth')

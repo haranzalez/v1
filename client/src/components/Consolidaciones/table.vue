@@ -1,10 +1,50 @@
 <template>
 <div>
+	<!-- select cliente dialog -->
+	<el-dialog
+		align="center"
+		title="Clientes"
+		:visible.sync="selectClienteDialogVisible"
+		width="25%"
+	>
+		<p>Porfavor seleccione un cliente para crear un nuevo viaje</p>
+		<el-select filterable @change="handleClienteChange" :value="selectedEditCliente" placeholder="Select">
+			<el-option
+			v-for="item in clientesList"
+			:key="item.id"
+			:label="item.nombre_razon_social"
+			:value="item.id">
+			</el-option>
+		</el-select>
+	<span slot="footer" class="dialog-footer">
+		<el-button size="mini" @click="selectClienteDialogVisible = false">Cerrar</el-button>
+	</span>
+	</el-dialog>
+	<!-- select vehiculo dialog -->
+	<el-dialog
+		align="center"
+		title="Vehiculos"
+		:visible.sync="selectVehiculoDialogVisible"
+		width="25%"
+	>
+		<el-select filterable @change="handleVehiculoChange" :value="selectedEditVehiculo" placeholder="Select">
+			<el-option
+			v-for="item in vehiculosList"
+			:key="item.id"
+			:label="item.placa"
+			:value="item.id">
+			</el-option>
+		</el-select>
+	<span slot="footer" class="dialog-footer">
+		<el-button size="mini" @click="selectVehiculoDialogVisible = false">Cerrar</el-button>
+	</span>
+	</el-dialog>
 	<!-- select producto dialog -->
 	<el-dialog
+		align="center"
 		title="Productos"
 		:visible.sync="selectProductoDialogVisible"
-		width="30%"
+		width="25%"
 	>
 		<el-select @change="handleProductChange" :value="selectedEditProducto" placeholder="Select">
 			<el-option
@@ -20,9 +60,10 @@
 	</el-dialog>
 	<!-- select servicio dialog -->
 	<el-dialog
+		align="center"
 		title="Servicios"
 		:visible.sync="selectServicioDialogVisible"
-		width="30%"
+		width="25%"
 	>
 		<el-select @change="handleServicioChange" :value="selectedEditServicio" placeholder="Select">
 			<el-option
@@ -38,9 +79,10 @@
 	</el-dialog>
 	<!-- select ruta dialog -->
 	<el-dialog
+		align="center"
 		title="Rutas"
 		:visible.sync="selectRutaDialogVisible"
-		width="30%"
+		width="25%"
 	>
 		<el-select @change="handleRutaChange" :value="selectedEditRuta" placeholder="Select">
 			<el-option
@@ -100,7 +142,7 @@
 	size="mini"
 	ref="consolidacionesTable"
 	stripe
-	min-height="300"
+	height="350px"
 	highlight-current-row
 	@current-change="handleCurrentTableChange"
     :data="filtered"
@@ -124,6 +166,28 @@
 	<el-table-column
 	  sortable
 	  align="center"
+      label="Vehiculo"
+      width="120">
+	  <template slot-scope="scope">
+		   <el-popover
+		    v-if="scope.row.vehiculo != null"
+            :ref="scope.row.id+'-vehiculo'"
+            placement="right"
+            width="400"
+            trigger="hover">
+            <div v-for="(item, key) in vehiculoPopOver(scope.row.vehiculo)" :key="item.id">
+                <el-row>
+					<el-col :xs="10" :sm="10" :md="10" :lg="10" :xl="10"><b>{{title(key)}}</b></el-col>
+					<el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12">{{ itemSel(key, item) }}</el-col>
+                </el-row>
+            </div>
+           </el-popover>
+		   <el-button size="mini" :type="(scope.row.vehiculo !== null)?'text':'default'" @click="setVehiculoSelect(scope.row.vehiculo)" v-popover="scope.row.id+'-vehiculo'">{{(scope.row.vehiculo !== null)?scope.row.vehiculo.placa:'Seleccionar'}}</el-button>
+	  </template>
+    </el-table-column>
+	<el-table-column
+	  sortable
+	  align="center"
       label="Ruta"
       width="220">
        <template slot-scope="scope">
@@ -133,7 +197,7 @@
             placement="right"
             width="400"
             trigger="hover">
-            <div  v-for="(item, key) in scope.row.cuadre_ruta" :key="item.id">
+            <div  v-for="(item, key) in rutaPopOver(scope.row.cuadre_ruta)" :key="item.id">
                 <el-row>
 					<el-col :xs="10" :sm="10" :md="10" :lg="10" :xl="10"><b>{{title(key)}}</b></el-col>
 					<el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12">{{ (key != 'created_at' || key != 'updated_at' || key != 'pivot' || key != 'ruta') ? item : '' }}</el-col>
@@ -155,7 +219,7 @@
             placement="right"
             width="400"
             trigger="hover">
-            <div  v-for="(item, key) in scope.row.cuadre_producto" :key="item.id">
+            <div  v-for="(item, key) in productoPopOver(scope.row.cuadre_producto)" :key="item.id">
                 <el-row>
 					<el-col :xs="10" :sm="10" :md="10" :lg="10" :xl="10"><b>{{title(key)}}</b></el-col>
 					<el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12">{{ (key != 'created_at' || key != 'updated_at' || key != 'pivot' || key != 'producto') ? item : '' }}</el-col>
@@ -177,14 +241,13 @@
             placement="right"
             width="400"
             trigger="hover">
-            <div v-for="(item, key) in scope.row.cuadre_servicio" :key="item.id">
+            <div v-for="(item, key) in servicioPopOver(scope.row.cuadre_servicio)" :key="item.id">
                 <el-row>
 					<el-col :xs="10" :sm="10" :md="10" :lg="10" :xl="10"><b>{{title(key)}}</b></el-col>
-					<el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12">{{ (key != 'created_at' || key != 'updated_at' || key != 'pivot' || key != 'producto') ? item : '' }}</el-col>
+					<el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12">{{ itemSel(key, item) }}</el-col>
                 </el-row>
             </div>
            </el-popover>
-
 		   <el-button size="mini" :type="(scope.row.servicio !== null)?'text':'default'" @click="setServicioSelect(scope.row.cliente_id, scope.row.servicio)" v-popover="scope.row.id+'-servicio'">{{(scope.row.servicio !== null)?scope.row.servicio.nombre:'Seleccionar'}}</el-button>
       </template>
     </el-table-column>
@@ -192,51 +255,15 @@
 	<el-table-column
 	  sortable
 	  align="center"
-      prop="flete"
-      label="Flete"
-      width="120">
-	  <template slot-scope="scope">
-		  {{(scope.row.flete == null)?'0':scope.row.flete }}
-	  </template>
-    </el-table-column>
-	<el-table-column
-	  sortable
-	  align="center"
-      prop="anticipo"
       label="Anticipo"
       width="120">
 	   <template slot-scope="scope">
-		  {{(scope.row.anticipo == null)?'0':scope.row.anticipo }}
-	  </template>
-    </el-table-column>
-	<el-table-column
-	  sortable
-	  align="center"
-      prop="descuento"
-      label="Descuento"
-      width="120">
-	   <template slot-scope="scope">
-		  {{(scope.row.descuento == null)?'0':scope.row.descuento }}
-	  </template>
-    </el-table-column>
-	<el-table-column
-	  sortable
-	  align="center"
-      prop="ganancia"
-      label="Ganancia"
-      width="120">
-	   <template slot-scope="scope">
-		  {{(scope.row.ganancia == null)?'0':scope.row.ganancia }}
-	  </template>
-    </el-table-column>
-	<el-table-column
-	  sortable
-	  align="center"
-      prop="debe"
-      label="Debe"
-      width="120">
-	   <template slot-scope="scope">
-		  {{(scope.row.debe == null)?'0':scope.row.debe }}
+		<el-input
+			size="mini"
+			:value="scope.row.id"
+			@input="anticipo"
+			clearable>
+		</el-input>
 	  </template>
     </el-table-column>
 
@@ -268,15 +295,26 @@ export default {
 			selectedEditProducto: '',
 			selectedEditServicio: '',
 			selectedEditRuta: '',
+			selectedEditVehiculo: '',
+			selectedEditCliente: '',
 			selectProductoDialogVisible: false,
 			selectServicioDialogVisible: false,
 			selectRutaDialogVisible: false,
+			selectClienteDialogVisible: false,
+			selectVehiculoDialogVisible: false,
             filter: '',
 		}
 	},
 	computed: {
+		
         ...mapState('authentication', [
 			'permisos',
+		]),
+		...mapState('vehiculos', [
+			'vehiculosList',
+		]),
+		...mapState('clientes', [
+			'clientesList',
 		]),
 		...mapState('consolidaciones', [
 			'consolidacionesList',
@@ -286,7 +324,7 @@ export default {
 			'headings',
 			'loadingConsolidacionesTable',
 			'dataReady',
-			
+			'anticipos',
 		]),
 		...mapState('clientes', [
 			'cuadreProductosList',
@@ -294,15 +332,12 @@ export default {
 			'cuadreServiciosList',
 			'loadingConsolidacionTableBtnsPkg',
 		]),
-
         filtered(){
 			if(this.dataReady){
 				if(this.filter !== ''){
 					let type = this.selectTypeOfSearch.toLowerCase()
-					console.log(type)
 					type = type.replace(' ', '_')
 					type = type.replace(' ', '_')
-					
 					return this.consolidacionesList.filter(cuadre => {
 						if(isNaN(cuadre[type])){
 							return cuadre[type].toLowerCase().includes(this.filter.toLowerCase())
@@ -311,25 +346,70 @@ export default {
 					})
 				}
 				return this.consolidacionesList
-			}
+			} 
         },
 	},
 	components: {
 	},
     methods: {
+		servicioPopOver(value){
+			var pkg = {
+				servicio: value.servicio[0].nombre,
+				valor_base: value.servicio[0].precio,
+				valor_a_pagar: value.precio,
+				ajuste: value.ajuste
+			}
+			return pkg
+		},
+		rutaPopOver(value){
+			var pkg = {
+				ruta: value.ruta[0].municipios[0].nombre_municipio + ' - ' + value.ruta[0].municipios[1].nombre_municipio,
+				valor_base: value.ruta[0].valor_flete,
+				valor_a_pagar: value.flete,
+				ajuste: value.ajuste
+			}
+			return pkg
+		},
+		productoPopOver(value){
+			var pkg = {
+				producto: value.producto[0].nombre,
+				valor_base: value.producto[0].precio,
+				valor_a_pagar: value.precio,
+				ajuste: value.ajuste
+			}
+			return pkg
+		},
+		vehiculoPopOver(value){
+			delete value.updated_at
+			delete value.created_at
+			delete value.consolidacion_id
+			return value
+		},
+		anticipo(value){
+			console.log(value)
+		},
 		handleProductChange(val){
 			this.setProducto(val)
 			this.selectedEditProducto = val
 		},
 		handleServicioChange(val){
-			console.log(val)
 			this.setServicio(val)
 			this.selectedEditServicio = val
 		},
 		handleRutaChange(val){
-			console.log(val)
 			this.setRuta(val)
 			this.selectedEditRuta = val
+		},
+		handleClienteChange(val){
+			console.log(val)
+			this.fetchCliente(val)
+			this.create_consolidacion()
+			this.fetchConsolidacionesList()
+			this.selectedEditCliente = val
+		},
+		handleVehiculoChange(val){
+			this.setVehiculo(val)
+			this.selectedEditVehiculo = val
 		},
 		setProductoSelect(row, producto){
 			this.fetchCuadresProductos(row.cliente_id)
@@ -347,7 +427,6 @@ export default {
 			}else{
 				this.selectedEditServicio = ''
 			}
-			
 			this.selectServicioDialogVisible = true
 		},
 		setRutaSelect(cliente, ruta){
@@ -360,6 +439,16 @@ export default {
 			
 			this.selectRutaDialogVisible = true
 		},
+		setVehiculoSelect(vehiculo){
+			this.fetchVehiculosList()
+			if(vehiculo){
+				this.selectedEditVehiculo = vehiculo.id
+			}else{
+				this.selectedEditVehiculo = ''
+			}
+			
+			this.selectVehiculoDialogVisible = true
+		},
 		handleCurrentTableChange(val) {
 			if(val == null){
 				this.$refs.consolidacionesTable.setCurrentRow(val);
@@ -370,7 +459,8 @@ export default {
 		},
 		handleAction(e, row){
             if(e == 'create'){
-				this.createFormVisible = true;
+				this.fetchClientesList()
+				this.selectClienteDialogVisible = true;
 			}
 			if(e == 'export'){
 				exportService.toXLS(this.cuadresList, 'Cuadro_de_viajes', true)
@@ -396,9 +486,19 @@ export default {
 			
 		},
         title(field){
+			if(field == 'pivot'){
+				return
+			}
             field = field.split('_').join(' ')
             field = field.charAt(0).toUpperCase() + field.slice(1)
             return field
+		},
+		itemSel(key, item){
+			if(key == 'pivot' || key == 'created_at' || key == 'updated_at'){
+				return
+			}else{
+				return item
+			}
 		},
 		...mapMutations('consolidaciones', [
 			'consolidacionesClearParams',
@@ -409,6 +509,15 @@ export default {
 			'setRuta',
 			'setProducto',
 			'setServicio',
+			'setVehiculo',
+		]),
+		...mapActions('vehiculos',[
+			'fetchVehiculosList',
+		]),
+		...mapActions('clientes',[
+			'fetchClientesList',
+			'create_consolidacion',
+			'fetchCliente',
 		]),
 		...mapActions('clientes',[
 			'fetchCuadresProductos',

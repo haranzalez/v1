@@ -23,6 +23,17 @@ export default {
            dias: null,
            created_at: null,
         },
+        deposito: {
+            id: null,
+            cliente_id: null,
+            cantidad: null,
+            fecha_deposito: null,
+        },
+        depositoTableLoading: false,
+        depositosList: null,
+        depositosEditFormVisible: false,
+        depositosCreateFormVisible: false,
+        depositoTotal: 0,
         dataready:false,
         clienteConsolidacion:null,
         clientesList: null,
@@ -39,36 +50,40 @@ export default {
         headings: [], 
         selectedContrato: '',
         selectedDias: '', 
-        contratoOptions: [{
-            tipo: 'Mandato',
-        },
-        {
-            tipo: 'Contrato',
-        },
-        {
-            tipo: 'Factura',
-        },
-        {
-            tipo: 'Contado',
-        },],
-        diasOptions: [{
-            dias: '5 dias.',
-        },
-        {
-            dias: '8 dias.',
-        },
-        {
-            dias: '15 dias.',
-        },
-        {
-            dias: '30 dias.',
-        },
-        {
-             dias: '45 dias.',
-        },
-        {
-             dias: '60 dias.',
-        }] 
+        contratoOptions: [
+            {
+                tipo: 'Mandato',
+            },
+            {
+                tipo: 'Contrato',
+            },
+            {
+                tipo: 'Factura',
+            },
+            {
+                tipo: 'Contado',
+            },
+        ],
+        diasOptions: [
+            {
+                dias: '5 dias.',
+            },
+            {
+                dias: '8 dias.',
+            },
+            {
+                dias: '15 dias.',
+            },
+            {
+                dias: '30 dias.',
+            },
+            {
+                dias: '45 dias.',
+            },
+            {
+                dias: '60 dias.',
+            }
+        ] 
     },
 
     actions: {
@@ -162,7 +177,7 @@ export default {
                 nombre_razon_social: state.cliente.nombre_razon_social,
                 nit: state.cliente.nit,
                 direccion: state.cliente.direccion,
-                ciudad: state.cliente.ciudad,
+                ciudad: state.cliente.ciudad, 
                 email: state.cliente.email,
                 telefono: state.cliente.telefono,
                 celular: state.cliente.celular,
@@ -222,6 +237,7 @@ export default {
                 dispatch('fetchCuadresRutas')
                 dispatch('fetchCuadresProductos')
                 dispatch('fetchCuadresServicios')
+                dispatch('fetchDepositos')
             })
             .catch(err => {
                 console.log(err)
@@ -242,7 +258,6 @@ export default {
         },
         renderTableHeadings({state, commit}){
             let pkg = []
-           
             for(let prop2 in state.clientesList[0]){
                 console.log(prop2)
                 if(prop2 == 'created_at' || prop2 == 'updated_at'){
@@ -253,9 +268,77 @@ export default {
                     pkg.push(prop2)
                 }
             }
-            
             commit('setTableHeadings', pkg)
         },
+//==============================================================================//
+//=============================== DEPOSITOS ACTIONS ====================================//
+//==============================================================================//
+        fetchDepositos({ state, commit, dispatch }){
+            commit('setDepositoTableLoading', true)
+            HTTP().local.get('api/clientes/'+state.cliente.id+'/depositos')
+            .then(d => {
+                console.log(d.data)
+                commit('setDepositosList', d.data)
+                commit('setDepositoTableLoading', false)
+                dispatch('calculateBalace')
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
+        fetchDeposito({ state, commit }, deposito_id){
+            HTTP().local.get('api/clientes/'+state.cliente.id+'/depositos/'+deposito_id)
+            .then(d => {
+                console.log(d.data)
+                commit('setFullDeposito', d.data[0])
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
+        create_deposito({ state }){
+            HTTP().local.post('api/clientes/'+state.cliente.id+'/createDeposito', state.deposito)
+            .then(d => {
+                console.log(d.data)
+                if(d.data.message == 'success'){
+                    Message({
+                        type: 'success',
+                        showClose: true,
+                        message: 'Deposito creado'
+                    })
+                }
+               
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
+        update_deposito({ state }){
+            HTTP().local.put('api/clientes/'+state.cliente.id+'/updateDeposito/'+state.deposito.id, state.deposito)
+            .then(d => {
+                console.log(d.data)
+                if(d.data.message == 'success'){
+                    Message({
+                        type: 'success',
+                        showClose: true,
+                        message: 'Deposito actualizado'
+                    })
+                }
+               
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
+        calculateBalace({ state, commit }){
+            commit('setDepositoTotal', 0)
+            var balance = 0
+            for(let prop in state.depositosList){
+                balance += state.depositosList[prop].cantidad
+            }
+
+            commit('setDepositoTotal', balance)
+        }
     },
     mutations: {
         setLoadingCuadreRutaTable(state, value){
@@ -362,7 +445,42 @@ export default {
         },
         setDataready(state, value){
             state.dataready = value
-        }
+        },
+//==============================================================================//
+//=============================== DEPOSITOS MUTATIONS ====================================//
+//==============================================================================//
+        setDepositoTableLoading(state, value){
+            state.depositoTableLoading = value
+        },
+        setDepositosList(state, value){
+            state.depositosList = value
+        },
+        setFullDeposito(state, value){
+            state.deposito = value
+        },
+        setDepositoCantidad(state, value){
+            state.deposito.cantidad = value
+        },
+        setFechaDeposito(state, value){
+            state.deposito.fecha_deposito = value
+        },
+        setDepositosCreateFormVisible(state, value){
+            state.depositosCreateFormVisible = value
+        },
+        setDepositosEditFormVisible(state, value){
+            state.depositosEditFormVisible = value
+        },
+        setDepositoTotal(state, value){
+            state.depositoTotal = value
+        },
+        resetDeposito(state){
+            state.deposito = {
+                id: null,
+                cliente_id: null,
+                cantidad: null,
+                fecha_deposito: null,
+            }
+        },
         
     },
 

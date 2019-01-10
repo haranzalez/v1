@@ -20,23 +20,7 @@
                             </el-select>
                         </el-form-item>
                     </el-col>
-                    <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
-                            <el-form-item label="Vehiculo">
-                                <el-select 
-                                class="selectWidth"
-                                size="mini" 
-                                :value.sync="selectedCreateVehiculo" 
-                                placeholder="Seleccione.." 
-                                @change="setSelectedCreateVehiculo">
-                                    <el-option
-                                    v-for="item in vehiculosList"
-                                    :key="item.id"
-                                    :label="item.placa"
-                                    :value="item.id">
-                                    </el-option>
-                                </el-select>
-                            </el-form-item>
-                    </el-col>
+                   
                     <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
                         <el-form-item label="Cuadre">
                             <el-input

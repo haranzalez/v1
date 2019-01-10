@@ -3,6 +3,9 @@
 const Model = use('Model')
 
 class Vehiculo extends Model {
+    consolidacion(){
+        return this.belongsTo('App/Models/Consolidacion')
+    }
     conductor(){
         return this.hasOne('App/Models/Conductore')
     }

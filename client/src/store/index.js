@@ -20,6 +20,7 @@ import cuadreServicios from './cuadreServicios'
 import productos from './productos'
 import servicios from './servicios'
 import consolidaciones from './consolidaciones'
+import backups from './backups'
 
 
 Vue.use(Vuex)
@@ -48,6 +49,7 @@ export default new Vuex.Store({
 		productos,
 		servicios,
 		consolidaciones,
+		backups,
 	},
 	mutations: {
 	},

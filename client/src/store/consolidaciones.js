@@ -13,10 +13,12 @@ export default {
             descuento: 0,
             precio_final: 0,
         },
+        anticipos: {},
         consolidacionesList: null,
         selectedRuta: null,
         selectedProducto: null,
         selectedServicio: null,
+        selectedVehiculo: null,
         dataReady: false,
         headings: [],  
         loadingConsolidacionesTable: false,
@@ -57,6 +59,22 @@ export default {
         },
         setServicio({ state, dispatch }, cuadre_servicio_id){
             HTTP().local.get('api/consolidaciones/'+state.consolidacion.id+'/add-cuadre-servicio/'+cuadre_servicio_id)
+            .then(d => {
+                if(d.data.message == 'success'){
+                    Message({
+                        type: 'success',
+                        showClose: true,
+                        message: 'Cambio exitoso'
+                    })
+                    dispatch('fetchConsolidacionesList')
+                }
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
+        setVehiculo({ state, dispatch }, vehiculo_id){
+            HTTP().local.get('api/consolidaciones/'+state.consolidacion.id+'/add-vehiculo/'+vehiculo_id)
             .then(d => {
                 if(d.data.message == 'success'){
                     Message({
@@ -135,14 +153,14 @@ export default {
                 ? state.consolidacionesList[prop].ruta.id
                 : ''
             }
-            console.log(obj)
+       
             commit('setSelectedRuta', obj)
             
             dispatch('renderSelectedProducto')
         },
         renderSelectedProducto({ state, commit, dispatch }){
             let obj = {}
-            console.log(state.consolidacionesList)
+           
             for(let prop in state.consolidacionesList){
                 obj[state.consolidacionesList[prop].id] = (state.consolidacionesList[prop].producto !== null)
                 ? state.consolidacionesList[prop].producto.id
@@ -151,7 +169,7 @@ export default {
             commit('setSelectedProducto', obj)
             dispatch('renderSelectedServicio')
         },
-        renderSelectedServicio({ state, commit }){
+        renderSelectedServicio({ state, commit, dispatch }){
             let obj = {}
             for(let prop in state.consolidacionesList){
                 obj[state.consolidacionesList[prop].id] = (state.consolidacionesList[prop].servicio !== null)
@@ -159,7 +177,19 @@ export default {
                 : ''
             }
             commit('setSelectedServicio', obj)
-            console.log('Finnished...')
+            dispatch('renderSelectedVehiculo')
+        },
+        renderSelectedVehiculo({ state, commit, dispatch }){
+            let obj = {}
+            for(let prop in state.consolidacionesList){
+                obj[state.consolidacionesList[prop].id] = (state.consolidacionesList[prop].vehiculo !== null)
+                ? state.consolidacionesList[prop].vehiculo.id
+                : ''
+            }
+   
+            commit('setSelectedVehiculo', obj)
+            
+           
         },
         
     },
@@ -187,6 +217,9 @@ export default {
         },
         setSelectedRuta(state, value){
             state.selectedRuta = value
+        },
+        setSelectedVehiculo(state, value){
+            state.selectedVehiculo = value
         },
         setLoadingConsolidacionesTable(state, value){
             state.loadingConsolidacionesTable = value

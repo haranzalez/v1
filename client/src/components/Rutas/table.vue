@@ -180,9 +180,7 @@
 	highlight-current-row
 	@current-change="handleCurrentTableChange"
     :data="filtered"
-	show-summary
-	:summary-method="summarizeValues"
-	sum-text="Total"
+	
 	:default-sort = "{prop: 'id', order: 'descending'}"
     style="width: 100%">
     <el-table-column

@@ -4,7 +4,6 @@ import { Notification } from 'element-ui'
 export default {
     renderTableHeadings(list){
         let pkg = []
-       
         for(let prop2 in list){
             if(prop2 == 'created_at' || prop2 == 'updated_at'){
                continue;
@@ -15,7 +14,6 @@ export default {
             }
             
         }
-        console.log(pkg)
         return pkg;
     },
 }

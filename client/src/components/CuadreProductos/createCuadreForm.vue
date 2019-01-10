@@ -3,16 +3,7 @@
         <el-form :inline="false" label-position="top" ref="form" label-width="120px">
             <el-row>
                 <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-                    <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-                        <el-form-item label="Precio">
-                            <el-input
-                                class="inputWidth"
-                                size="mini"
-                                placeholder="$0"
-                                @input="setPrecioProducto">
-                            </el-input>
-                        </el-form-item>
-                    </el-col>
+                   
                     <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
                         <el-form-item label="Producto">
                             <el-select
@@ -28,6 +19,16 @@
                                 :value="item.id">
                                 </el-option>
                             </el-select>
+                        </el-form-item>
+                    </el-col>
+                     <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+                        <el-form-item label="Precio">
+                            <el-input
+                                class="inputWidth"
+                                size="mini"
+                                placeholder="$0"
+                                @input="setPrecioProducto">
+                            </el-input>
                         </el-form-item>
                     </el-col>
             </el-col>

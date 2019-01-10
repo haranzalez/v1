@@ -168,6 +168,7 @@ export default {
 	name: 'UserTable',
 	data () {
       	return {
+			reportDialogVisible: false,
 			dialogWidth: '35%',
 			editFormVisible: false,
 			createFormVisible: false,  

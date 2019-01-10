@@ -12,6 +12,7 @@ class ConsolidacionController {
         .with('cuadre_ruta.ruta.municipios')
         .with('cuadre_producto.producto')
         .with('cuadre_servicio.servicio')
+        .with('vehiculo')
         .fetch()
      
         if(cuadre.rows.length > 0){
@@ -60,6 +61,8 @@ class ConsolidacionController {
                 }else{
                     cuadre.rows[prop]['ruta'] = null
                 }
+
+              
                 cuadre.rows[prop].$relations.cuadre_producto = cuadre.rows[prop].$relations.cuadre_producto.rows[0]
                 cuadre.rows[prop].$relations.cuadre_servicio = cuadre.rows[prop].$relations.cuadre_servicio.rows[0]
                 cuadre.rows[prop].$relations.cuadre_ruta = cuadre.rows[prop].$relations.cuadre_ruta.rows[0]
@@ -104,13 +107,17 @@ class ConsolidacionController {
         .where('consolidacion_id', consolidacion_id)
         .fetch()
     }
+    async get_vehiculo({params}){
+        const { consolidacion_id } = params
+        return await Database.from('vehiculos').where('consolidacion_id', consolidacion_id)
+    }
     async add_ruta({ params }){
         const { consolidacion_id, cuadre_ruta_id } = params
         //await CuadreRuta.query().where('consolidacion_id', consolidacion_id).update({ consolidacion_id: null })
         const cuadreRuta = await CuadreRuta.find(cuadre_ruta_id)
         const cons = await Database.from('pivot_consolidacion_cuadre_rutas').where('consolidacion_id', consolidacion_id)
        
-        console.log(cons)
+       
         if(cons.length > 0){
             await Database.table('pivot_consolidacion_cuadre_rutas').where('consolidacion_id', consolidacion_id).delete()
         }
@@ -125,7 +132,7 @@ class ConsolidacionController {
         const cuadreProducto = await CuadreProducto.find(cuadre_producto_id)
         const cons = await Database.from('pivot_consolidacion_cuadre_productos').where('consolidacion_id', consolidacion_id)
        
-        console.log(cons)
+      
         if(cons.length > 0){
             await Database.table('pivot_consolidacion_cuadre_productos').where('consolidacion_id', consolidacion_id).delete()
         }
@@ -140,11 +147,17 @@ class ConsolidacionController {
         const cuadreServicio = await CuadreServicio.find(cuadre_servicio_id)
         const cons = await Database.from('pivot_consolidacion_cuadre_servicios').where('consolidacion_id', consolidacion_id)
        
-        console.log(cons)
         if(cons.length > 0){
             await Database.table('pivot_consolidacion_cuadre_servicios').where('consolidacion_id', consolidacion_id).delete()
         }
         await cuadreServicio.consolidacion().attach([consolidacion_id])
+        return {
+            message: 'success'
+        }
+    }
+    async add_vehiculo({ params }){
+        const { consolidacion_id, vehiculo_id } = params
+        await Database.table('vehiculos').where('id', vehiculo_id).update({consolidacion_id})
         return {
             message: 'success'
         }

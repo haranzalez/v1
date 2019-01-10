@@ -6,6 +6,9 @@ class Consolidacion extends Model {
     cliente(){
         return this.belongsTo('App/Models/Cliente')
     }
+    vehiculo(){
+        return this.hasOne('App/Models/Vehiculo')
+    }
     cuadre_producto(){
         return this.belongsToMany('App/Models/CuadreProducto')
         .pivotModel(use('App/Models/PivotConsolidacionCuadreProductos'));

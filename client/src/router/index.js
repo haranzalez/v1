@@ -39,6 +39,8 @@ import CuadroViajesEditForm from '../views/CuadresRutas/EditForm.vue'
 import ProductosTable from '../views/Productos/productosTable.vue'
 //servicios
 import ServiciosTable from '../views/Servicios/serviciosTable.vue'
+//Backups
+import BackupsTable from '../views/Backups/backups.vue'
 
 
 //pages
@@ -420,6 +422,20 @@ const router = new Router({
 			beforeEnter (to, from, next) {
 				auth.logout()
 				next({path:'/login'})
+			}
+		},
+		//=========================================================================
+		//Bakcups
+		//=========================================================================
+		{
+			path: '/Backups',
+			name: 'backups',
+			component: BackupsTable,
+			meta: {
+				auth: true,
+				layout: layouts.navLeft,
+				searchable: false,
+				tags: ['Sistema']
 			}
 		},
 		//=========================================================================

@@ -31,6 +31,29 @@
 			<el-button size="mini" type="primary">OK</el-button>
 		</span>
 	</el-dialog>
+	<!--depositos table -->
+	<el-dialog center width="50%" top="15vh" title="Depositos" :visible.sync="depositosTableVisible">
+		<!--Depositos Edit dialog form -->
+		<el-dialog :append-to-body="true" width="25%" top="5vh" :visible.sync="DepositosEditFormVisible">
+			<DepositosEditForm></DepositosEditForm>
+			<span slot="footer" class="dialog-footer">
+				<el-button size="mini" @click="DepositosEditFormVisible = false">Cancelar</el-button>
+				<el-button size="mini" type="primary" @click="update_deposito">Actualizar</el-button>
+			</span>
+		</el-dialog>
+		<!--Depositos Create dialog form -->
+		<el-dialog :append-to-body="true" width="25%" top="5vh" :visible.sync="DepositosCreateFormVisible">
+			<DepositosCreateForm></DepositosCreateForm>
+			<span slot="footer" class="dialog-footer">
+				<el-button size="mini" @click="DepositosCreateFormVisible = false">Cancelar</el-button>
+				<el-button size="mini" type="primary" @click="create_deposito">Crear</el-button>
+			</span>
+		</el-dialog>
+		<DepositosTable></DepositosTable>
+		<span slot="footer" class="dialog-footer animated fadeInUp">
+			<el-button size="mini" @click="depositosTableVisible = false;">Cerrar</el-button>
+		</span>
+	</el-dialog>
 	<!--cuadres table -->
 	<el-dialog fullscreen width="65%" top="10vh" :visible.sync="cuadresTableVisible">
 		<div slot="title">
@@ -59,7 +82,7 @@
 	</el-dialog>
 	
 	<!--edit viaje form -->
-	<el-dialog center width="50%" top="15vh" title="Cuadre ruta" :visible.sync="cuadreViajeEditFormVisible">
+	<el-dialog center width="30%" top="15vh" title="Cuadre ruta" :visible.sync="cuadreViajeEditFormVisible">
 		<ViajeEditForm></ViajeEditForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button size="mini" type="primary" @click="editCuadreRuta(cliente.id)">Actualizar</el-button>
@@ -84,7 +107,7 @@
 	</el-dialog>
 	
 	<!--Create viaje form -->
-	<el-dialog center width="50%" top="15vh" title="Cuadre ruta" :visible.sync="createViajeFormVisible">
+	<el-dialog center width="30%" top="15vh" title="Cuadre ruta" :visible.sync="createViajeFormVisible">
 		<ViajeCreateForm></ViajeCreateForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button size="mini" type="primary" @click="create_cuadre_viaje(cliente.id)">Crear cuadre</el-button>
@@ -149,8 +172,9 @@
 							<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Crear cliente</el-dropdown-item>
 							<el-dropdown-item :disabled="(permisos['Clientes'].editar)? false:true" command="edit"><i class="mdi mdi-lead-pencil mr-10"></i> Editar</el-dropdown-item>
 							<el-dropdown-item :disabled="(permisos['Clientes'].eliminar)? false:true" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
-							<el-dropdown-item command="verCuadres" divided><i class="mdi mdi-folder-open mr-10"></i> Ver cuadres</el-dropdown-item>
-							<el-dropdown-item command="crearViaje"><i class="mdi mdi-plus mr-10"></i> Crear Viaje</el-dropdown-item>
+							<el-dropdown-item :disabled="diabled" command="verCuadres" divided><i class="mdi mdi-folder-open mr-10"></i> Cuadres</el-dropdown-item>
+							<el-dropdown-item :disabled="diabled" command="crearViaje"><i class="mdi mdi-road-variant mr-10"></i> Crear Viaje</el-dropdown-item>
+							<el-dropdown-item :disabled="diabled" command="depositos" divided><i class="mdi mdi-currency-usd mr-10"></i> Depositos</el-dropdown-item>
 						</el-dropdown-menu>
 					</el-dropdown>
 				</el-row>
@@ -264,15 +288,20 @@ import cuadreProductoTable from './cuadreProductoTable'
 import cuadreServicioTable from './cuadreServicioTable'
 import cuadresTable from './cuadresTable'
 import JsonExcel from 'json-to-excel';
+import DepositosTable from './depositosTable'
+import DepositosCreateForm from './depositosCreateForm'
+import DepositosEditForm from './depositosEditForm'
 
 export default {
 	name: 'ClientesTable',
 	data () {
       	return {
+			diabled: true,
 			currentRow: null,
 			reportDialogVisible: false,
 			editFormVisible: false,
 			createFormVisible: false,
+			depositosTableVisible: false,
 			createViajeFormVisible: false,
 			createProductoFormVisible: false,
 			createServicioFormVisible: false,
@@ -304,10 +333,31 @@ export default {
 			'loadingClientesTable',
 			'currentCuadresTab',
 			'dataready',
+			'depositosCreateFormVisible',
+			'depositosEditFormVisible'
 		]),
 //=============================//
 //========== Local Variables =========//
 //=============================//
+		computeDisable(){
+
+		},
+		DepositosCreateFormVisible: {
+			get(){
+				return this.depositosCreateFormVisible
+			},
+			set(value){
+				this.setDepositosCreateFormVisible(value)
+			}
+		},
+		DepositosEditFormVisible: {
+			get(){
+				return this.depositosEditFormVisible
+			},
+			set(value){
+				this.setDepositosEditFormVisible(value)
+			}
+		},
 		datePickerValue: {
 			get(value){
 				return ''
@@ -343,6 +393,9 @@ export default {
 		cuadreServicioTable,
 		cuadresTable,
 		JsonExcel,
+		DepositosTable,
+		DepositosCreateForm,
+		DepositosEditForm,
 	},
     methods: {
 //=============================//
@@ -352,6 +405,8 @@ export default {
 			'setFullCliente',
 			'paramsReset',
 			'setDataReady',
+			'setDepositosCreateFormVisible',
+			'setDepositosEditFormVisible',
 		]),
 		
         ...mapActions('clientes',[
@@ -364,6 +419,8 @@ export default {
 			'editCliente',
 			'fetchCliente',
 			'create_consolidacion',
+			'create_deposito',
+			'update_deposito'
 		]),
 //=============================//
 //========== Components Functions =========//
@@ -426,33 +483,40 @@ export default {
 				this.resetCuadreServicio()
 			}
 		},
-
 		exportTable(){
 			this.reportDialogVisible = true
 			//exportService.toXLS(this.clientesList, 'Clientes')
 		},
 		reloadTable(table){
+			this.diabled = true
 			if(table == 'clientes'){
 				this.fetchClientesList() 
+				this.diabled = true
 			}
 			if(table == 'cuadreRutas'){
 				this.fetchCuadresRutas()
+				this.diabled = true
 			}
 			if(table == 'cuadreProductos'){
 				this.fetchCuadresProductos()
+				this.diabled = true
 			}
 			if(table == 'cuadreServicios'){
 				this.fetchCuadresServicios()
+				this.diabled = true
 			}
+			this.diabled = true
 		},
 		handleCurrentTableChange(val) {
 			if(val == null){
 				this.$refs.clientsTable.setCurrentRow(val);
 				this.setDataReady(false)
+				this.diabled = false
 				return
 			}
 			this.fetchCliente(val.id)
 			this.setDataReady(true)
+			this.diabled = false
 			this.$refs.clientsTable.setCurrentRow(val);
 			
 		},
@@ -519,6 +583,9 @@ export default {
 			}
 			if(e == 'crearViaje'){
 				this.create_consolidacion()
+			}
+			if(e == 'depositos'){
+				this.depositosTableVisible = true
 			}
 			
 		},

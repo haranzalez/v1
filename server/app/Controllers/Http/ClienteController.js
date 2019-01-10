@@ -1,5 +1,6 @@
 'use strict'
 const Cliente = use('App/Models/Cliente')
+const Database = use('Database')
 const TipoNegociacion = use('App/Models/ClienteTipoNegociacion')
 class ClienteController {
     //READ
@@ -58,7 +59,9 @@ class ClienteController {
             }
         return res
     }
-    async create_cliente({ request }){
+    async create_cliente({ auth, request }){
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const { 
             nombre_razon_social, 
             nit, 
@@ -98,7 +101,9 @@ class ClienteController {
         }
     }
     //UPDATE
-    async update_cliente({ request, params }){
+    async update_cliente({ auth, request, params }){
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const { id } = params;
         const cliente = await Cliente.find(id)
         const {
@@ -150,11 +155,66 @@ class ClienteController {
     }
 
      //DELETE
-     async delete_cliente({ params }){
+     async delete_cliente({ auth, params }){
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const { id } = params
         const cliente = await Cliente.find(id)
         return cliente.delete()
     }
+
+    //==============================================================================//
+    //=========================== DEPOSITOS ========================================//
+    //==============================================================================//
+
+    async fetch_depositos({ params }) {
+       const { id } = params
+       return await Database.from('deposito_clientes').where('cliente_id', id)
+
+    }
+    async fetch_deposito({ params }) {
+        const { deposito_id } = params
+        return await Database.from('deposito_clientes').where('id', deposito_id)
+     }
+
+    async create_deposito({ params, request }) {
+        const { id } = params
+        const { 
+            cantidad,
+            fecha_deposito
+        } = request.all()
+        await Database
+        .table('deposito_clientes')
+        .insert({
+            cliente_id: id,
+            cantidad,
+            fecha_deposito
+        })
+        return {
+            message: 'success'
+        }
+
+    }
+    async update_deposito({ params, request }) {
+        const { id, deposito_id } = params
+        const { 
+            cantidad,
+            fecha_deposito
+        } = request.all()
+        await Database
+        .table('deposito_clientes')
+        .where('id', deposito_id)
+        .update(
+        {
+            cantidad,
+            fecha_deposito
+        })
+        return {
+            message: 'success'
+        }
+
+    }
+
 }
 
 module.exports = ClienteController

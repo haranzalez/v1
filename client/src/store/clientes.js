@@ -22,6 +22,7 @@ export default {
            cupo: null,
            dias: null,
            created_at: null,
+           radica_rndc: false,
         },
         deposito: {
             id: null,
@@ -353,6 +354,9 @@ export default {
         setLoadingClientesTable(state, value){
             state.loadingClientesTable = value
         },
+        setRadicaRndc(state, value){
+            state.cliente.radica_rndc = value
+        },
         setFullCliente(state, value){
             state.cliente = value
         },
@@ -434,6 +438,8 @@ export default {
                 direccion_envio_de_factura: null,
                 tipo_contrato: null,
                 created_at: null,
+                radica_rndc: false,
+                anticipo: false,
             }
         },
         setFullCLienteConsolidacion(state, value){
@@ -446,6 +452,7 @@ export default {
         setDataready(state, value){
             state.dataready = value
         },
+        
 //==============================================================================//
 //=============================== DEPOSITOS MUTATIONS ====================================//
 //==============================================================================//

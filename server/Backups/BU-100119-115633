@@ -1,0 +1,4153 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 10.4
+-- Dumped by pg_dump version 10.4
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- Name: logging; Type: SCHEMA; Schema: -; Owner: postgres
+--
+
+CREATE SCHEMA logging;
+
+
+ALTER SCHEMA logging OWNER TO postgres;
+
+--
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+--
+-- Name: change_trigger(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.change_trigger() RETURNS trigger
+    LANGUAGE plpgsql SECURITY DEFINER
+    AS $$
+
+        BEGIN
+
+                IF      TG_OP = 'INSERT'
+
+                THEN
+
+                        INSERT INTO logging.historial (nombre_tabla, nombre_schema, operacion, usuario, valor_nuevo)
+
+                                VALUES (TG_RELNAME, TG_TABLE_SCHEMA, TG_OP, get_app_user(), row_to_json(NEW));
+
+                        RETURN NEW;
+
+                ELSIF   TG_OP = 'UPDATE'
+
+                THEN
+
+                        INSERT INTO logging.historial (nombre_tabla, nombre_schema, operacion, usuario, valor_nuevo, valor_anterior)
+
+                                VALUES (TG_RELNAME, TG_TABLE_SCHEMA, TG_OP, get_app_user(),
+
+                                        row_to_json(NEW), row_to_json(OLD));
+
+                        RETURN NEW;
+
+                ELSIF   TG_OP = 'DELETE'
+
+                THEN
+
+                        INSERT INTO logging.historial (nombre_tabla, nombre_schema, operacion, usuario, valor_anterior)
+
+                                VALUES (TG_RELNAME, TG_TABLE_SCHEMA, TG_OP, get_app_user(), row_to_json(OLD));
+
+                        RETURN OLD;
+
+                END IF;
+
+        END;
+
+$$;
+
+
+ALTER FUNCTION public.change_trigger() OWNER TO postgres;
+
+--
+-- Name: get_app_user(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.get_app_user() RETURNS text
+    LANGUAGE sql
+    AS $$
+    SELECT current_setting('hq.usuario');
+$$;
+
+
+ALTER FUNCTION public.get_app_user() OWNER TO postgres;
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- Name: historial; Type: TABLE; Schema: logging; Owner: postgres
+--
+
+CREATE TABLE logging.historial (
+    id integer NOT NULL,
+    fecha timestamp without time zone DEFAULT now(),
+    nombre_schema text,
+    nombre_tabla text,
+    operacion text,
+    usuario text DEFAULT CURRENT_USER,
+    valor_nuevo json,
+    valor_anterior json
+);
+
+
+ALTER TABLE logging.historial OWNER TO postgres;
+
+--
+-- Name: historial_id_seq; Type: SEQUENCE; Schema: logging; Owner: postgres
+--
+
+CREATE SEQUENCE logging.historial_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE logging.historial_id_seq OWNER TO postgres;
+
+--
+-- Name: historial_id_seq; Type: SEQUENCE OWNED BY; Schema: logging; Owner: postgres
+--
+
+ALTER SEQUENCE logging.historial_id_seq OWNED BY logging.historial.id;
+
+
+--
+-- Name: servicios; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.servicios (
+    id integer NOT NULL,
+    nombre character varying,
+    descripcion text,
+    precio real,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+);
+
+
+ALTER TABLE public.servicios OWNER TO postgres;
+
+--
+-- Name: Servicios_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public."Servicios_id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public."Servicios_id_seq" OWNER TO postgres;
+
+--
+-- Name: Servicios_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public."Servicios_id_seq" OWNED BY public.servicios.id;
+
+
+--
+-- Name: cliente_tipo_negociacions; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.cliente_tipo_negociacions (
+    id integer NOT NULL,
+    cliente_id integer,
+    contrato character varying(255),
+    dias character varying(255),
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone,
+    cupo real
+);
+
+
+ALTER TABLE public.cliente_tipo_negociacions OWNER TO postgres;
+
+--
+-- Name: cliente_tipo_negociacions_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.cliente_tipo_negociacions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.cliente_tipo_negociacions_id_seq OWNER TO postgres;
+
+--
+-- Name: cliente_tipo_negociacions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.cliente_tipo_negociacions_id_seq OWNED BY public.cliente_tipo_negociacions.id;
+
+
+--
+-- Name: clientes; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.clientes (
+    id integer NOT NULL,
+    nombre_razon_social character varying(255),
+    nit character varying(255),
+    direccion character varying(255),
+    ciudad character varying(255),
+    email character varying(255),
+    telefono character varying(255),
+    celular character varying(255),
+    persona_de_contacto character varying(255),
+    direccion_envio_de_factura character varying(255),
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone
+);
+
+
+ALTER TABLE public.clientes OWNER TO postgres;
+
+--
+-- Name: clientes_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.clientes_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.clientes_id_seq OWNER TO postgres;
+
+--
+-- Name: clientes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.clientes_id_seq OWNED BY public.clientes.id;
+
+
+--
+-- Name: comentarios_rutas; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.comentarios_rutas (
+    id integer NOT NULL,
+    ruta_id integer,
+    usuario character varying(255),
+    comentario text,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone
+);
+
+
+ALTER TABLE public.comentarios_rutas OWNER TO postgres;
+
+--
+-- Name: comentarios_rutas_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.comentarios_rutas_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.comentarios_rutas_id_seq OWNER TO postgres;
+
+--
+-- Name: comentarios_rutas_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.comentarios_rutas_id_seq OWNED BY public.comentarios_rutas.id;
+
+
+--
+-- Name: conductores; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.conductores (
+    id integer NOT NULL,
+    vehiculo_id integer,
+    codigo integer,
+    tipo_de_identificacion character varying(255),
+    cedula character varying(255),
+    nombres character varying(255),
+    primer_apellido character varying(255),
+    segundo_apellido character varying(255),
+    tipo_de_conductor character varying(255),
+    direccion character varying(255),
+    municipio character varying(255),
+    telefono_1 character varying(255),
+    telefono_2 character varying(255),
+    celular character varying(255),
+    transportadora character varying(255),
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone,
+    municipio_documento character varying(255)
+);
+
+
+ALTER TABLE public.conductores OWNER TO postgres;
+
+--
+-- Name: conductores_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.conductores_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.conductores_id_seq OWNER TO postgres;
+
+--
+-- Name: conductores_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.conductores_id_seq OWNED BY public.conductores.id;
+
+
+--
+-- Name: consolidacions; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.consolidacions (
+    id integer NOT NULL,
+    cliente_id integer,
+    precio_real real,
+    descuento real,
+    precio_final real,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone,
+    ganancia real
+);
+
+
+ALTER TABLE public.consolidacions OWNER TO postgres;
+
+--
+-- Name: consolidacions_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.consolidacions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.consolidacions_id_seq OWNER TO postgres;
+
+--
+-- Name: consolidacions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.consolidacions_id_seq OWNED BY public.consolidacions.id;
+
+
+--
+-- Name: cuadre_productos; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.cuadre_productos (
+    id integer NOT NULL,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone,
+    precio real,
+    cliente_id integer,
+    ajuste real
+);
+
+
+ALTER TABLE public.cuadre_productos OWNER TO postgres;
+
+--
+-- Name: cuadre_productos_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.cuadre_productos_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.cuadre_productos_id_seq OWNER TO postgres;
+
+--
+-- Name: cuadre_productos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.cuadre_productos_id_seq OWNED BY public.cuadre_productos.id;
+
+
+--
+-- Name: cuadre_servicios; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.cuadre_servicios (
+    id integer NOT NULL,
+    precio real,
+    ajuste real,
+    cliente_id integer,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone
+);
+
+
+ALTER TABLE public.cuadre_servicios OWNER TO postgres;
+
+--
+-- Name: cuadre_servicios_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.cuadre_servicios_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.cuadre_servicios_id_seq OWNER TO postgres;
+
+--
+-- Name: cuadre_servicios_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.cuadre_servicios_id_seq OWNED BY public.cuadre_servicios.id;
+
+
+--
+-- Name: cuadre_viajes; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.cuadre_viajes (
+    id integer NOT NULL,
+    flete real,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone,
+    anticipo real,
+    debe real,
+    cliente_id integer,
+    ajuste real
+);
+
+
+ALTER TABLE public.cuadre_viajes OWNER TO postgres;
+
+--
+-- Name: cuadre_viajes_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.cuadre_viajes_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.cuadre_viajes_id_seq OWNER TO postgres;
+
+--
+-- Name: cuadre_viajes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.cuadre_viajes_id_seq OWNED BY public.cuadre_viajes.id;
+
+
+--
+-- Name: datos_bancarios_conductores; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.datos_bancarios_conductores (
+    id integer NOT NULL,
+    conductor_id integer,
+    titular character varying(255),
+    tipo_de_id character varying(255),
+    numero_cuenta_bancaria character varying(255),
+    tipo_cuenta_bancaria character varying(255),
+    banco character varying(255),
+    cuenta_propia boolean,
+    radica_rndc boolean,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone
+);
+
+
+ALTER TABLE public.datos_bancarios_conductores OWNER TO postgres;
+
+--
+-- Name: datos_bancarios_conductores_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.datos_bancarios_conductores_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.datos_bancarios_conductores_id_seq OWNER TO postgres;
+
+--
+-- Name: datos_bancarios_conductores_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.datos_bancarios_conductores_id_seq OWNED BY public.datos_bancarios_conductores.id;
+
+
+--
+-- Name: deposito_cliente_aplicados; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.deposito_cliente_aplicados (
+    id integer NOT NULL,
+    deposito_id integer,
+    consolidacion_id integer,
+    fecha_aplicado date,
+    cantidad real,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone
+);
+
+
+ALTER TABLE public.deposito_cliente_aplicados OWNER TO postgres;
+
+--
+-- Name: deposito_cliente_aplicados_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.deposito_cliente_aplicados_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.deposito_cliente_aplicados_id_seq OWNER TO postgres;
+
+--
+-- Name: deposito_cliente_aplicados_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.deposito_cliente_aplicados_id_seq OWNED BY public.deposito_cliente_aplicados.id;
+
+
+--
+-- Name: deposito_clientes; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.deposito_clientes (
+    id integer NOT NULL,
+    cliente_id integer,
+    cantidad real,
+    fecha_deposito date,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone
+);
+
+
+ALTER TABLE public.deposito_clientes OWNER TO postgres;
+
+--
+-- Name: deposito_clientes_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.deposito_clientes_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.deposito_clientes_id_seq OWNER TO postgres;
+
+--
+-- Name: deposito_clientes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.deposito_clientes_id_seq OWNED BY public.deposito_clientes.id;
+
+
+--
+-- Name: licencias_conductores; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.licencias_conductores (
+    id integer NOT NULL,
+    conductor_id integer,
+    numero_de_licencia character varying(255),
+    categoria character varying(255),
+    fecha_de_vencimiento date,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone
+);
+
+
+ALTER TABLE public.licencias_conductores OWNER TO postgres;
+
+--
+-- Name: licencias_conductores_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.licencias_conductores_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.licencias_conductores_id_seq OWNER TO postgres;
+
+--
+-- Name: licencias_conductores_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.licencias_conductores_id_seq OWNED BY public.licencias_conductores.id;
+
+
+--
+-- Name: modulos; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.modulos (
+    id integer NOT NULL,
+    nombre character varying(255) NOT NULL,
+    descripcion character varying(255),
+    icono character varying(255)
+);
+
+
+ALTER TABLE public.modulos OWNER TO postgres;
+
+--
+-- Name: modulos_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.modulos_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.modulos_id_seq OWNER TO postgres;
+
+--
+-- Name: modulos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.modulos_id_seq OWNED BY public.modulos.id;
+
+
+--
+-- Name: municipios; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.municipios (
+    id integer NOT NULL,
+    nombre_municipio character varying(255),
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone,
+    departamento character varying(255),
+    codigo_dane character varying(255)
+);
+
+
+ALTER TABLE public.municipios OWNER TO postgres;
+
+--
+-- Name: municipios_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.municipios_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.municipios_id_seq OWNER TO postgres;
+
+--
+-- Name: municipios_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.municipios_id_seq OWNED BY public.municipios.id;
+
+
+--
+-- Name: password_requests; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.password_requests (
+    id integer NOT NULL,
+    user_id integer,
+    ip character varying(255),
+    token character varying(255),
+    expires character varying(255),
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone
+);
+
+
+ALTER TABLE public.password_requests OWNER TO postgres;
+
+--
+-- Name: password_requests_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.password_requests_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.password_requests_id_seq OWNER TO postgres;
+
+--
+-- Name: password_requests_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.password_requests_id_seq OWNED BY public.password_requests.id;
+
+
+--
+-- Name: pivot_consolidacion_cuadre_productos; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.pivot_consolidacion_cuadre_productos (
+    consolidacion_id integer,
+    cuadre_producto_id integer
+);
+
+
+ALTER TABLE public.pivot_consolidacion_cuadre_productos OWNER TO postgres;
+
+--
+-- Name: pivot_consolidacion_cuadre_rutas; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.pivot_consolidacion_cuadre_rutas (
+    consolidacion_id integer,
+    cuadre_viaje_id integer
+);
+
+
+ALTER TABLE public.pivot_consolidacion_cuadre_rutas OWNER TO postgres;
+
+--
+-- Name: pivot_consolidacion_cuadre_servicios; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.pivot_consolidacion_cuadre_servicios (
+    consolidacion_id integer,
+    cuadre_servicio_id integer
+);
+
+
+ALTER TABLE public.pivot_consolidacion_cuadre_servicios OWNER TO postgres;
+
+--
+-- Name: pivot_cuadre_viaje_rutas; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.pivot_cuadre_viaje_rutas (
+    cuadre_viaje_id integer,
+    ruta_id integer
+);
+
+
+ALTER TABLE public.pivot_cuadre_viaje_rutas OWNER TO postgres;
+
+--
+-- Name: pivot_cuadre_viaje_vehiculos; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.pivot_cuadre_viaje_vehiculos (
+    cuadre_viaje_id integer,
+    vehiculo_id integer
+);
+
+
+ALTER TABLE public.pivot_cuadre_viaje_vehiculos OWNER TO postgres;
+
+--
+-- Name: pivot_producto_cuadre_productos; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.pivot_producto_cuadre_productos (
+    cuadre_producto_id integer,
+    producto_id integer
+);
+
+
+ALTER TABLE public.pivot_producto_cuadre_productos OWNER TO postgres;
+
+--
+-- Name: pivot_rutas_municipios; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.pivot_rutas_municipios (
+    ruta_id integer,
+    municipio_id integer
+);
+
+
+ALTER TABLE public.pivot_rutas_municipios OWNER TO postgres;
+
+--
+-- Name: pivot_servicio_cuadre_servicios; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.pivot_servicio_cuadre_servicios (
+    cuadre_servicio_id integer,
+    servicio_id integer
+);
+
+
+ALTER TABLE public.pivot_servicio_cuadre_servicios OWNER TO postgres;
+
+--
+-- Name: productos; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.productos (
+    id integer NOT NULL,
+    nombre character varying(255) NOT NULL,
+    descripcion character varying(255),
+    precio real,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone
+);
+
+
+ALTER TABLE public.productos OWNER TO postgres;
+
+--
+-- Name: productos_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.productos_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.productos_id_seq OWNER TO postgres;
+
+--
+-- Name: productos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.productos_id_seq OWNED BY public.productos.id;
+
+
+--
+-- Name: programacion_entregas; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.programacion_entregas (
+    id integer NOT NULL,
+    consolidacion_id integer,
+    fecha_solicitud date,
+    fecha_despacho date,
+    fecha_entrega_programada date,
+    fecha_entrega_real date,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone
+);
+
+
+ALTER TABLE public.programacion_entregas OWNER TO postgres;
+
+--
+-- Name: programacion_entregas_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.programacion_entregas_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.programacion_entregas_id_seq OWNER TO postgres;
+
+--
+-- Name: programacion_entregas_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.programacion_entregas_id_seq OWNED BY public.programacion_entregas.id;
+
+
+--
+-- Name: role_modulos; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.role_modulos (
+    role_id integer,
+    modulo_id integer
+);
+
+
+ALTER TABLE public.role_modulos OWNER TO postgres;
+
+--
+-- Name: role_sub_modulo_permisos; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.role_sub_modulo_permisos (
+    id integer NOT NULL,
+    role_id integer,
+    sub_modulo_id integer,
+    editar boolean DEFAULT false,
+    crear boolean DEFAULT false,
+    eliminar boolean DEFAULT false,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone
+);
+
+
+ALTER TABLE public.role_sub_modulo_permisos OWNER TO postgres;
+
+--
+-- Name: role_sub_modulo_permisos_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.role_sub_modulo_permisos_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.role_sub_modulo_permisos_id_seq OWNER TO postgres;
+
+--
+-- Name: role_sub_modulo_permisos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.role_sub_modulo_permisos_id_seq OWNED BY public.role_sub_modulo_permisos.id;
+
+
+--
+-- Name: roles; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.roles (
+    id integer NOT NULL,
+    nombre character varying(80) NOT NULL,
+    description character varying(254),
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone
+);
+
+
+ALTER TABLE public.roles OWNER TO postgres;
+
+--
+-- Name: roles_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.roles_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.roles_id_seq OWNER TO postgres;
+
+--
+-- Name: roles_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.roles_id_seq OWNED BY public.roles.id;
+
+
+--
+-- Name: rutas; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.rutas (
+    id integer NOT NULL,
+    kilometros real,
+    anticipo_sugerido real,
+    valor_flete real,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone,
+    "pago_conductor_HQ" real,
+    pago_tercero real,
+    pago_cabezote real
+);
+
+
+ALTER TABLE public.rutas OWNER TO postgres;
+
+--
+-- Name: rutas_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.rutas_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.rutas_id_seq OWNER TO postgres;
+
+--
+-- Name: rutas_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.rutas_id_seq OWNED BY public.rutas.id;
+
+
+--
+-- Name: sub_modulos; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.sub_modulos (
+    id integer NOT NULL,
+    nombre character varying(255),
+    icono character varying(255),
+    modulo_id integer,
+    link character varying(255)
+);
+
+
+ALTER TABLE public.sub_modulos OWNER TO postgres;
+
+--
+-- Name: sub_modulo_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.sub_modulo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.sub_modulo_id_seq OWNER TO postgres;
+
+--
+-- Name: sub_modulo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.sub_modulo_id_seq OWNED BY public.sub_modulos.id;
+
+
+--
+-- Name: tokens; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.tokens (
+    id integer NOT NULL,
+    user_id integer,
+    token character varying(255) NOT NULL,
+    type character varying(80) NOT NULL,
+    is_revoked boolean DEFAULT false,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone
+);
+
+
+ALTER TABLE public.tokens OWNER TO postgres;
+
+--
+-- Name: tokens_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.tokens_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.tokens_id_seq OWNER TO postgres;
+
+--
+-- Name: tokens_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.tokens_id_seq OWNED BY public.tokens.id;
+
+
+--
+-- Name: trailers; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.trailers (
+    id integer NOT NULL,
+    vehiculo_id integer,
+    placa character varying(255) NOT NULL,
+    tipo_de_vehiculo character varying(255),
+    tipo_de_configuracion character varying(255),
+    tenedor character varying(255),
+    modelo character varying(255),
+    propietario character varying(255),
+    tipo_de_flota character varying(255),
+    poseedor character varying(255),
+    color character varying(255),
+    marca_trailer character varying(255),
+    peso character varying(255),
+    tipo_carroceria character varying(255),
+    estado character varying(255),
+    radica_rndc boolean,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone
+);
+
+
+ALTER TABLE public.trailers OWNER TO postgres;
+
+--
+-- Name: trailers_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.trailers_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.trailers_id_seq OWNER TO postgres;
+
+--
+-- Name: trailers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.trailers_id_seq OWNED BY public.trailers.id;
+
+
+--
+-- Name: user_logs; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.user_logs (
+    id integer NOT NULL,
+    user_id integer,
+    ip character varying(255),
+    token character varying(255),
+    is_revoke boolean,
+    entrada timestamp with time zone DEFAULT now(),
+    salida timestamp with time zone
+);
+
+
+ALTER TABLE public.user_logs OWNER TO postgres;
+
+--
+-- Name: user_logs_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.user_logs_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.user_logs_id_seq OWNER TO postgres;
+
+--
+-- Name: user_logs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.user_logs_id_seq OWNED BY public.user_logs.id;
+
+
+--
+-- Name: user_roles; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.user_roles (
+    user_id integer,
+    role_id integer
+);
+
+
+ALTER TABLE public.user_roles OWNER TO postgres;
+
+--
+-- Name: users; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.users (
+    id integer NOT NULL,
+    nombre character varying(254),
+    apellido character varying(254),
+    cedula character varying(254),
+    tel_fijo character varying(254),
+    tel_mobil character varying(254),
+    direccion character varying(254),
+    ciudad character varying(254),
+    departamento character varying(254),
+    username character varying(80) NOT NULL,
+    email character varying(254) NOT NULL,
+    password character varying(60) NOT NULL,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone,
+    estado boolean
+);
+
+
+ALTER TABLE public.users OWNER TO postgres;
+
+--
+-- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.users_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.users_id_seq OWNER TO postgres;
+
+--
+-- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
+
+
+--
+-- Name: vehiculos; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.vehiculos (
+    id integer NOT NULL,
+    placa character varying(255) NOT NULL,
+    numero_chasis character varying(255) NOT NULL,
+    tipo_de_vehiculo character varying(255),
+    tipo_configuracion character varying(255),
+    modelo character varying(255),
+    numero_motor character varying(255) NOT NULL,
+    tipo_de_flota character varying(255),
+    marca_cabezote character varying(255),
+    linea_cabezote character varying(255),
+    tipo_de_combustible character varying(255),
+    color character varying(255),
+    peso real,
+    capasidad_carga real,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone,
+    estado character varying(255),
+    consolidacion_id integer
+);
+
+
+ALTER TABLE public.vehiculos OWNER TO postgres;
+
+--
+-- Name: vehiculos_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.vehiculos_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.vehiculos_id_seq OWNER TO postgres;
+
+--
+-- Name: vehiculos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.vehiculos_id_seq OWNED BY public.vehiculos.id;
+
+
+--
+-- Name: historial id; Type: DEFAULT; Schema: logging; Owner: postgres
+--
+
+ALTER TABLE ONLY logging.historial ALTER COLUMN id SET DEFAULT nextval('logging.historial_id_seq'::regclass);
+
+
+--
+-- Name: cliente_tipo_negociacions id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.cliente_tipo_negociacions ALTER COLUMN id SET DEFAULT nextval('public.cliente_tipo_negociacions_id_seq'::regclass);
+
+
+--
+-- Name: clientes id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.clientes ALTER COLUMN id SET DEFAULT nextval('public.clientes_id_seq'::regclass);
+
+
+--
+-- Name: comentarios_rutas id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.comentarios_rutas ALTER COLUMN id SET DEFAULT nextval('public.comentarios_rutas_id_seq'::regclass);
+
+
+--
+-- Name: conductores id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.conductores ALTER COLUMN id SET DEFAULT nextval('public.conductores_id_seq'::regclass);
+
+
+--
+-- Name: consolidacions id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.consolidacions ALTER COLUMN id SET DEFAULT nextval('public.consolidacions_id_seq'::regclass);
+
+
+--
+-- Name: cuadre_productos id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.cuadre_productos ALTER COLUMN id SET DEFAULT nextval('public.cuadre_productos_id_seq'::regclass);
+
+
+--
+-- Name: cuadre_servicios id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.cuadre_servicios ALTER COLUMN id SET DEFAULT nextval('public.cuadre_servicios_id_seq'::regclass);
+
+
+--
+-- Name: cuadre_viajes id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.cuadre_viajes ALTER COLUMN id SET DEFAULT nextval('public.cuadre_viajes_id_seq'::regclass);
+
+
+--
+-- Name: datos_bancarios_conductores id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.datos_bancarios_conductores ALTER COLUMN id SET DEFAULT nextval('public.datos_bancarios_conductores_id_seq'::regclass);
+
+
+--
+-- Name: deposito_cliente_aplicados id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.deposito_cliente_aplicados ALTER COLUMN id SET DEFAULT nextval('public.deposito_cliente_aplicados_id_seq'::regclass);
+
+
+--
+-- Name: deposito_clientes id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.deposito_clientes ALTER COLUMN id SET DEFAULT nextval('public.deposito_clientes_id_seq'::regclass);
+
+
+--
+-- Name: licencias_conductores id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.licencias_conductores ALTER COLUMN id SET DEFAULT nextval('public.licencias_conductores_id_seq'::regclass);
+
+
+--
+-- Name: modulos id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.modulos ALTER COLUMN id SET DEFAULT nextval('public.modulos_id_seq'::regclass);
+
+
+--
+-- Name: municipios id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.municipios ALTER COLUMN id SET DEFAULT nextval('public.municipios_id_seq'::regclass);
+
+
+--
+-- Name: password_requests id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.password_requests ALTER COLUMN id SET DEFAULT nextval('public.password_requests_id_seq'::regclass);
+
+
+--
+-- Name: productos id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.productos ALTER COLUMN id SET DEFAULT nextval('public.productos_id_seq'::regclass);
+
+
+--
+-- Name: programacion_entregas id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.programacion_entregas ALTER COLUMN id SET DEFAULT nextval('public.programacion_entregas_id_seq'::regclass);
+
+
+--
+-- Name: role_sub_modulo_permisos id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.role_sub_modulo_permisos ALTER COLUMN id SET DEFAULT nextval('public.role_sub_modulo_permisos_id_seq'::regclass);
+
+
+--
+-- Name: roles id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.roles ALTER COLUMN id SET DEFAULT nextval('public.roles_id_seq'::regclass);
+
+
+--
+-- Name: rutas id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.rutas ALTER COLUMN id SET DEFAULT nextval('public.rutas_id_seq'::regclass);
+
+
+--
+-- Name: servicios id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.servicios ALTER COLUMN id SET DEFAULT nextval('public."Servicios_id_seq"'::regclass);
+
+
+--
+-- Name: sub_modulos id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.sub_modulos ALTER COLUMN id SET DEFAULT nextval('public.sub_modulo_id_seq'::regclass);
+
+
+--
+-- Name: tokens id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.tokens ALTER COLUMN id SET DEFAULT nextval('public.tokens_id_seq'::regclass);
+
+
+--
+-- Name: trailers id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.trailers ALTER COLUMN id SET DEFAULT nextval('public.trailers_id_seq'::regclass);
+
+
+--
+-- Name: user_logs id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.user_logs ALTER COLUMN id SET DEFAULT nextval('public.user_logs_id_seq'::regclass);
+
+
+--
+-- Name: users id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
+
+
+--
+-- Name: vehiculos id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.vehiculos ALTER COLUMN id SET DEFAULT nextval('public.vehiculos_id_seq'::regclass);
+
+
+--
+-- Data for Name: historial; Type: TABLE DATA; Schema: logging; Owner: postgres
+--
+
+COPY logging.historial (id, fecha, nombre_schema, nombre_tabla, operacion, usuario, valor_nuevo, valor_anterior) FROM stdin;
+1	2019-01-09 16:36:40.394253	public	clientes	UPDATE	postgres	{"id":20,"nombre_razon_social":"Hans C. Aranzalez","nit":"90045632545","direccion":"2242 Brookhurst Road","ciudad":"Mississauga","email":"haranzalez@gmail.com","telefono":"4165582575","celular":"3108389763","persona_de_contacto":"Hans","direccion_envio_de_factura":"2242 Brookhurst Road","created_at":"2018-12-04T16:46:00-05:00","updated_at":"2018-12-04T16:46:00-05:00"}	{"id":20,"nombre_razon_social":"Hans aranzalez","nit":"90045632545","direccion":"2242 Brookhurst Road","ciudad":"Mississauga","email":"haranzalez@gmail.com","telefono":"4165582575","celular":"3108389763","persona_de_contacto":"Hans","direccion_envio_de_factura":"2242 Brookhurst Road","created_at":"2018-12-04T16:46:00-05:00","updated_at":"2018-12-04T16:46:00-05:00"}
+2	2019-01-09 16:37:06.122273	public	clientes	UPDATE	postgres	{"id":20,"nombre_razon_social":"Hans Aranzalez","nit":"90045632545","direccion":"2242 Brookhurst Road","ciudad":"Mississauga","email":"haranzalez@gmail.com","telefono":"4165582575","celular":"3108389763","persona_de_contacto":"Hans","direccion_envio_de_factura":"2242 Brookhurst Road","created_at":"2018-12-04T16:46:00-05:00","updated_at":"2019-01-09T16:37:06-05:00"}	{"id":20,"nombre_razon_social":"Hans C. Aranzalez","nit":"90045632545","direccion":"2242 Brookhurst Road","ciudad":"Mississauga","email":"haranzalez@gmail.com","telefono":"4165582575","celular":"3108389763","persona_de_contacto":"Hans","direccion_envio_de_factura":"2242 Brookhurst Road","created_at":"2018-12-04T16:46:00-05:00","updated_at":"2018-12-04T16:46:00-05:00"}
+3	2019-01-10 00:47:15.023605	public	clientes	INSERT	hans	{"id":23,"nombre_razon_social":null,"nit":null,"direccion":null,"ciudad":null,"email":null,"telefono":null,"celular":null,"persona_de_contacto":null,"direccion_envio_de_factura":null,"created_at":"2019-01-10T00:47:15-05:00","updated_at":"2019-01-10T00:47:15-05:00"}	\N
+\.
+
+
+--
+-- Data for Name: cliente_tipo_negociacions; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.cliente_tipo_negociacions (id, cliente_id, contrato, dias, created_at, updated_at, cupo) FROM stdin;
+6	22	tipo 3	60 dias.	2018-12-07 14:04:24-05	2018-12-07 14:04:24-05	400000
+4	20	tipo 2	30 dias.	2018-12-04 16:46:01-05	2019-01-09 16:37:06-05	30000
+7	23	\N	\N	2019-01-10 00:47:15-05	2019-01-10 00:47:15-05	\N
+\.
+
+
+--
+-- Data for Name: clientes; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.clientes (id, nombre_razon_social, nit, direccion, ciudad, email, telefono, celular, persona_de_contacto, direccion_envio_de_factura, created_at, updated_at) FROM stdin;
+22	Prueba	1419516218	2242 Brookhurst Road	Mississauga	haranzalez@gmail.com	4165582575	3124562526	Johan	carrera 91 # 19-48	2018-12-07 14:04:24-05	2018-12-07 14:04:24-05
+20	Hans Aranzalez	90045632545	2242 Brookhurst Road	Mississauga	haranzalez@gmail.com	4165582575	3108389763	Hans	2242 Brookhurst Road	2018-12-04 16:46:00-05	2019-01-09 16:37:06-05
+23	\N	\N	\N	\N	\N	\N	\N	\N	\N	2019-01-10 00:47:15-05	2019-01-10 00:47:15-05
+\.
+
+
+--
+-- Data for Name: comentarios_rutas; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.comentarios_rutas (id, ruta_id, usuario, comentario, created_at, updated_at) FROM stdin;
+4	7	hans	Comentario de prueba	2018-11-21 11:31:02-05	2018-11-21 11:31:02-05
+9	8	hans	Nuevo comentario para barrancabermeja	2018-11-21 13:14:59-05	2018-11-21 13:14:59-05
+10	7	hans	La linea en ruta hacia cali esta bloqueada	2018-11-21 13:34:44-05	2018-11-21 13:34:44-05
+12	9	hans	lsujfqa	2018-11-23 15:04:37-05	2018-11-23 15:04:37-05
+13	11	hans	comentario de prueba	2018-11-28 16:24:44-05	2018-11-28 16:24:44-05
+14	12	hans	Comentario para ruta	2018-12-07 15:34:46-05	2018-12-07 15:34:46-05
+15	11	hans	uygiuh	2018-12-13 21:11:30-05	2018-12-13 21:11:30-05
+16	11	hans	Prueba	2018-12-18 12:28:31-05	2018-12-18 12:28:31-05
+17	11	hans	Prueba	2018-12-18 12:28:35-05	2018-12-18 12:28:35-05
+18	11	hans	Prueba	2018-12-18 12:28:40-05	2018-12-18 12:28:40-05
+19	11	hans	Prueba	2018-12-18 12:28:44-05	2018-12-18 12:28:44-05
+20	11	hans	Prueba	2018-12-18 12:28:48-05	2018-12-18 12:28:48-05
+21	11	hans	Prueba	2018-12-18 12:28:52-05	2018-12-18 12:28:52-05
+22	11	hans	Prueba	2018-12-18 12:28:57-05	2018-12-18 12:28:57-05
+23	11	hans	Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?	2018-12-18 12:31:51-05	2018-12-18 12:31:51-05
+24	14	hans	comentarios	2018-12-21 15:18:23-05	2018-12-21 15:18:23-05
+\.
+
+
+--
+-- Data for Name: conductores; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.conductores (id, vehiculo_id, codigo, tipo_de_identificacion, cedula, nombres, primer_apellido, segundo_apellido, tipo_de_conductor, direccion, municipio, telefono_1, telefono_2, celular, transportadora, created_at, updated_at, municipio_documento) FROM stdin;
+2	\N	81950	cedula	2233564	Segio	Castro	Vanegas	Carga	Direccion carrera	Cali	3356968	3345635	3152624	Su papa	2018-12-27 17:31:33-05	2018-12-27 17:31:33-05	Salsar
+4	\N	4852	cedula	54821956	Miguel	Arbelaez	Perez	Carga baja	Cara	Cli	951532218	6216546512	3152449	Valle	2018-12-27 18:39:38-05	2018-12-27 18:39:38-05	Sarsal
+7	\N	8498	cedula	111445552	Efrasion	Gallego	Peye	Carga	cra	palmira	365259	486598	315662	Melendez	2018-12-27 18:56:32-05	2018-12-27 18:56:32-05	Cali
+6	\N	8549	cedula	45529295	Efren Edwardo	Calacico	Omeneo	Bolqueta	cra	Cali	3358968	9812951	959506	Bogotana	2018-12-27 18:46:23-05	2018-12-27 20:15:52-05	Cali
+8	\N	984951	cedula	4562595195	Eustacion	Ocoro	Muñinga	bolqueta	cra	Tulu	365254122	949155	1894919	Villegaz	2018-12-27 19:14:37-05	2019-01-01 23:48:07-05	Tolima
+1	1	5456	cedula	1134567678	Fernando	Zuluaga	Fernandez	Carga pesada	calle 34 # 12-54	Cali	3321714	\N	3198789876	Melendez	2018-10-25 22:47:38-05	2019-01-01 23:48:07-05	Cali
+5	4	9864	pasaporte	212352456	Edwin	Vallesteros	Ramirez	Bolqueta	cra	Cali	6519849519	9549165198	3338949512951	Valle	2018-12-27 18:42:18-05	2019-01-04 11:18:23-05	Restrepo
+\.
+
+
+--
+-- Data for Name: consolidacions; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.consolidacions (id, cliente_id, precio_real, descuento, precio_final, created_at, updated_at, ganancia) FROM stdin;
+63	20	\N	\N	\N	2019-01-01 17:57:55-05	2019-01-01 17:57:55-05	\N
+64	20	\N	\N	\N	2019-01-03 15:30:05-05	2019-01-03 15:30:05-05	\N
+65	20	\N	\N	\N	2019-01-04 12:08:57-05	2019-01-04 12:08:57-05	\N
+66	20	\N	\N	\N	2019-01-04 16:55:16-05	2019-01-04 16:55:16-05	\N
+67	20	\N	\N	\N	2019-01-04 16:56:15-05	2019-01-04 16:56:15-05	\N
+68	22	\N	\N	\N	2019-01-04 16:56:36-05	2019-01-04 16:56:36-05	\N
+69	22	\N	\N	\N	2019-01-04 16:56:52-05	2019-01-04 16:56:52-05	\N
+70	20	\N	\N	\N	2019-01-04 16:56:57-05	2019-01-04 16:56:57-05	\N
+71	22	\N	\N	\N	2019-01-04 16:56:59-05	2019-01-04 16:56:59-05	\N
+72	20	\N	\N	\N	2019-01-04 16:57:02-05	2019-01-04 16:57:02-05	\N
+73	22	\N	\N	\N	2019-01-04 16:57:05-05	2019-01-04 16:57:05-05	\N
+74	22	\N	\N	\N	2019-01-04 16:59:46-05	2019-01-04 16:59:46-05	\N
+75	22	\N	\N	\N	2019-01-04 16:59:55-05	2019-01-04 16:59:55-05	\N
+76	20	\N	\N	\N	2019-01-04 16:59:57-05	2019-01-04 16:59:57-05	\N
+77	22	\N	\N	\N	2019-01-04 17:00:00-05	2019-01-04 17:00:00-05	\N
+78	20	\N	\N	\N	2019-01-04 17:00:02-05	2019-01-04 17:00:02-05	\N
+79	22	\N	\N	\N	2019-01-04 17:00:05-05	2019-01-04 17:00:05-05	\N
+80	22	\N	\N	\N	2019-01-04 18:18:03-05	2019-01-04 18:18:03-05	\N
+\.
+
+
+--
+-- Data for Name: cuadre_productos; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.cuadre_productos (id, created_at, updated_at, precio, cliente_id, ajuste) FROM stdin;
+14	2018-12-17 12:29:30-05	2018-12-20 18:21:43-05	79000	20	1000
+17	2018-12-20 18:23:11-05	2018-12-20 23:07:53-05	900	22	-77100
+15	2018-12-20 11:21:01-05	2018-12-20 23:08:07-05	9000	20	4500
+16	2018-12-20 11:21:32-05	2018-12-20 23:17:57-05	100000	20	17000
+\.
+
+
+--
+-- Data for Name: cuadre_servicios; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.cuadre_servicios (id, precio, ajuste, cliente_id, created_at, updated_at) FROM stdin;
+14	900	-1600	22	2018-12-20 18:23:22-05	2018-12-20 23:23:02-05
+13	8000	500	20	2018-12-17 12:32:21-05	2018-12-20 23:39:19-05
+15	8000	5500	20	2019-01-04 15:07:58-05	2019-01-04 15:07:58-05
+\.
+
+
+--
+-- Data for Name: cuadre_viajes; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.cuadre_viajes (id, flete, created_at, updated_at, anticipo, debe, cliente_id, ajuste) FROM stdin;
+72	1000	2018-12-18 15:38:15-05	2018-12-20 23:27:02-05	200	800	22	-200
+73	800	2018-12-20 18:20:17-05	2018-12-20 23:40:45-05	100	700	20	-400
+71	800	2018-12-17 12:26:04-05	2018-12-20 23:40:52-05	100	700	20	450
+74	800	2018-12-21 15:19:33-05	2018-12-21 15:19:33-05	200	600	20	-100
+75	9000	2018-12-31 23:51:37-05	2018-12-31 23:51:37-05	\N	9000	22	7200
+76	900	2019-01-04 12:08:33-05	2019-01-04 12:08:33-05	200	700	20	270
+\.
+
+
+--
+-- Data for Name: datos_bancarios_conductores; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.datos_bancarios_conductores (id, conductor_id, titular, tipo_de_id, numero_cuenta_bancaria, tipo_cuenta_bancaria, banco, cuenta_propia, radica_rndc, created_at, updated_at) FROM stdin;
+2	7	Efrasion	Cedula	3562198	Ahorros	Pichincha	t	f	\N	\N
+3	8	Eustacion Ocoro Muñinga	Cedula	9881651	Corriente	Colpatria	t	t	\N	\N
+\.
+
+
+--
+-- Data for Name: deposito_cliente_aplicados; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.deposito_cliente_aplicados (id, deposito_id, consolidacion_id, fecha_aplicado, cantidad, created_at, updated_at) FROM stdin;
+\.
+
+
+--
+-- Data for Name: deposito_clientes; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.deposito_clientes (id, cliente_id, cantidad, fecha_deposito, created_at, updated_at) FROM stdin;
+4	20	7885455	2018-12-20	\N	\N
+3	20	9000000	2018-12-20	\N	\N
+1	20	800000	2019-02-22	\N	\N
+5	22	8190954	2018-12-19	\N	\N
+\.
+
+
+--
+-- Data for Name: licencias_conductores; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.licencias_conductores (id, conductor_id, numero_de_licencia, categoria, fecha_de_vencimiento, created_at, updated_at) FROM stdin;
+4	8	45629348	Full	2019-01-24	\N	\N
+3	5	9598452	B	2018-12-04	\N	\N
+5	6	532463	B	2019-01-30	\N	\N
+\.
+
+
+--
+-- Data for Name: modulos; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.modulos (id, nombre, descripcion, icono) FROM stdin;
+1	Sistema	Modulo para la administracion de usuarios, registros y backups	\N
+2	Logistica	Modulos para la administraciony manejo de operaciones logisticas	\N
+\.
+
+
+--
+-- Data for Name: municipios; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.municipios (id, nombre_municipio, created_at, updated_at, departamento, codigo_dane) FROM stdin;
+2	NO RESIDENTE EN EL PAIS	2018-11-03 14:02:28-05	2018-11-03 14:02:28-05	OTRO	00099
+4	MEDELLIN	2018-11-03 14:08:41-05	2018-11-03 14:08:41-05	ANTIOQUIA	5001
+5	ABEJORRAL	2018-11-03 14:09:24-05	2018-11-03 14:09:24-05	ANTIOQUIA	5002
+6	ALEJANDRIA	2018-11-03 16:06:21-05	2018-11-03 16:06:21-05	ANTIOQUIA	5021
+7	AMAGA	2018-11-03 16:08:09-05	2018-11-03 16:08:09-05	ANTIOQUIA	5030
+8	AMALFI	2018-11-03 16:08:41-05	2018-11-03 16:08:41-05	ANTIOQUIA	5031
+9	ANDES	2018-11-03 16:09:08-05	2018-11-03 16:09:08-05	ANTIOQUIA	5034
+10	ANGELOPOLIS	2018-11-03 16:09:38-05	2018-11-03 16:09:38-05	ANTIOQUIA	5036
+11	ANGOSTURA	2018-11-03 16:09:58-05	2018-11-03 16:09:58-05	ANTIOQUIA	5038
+12	ANORI	2018-11-03 16:10:19-05	2018-11-03 16:10:19-05	ANTIOQUIA	5040
+13	SANTAFE DE ANTIOQUIA	2018-11-03 16:10:57-05	2018-11-03 16:10:57-05	ANTIOQUIA	5042
+14	ANZA	2018-11-03 16:11:24-05	2018-11-03 16:11:24-05	ANTIOQUIA	5044
+15	APARTADO	2018-11-03 16:11:47-05	2018-11-03 16:11:47-05	ANTIOQUIA	5045
+16	ARBOLETES	2018-11-03 16:12:34-05	2018-11-03 16:12:34-05	ANTIOQUIA	5051
+17	ARGELIA	2018-11-03 16:12:58-05	2018-11-03 16:12:58-05	ANTIOQUIA	5055
+18	ARMENIA	2018-11-03 16:13:19-05	2018-11-03 16:13:19-05	ANTIOQUIA	5059
+19	BARBOSA	2018-11-03 16:13:42-05	2018-11-03 16:13:42-05	ANTIOQUIA	5079
+20	BELMIRA	2018-11-03 16:14:01-05	2018-11-03 16:14:01-05	ANTIOQUIA	5086
+21	BELLO	2018-11-03 16:14:36-05	2018-11-03 16:14:36-05	ANTIOQUIA	5088
+22	BETANIA	2018-11-03 16:14:55-05	2018-11-03 16:14:55-05	ANTIOQUIA	5091
+23	BETULIA	2018-11-03 16:15:10-05	2018-11-03 16:15:10-05	ANTIOQUIA	5093
+24	CIUDAD BOLIVAR	2018-11-03 16:15:36-05	2018-11-03 16:15:36-05	ANTIOQUIA	5101
+25	BRICEÑO	2018-11-03 16:15:55-05	2018-11-03 16:15:55-05	ANTIOQUIA	5107
+26	BURITICA	2018-11-03 16:16:19-05	2018-11-03 16:16:19-05	ANTIOQUIA	5113
+27	CACERES	2018-11-03 16:16:33-05	2018-11-03 16:16:33-05	ANTIOQUIA	5120
+28	CAICEDO	2018-11-03 16:16:49-05	2018-11-03 16:16:49-05	ANTIOQUIA	5125
+29	CALDAS	2018-11-03 16:17:01-05	2018-11-03 16:17:01-05	ANTIOQUIA	5129
+30	CAMPAMENTO	2018-11-03 16:17:37-05	2018-11-03 16:17:37-05	ANTIOQUIA	5134
+31	CAÑASGORDAS	2018-11-03 16:17:57-05	2018-11-03 16:17:57-05	ANTIOQUIA	5138
+32	CARACOLI	2018-11-03 16:18:13-05	2018-11-03 16:18:13-05	ANTIOQUIA	5142
+33	CARAMANTA	2018-11-03 16:18:28-05	2018-11-03 16:18:28-05	ANTIOQUIA	5145
+34	CAREPA	2018-11-03 16:18:40-05	2018-11-03 16:18:40-05	ANTIOQUIA	5147
+35	EL CARMEN DE VIBORAL	2018-11-03 16:19:02-05	2018-11-03 16:19:02-05	ANTIOQUIA	5148
+36	CAROLINA	2018-11-03 16:19:37-05	2018-11-03 16:19:37-05	ANTIOQUIA	5150
+37	CAUCASIA	2018-11-03 16:19:57-05	2018-11-03 16:19:57-05	ANTIOQUIA	5154
+38	CHIGORODO	2018-11-03 16:20:20-05	2018-11-03 16:20:20-05	ANTIOQUIA	5172
+39	CISNEROS	2018-11-03 16:20:34-05	2018-11-03 16:20:34-05	ANTIOQUIA	5190
+40	COCORNA	2018-11-03 16:20:58-05	2018-11-03 16:20:58-05	ANTIOQUIA	5197
+41	CONCEPCION	2018-11-03 16:21:39-05	2018-11-03 16:21:39-05	ANTIOQUIA	5206
+42	CONCORDIA	2018-11-03 16:21:52-05	2018-11-03 16:21:52-05	ANTIOQUIA	5209
+43	COPACABANA	2018-11-03 16:22:04-05	2018-11-03 16:22:04-05	ANTIOQUIA	5212
+44	DABEIBA	2018-11-03 16:34:20-05	2018-11-03 16:34:20-05	ANTIOQUIA	5234
+45	DON MATIAS	2018-11-03 16:34:36-05	2018-11-03 16:34:36-05	ANTIOQUIA	5237
+46	EBEJICO	2018-11-03 16:34:51-05	2018-11-03 16:34:51-05	ANTIOQUIA	5240
+47	EL BAGRE	2018-11-03 16:36:11-05	2018-11-03 16:36:11-05	ANTIOQUIA	5250
+48	ENTRERRIOS	2018-11-03 16:38:15-05	2018-11-03 16:38:15-05	ANTIOQUIA	5264
+49	ENVIGADO	2018-11-03 16:38:48-05	2018-11-03 16:38:48-05	ANTIOQUIA	5266
+50	GIRALDO	2018-11-03 16:39:43-05	2018-11-03 16:39:43-05	ANTIOQUIA	5306
+51	GIRARDOTA	2018-11-03 16:39:59-05	2018-11-03 16:39:59-05	ANTIOQUIA	5308
+52	GOMEZ PLATA	2018-11-03 16:40:16-05	2018-11-03 16:40:16-05	ANTIOQUIA	5310
+53	GRANADA	2018-11-03 16:40:28-05	2018-11-03 16:40:28-05	ANTIOQUIA	5313
+54	GUADALUPE	2018-11-03 16:41:19-05	2018-11-03 16:41:19-05	ANTIOQUIA	5315
+55	GUARNE	2018-11-03 16:41:34-05	2018-11-03 16:41:34-05	ANTIOQUIA	5318
+56	GUATAPE	2018-11-03 16:41:50-05	2018-11-03 16:41:50-05	ANTIOQUIA	5321
+57	HELICONIA	2018-11-03 16:42:11-05	2018-11-03 16:42:11-05	ANTIOQUIA	5347
+58	HISPANIA	2018-11-03 16:42:34-05	2018-11-03 16:42:34-05	ANTIOQUIA	5353
+59	ITAGÜI	2018-11-03 16:42:58-05	2018-11-03 16:42:58-05	ANTIOQUIA	5360
+60	ITUANGO	2018-11-03 16:43:50-05	2018-11-03 16:43:50-05	ANTIOQUIA	5361
+61	JARDIN	2018-11-03 16:44:00-05	2018-11-03 16:44:00-05	ANTIOQUIA	5364
+62	JERICO	2018-11-03 16:44:34-05	2018-11-03 16:44:34-05	ANTIOQUIA	5368
+63	LA CEJA	2018-11-03 16:44:47-05	2018-11-03 16:44:47-05	ANTIOQUIA	5376
+64	LA ESTRELLA	2018-11-03 16:44:58-05	2018-11-03 16:44:58-05	ANTIOQUIA	5380
+65	LA PINTADA	2018-11-03 16:45:11-05	2018-11-03 16:45:11-05	ANTIOQUIA	5390
+66	LA UNION	2018-11-03 16:45:28-05	2018-11-03 16:45:28-05	ANTIOQUIA	5400
+67	LIBORINA	2018-11-03 16:45:44-05	2018-11-03 16:45:44-05	ANTIOQUIA	5411
+68	MACEO	2018-11-03 16:45:56-05	2018-11-03 16:45:56-05	ANTIOQUIA	5425
+69	MARINILLA	2018-11-03 16:46:36-05	2018-11-03 16:46:36-05	ANTIOQUIA	5440
+70	MONTEBELLO	2018-11-03 16:46:48-05	2018-11-03 16:46:48-05	ANTIOQUIA	5467
+71	MURINDO	2018-11-03 16:46:59-05	2018-11-03 16:46:59-05	ANTIOQUIA	5475
+72	MUTATA	2018-11-03 16:49:20-05	2018-11-03 16:49:20-05	ANTIOQUIA	5480
+73	NARIÑO	2018-11-03 16:49:42-05	2018-11-03 16:49:42-05	ANTIOQUIA	5483
+74	NECOCLI	2018-11-03 16:49:59-05	2018-11-03 16:49:59-05	ANTIOQUIA	5490
+75	NECHI	2018-11-03 16:50:17-05	2018-11-03 16:50:17-05	ANTIOQUIA	5495
+76	OLAYA	2018-11-03 16:50:30-05	2018-11-03 16:50:30-05	ANTIOQUIA	5501
+77	PEÑOL 	2018-11-03 16:50:52-05	2018-11-03 16:50:52-05	ANTIOQUIA	5541
+78	PEQUE	2018-11-03 16:51:04-05	2018-11-03 16:51:04-05	ANTIOQUIA	5543
+79	PUEBLORRICO	2018-11-03 16:51:26-05	2018-11-03 16:51:26-05	ANTIOQUIA	5576
+80	PUERTO BERRIO	2018-11-03 16:51:39-05	2018-11-03 16:51:39-05	ANTIOQUIA	5579
+81	PUERTO NARE	2018-11-03 16:51:56-05	2018-11-03 16:51:56-05	ANTIOQUIA	5585
+82	PUERTO TRIUNFO	2018-11-03 16:52:15-05	2018-11-03 16:52:15-05	ANTIOQUIA	5591
+83	REMEDIOS	2018-11-03 16:52:30-05	2018-11-03 16:52:30-05	ANTIOQUIA	5604
+84	RETIRO	2018-11-03 16:52:42-05	2018-11-03 16:52:42-05	ANTIOQUIA	5607
+85	RIONEGRO	2018-11-03 16:54:37-05	2018-11-03 16:54:37-05	ANTIOQUIA	5615
+86	SABANALARGA	2018-11-03 16:54:59-05	2018-11-03 16:54:59-05	ANTIOQUIA	5628
+87	SABANETA	2018-11-03 16:55:09-05	2018-11-03 16:55:09-05	ANTIOQUIA	5631
+88	SALGAR	2018-11-03 16:55:30-05	2018-11-03 16:55:30-05	ANTIOQUIA	5642
+89	SAN ANDRES	2018-11-03 16:55:40-05	2018-11-03 16:55:40-05	ANTIOQUIA	5647
+90	SAN CARLOS	2018-11-03 16:55:54-05	2018-11-03 16:55:54-05	ANTIOQUIA	5649
+91	SAN FRANCISCO	2018-11-03 16:56:11-05	2018-11-03 16:56:11-05	ANTIOQUIA	5652
+92	SAN JERONIMO	2018-11-03 16:56:22-05	2018-11-03 16:56:22-05	ANTIOQUIA	5656
+93	SAN JOSE DE LA MONTAÑA	2018-11-03 16:56:43-05	2018-11-03 16:56:43-05	ANTIOQUIA	5658
+94	SAN JUAN DE URABA	2018-11-03 16:57:16-05	2018-11-03 16:57:16-05	ANTIOQUIA	5659
+95	SAN LUIS	2018-11-03 16:57:49-05	2018-11-03 16:57:49-05	ANTIOQUIA	5660
+96	SAN PEDRO	2018-11-03 16:57:58-05	2018-11-03 16:57:58-05	ANTIOQUIA	5664
+97	SAN PEDRO DE URABA	2018-11-03 16:58:14-05	2018-11-03 16:58:14-05	ANTIOQUIA	5665
+98	SAN RAFAEL	2018-11-03 16:58:30-05	2018-11-03 16:58:30-05	ANTIOQUIA	5667
+99	SAN ROQUE	2018-11-03 17:05:40-05	2018-11-03 17:05:40-05	ANTIOQUIA	5670
+100	SAN VICENTE 	2018-11-03 17:05:51-05	2018-11-03 17:05:51-05	ANTIOQUIA	5674
+101	SANTA BARBARA	2018-11-03 17:20:51-05	2018-11-03 17:20:51-05	ANTIOQUIA	5679
+102	SANTA ROSA DE OSOS	2018-11-03 17:21:19-05	2018-11-03 17:21:19-05	ANTIOQUIA	5686
+103	SANTO DOMINGO	2018-11-03 17:24:34-05	2018-11-03 17:24:34-05	ANTIOQUIA	5690
+104	EL SANTUARIO	2018-11-03 17:25:53-05	2018-11-03 17:25:53-05	ANTIOQUIA	5697 
+105	SEGOVIA 	2018-11-03 17:27:33-05	2018-11-03 17:27:33-05	ANTIOQUIA	5736
+106	SONSON	2018-11-03 17:29:23-05	2018-11-03 17:29:23-05	ANTIOQUIA	5756
+107	SOPETRAN	2018-11-03 17:29:44-05	2018-11-03 17:29:44-05	ANTIOQUIA	5761
+108	TAMESIS	2018-11-03 17:29:58-05	2018-11-03 17:29:58-05	ANTIOQUIA	5789
+109	TARAZA	2018-11-03 17:30:13-05	2018-11-03 17:30:13-05	ANTIOQUIA	5790
+110	TARSO	2018-11-03 17:30:26-05	2018-11-03 17:30:26-05	ANTIOQUIA	5792
+111	TITIRIBI	2018-11-03 17:30:49-05	2018-11-03 17:30:49-05	ANTIOQUIA	5809
+112	TOLEDO	2018-11-03 17:31:22-05	2018-11-03 17:31:22-05	ANTIOQUIA	5819
+113	TURBO	2018-11-03 17:32:00-05	2018-11-03 17:32:00-05	ANTIOQUIA	5837
+114	URAMITA	2018-11-03 17:34:25-05	2018-11-03 17:34:25-05	ANTIOQUIA	5842
+115	URRAO	2018-11-03 17:34:59-05	2018-11-03 17:34:59-05	ANTIOQUIA	5847
+116	VALDIVIA	2018-11-03 17:35:16-05	2018-11-03 17:35:16-05	ANTIOQUIA	5854
+117	VALPARAISO	2018-11-03 17:35:31-05	2018-11-03 17:35:31-05	ANTIOQUIA	5856
+118	VEGACHI	2018-11-03 17:35:57-05	2018-11-03 17:35:57-05	ANTIOQUIA	5858
+119	VENECIA	2018-11-03 17:36:30-05	2018-11-03 17:36:30-05	ANTIOQUIA	5861
+120	VIGIA DEL FUERTE 	2018-11-03 17:36:50-05	2018-11-03 17:36:50-05	ANTIOQUIA	5873
+121	YALI	2018-11-03 17:37:30-05	2018-11-03 17:37:30-05	ANTIOQUIA	5885
+122	YARUMAL	2018-11-03 17:37:41-05	2018-11-03 17:37:41-05	ANTIOQUIA	5887
+123	YOLOMBO	2018-11-03 17:38:01-05	2018-11-03 17:38:01-05	ANTIOQUIA	5890
+124	YONDO	2018-11-03 17:39:08-05	2018-11-03 17:39:08-05	ANTIOQUIA	5893
+125	ZARAGOZA	2018-11-03 17:39:21-05	2018-11-03 17:39:21-05	ANTIOQUIA	5895
+126	BARRANQUILLA	2018-11-03 17:40:20-05	2018-11-03 17:40:20-05	ANTIOQUIA	8001
+127	BARANOA	2018-11-03 17:41:16-05	2018-11-03 17:41:16-05	ATLANTICO	8078
+128	CAMPO DE LA CRUZ	2018-11-03 17:42:15-05	2018-11-03 17:42:15-05	ATLANTICO	8137
+129	CANDELARIA	2018-11-03 17:58:13-05	2018-11-03 17:58:13-05	ATLANTICO	8141
+130	GALAPA	2018-11-03 18:00:20-05	2018-11-03 18:00:20-05	ATLANTICO	8296
+131	JUAN DE ACOSTA	2018-11-03 18:01:05-05	2018-11-03 18:01:05-05	ATLANTICO	8372
+132	LURUACO	2018-11-03 18:01:48-05	2018-11-03 18:01:48-05	ATLANTICO	8421
+133	MALAMBO	2018-11-03 18:02:28-05	2018-11-03 18:02:28-05	ATLANTICO	8433
+134	MANATÍ	2018-11-03 18:02:46-05	2018-11-03 18:02:46-05	ATLANTICO	8436
+135	PALMAR DE VARELA	2018-11-03 18:06:28-05	2018-11-03 18:06:28-05	ATLANTICO	8520
+136	PIOJÓ	2018-11-03 18:07:15-05	2018-11-03 18:07:15-05	ATLANTICO	8549
+137	POLONUEVO	2018-11-03 18:08:37-05	2018-11-03 18:08:37-05	ATLANTICO	8558
+138	PONEDERA	2018-11-03 18:08:52-05	2018-11-03 18:08:52-05	ATLANTICO	8560
+139	PUERTO COLOMBIA	2018-11-03 18:11:20-05	2018-11-03 18:11:20-05	ATLANTICO	8573
+140	REPELÓN	2018-11-03 18:12:21-05	2018-11-03 18:12:21-05	ATLANTICO	8606
+141	SABANAGRANDE	2018-11-03 18:13:38-05	2018-11-03 18:13:38-05	ATLANTICO	8634
+142	SABANALARGA	2018-11-03 18:15:09-05	2018-11-03 18:15:09-05	ATLANTICO	8638
+143	SANTA LUCÍA	2018-11-03 18:15:51-05	2018-11-03 18:15:51-05	ATLANTICO	8675
+144	SANTO TOMAS	2018-11-03 18:16:15-05	2018-11-03 18:16:15-05	ATLANTICO	8685
+145	SOLEDAD	2018-11-03 18:17:04-05	2018-11-03 18:17:04-05	ATLANTICO	8758
+146	SUAN	2018-11-03 18:17:39-05	2018-11-03 18:17:39-05	ATLANTICO	8770
+147	TUBARÁ	2018-11-03 18:18:16-05	2018-11-03 18:18:16-05	ATLANTICO	8832
+148	USIACURÍ	2018-11-03 18:18:45-05	2018-11-03 18:18:45-05	ATLANTICO	8849
+3	DESCONOSIDO	2018-11-03 14:07:24-05	2018-11-03 14:07:24-05	Sin definir	1001
+149	BOGOTÁ D.C.	2018-11-08 18:03:58-05	2018-11-08 18:03:58-05	BOGOTÁ D.C.	11001
+150	CARTAGENA 	2018-11-08 18:04:29-05	2018-11-08 18:04:29-05	BOLIVAR	13001
+151	ACHÍ	2018-11-08 18:04:57-05	2018-11-08 18:04:57-05	BOLIVAR	13006
+152	ALTOS DEL ROSARIO	2018-11-08 18:05:29-05	2018-11-08 18:05:29-05	BOLIVAR	13030
+153	ARENAL	2018-11-08 18:05:45-05	2018-11-08 18:05:45-05	BOLIVAR	13042
+154	ARJONA	2018-11-08 18:06:04-05	2018-11-08 18:06:04-05	BOLIVAR	13052
+155	ARROYOHONDO	2018-11-08 18:06:57-05	2018-11-08 18:06:57-05	BOLIVAR	13062
+156	BARRANCO DE LOBA 	2018-11-08 18:07:31-05	2018-11-08 18:07:31-05	BOLIVAR	13074
+157	CALAMAR	2018-11-08 18:07:51-05	2018-11-08 18:07:51-05	BOLIVAR	13140
+158	CANTAGALLO	2018-11-08 18:08:11-05	2018-11-08 18:08:11-05	BOLIVAR	13160
+159	CICUCO	2018-11-08 18:08:27-05	2018-11-08 18:08:27-05	BOLIVAR	13188
+160	CÓRDOBA	2018-11-08 18:08:51-05	2018-11-08 18:08:51-05	BOLIVAR	13212
+161	CLEMENCIA	2018-11-08 18:09:07-05	2018-11-08 18:09:07-05	BOLIVAR	13222
+162	EL CARMEN DE BOLÍVAR 	2018-11-08 18:09:26-05	2018-11-08 18:09:26-05	BOLIVAR	13244
+163	EL GUAMO 	2018-11-08 18:10:02-05	2018-11-08 18:10:02-05	BOLIVAR	13248
+164	EL PEÑÓN 	2018-11-08 18:10:27-05	2018-11-08 18:10:27-05	BOLIVAR	13268
+165	HATILLO DE LOBA	2018-11-08 18:31:55-05	2018-11-08 18:31:55-05	BOLIVAR 	13300
+166	MAGANGUÉ	2018-11-08 18:32:24-05	2018-11-08 18:32:24-05	BOLIVAR 	13430
+167	MAHATES 	2018-11-08 18:32:47-05	2018-11-08 18:32:47-05	BOLIVAR 	13433
+168	MARGARITA 	2018-11-08 18:33:11-05	2018-11-08 18:33:11-05	BOLIVAR 	13440
+169	MARÍA LA BAJA 	2018-11-08 18:33:35-05	2018-11-08 18:33:35-05	BOLIVAR 	13442
+170	MONTECRISTO	2018-11-08 18:34:07-05	2018-11-08 18:34:07-05	BOLIVAR 	13458
+171	MOMPÓS 	2018-11-08 18:34:27-05	2018-11-08 18:34:27-05	BOLIVAR 	13468
+172	MORALES 	2018-11-08 18:35:00-05	2018-11-08 18:35:00-05	BOLIVAR 	13473
+173	NOROSÍ	2018-11-08 18:35:40-05	2018-11-08 18:35:40-05	BOLIVAR 	13490
+174	PINILLOS 	2018-11-08 18:35:59-05	2018-11-08 18:35:59-05	BOLIVAR 	13549
+175	REGIDOR 	2018-11-08 18:36:23-05	2018-11-08 18:36:23-05	BOLIVAR 	13580
+176	RÍO VIEJO	2018-11-08 18:37:10-05	2018-11-08 18:37:10-05	BOLIVAR 	13600
+177	SAN CRISTOBAL	2018-11-08 18:37:27-05	2018-11-08 18:37:27-05	BOLIVAR 	13620
+178	SAN ESTANISLAO	2018-11-08 18:37:48-05	2018-11-08 18:37:48-05	BOLIVAR 	13647
+179	SAN FERNANDO	2018-11-08 18:38:12-05	2018-11-08 18:38:12-05	BOLIVAR 	13650
+180	SAN JACINTO	2018-11-08 18:38:38-05	2018-11-08 18:38:38-05	BOLIVAR 	13654
+181	SAN JACINTO DEL CAUCA	2018-11-08 18:39:09-05	2018-11-08 18:39:09-05	BOLIVAR 	13655
+182	SAN JUAN NEPOMUCENO	2018-11-08 18:39:38-05	2018-11-08 18:39:38-05	BOLIVAR 	13657
+183	SAN MARTÍN DE LOBA	2018-11-08 18:40:10-05	2018-11-08 18:40:10-05	BOLIVAR 	13667
+184	SAN PABLO	2018-11-08 18:40:32-05	2018-11-08 18:40:32-05	BOLIVAR 	13670
+185	SANTA CATALINA	2018-11-08 20:11:55-05	2018-11-08 20:11:55-05	BOLIVAR 	13673
+186	SANTA ROSA 	2018-11-08 20:12:16-05	2018-11-08 20:12:16-05	BOLIVAR 	13683
+187	SANTA ROSA DEL SUR	2018-11-08 20:12:50-05	2018-11-08 20:12:50-05	BOLIVAR 	13688
+188	SIMITÍ	2018-11-08 20:13:57-05	2018-11-08 20:13:57-05	BOLIVAR 	13744
+189	SOPLAVIENTO	2018-11-08 20:14:38-05	2018-11-08 20:14:38-05	BOLIVAR 	13760
+190	TALAIGUA NUEVO	2018-11-08 20:15:41-05	2018-11-08 20:15:41-05	BOLIVAR 	13780
+191	TIQUISIO	2018-11-08 20:16:17-05	2018-11-08 20:16:17-05	BOLIVAR 	13810
+192	TURBACO	2018-11-08 20:18:36-05	2018-11-08 20:18:36-05	BOLIVAR	13836
+193	TURBANÁ	2018-11-08 20:19:22-05	2018-11-08 20:19:22-05	BOLIVAR	13838
+194	VILLANUEVA	2018-11-08 20:19:51-05	2018-11-08 20:19:51-05	BOLIVAR	13873
+195	ZAMBRANO	2018-11-08 20:20:37-05	2018-11-08 20:20:37-05	BOLIVAR	13894
+196	TUNJA	2018-11-08 20:21:41-05	2018-11-08 20:21:41-05	BOYACA	15001
+197	ALMEIDA	2018-11-08 20:22:09-05	2018-11-08 20:22:09-05	BOYACA	15022
+198	AQUITANIA	2018-11-08 20:22:48-05	2018-11-08 20:22:48-05	BOYACA	15047
+199	ARCABUCO	2018-11-08 20:24:40-05	2018-11-08 20:24:40-05	BOYACA	15051
+200	BELÉN	2018-11-08 20:30:52-05	2018-11-08 20:30:52-05	BOYACA	15087
+201	BERBEO	2018-11-08 20:31:30-05	2018-11-08 20:31:30-05	BOYACA	15090
+202	BETÉITIVA	2018-11-08 20:32:12-05	2018-11-08 20:32:12-05	BOYACA	15092
+203	BOAVITA	2018-11-08 20:33:28-05	2018-11-08 20:33:28-05	BOYACA	15097
+204	BOYACÁ	2018-11-08 20:34:48-05	2018-11-08 20:34:48-05	BOYACA	15104
+205	BRICEÑO	2018-11-08 20:35:21-05	2018-11-08 20:35:21-05	BOYACA	15106
+206	BUENAVISTA	2018-11-08 20:35:45-05	2018-11-08 20:35:45-05	BOYACA	15109
+207	BUSBANZÁ	2018-11-08 20:36:17-05	2018-11-08 20:36:17-05	BOYACA	15114
+208	CALDAS	2018-11-08 20:36:48-05	2018-11-08 20:36:48-05	BOYACA	15131
+209	CAMPOHERMOSO	2018-11-08 20:37:16-05	2018-11-08 20:37:16-05	BOYACA	15135
+210	CERINZA	2018-11-08 20:38:28-05	2018-11-08 20:38:28-05	BOYACA	15162
+211	CHINAVITA	2018-11-08 20:39:19-05	2018-11-08 20:39:19-05	BOYACA	15172
+212	CHIQUINQUIRÁ 	2018-11-08 20:40:11-05	2018-11-08 20:40:11-05	BOYACA	15176
+213	CHISCAS	2018-11-08 20:40:36-05	2018-11-08 20:40:36-05	BOYACA	15180
+214	CHITA 	2018-11-08 20:41:32-05	2018-11-08 20:41:32-05	BOYACA	15183
+215	CHITARAQUE	2018-11-08 20:42:06-05	2018-11-08 20:42:06-05	BOYACA	15185
+216	CHIVATÁ	2018-11-08 20:42:38-05	2018-11-08 20:42:38-05	BOYACA	15187
+217	CIENEGA	2018-11-08 20:43:05-05	2018-11-08 20:43:05-05	BOYACA	15189
+218	COMBITA	2018-11-08 20:43:34-05	2018-11-08 20:43:34-05	BOYACA	15204
+219	COPER	2018-11-08 20:44:20-05	2018-11-08 20:44:20-05	BOYACA	15212
+220	CORRALES	2018-11-08 20:45:29-05	2018-11-08 20:45:29-05	BOYACA	15215
+221	COVARACHÍA	2018-11-08 20:45:58-05	2018-11-08 20:45:58-05	BOYACA	15218
+222	CUBARÁ	2018-11-08 20:46:32-05	2018-11-08 20:46:32-05	BOYACA	15223
+223	CUCAITA	2018-11-08 20:47:29-05	2018-11-08 20:47:29-05	BOYACA	15224
+224	CUITIIVA 	2018-11-08 20:48:07-05	2018-11-08 20:48:07-05	BOYACA	15226
+225	CHIQUIZA	2018-11-08 20:48:39-05	2018-11-08 20:48:39-05	BOYACA	15232
+226	CHIVOR 	2018-11-08 20:49:09-05	2018-11-08 20:49:09-05	BOYACA	15236
+227	DUITAMA	2018-11-08 20:50:23-05	2018-11-08 20:50:23-05	BOYACA	15238
+228	EL COCUY	2018-11-08 20:56:49-05	2018-11-08 20:56:49-05	BOYACA	15244
+229	EL ESPINO	2018-11-08 20:58:39-05	2018-11-08 20:58:39-05	BOYACA	15248
+230	FIRAVITOBA	2018-11-08 21:00:47-05	2018-11-08 21:00:47-05	BOYACA	15272
+231	FLORESTA	2018-11-08 21:01:23-05	2018-11-08 21:01:23-05	BOYACA	15276
+232	GACHANTIVÁ	2018-11-08 21:02:21-05	2018-11-08 21:02:21-05	BOYACA	15293
+233	GAMEZA	2018-11-08 21:03:16-05	2018-11-08 21:03:16-05	BOYACA	15296
+234	GARAGOA	2018-11-08 21:04:55-05	2018-11-08 21:04:55-05	BOYACA	15299
+235	GUACAMAYAS 	2018-11-08 21:05:56-05	2018-11-08 21:05:56-05	BOYACA	15317
+236	GUATEQUE	2018-11-08 21:06:56-05	2018-11-08 21:06:56-05	BOYACA	15322
+237	GUAYATÁ	2018-11-08 21:08:55-05	2018-11-08 21:08:55-05	BOYACA	15325
+238	GUICÁN	2018-11-08 21:10:36-05	2018-11-08 21:10:36-05	BOYACA	15332
+239	IZA	2018-11-08 21:13:04-05	2018-11-08 21:13:04-05	BOYACA	15362
+240	JENESANO	2018-11-08 21:14:27-05	2018-11-08 21:14:27-05	BOYACA	15367
+241	JERICÓ	2018-11-08 21:14:56-05	2018-11-08 21:14:56-05	BOYACA	15368
+242	LABRANZAGRANDE	2018-11-08 21:15:54-05	2018-11-08 21:15:54-05	BOYACA	15377
+243	LA CAPILLA	2018-11-08 21:16:30-05	2018-11-08 21:16:30-05	BOYACA	15380
+244	LA VICTORIA 	2018-11-08 21:16:52-05	2018-11-08 21:16:52-05	BOYACA	15401
+245	LA UVITA	2018-11-08 21:17:42-05	2018-11-08 21:17:42-05	BOYACA	15403
+246	VILLA DE LEYVA	2018-11-08 21:18:14-05	2018-11-08 21:18:14-05	BOYACA	15407
+247	MACANAL	2018-11-08 21:18:48-05	2018-11-08 21:18:48-05	BOYACA	15425
+248	MARIPÍ	2018-11-08 21:19:13-05	2018-11-08 21:19:13-05	BOYACA	15442
+249	MIRAFLORES	2018-11-08 21:19:34-05	2018-11-08 21:19:34-05	BOYACA	15455
+250	MONGUA	2018-11-08 21:20:01-05	2018-11-08 21:20:01-05	BOYACA	15464
+251	MONGUÍ	2018-11-08 21:20:36-05	2018-11-08 21:20:36-05	BOYACA	15466
+252	MONIQUIRÁ	2018-11-08 21:21:03-05	2018-11-08 21:21:03-05	BOYACA	15469
+253	MOTAVITA	2018-11-08 21:21:48-05	2018-11-08 21:21:48-05	BOYACA	15476
+254	MUZO	2018-11-08 21:22:29-05	2018-11-08 21:22:29-05	BOYACA	15480
+255	NOBSA	2018-11-08 21:22:50-05	2018-11-08 21:22:50-05	BOYACA	15491
+256	NUEVO COLÓN	2018-11-08 21:23:11-05	2018-11-08 21:23:11-05	BOYACA	15494
+257	OICATA	2018-11-08 21:23:52-05	2018-11-08 21:23:52-05	BOYACA	15500
+258	OTANCHE	2018-11-08 21:55:28-05	2018-11-08 21:55:28-05	BOYACA	15507
+259	PACHAVITA	2018-11-08 22:21:11-05	2018-11-08 22:21:11-05	BOYACA	15511
+260	PAEZ	2018-11-08 22:23:40-05	2018-11-08 22:23:40-05	BOYACA	15514
+261	PAIPA	2018-11-08 22:24:40-05	2018-11-08 22:24:40-05	BOYACA	15516
+262	PAJARITO	2018-11-08 22:24:59-05	2018-11-08 22:24:59-05	BOYACA	15518
+263	PANQUEBA	2018-11-08 22:25:41-05	2018-11-08 22:25:41-05	BOYACA	15522
+264	PAUNA	2018-11-08 22:26:12-05	2018-11-08 22:26:12-05	BOYACA	15531
+265	PAYA	2018-11-08 22:27:22-05	2018-11-08 22:27:22-05	BOYACA	15533
+266	PAZ DE RÍO	2018-11-08 22:29:10-05	2018-11-08 22:29:10-05	BOYACA	15537
+267	PESCA	2018-11-08 22:30:36-05	2018-11-08 22:30:36-05	BOYACA	15542
+268	PISBA	2018-11-08 22:32:39-05	2018-11-08 22:32:39-05	BOYACA	15550
+269	PUERTO BOYACÁ	2018-11-08 22:37:17-05	2018-11-08 22:37:17-05	BOYACA	15572
+270	QUIPAMA	2018-11-08 22:38:18-05	2018-11-08 22:38:18-05	BOYACA	15580
+271	RAMIRIQUÍ	2018-11-08 22:39:41-05	2018-11-08 22:39:41-05	BOYACA	15599
+272	RAQUIRA	2018-11-08 22:41:07-05	2018-11-08 22:41:07-05	BOYACA	15600
+273	RONDÓN	2018-11-08 22:41:48-05	2018-11-08 22:41:48-05	BOYACA	15621
+274	SABOYÁ	2018-11-08 22:42:33-05	2018-11-08 22:42:33-05	BOYACA	15632
+275	SACHICA	2018-11-08 22:42:58-05	2018-11-08 22:42:58-05	BOYACA	15638
+276	SAMACÁ	2018-11-08 22:43:46-05	2018-11-08 22:43:46-05	BOYACA	15646
+277	SAN EDUARDO	2018-11-08 22:44:17-05	2018-11-08 22:44:17-05	BOYACA	15660
+278	SAN JOSÉ DE PARE	2018-11-08 22:44:48-05	2018-11-08 22:44:48-05	BOYACA	15664
+279	SAN LUIS DE GACENO	2018-11-08 22:50:41-05	2018-11-08 22:50:41-05	BOYACA	15667
+280	SAN MATEO	2018-11-08 22:51:17-05	2018-11-08 22:51:17-05	BOYACA	15673
+281	SAN MIGUEL DE SEMA	2018-11-08 22:51:45-05	2018-11-08 22:51:45-05	BOYACA	15676
+282	SAN PABLO BORBUR	2018-11-08 22:52:09-05	2018-11-08 22:52:09-05	BOYACA	15681
+283	SANTANA	2018-11-08 22:52:40-05	2018-11-08 22:52:40-05	BOYACA	15686
+284	SANTA MARÍA	2018-11-08 22:53:06-05	2018-11-08 22:53:06-05	BOYACA	15690
+285	SANTA ROSA DE VITERBO	2018-11-08 22:55:15-05	2018-11-08 22:55:15-05	BOYACA	15693
+286	SANTA SOFÍA	2018-11-08 22:55:42-05	2018-11-08 22:55:42-05	BOYACA	15696
+287	SATIVANORTE	2018-11-08 22:56:25-05	2018-11-08 22:56:25-05	BOYACA	15720
+288	SATIVASUR	2018-11-08 22:56:52-05	2018-11-08 22:56:52-05	BOYACA	15723
+289	SIACHOQUE	2018-11-08 22:57:17-05	2018-11-08 22:57:17-05	BOYACA	15740
+290	SOATÁ	2018-11-08 22:57:44-05	2018-11-08 22:57:44-05	BOYACA	15753
+291	SOCOTÁ	2018-11-08 22:58:10-05	2018-11-08 22:58:10-05	BOYACA	15755
+292	SOCHA	2018-11-08 22:59:18-05	2018-11-08 22:59:18-05	BOYACA	15757
+293	SOGAMOSO	2018-11-08 22:59:41-05	2018-11-08 22:59:41-05	BOYACA	15759
+294	SOMONDOCO	2018-11-08 23:00:22-05	2018-11-08 23:00:22-05	BOYACA	15761
+295	SORA	2018-11-08 23:00:56-05	2018-11-08 23:00:56-05	BOYACA	15762
+296	SOTAQUIRÁ	2018-11-08 23:01:27-05	2018-11-08 23:01:27-05	BOYACA	15763
+297	SORACÁ	2018-11-08 23:01:56-05	2018-11-08 23:01:56-05	BOYACA	15764
+298	SUSACÓN	2018-11-08 23:02:18-05	2018-11-08 23:02:18-05	BOYACA	15774
+299	SUTAMARCHÁN	2018-11-08 23:03:24-05	2018-11-08 23:03:24-05	BOYACA	15776
+301	SUTATENZA	2018-11-10 16:28:24-05	2018-11-10 16:28:24-05	BOYACA	15778
+303	TASCO	2018-11-10 16:29:01-05	2018-11-10 16:29:01-05	BOYACA	15790
+306	TIBASOSA	2018-11-10 16:30:40-05	2018-11-10 16:30:40-05	BOYACA	15806
+307	TINJACA	2018-11-10 16:31:01-05	2018-11-10 16:31:01-05	BOYACA	15808
+308	TIPACOQUE	2018-11-10 16:31:21-05	2018-11-10 16:31:21-05	BOYACA	15810
+309	TOCA	2018-11-10 16:31:43-05	2018-11-10 16:31:43-05	BOYACA	15814
+310	TOGUI	2018-11-10 16:32:15-05	2018-11-10 16:32:15-05	BOYACA	15816
+311	TOPAGA	2018-11-10 16:32:50-05	2018-11-10 16:32:50-05	BOYACA	15820
+312	TOPAGA	2018-11-10 16:32:58-05	2018-11-10 16:32:58-05	BOYACA	15820
+313	TOTA	2018-11-10 16:33:14-05	2018-11-10 16:33:14-05	BOYACA	15822
+314	TUNUNGUA	2018-11-10 16:33:48-05	2018-11-10 16:33:48-05	BOYACA	15832
+316	TURMEQUE	2018-11-10 16:34:15-05	2018-11-10 16:34:15-05	BOYACA	15835
+317	TUTA	2018-11-10 16:34:28-05	2018-11-10 16:34:28-05	BOYACA	15837
+318	TUTASA	2018-11-10 16:34:57-05	2018-11-10 16:34:57-05	BOYACA	15839
+319	UMBITA	2018-11-10 16:35:11-05	2018-11-10 16:35:11-05	BOYACA	15842
+320	VENTAQUEMADA	2018-11-10 16:35:32-05	2018-11-10 16:35:32-05	BOYACA	15861
+321	VIRACACHA	2018-11-10 16:35:54-05	2018-11-10 16:35:54-05	BOYACA	15879
+322	ZETAQUIRA	2018-11-10 16:36:19-05	2018-11-10 16:36:19-05	BOYACA	15897
+324	MANIZALES	2018-11-10 16:36:58-05	2018-11-10 16:36:58-05	CALDAS	17001
+325	AGUADAS	2018-11-10 16:37:35-05	2018-11-10 16:37:35-05	CALDAS	17013
+328	ANSERMA	2018-11-10 16:39:24-05	2018-11-10 16:39:24-05	CALDAS	17042
+330	ARANZAZU	2018-11-10 16:40:12-05	2018-11-10 16:40:12-05	CALDAS	17050
+331	BELALCAZAR	2018-11-10 16:41:31-05	2018-11-10 16:41:31-05	CALDAS	17088
+332	CHINCHINA	2018-11-10 16:42:02-05	2018-11-10 16:42:02-05	CALDAS	17174
+333	FILADELFIA	2018-11-10 16:42:52-05	2018-11-10 16:42:52-05	CALDAS	17272
+334	LA DORADA 	2018-11-10 16:43:15-05	2018-11-10 16:43:15-05	CALDAS	17380
+335	LA MERCED	2018-11-10 16:43:41-05	2018-11-10 16:43:41-05	CALDAS	17488
+336	MANZANARES	2018-11-10 16:44:17-05	2018-11-10 16:44:17-05	CALDAS	17433
+337	MARMATO	2018-11-10 16:44:33-05	2018-11-10 16:44:33-05	CALDAS	17442
+304	TENZA	2018-11-10 16:29:39-05	2018-11-10 16:29:39-05	BOYACA	15798
+305	TIBANÁ	2018-11-10 16:30:13-05	2018-11-10 16:30:13-05	BOYACA	15804
+338	MARQUETALIA	2018-11-10 16:44:44-05	2018-11-10 16:44:44-05	CALDAS	17444
+339	MARULANDA	2018-11-10 16:44:58-05	2018-11-10 16:44:58-05	CALDAS	17446
+340	NEIRA	2018-11-10 16:45:15-05	2018-11-10 16:45:15-05	CALDAS	17486
+341	NORCASIA	2018-11-10 16:46:20-05	2018-11-10 16:46:20-05	CALDAS	17495
+342	PACORA	2018-11-10 16:46:55-05	2018-11-10 16:46:55-05	CALDAS	17513\n
+343	PALESTINA	2018-11-10 16:48:02-05	2018-11-10 16:48:02-05	CALDAS	17524 \n
+344	PENSILVANIA	2018-11-10 16:49:03-05	2018-11-10 16:49:03-05	CALDAS	17541\n
+345	RIOSUCIO	2018-11-10 16:49:28-05	2018-11-10 16:49:28-05	CALDAS	17614\n
+346	RISARALDA	2018-11-10 16:49:43-05	2018-11-10 16:49:43-05	CALDAS	17616\n
+347	SALAMINA	2018-11-10 16:49:58-05	2018-11-10 16:49:58-05	CALDAS	17653\n
+348	SAMANA	2018-11-10 16:50:15-05	2018-11-10 16:50:15-05	CALDAS	17662\n
+349	SAN JOSE 	2018-11-10 16:50:26-05	2018-11-10 16:50:26-05	CALDAS	17665\n
+350	SUPIA	2018-11-10 16:50:40-05	2018-11-10 16:50:40-05	CALDAS	17777\n
+351	VICTORIA	2018-11-10 16:51:04-05	2018-11-10 16:51:04-05	CALDAS	17867\n
+352	VILLAMARIA	2018-11-10 16:51:53-05	2018-11-10 16:51:53-05	CALDAS	17873\n
+353	VITERBO	2018-11-10 16:52:10-05	2018-11-10 16:52:10-05	CALDAS	17877\n
+354	FLORENCIA	2018-11-10 16:52:44-05	2018-11-10 16:52:44-05	CAQUETA	18001\n
+355	ALBANIA	2018-11-10 16:54:10-05	2018-11-10 16:54:10-05	CAQUETA	18029\n
+356	BELEN DE LOS ANDAQUIES 	2018-11-10 16:54:34-05	2018-11-10 16:54:34-05	CAQUETA	18094\n
+357	CARTAGENA DEL CHAIRA	2018-11-10 16:55:05-05	2018-11-10 16:55:05-05	CAQUETA	18150\n
+358	CURRILLO	2018-11-10 16:55:46-05	2018-11-10 16:55:46-05	CAQUETA	18205\n
+359	EL DONCELLO 	2018-11-10 16:56:25-05	2018-11-10 16:56:25-05	CAQUETA	18247\n
+360	EL PAUJIL	2018-11-10 16:56:51-05	2018-11-10 16:56:51-05	CAQUETA	18256\n
+361	LA MONTAÑITA	2018-11-10 16:58:05-05	2018-11-10 16:58:05-05	CAQUETÁ	18410\n
+362	MILÁN	2018-11-10 16:59:25-05	2018-11-10 16:59:25-05	CAQUETÁ	18460\n
+363	MORELIA	2018-11-10 16:59:43-05	2018-11-10 16:59:43-05	CAQUETÁ	18479\n
+364	PUERTO RICO	2018-11-10 17:00:11-05	2018-11-10 17:00:11-05	CAQUETÁ	18592\n
+365	SAN JOSÉ DE LA FRAGUA	2018-11-10 17:00:59-05	2018-11-10 17:00:59-05	CAQUETÁ	18610\n
+366	SAN VICENTE DEL CAGUÁN	2018-11-10 17:01:42-05	2018-11-10 17:01:42-05	CAQUETÁ	18753\n
+367	SOLANO	2018-11-10 17:02:06-05	2018-11-10 17:02:06-05	CAQUETÁ	18756\n
+368	SOLITA	2018-11-10 17:02:20-05	2018-11-10 17:02:20-05	CAQUETÁ	18785\n
+369	VALPARAÍSO	2018-11-10 17:03:06-05	2018-11-10 17:03:06-05	CAQUETÁ	18860\n
+370	POPAYÁN	2018-11-10 17:03:37-05	2018-11-10 17:03:37-05	CAUCA	19001\n
+371	POPAYÁN	2018-11-10 17:04:17-05	2018-11-10 17:04:17-05	CAUCA	19001\n
+372	ALMAGUER	2018-11-10 17:04:40-05	2018-11-10 17:04:40-05	CAUCA	19022\n
+373	ARGELIA	2018-11-10 17:05:03-05	2018-11-10 17:05:03-05	CAUCA	19050\n
+374	BALBOA	2018-11-10 17:05:18-05	2018-11-10 17:05:18-05	CAUCA	19075\n
+375	BOLÍVAR	2018-11-10 17:05:45-05	2018-11-10 17:05:45-05	CAUCA	19100\n
+376	BUENOS AIRES	2018-11-10 17:06:05-05	2018-11-10 17:06:05-05	CAUCA	19110\n
+377	CAJIBÍO	2018-11-10 17:06:25-05	2018-11-10 17:06:25-05	CAUCA	19130\n
+378	CALDONO	2018-11-10 17:06:39-05	2018-11-10 17:06:39-05	CAUCA	19137\n
+379	CALOTO	2018-11-10 17:06:56-05	2018-11-10 17:06:56-05	CAUCA	19142\n
+380	CORINTO	2018-11-10 17:07:16-05	2018-11-10 17:07:16-05	CAUCA	19212\n
+381	EL TAMBO	2018-11-10 17:07:44-05	2018-11-10 17:07:44-05	CAUCA	19256\n
+382	FLORENCIA 	2018-11-10 17:08:13-05	2018-11-10 17:08:13-05	CAUCA	19290\n
+383	GUACHENE	2018-11-10 17:08:36-05	2018-11-10 17:08:36-05	CAUCA	19300\n
+384	GUAPI	2018-11-10 17:08:54-05	2018-11-10 17:08:54-05	CAUCA	19318\n
+385	INZÁ	2018-11-10 17:09:10-05	2018-11-10 17:09:10-05	CAUCA	19355\n
+386	JAMBALÓ	2018-11-10 17:09:29-05	2018-11-10 17:09:29-05	CAUCA	19364\n
+387	LA SIERRA	2018-11-10 17:09:54-05	2018-11-10 17:09:54-05	CAUCA	19392\n
+388	LA VEGA	2018-11-10 17:10:23-05	2018-11-10 17:10:23-05	CAUCA	19397\n
+389	LÓPEZ	2018-11-10 17:13:40-05	2018-11-10 17:13:40-05	CAUCA	19418\n
+390	MERCADERES	2018-11-10 17:13:58-05	2018-11-10 17:13:58-05	CAUCA	19450\n
+391	MIRANDA	2018-11-10 17:14:14-05	2018-11-10 17:14:14-05	CAUCA	19455\n
+392	MORALES	2018-11-10 17:14:45-05	2018-11-10 17:14:45-05	CAUCA	19473\n
+393	PADILLA	2018-11-10 17:15:08-05	2018-11-10 17:15:08-05	CAUCA	19513\n
+394	PÁEZ	2018-11-10 17:15:24-05	2018-11-10 17:15:24-05	CAUCA	19517\n
+395	PATÍA	2018-11-10 17:15:44-05	2018-11-10 17:15:44-05	CAUCA	19532\n
+396	PIAMONTE	2018-11-10 17:16:04-05	2018-11-10 17:16:04-05	CAUCA	19533\n
+397	PIENDAMÓ	2018-11-10 17:16:23-05	2018-11-10 17:16:23-05	CAUCA	19548\n
+398	PUERTO TREJADA	2018-11-10 17:16:46-05	2018-11-10 17:16:46-05	CAUCA	19573\n
+399	PURACÉ	2018-11-10 17:17:18-05	2018-11-10 17:17:18-05	CAUCA	19585\n
+400	ROSAS	2018-11-10 17:17:38-05	2018-11-10 17:17:38-05	CAUCA	19622\n
+401	SAN SEBASTIÁN	2018-11-10 17:18:00-05	2018-11-10 17:18:00-05	CAUCA	19693\n
+402	SANTANDER DE QUILICHAO	2018-11-10 17:18:18-05	2018-11-10 17:18:18-05	CAUCA	19698\n
+403	SANTA ROSA	2018-11-10 17:18:41-05	2018-11-10 17:18:41-05	CAUCA	19701\n
+404	SILVIA	2018-11-10 17:19:19-05	2018-11-10 17:19:19-05	CAUCA	19743\n
+405	SOTARÁ	2018-11-10 17:19:43-05	2018-11-10 17:19:43-05	CAUCA	19760\n
+406	SUÁREZ	2018-11-10 17:19:58-05	2018-11-10 17:19:58-05	CAUCA	19780\n
+407	SUCRE	2018-11-10 17:20:16-05	2018-11-10 17:20:16-05	CAUCA	19785\n
+408	TIMBÍO	2018-11-10 17:20:53-05	2018-11-10 17:20:53-05	CAUCA	19807\n
+409	TIMBIQUÍ	2018-11-10 17:21:18-05	2018-11-10 17:21:18-05	CAUCA	19809\n
+410	TORIBÍO	2018-11-10 17:21:37-05	2018-11-10 17:21:37-05	CAUCA	19821\n
+411	TOTORÓ	2018-11-10 17:21:52-05	2018-11-10 17:21:52-05	CAUCA	19824\n
+412	VILLA RICA 	2018-11-10 17:22:22-05	2018-11-10 17:22:22-05	CAUCA	19845\n
+413	VALLEDUPAR	2018-11-10 17:22:56-05	2018-11-10 17:22:56-05	CESAR	20001\n
+414	AGUACHICA	2018-11-10 17:23:33-05	2018-11-10 17:23:33-05	CESAR	20011\n
+415	AGUSTÍN CODAZZI	2018-11-10 17:23:54-05	2018-11-10 17:23:54-05	CESAR	20013\n
+416	ASTREA	2018-11-10 17:24:10-05	2018-11-10 17:24:10-05	CESAR	20032\n
+417	BECERRIL	2018-11-10 17:24:29-05	2018-11-10 17:24:29-05	CESAR	20045\n
+418	BOSCONIA	2018-11-10 17:24:49-05	2018-11-10 17:24:49-05	CESAR	20060\n
+419	CHIMICHAGUA	2018-11-10 17:26:19-05	2018-11-10 17:26:19-05	CESAR	20175\n
+420	CHIRIGUANÁ	2018-11-10 17:26:41-05	2018-11-10 17:26:41-05	CESAR	20178\n
+421	CURUMANÍ	2018-11-10 17:27:01-05	2018-11-10 17:27:01-05	CESAR	20228\n
+422	EL COPEY	2018-11-10 17:27:21-05	2018-11-10 17:27:21-05	CESAR	20238\n
+423	EL PASO	2018-11-10 17:27:35-05	2018-11-10 17:27:35-05	CESAR	20250\n
+424	GAMARRA	2018-11-10 17:27:52-05	2018-11-10 17:27:52-05	CESAR	20295\n
+425	GONZÁLEZ	2018-11-10 17:28:19-05	2018-11-10 17:28:19-05	CESAR	20310\n
+426	LA GLORIA 	2018-11-10 17:28:34-05	2018-11-10 17:28:34-05	CESAR	20383\n
+427	LA JAGUA DE IBIRICO	2018-11-10 17:28:55-05	2018-11-10 17:28:55-05	CESAR	20400\n
+428	MANAURE	2018-11-10 17:29:16-05	2018-11-10 17:29:16-05	CESAR	20443\n
+429	PAILITAS	2018-11-10 17:29:37-05	2018-11-10 17:29:37-05	CESAR	20517\n
+430	PELAYA	2018-11-10 17:29:52-05	2018-11-10 17:29:52-05	CESAR	20550\n
+431	PUEBLO BELLO 	2018-11-10 17:30:05-05	2018-11-10 17:30:05-05	CESAR	20570\n
+432	RÍO DE ORO	2018-11-10 17:30:22-05	2018-11-10 17:30:22-05	CESAR	20614\n
+433	LA PAZ	2018-11-10 17:30:37-05	2018-11-10 17:30:37-05	CESAR	20621\n
+434	SAN ALBERTO	2018-11-10 17:30:55-05	2018-11-10 17:30:55-05	CESAR	20710\n
+435	SAN DIEGO	2018-11-10 17:31:08-05	2018-11-10 17:31:08-05	CESAR	20750\n
+436	SAN MARTÍN	2018-11-10 17:31:31-05	2018-11-10 17:31:31-05	CESAR	20770\n
+437	TAMALAMEQUE	2018-11-10 17:31:55-05	2018-11-10 17:31:55-05	CESAR	20787\n
+440	MONTERÍA	2018-11-10 17:33:13-05	2018-11-10 17:33:13-05	CÓRDOBA	23001\n
+441	AYAPEL	2018-11-10 17:34:16-05	2018-11-10 17:34:16-05	CÓRDOBA	23068\n
+442	BUENAVISTA	2018-11-10 17:34:45-05	2018-11-10 17:34:45-05	CÓRDOBA	23079\n
+443	CANALETE	2018-11-10 17:35:04-05	2018-11-10 17:35:04-05	CÓRDOBA	23090\n
+444	CERETÉ	2018-11-10 17:35:22-05	2018-11-10 17:35:22-05	CÓRDOBA	23162\n
+445	CHIMA	2018-11-10 17:35:33-05	2018-11-10 17:35:33-05	CÓRDOBA	23168\n
+446	CHINÚ	2018-11-10 17:35:45-05	2018-11-10 17:35:45-05	CÓRDOBA	23182\n
+447	CIÉNAGA DE ORO 	2018-11-10 17:36:01-05	2018-11-10 17:36:01-05	CÓRDOBA	23189\n
+448	COTORRA	2018-11-10 17:36:21-05	2018-11-10 17:36:21-05	CÓRDOBA	23300\n
+449	LA APARTADA	2018-11-10 17:38:20-05	2018-11-10 17:38:20-05	CÓRDOBA	23350\n
+450	LORICA	2018-11-10 17:38:40-05	2018-11-10 17:38:40-05	CÓRDOBA	23417\n
+451	LOS CÓRDOBAS	2018-11-10 17:38:59-05	2018-11-10 17:38:59-05	CÓRDOBA	23419\n
+452	MOMIL	2018-11-10 17:39:17-05	2018-11-10 17:39:17-05	CÓRDOBA	23464\n
+453	MONTELÍBANO	2018-11-10 17:39:33-05	2018-11-10 17:39:33-05	CÓRDOBA	23466\n
+454	MOÑITOS	2018-11-10 17:39:54-05	2018-11-10 17:39:54-05	CÓRDOBA	23500\n
+455	PLANETA RICA	2018-11-10 17:40:17-05	2018-11-10 17:40:17-05	CÓRDOBA	23555\n
+456	PUEBLO NUEVO	2018-11-10 17:41:51-05	2018-11-10 17:41:51-05	CÓRDOBA	23570\n
+457	PUERTO ESCONDIDO	2018-11-10 17:42:14-05	2018-11-10 17:42:14-05	CÓRDOBA	23574\n
+458	PUERTO LIBERTADOR	2018-11-10 17:42:25-05	2018-11-10 17:42:25-05	CÓRDOBA	23580\n
+459	PURÍSIMA	2018-11-10 17:42:43-05	2018-11-10 17:42:43-05	CÓRDOBA	23586\n
+460	SAHAGÚN	2018-11-10 17:43:09-05	2018-11-10 17:43:09-05	CÓRDOBA	23660\n
+461	SAN ANDRÉS DE SOTAVETO	2018-11-10 17:43:32-05	2018-11-10 17:43:32-05	CÓRDOBA	23670\n
+462	SAN ANTERO	2018-11-10 17:43:43-05	2018-11-10 17:43:43-05	CÓRDOBA	23672\n
+463	SAN BERNARDO DEL VIENTO	2018-11-10 17:44:07-05	2018-11-10 17:44:07-05	CÓRDOBA	23675\n
+464	SAN CARLOS	2018-11-10 17:44:26-05	2018-11-10 17:44:26-05	CÓRDOBA	23678\n
+465	SAN JOSE DE URE	2018-11-10 17:44:43-05	2018-11-10 17:44:43-05	CÓRDOBA	23682\n
+466	SAN PELAYO	2018-11-10 17:45:01-05	2018-11-10 17:45:01-05	CÓRDOBA	23686\n
+467	TIERRALTA	2018-11-10 17:45:27-05	2018-11-10 17:45:27-05	CÓRDOBA	23807\n
+468	TUCHIN	2018-11-10 17:45:46-05	2018-11-10 17:45:46-05	CÓRDOBA	23815\n
+469	VALENCIA	2018-11-10 17:45:59-05	2018-11-10 17:45:59-05	CÓRDOBA	23855\n
+472	AGUA DE DIOS	2018-11-10 17:47:50-05	2018-11-10 17:47:50-05	CUNDINAMARCA	25001\n
+473	ALBAN	2018-11-10 17:48:06-05	2018-11-10 17:48:06-05	CUNDINAMARCA	25019\n
+474	ANAPOIMA	2018-11-10 17:49:09-05	2018-11-10 17:49:09-05	CUNDINAMARCA	25035\n
+475	ANOLAIMA	2018-11-10 17:49:38-05	2018-11-10 17:49:38-05	CUNDINAMARCA	25040\n
+476	ARVBELÁEZ	2018-11-10 17:49:55-05	2018-11-10 17:49:55-05	CUNDINAMARCA	25053\n
+477	BELTRÁN	2018-11-10 17:50:15-05	2018-11-10 17:50:15-05	CUNDINAMARCA	25086\n
+478	BITUIMA	2018-11-10 17:50:30-05	2018-11-10 17:50:30-05	CUNDINAMARCA	25095\n
+479	BOJACÁ	2018-11-10 17:50:43-05	2018-11-10 17:50:43-05	CUNDINAMARCA	25099\n
+480	CABRERA	2018-11-10 17:51:01-05	2018-11-10 17:51:01-05	CUNDINAMARCA	25120\n
+481	CACHIPAY	2018-11-10 17:51:15-05	2018-11-10 17:51:15-05	CUNDINAMARCA	25123\n
+482	CAJICÁ	2018-11-10 17:51:28-05	2018-11-10 17:51:28-05	CUNDINAMARCA	25126\n
+483	CAPARRAPÍ	2018-11-10 17:51:49-05	2018-11-10 17:51:49-05	CUNDINAMARCA	25148\n
+484	CÁQUEZA	2018-11-10 17:52:09-05	2018-11-10 17:52:09-05	CUNDINAMARCA	25151\n
+485	CARMEN DE CARUPA	2018-11-10 17:52:26-05	2018-11-10 17:52:26-05	CUNDINAMARCA	25154\n
+486	CHAGUANÍ	2018-11-10 17:52:48-05	2018-11-10 17:52:48-05	CUNDINAMARCA	25168\n
+487	CHÍA	2018-11-10 17:53:06-05	2018-11-10 17:53:06-05	CUNDINAMARCA	25175\n
+488	CHIPAQUE	2018-11-10 17:53:19-05	2018-11-10 17:53:19-05	CUNDINAMARCA	25178\n
+489	CHOACHÍ	2018-11-10 17:53:46-05	2018-11-10 17:53:46-05	CUNDINAMARCA	25181\n
+490	CHOCONTÁ	2018-11-10 17:54:03-05	2018-11-10 17:54:03-05	CUNDINAMARCA	25183\n
+491	COGUA	2018-11-10 17:54:29-05	2018-11-10 17:54:29-05	CUNDINAMARCA	25200\n
+492	COTA	2018-11-10 17:54:41-05	2018-11-10 17:54:41-05	CUNDINAMARCA	25214\n
+493	CUCUNUBÁ	2018-11-10 17:54:59-05	2018-11-10 17:54:59-05	CUNDINAMARCA	25224\n
+494	EL COLEGIO 	2018-11-10 17:55:11-05	2018-11-10 17:55:11-05	CUNDINAMARCA	25245\n
+495	EL PEÑÓN	2018-11-10 17:55:29-05	2018-11-10 17:55:29-05	CUNDINAMARCA	25258\n
+496	EL ROSAL	2018-11-10 17:55:40-05	2018-11-10 17:55:40-05	CUNDINAMARCA	25260\n
+497	FACATATIVÁ	2018-11-10 17:56:09-05	2018-11-10 17:56:09-05	CUNDINAMARCA	25269\n
+498	FÓMEQUE	2018-11-10 17:56:24-05	2018-11-10 17:56:24-05	CUNDINAMARCA	25279\n
+499	FOSCA	2018-11-10 17:56:36-05	2018-11-10 17:56:36-05	CUNDINAMARCA	25281\n
+500	FUNZA	2018-11-10 17:56:45-05	2018-11-10 17:56:45-05	CUNDINAMARCA	25286\n
+501	FÚGUENE	2018-11-10 17:56:59-05	2018-11-10 17:56:59-05	CUNDINAMARCA	25288\n
+502	FUSAGASUGÁ	2018-11-10 17:57:15-05	2018-11-10 17:57:15-05	CUNDINAMARCA	25290\n
+503	GACHALÁ	2018-11-10 17:57:32-05	2018-11-10 17:57:32-05	CUNDINAMARCA	25293\n
+504	GACHANCUPÁ	2018-11-10 17:57:44-05	2018-11-10 17:57:44-05	CUNDINAMARCA	25295\n
+505	GACHETÁ	2018-11-10 17:57:59-05	2018-11-10 17:57:59-05	CUNDINAMARCA	25297\n
+506	GAMA	2018-11-10 17:58:09-05	2018-11-10 17:58:09-05	CUNDINAMARCA	25299\n
+507	GIRARDOT	2018-11-10 17:58:23-05	2018-11-10 17:58:23-05	CUNDINAMARCA	25307\n
+508	GRANADA	2018-11-10 17:58:35-05	2018-11-10 17:58:35-05	CUNDINAMARCA	25312\n
+509	GUACHETÁ	2018-11-10 17:58:49-05	2018-11-10 17:58:49-05	CUNDINAMARCA	25317\n
+510	GUADUAS	2018-11-10 17:59:03-05	2018-11-10 17:59:03-05	CUNDINAMARCA	25320\n
+511	GUASCA	2018-11-10 17:59:12-05	2018-11-10 17:59:12-05	CUNDINAMARCA	25322\n
+512	GUATAQUÍ	2018-11-10 17:59:27-05	2018-11-10 17:59:27-05	CUNDINAMARCA	25324\n
+513	GUATAVITA	2018-11-10 17:59:37-05	2018-11-10 17:59:37-05	CUNDINAMARCA	25326\n
+514	GUAYABAL DE SÍGUIMA	2018-11-10 17:59:59-05	2018-11-10 17:59:59-05	CUNDINAMARCA	25328\n
+515	GUYABETAL	2018-11-10 18:00:16-05	2018-11-10 18:00:16-05	CUNDINAMARCA	25335\n
+516	GUTIÉRREZ	2018-11-10 18:00:35-05	2018-11-10 18:00:35-05	CUNDINAMARCA	25339\n
+517	JERUSALÉN	2018-11-10 18:00:53-05	2018-11-10 18:00:53-05	CUNDINAMARCA	25368\n
+518	JUNÍN	2018-11-10 18:01:06-05	2018-11-10 18:01:06-05	CUNDINAMARCA	25372\n
+519	LA CALERA	2018-11-10 18:01:17-05	2018-11-10 18:01:17-05	CUNDINAMARCA	25377\n
+520	LA MESA	2018-11-10 18:01:31-05	2018-11-10 18:01:31-05	CUNDINAMARCA	25386\n
+521	LA PALMA	2018-11-10 18:01:46-05	2018-11-10 18:01:46-05	CUNDINAMARCA	25394\n
+522	LA PEÑA	2018-11-10 18:01:57-05	2018-11-10 18:01:57-05	CUNDINAMARCA	25398\n
+523	LA VEGA	2018-11-10 18:02:13-05	2018-11-10 18:02:13-05	CUNDINAMARCA	25402\n
+524	LENGUAZAQUE	2018-11-10 18:02:53-05	2018-11-10 18:02:53-05	CUNDINAMARCA	25407\n
+525	MACHETÁ	2018-11-10 18:03:11-05	2018-11-10 18:03:11-05	CUNDINAMARCA	25426\n
+526	MADRID	2018-11-10 18:03:26-05	2018-11-10 18:03:26-05	CUNDINAMARCA	25430\n
+527	MANTA	2018-11-10 18:03:42-05	2018-11-10 18:03:42-05	CUNDINAMARCA	25436\n
+528	MEDINA	2018-11-10 18:05:21-05	2018-11-10 18:05:21-05	CUNDINAMARCA	25438\n
+529	MOSQUERA	2018-11-10 18:05:39-05	2018-11-10 18:05:39-05	CUNDINAMARCA	25473\n
+530	NARIÑO	2018-11-10 18:05:53-05	2018-11-10 18:05:53-05	CUNDINAMARCA	25483\n
+531	NEMOCÓN	2018-11-10 18:06:05-05	2018-11-10 18:06:05-05	CUNDINAMARCA	25486\n
+532	NILO	2018-11-10 18:06:21-05	2018-11-10 18:06:21-05	CUNDINAMARCA	25488\n
+533	NIMAIMA	2018-11-10 18:06:38-05	2018-11-10 18:06:38-05	CUNDINAMARCA	25489\n
+534	NICAIMA	2018-11-10 18:06:55-05	2018-11-10 18:06:55-05	CUNDINAMARCA	25491\n
+535	VENECIA	2018-11-10 18:07:33-05	2018-11-10 18:07:33-05	CUNDINAMARCA	25506\n
+536	PACHO	2018-11-10 18:07:42-05	2018-11-10 18:07:42-05	CUNDINAMARCA	25513\n
+537	PAIME	2018-11-10 18:07:53-05	2018-11-10 18:07:53-05	CUNDINAMARCA	25518\n
+538	PANDI	2018-11-10 18:08:12-05	2018-11-10 18:08:12-05	CUNDINAMARCA	25524\n
+539	PARATEBUENO	2018-11-10 18:08:26-05	2018-11-10 18:08:26-05	CUNDINAMARCA	25530\n
+540	PASCA	2018-11-10 18:08:36-05	2018-11-10 18:08:36-05	CUNDINAMARCA	25535\n
+541	PUERTO SALGAR	2018-11-10 18:08:54-05	2018-11-10 18:08:54-05	CUNDINAMARCA	25572\n
+542	PULÍ	2018-11-10 18:09:11-05	2018-11-10 18:09:11-05	CUNDINAMARCA	25580\n
+543	QUEBRADANEGRA	2018-11-10 18:09:32-05	2018-11-10 18:09:32-05	CUNDINAMARCA	25592\n
+544	QUETAME	2018-11-10 18:09:47-05	2018-11-10 18:09:47-05	CUNDINAMARCA	25594\n
+545	QUÍPILE	2018-11-10 18:10:04-05	2018-11-10 18:10:04-05	CUNDINAMARCA	25596\n
+546	APULO	2018-11-10 18:10:20-05	2018-11-10 18:10:20-05	CUNDINAMARCA	25599\n
+548	RICAURTE	2018-11-10 18:11:43-05	2018-11-10 18:11:43-05	CUNDINAMARCA	25612\n
+549	SAN ANTONIO DE TEQUENDAMA	2018-11-10 18:12:00-05	2018-11-10 18:12:00-05	CUNDINAMARCA	25645\n
+550	SAN BERARDO	2018-11-10 18:12:17-05	2018-11-10 18:12:17-05	CUNDINAMARCA	25649\n
+551	SAN CAYETANO	2018-11-10 18:12:32-05	2018-11-10 18:12:32-05	CUNDINAMARCA	25653\n
+552	SAN FRANCISCO	2018-11-10 18:12:45-05	2018-11-10 18:12:45-05	CUNDINAMARCA	25658\n
+553	SAN JUAN DE RIOSECO	2018-11-10 18:13:05-05	2018-11-10 18:13:05-05	CUNDINAMARCA	25662\n
+554	SASAIMA	2018-11-10 18:13:24-05	2018-11-10 18:13:24-05	CUNDINAMARCA	25718\n
+555	SESQUILÉ	2018-11-10 18:13:39-05	2018-11-10 18:13:39-05	CUNDINAMARCA	25736\n
+556	SIBATÉ	2018-11-10 18:13:52-05	2018-11-10 18:13:52-05	CUNDINAMARCA	25740\n
+557	SILVANIA	2018-11-10 18:14:01-05	2018-11-10 18:14:01-05	CUNDINAMARCA	25743\n
+558	SIMIJACA	2018-11-10 18:14:19-05	2018-11-10 18:14:19-05	CUNDINAMARCA	25745\n
+559	SOACHA	2018-11-10 18:14:31-05	2018-11-10 18:14:31-05	CUNDINAMARCA	25754\n
+560	SOPÓ	2018-11-10 18:14:44-05	2018-11-10 18:14:44-05	CUNDINAMARCA	25758\n
+561	SUBACHOQUE	2018-11-10 18:15:11-05	2018-11-10 18:15:11-05	CUNDINAMARCA	25769\n
+562	SUESCA	2018-11-10 18:15:22-05	2018-11-10 18:15:22-05	CUNDINAMARCA	25772\n
+563	SUPATÁ	2018-11-10 18:15:36-05	2018-11-10 18:15:36-05	CUNDINAMARCA	25777\n
+564	SUSA	2018-11-10 18:15:44-05	2018-11-10 18:15:44-05	CUNDINAMARCA	25779\n
+565	SUTATAUSA	2018-11-10 18:16:00-05	2018-11-10 18:16:00-05	CUNDINAMARCA	25781\n
+566	TABIO	2018-11-10 18:16:17-05	2018-11-10 18:16:17-05	CUNDINAMARCA	25785\n
+567	TAUSA	2018-11-10 18:16:28-05	2018-11-10 18:16:28-05	CUNDINAMARCA	25793\n
+568	TENA	2018-11-10 18:16:37-05	2018-11-10 18:16:37-05	CUNDINAMARCA	25797\n
+569	TENJO	2018-11-10 18:16:45-05	2018-11-10 18:16:45-05	CUNDINAMARCA	25799\n
+570	TIBACUY	2018-11-10 18:17:03-05	2018-11-10 18:17:03-05	CUNDINAMARCA	25805\n
+571	TIBIRITA	2018-11-10 18:17:24-05	2018-11-10 18:17:24-05	CUNDINAMARCA	25807\n
+572	TOCAIMA	2018-11-10 18:17:34-05	2018-11-10 18:17:34-05	CUNDINAMARCA	25815\n
+573	TOCANCIPÁ	2018-11-10 18:17:44-05	2018-11-10 18:17:44-05	CUNDINAMARCA	25817\n
+574	TOPAIPÍ	2018-11-10 18:18:13-05	2018-11-10 18:18:13-05	CUNDINAMARCA	25823\n
+575	UBALÁ	2018-11-10 18:18:39-05	2018-11-10 18:18:39-05	CUNDINAMARCA	25839\n
+576	UBAQUE	2018-11-10 18:18:54-05	2018-11-10 18:18:54-05	CUNDINAMARCA	25841\n
+577	UBATÉ	2018-11-10 18:19:20-05	2018-11-10 18:19:20-05	CUNDINAMARCA	25843\n
+578	UNE	2018-11-10 18:19:29-05	2018-11-10 18:19:29-05	CUNDINAMARCA	25845\n
+579	ÚTICA	2018-11-10 18:19:47-05	2018-11-10 18:19:47-05	CUNDINAMARCA	25851\n
+580	VERGARA	2018-11-10 18:20:04-05	2018-11-10 18:20:04-05	CUNDINAMARCA	25862\n
+581	VIANÍ	2018-11-10 18:20:21-05	2018-11-10 18:20:21-05	CUNDINAMARCA	25867\n
+582	VILLAGÓMEZ	2018-11-10 18:20:56-05	2018-11-10 18:20:56-05	CUNDINAMARCA	25871\n
+583	VILLAPINZÓN	2018-11-10 18:21:09-05	2018-11-10 18:21:09-05	CUNDINAMARCA	25873\n
+584	VILLETA	2018-11-10 18:21:18-05	2018-11-10 18:21:18-05	CUNDINAMARCA	25875\n
+585	VIOTÁ	2018-11-10 18:21:33-05	2018-11-10 18:21:33-05	CUNDINAMARCA	25878\n
+586	YACOPÍ	2018-11-10 18:21:56-05	2018-11-10 18:21:56-05	CUNDINAMARCA	25885\n
+587	ZIPACÓN	2018-11-10 18:22:16-05	2018-11-10 18:22:16-05	CUNDINAMARCA	25898\n
+588	ZIPAQUIRA	2018-11-10 18:23:02-05	2018-11-10 18:23:02-05	CUNDINAMARCA	25899\n
+589	QUIBDO	2018-11-13 16:40:30-05	2018-11-13 16:40:30-05	CHOCÓ	27001\n
+590	ACANDÍ	2018-11-13 16:40:47-05	2018-11-13 16:40:47-05	CHOCÓ	27006\n
+591	ALTO BAUDÓ	2018-11-13 16:41:45-05	2018-11-13 16:41:45-05	CHOCÓ	27025\n
+592	ATRATO	2018-11-13 16:42:11-05	2018-11-13 16:42:11-05	CHOCÓ	27050\n
+593	BAGADÓ	2018-11-13 16:42:25-05	2018-11-13 16:42:25-05	CHOCÓ	27073\n
+594	BAHÍA SOLANO	2018-11-13 16:42:40-05	2018-11-13 16:42:40-05	CHOCÓ	27075\n
+595	BAJO BAUDÓ	2018-11-13 16:42:56-05	2018-11-13 16:42:56-05	CHOCÓ	27077\n
+596	BOJAYÁ	2018-11-13 16:43:10-05	2018-11-13 16:43:10-05	CHOCÓ	27099\n
+597	CANTÓN DEL SAN PABLO 	2018-11-13 16:43:35-05	2018-11-13 16:43:35-05	CHOCÓ	27135\n
+598	CARMEN DEL DARIEN 	2018-11-13 16:43:52-05	2018-11-13 16:43:52-05	CHOCÓ	27150\n
+599	CERTEGUI	2018-11-13 16:44:05-05	2018-11-13 16:44:05-05	CHOCÓ	27160\n
+600	CONDOTO	2018-11-13 16:44:20-05	2018-11-13 16:44:20-05	CHOCÓ	27205\n
+601	EL CARMEN DE ATRATO	2018-11-13 16:44:37-05	2018-11-13 16:44:37-05	CHOCÓ	27245\n
+602	LITORIAL DEL BAJO SAN JUAN 	2018-11-13 16:44:54-05	2018-11-13 16:44:54-05	CHOCÓ	27250\n
+603	ISTMINA	2018-11-13 16:45:31-05	2018-11-13 16:45:31-05	CHOCÓ	27361\n
+604	JURADÓ	2018-11-13 16:45:56-05	2018-11-13 16:45:56-05	CHOCÓ	27372\n
+605	LLORÓ	2018-11-13 16:46:10-05	2018-11-13 16:46:10-05	CHOCÓ	27413\n
+606	MEDIO ATRATO	2018-11-13 16:46:24-05	2018-11-13 16:46:24-05	CHOCÓ	27425\n
+607	MEDIO BAUDO	2018-11-13 16:46:37-05	2018-11-13 16:46:37-05	CHOCÓ	27430\n
+608	MEDIO SAN JUAN 	2018-11-13 16:46:48-05	2018-11-13 16:46:48-05	CHOCÓ	27450\n
+609	NÓVITA	2018-11-13 16:47:05-05	2018-11-13 16:47:05-05	CHOCÓ	27491\n
+610	NUQUÍ	2018-11-13 16:47:24-05	2018-11-13 16:47:24-05	CHOCÓ	27495\n
+611	RÍO IRO	2018-11-13 16:47:45-05	2018-11-13 16:47:45-05	CHOCÓ	27580\n
+612	RÍO QUITO	2018-11-13 16:47:58-05	2018-11-13 16:47:58-05	CHOCÓ	27600\n
+613	RIOSUCIO	2018-11-13 16:48:09-05	2018-11-13 16:48:09-05	CHOCÓ	27615\n
+614	SAN JOSÉ DEL PALMAR	2018-11-13 16:48:25-05	2018-11-13 16:48:25-05	CHOCÓ	27660\n
+615	SIPÍ	2018-11-13 16:48:36-05	2018-11-13 16:48:36-05	CHOCÓ	27745\n
+616	TADÓ	2018-11-13 16:48:51-05	2018-11-13 16:48:51-05	CHOCÓ	27787\n
+617	UNGUÍA	2018-11-13 16:49:07-05	2018-11-13 16:49:07-05	CHOCÓ	27800\n
+618	UNION PANAMERICANA	2018-11-13 16:49:21-05	2018-11-13 16:49:21-05	CHOCÓ	27810\n
+619	NEIVA	2018-11-13 16:49:44-05	2018-11-13 16:49:44-05	HUILA	41001\n
+620	ACEVEDO	2018-11-13 16:50:01-05	2018-11-13 16:50:01-05	HUILA	41006\n
+621	AGRADO	2018-11-13 16:56:00-05	2018-11-13 16:56:00-05	HUILA	41013\n
+622	AIPE	2018-11-13 16:56:13-05	2018-11-13 16:56:13-05	HUILA	41016\n
+623	ALGECIRAS	2018-11-13 16:56:26-05	2018-11-13 16:56:26-05	HUILA	41020\n
+624	ALTAMIRA	2018-11-13 16:56:36-05	2018-11-13 16:56:36-05	HUILA	41026\n
+625	BARAYA	2018-11-13 16:56:51-05	2018-11-13 16:56:51-05	HUILA	41078\n
+626	CAMPOALEGRE	2018-11-13 16:57:08-05	2018-11-13 16:57:08-05	HUILA	41132\n
+627	COLOMBIA	2018-11-13 16:57:23-05	2018-11-13 16:57:23-05	HUILA	41206\n
+628	ELÍAS	2018-11-13 16:57:36-05	2018-11-13 16:57:36-05	HUILA	41244\n
+629	GARZÓN	2018-11-13 16:57:47-05	2018-11-13 16:57:47-05	HUILA	41298\n
+630	GIGANTE	2018-11-13 16:58:00-05	2018-11-13 16:58:00-05	HUILA	41306\n
+631	GUADALUPE	2018-11-13 16:58:12-05	2018-11-13 16:58:12-05	HUILA	41319\n
+632	HOBO	2018-11-13 16:58:33-05	2018-11-13 16:58:33-05	HUILA	41349\n
+633	IQUIRA	2018-11-13 16:58:54-05	2018-11-13 16:58:54-05	HUILA	41357\n
+634	ISNOS	2018-11-13 16:59:05-05	2018-11-13 16:59:05-05	HUILA	41359\n
+635	LA ARGENTINA	2018-11-13 16:59:15-05	2018-11-13 16:59:15-05	HUILA	41378\n
+636	LA PLATA	2018-11-13 16:59:27-05	2018-11-13 16:59:27-05	HUILA	41396\n
+637	NÁTAGA	2018-11-13 17:00:05-05	2018-11-13 17:00:05-05	HUILA	41483\n
+638	OPORAPA	2018-11-13 17:00:40-05	2018-11-13 17:00:40-05	HUILA	41503\n
+639	PAICOL	2018-11-13 17:00:51-05	2018-11-13 17:00:51-05	HUILA	41518\n
+640	PALERMO	2018-11-13 17:01:01-05	2018-11-13 17:01:01-05	HUILA	41524\n
+641	PALESTINA	2018-11-13 17:01:15-05	2018-11-13 17:01:15-05	HUILA	41530\n
+642	PITAL	2018-11-13 17:01:35-05	2018-11-13 17:01:35-05	HUILA	41548\n
+643	PITALITO	2018-11-13 17:01:45-05	2018-11-13 17:01:45-05	HUILA	41551\n
+644	RIVERA	2018-11-13 17:02:01-05	2018-11-13 17:02:01-05	HUILA	41615\n
+645	SALADOBLANCO	2018-11-13 17:02:12-05	2018-11-13 17:02:12-05	HUILA	41660\n
+646	SAN AGUSTÍN	2018-11-13 17:02:26-05	2018-11-13 17:02:26-05	HUILA	41668\n
+647	SAN MARÍA	2018-11-13 17:02:39-05	2018-11-13 17:02:39-05	HUILA	41676\n
+648	SUAZA	2018-11-13 17:02:51-05	2018-11-13 17:02:51-05	HUILA	41770\n
+649	TARQUI	2018-11-13 17:03:04-05	2018-11-13 17:03:04-05	HUILA	41791\n
+650	TESALIA	2018-11-13 17:03:15-05	2018-11-13 17:03:15-05	HUILA	41797\n
+651	TELLO	2018-11-13 17:03:23-05	2018-11-13 17:03:23-05	HUILA	41799\n
+652	TERUEL	2018-11-13 17:03:35-05	2018-11-13 17:03:35-05	HUILA	41801\n
+653	TIMANÁ	2018-11-13 17:03:46-05	2018-11-13 17:03:46-05	HUILA	41807\n
+654	VILLAVIEJA	2018-11-13 17:04:01-05	2018-11-13 17:04:01-05	HUILA	41872\n
+655	YAGUARÁ	2018-11-13 17:04:14-05	2018-11-13 17:04:14-05	HUILA	41885\n
+656	RIOHACHA	2018-11-13 17:08:35-05	2018-11-13 17:08:35-05	LA GUAJIRA	44001\n
+657	ALBANIA	2018-11-13 17:08:48-05	2018-11-13 17:08:48-05	LA GUAJIRA	44035\n
+658	BARRANCAS	2018-11-13 17:09:01-05	2018-11-13 17:09:01-05	LA GUAJIRA	44078\n
+659	DIBULLA	2018-11-13 17:09:15-05	2018-11-13 17:09:15-05	LA GUAJIRA	44090\n
+660	DISTRACCION	2018-11-13 17:09:26-05	2018-11-13 17:09:26-05	LA GUAJIRA	44098\n
+661	EL MOLINO	2018-11-13 17:09:37-05	2018-11-13 17:09:37-05	LA GUAJIRA	44110\n
+662	FONSECA	2018-11-13 17:09:47-05	2018-11-13 17:09:47-05	LA GUAJIRA	44219\n
+663	HATONUEVO	2018-11-13 17:10:00-05	2018-11-13 17:10:00-05	LA GUAJIRA	44378\n
+664	LA JAGUA DEL PILAR	2018-11-13 17:10:18-05	2018-11-13 17:10:18-05	LA GUAJIRA	44420\n
+665	MAICAO	2018-11-13 17:10:34-05	2018-11-13 17:10:34-05	LA GUAJIRA	44430\n
+666	MANAURE	2018-11-13 17:10:46-05	2018-11-13 17:10:46-05	LA GUAJIRA	44560\n
+667	SAN JUAN DEL CESAR	2018-11-13 17:11:01-05	2018-11-13 17:11:01-05	LA GUAJIRA	44650\n
+668	URBITA	2018-11-13 17:11:17-05	2018-11-13 17:11:17-05	LA GUAJIRA	44847\n
+669	URUMITA	2018-11-13 17:11:29-05	2018-11-13 17:11:29-05	LA GUAJIRA	44855\n
+670	VILLANUEVA	2018-11-13 17:11:41-05	2018-11-13 17:11:41-05	LA GUAJIRA	44874\n
+671	SANTA MARTA	2018-11-13 17:12:13-05	2018-11-13 17:12:13-05	MAGDALENA	47001\n
+672	ALGARROBO	2018-11-13 17:12:42-05	2018-11-13 17:12:42-05	MAGDALENA	47030\n
+673	ARACATACA	2018-11-13 17:12:53-05	2018-11-13 17:12:53-05	MAGDALENA	47053\n
+674	ARIGUANÍ	2018-11-13 17:13:07-05	2018-11-13 17:13:07-05	MAGDALENA	47058\n
+675	CERRO SAN ANTONIO	2018-11-13 17:13:22-05	2018-11-13 17:13:22-05	MAGDALENA	47161\n
+676	CHIVOLÓ	2018-11-13 17:13:34-05	2018-11-13 17:13:34-05	MAGDALENA	47170\n
+677	CIÉNAGA	2018-11-13 17:13:48-05	2018-11-13 17:13:48-05	MAGDALENA	47189\n
+678	CONCORDIA	2018-11-13 17:14:05-05	2018-11-13 17:14:05-05	MAGDALENA	47205\n
+679	EL BANCO	2018-11-13 17:14:16-05	2018-11-13 17:14:16-05	MAGDALENA	47245\n
+680	EL PIÑÓN	2018-11-13 17:14:38-05	2018-11-13 17:14:38-05	MAGDALENA	47258\n
+681	EL RETÉN	2018-11-13 17:14:52-05	2018-11-13 17:14:52-05	MAGDALENA	47268\n
+682	FUNDACIÓN	2018-11-13 17:15:05-05	2018-11-13 17:15:05-05	MAGDALENA	47288\n
+683	GUAMAL	2018-11-13 17:15:17-05	2018-11-13 17:15:17-05	MAGDALENA	47318\n
+684	NUEVA GRANADA 	2018-11-13 17:15:36-05	2018-11-13 17:15:36-05	MAGDALENA	47460\n
+685	PEDRAZA 	2018-11-13 17:15:58-05	2018-11-13 17:15:58-05	MAGDALENA	47541\n
+686	PIJINO DEL CARMEN	2018-11-13 17:16:13-05	2018-11-13 17:16:13-05	MAGDALENA	47545\n
+687	PIVIJAY	2018-11-13 17:16:28-05	2018-11-13 17:16:28-05	MAGDALENA	47551\n
+688	PLATO	2018-11-13 17:16:39-05	2018-11-13 17:16:39-05	MAGDALENA	47555\n
+689	PUEBLO VIEJO	2018-11-13 17:16:50-05	2018-11-13 17:16:50-05	MAGDALENA	47570\n
+690	REMOLINO	2018-11-13 17:17:05-05	2018-11-13 17:17:05-05	MAGDALENA	47605\n
+691	SABANAS DE SAN ÁNGEL	2018-11-13 17:17:18-05	2018-11-13 17:17:18-05	MAGDALENA	47660\n
+692	SALAMINA	2018-11-13 17:17:32-05	2018-11-13 17:17:32-05	MAGDALENA	47675\n
+693	SAN SEBASTIAN DE BUENA VISTA	2018-11-13 17:17:46-05	2018-11-13 17:17:46-05	MAGDALENA	47692\n
+694	SAN ZENÓN	2018-11-13 17:18:00-05	2018-11-13 17:18:00-05	MAGDALENA	47703\n
+695	SANTA ANA	2018-11-13 17:18:11-05	2018-11-13 17:18:11-05	MAGDALENA	47707\n
+696	SANTA BARBARA DE PINTO	2018-11-13 17:18:24-05	2018-11-13 17:18:24-05	MAGDALENA	47720\n
+697	SITIONUEVO	2018-11-13 17:18:35-05	2018-11-13 17:18:35-05	MAGDALENA	47745\n
+698	TENERIFE	2018-11-13 17:18:50-05	2018-11-13 17:18:50-05	MAGDALENA	47798\n
+699	ZAPAYÁN	2018-11-13 17:19:21-05	2018-11-13 17:19:21-05	MAGDALENA	47960\n
+700	ZONA BANANERA	2018-11-13 17:19:33-05	2018-11-13 17:19:33-05	MAGDALENA	47980\n
+701	VILLAVICENCIO	2018-11-13 17:20:11-05	2018-11-13 17:20:11-05	META	50001\n
+702	ACACÍAS	2018-11-13 17:20:32-05	2018-11-13 17:20:32-05	META	50006\n
+703	BARRANCA DE UPÍA	2018-11-13 17:22:04-05	2018-11-13 17:22:04-05	META	50110\n
+704	CABUYARO	2018-11-13 17:24:17-05	2018-11-13 17:24:17-05	META	50124\n
+705	CASTILLA LA NUEVA	2018-11-13 17:24:30-05	2018-11-13 17:24:30-05	META	50150\n
+706	CUBARRAL	2018-11-13 17:24:52-05	2018-11-13 17:24:52-05	META	50223\n
+707	CUMARAL	2018-11-13 17:25:41-05	2018-11-13 17:25:41-05	META	50226\n
+708	EL CALVARIO	2018-11-13 17:26:19-05	2018-11-13 17:26:19-05	META	50245\n
+709	EL CASTILLO	2018-11-13 17:26:29-05	2018-11-13 17:26:29-05	META	50251\n
+710	EL DORADO	2018-11-13 17:26:42-05	2018-11-13 17:26:42-05	META	50270\n
+711	FUENTE DE ORO	2018-11-13 17:27:05-05	2018-11-13 17:27:05-05	META	50287\n
+712	GRANADA	2018-11-13 17:27:17-05	2018-11-13 17:27:17-05	META	50313\n
+713	GUAMAL	2018-11-13 17:27:28-05	2018-11-13 17:27:28-05	META	50318\n
+714	MAPIRIPÁN	2018-11-13 17:27:50-05	2018-11-13 17:27:50-05	META	50325\n
+715	MESETAS	2018-11-13 17:27:59-05	2018-11-13 17:27:59-05	META	50330\n
+716	LA MACARENA	2018-11-13 17:28:11-05	2018-11-13 17:28:11-05	META	50350\n
+717	URIBE	2018-11-13 17:28:46-05	2018-11-13 17:28:46-05	META	50370\n
+718	LEJANÍAS	2018-11-13 17:29:12-05	2018-11-13 17:29:12-05	META	50400\n
+719	PUERTO CONCORDIA	2018-11-13 17:29:26-05	2018-11-13 17:29:26-05	META	50450\n
+720	PUERTO GAITÁN	2018-11-13 17:29:42-05	2018-11-13 17:29:42-05	META	50568\n
+721	PUERTO LÓPEZ	2018-11-13 17:29:55-05	2018-11-13 17:29:55-05	META	50573\n
+722	PUERTO LLERAS	2018-11-13 17:30:06-05	2018-11-13 17:30:06-05	META	50577\n
+723	PUERTO RICO	2018-11-13 17:30:15-05	2018-11-13 17:30:15-05	META	50590\n
+724	RESTREPO	2018-11-13 17:30:31-05	2018-11-13 17:30:31-05	META	50606\n
+725	SAN CARLOS DE GUAROA	2018-11-13 17:30:50-05	2018-11-13 17:30:50-05	META	50680\n
+726	SAN JUAN DE ARAMA	2018-11-13 17:31:01-05	2018-11-13 17:31:01-05	META	50683\n
+727	SAN JUANITO	2018-11-13 17:31:16-05	2018-11-13 17:31:16-05	META	50686\n
+728	SAN MARTÍN 	2018-11-13 17:31:31-05	2018-11-13 17:31:31-05	META	50689\n
+729	VISTA HERMOSA	2018-11-13 17:31:43-05	2018-11-13 17:31:43-05	META	50711\n
+730	PASTO	2018-11-13 17:32:03-05	2018-11-13 17:32:03-05	NARIÑO 	52001\n
+731	ALBÁN	2018-11-13 17:32:31-05	2018-11-13 17:32:31-05	NARIÑO 	52019\n
+732	ALDANA	2018-11-13 17:32:41-05	2018-11-13 17:32:41-05	NARIÑO 	52022\n
+733	ANCUYÁ	2018-11-13 17:32:54-05	2018-11-13 17:32:54-05	NARIÑO 	52036\n
+734	ARBOLEDA	2018-11-13 17:33:11-05	2018-11-13 17:33:11-05	NARIÑO 	52051\n
+735	BARBACOAS 	2018-11-13 17:33:30-05	2018-11-13 17:33:30-05	NARIÑO 	52079\n
+736	BELÉN	2018-11-13 17:33:47-05	2018-11-13 17:33:47-05	NARIÑO 	52083\n
+737	BUESACO	2018-11-13 17:34:00-05	2018-11-13 17:34:00-05	NARIÑO 	52110\n
+738	COLÓN	2018-11-13 17:34:18-05	2018-11-13 17:34:18-05	NARIÑO 	52203\n
+739	CONSACÁ	2018-11-13 17:34:40-05	2018-11-13 17:34:40-05	NARIÑO 	52207\n
+740	CONTADERO	2018-11-13 17:34:53-05	2018-11-13 17:34:53-05	NARIÑO 	52210\n
+741	CÓRDOBA	2018-11-13 17:35:05-05	2018-11-13 17:35:05-05	NARIÑO 	52215\n
+742	CUASPUD	2018-11-13 17:35:24-05	2018-11-13 17:35:24-05	NARIÑO 	52224\n
+743	CUMBAL	2018-11-13 17:44:52-05	2018-11-13 17:44:52-05	NARIÑO 	52227\n
+744	CUMBITARA	2018-11-13 17:56:53-05	2018-11-13 17:56:53-05	NARIÑO 	52233\n
+745	CHACHAGUÍ	2018-11-13 17:58:48-05	2018-11-13 17:58:48-05	NARIÑO 	52240\n
+746	EL CHARCO 	2018-11-13 17:58:59-05	2018-11-13 17:58:59-05	NARIÑO 	52250\n
+747	EL PEÑOL	2018-11-13 17:59:08-05	2018-11-13 17:59:08-05	NARIÑO 	52254\n
+748	EL ROSARIO	2018-11-13 17:59:16-05	2018-11-13 17:59:16-05	NARIÑO 	52256\n
+749	EL TABLÓN	2018-11-13 17:59:28-05	2018-11-13 17:59:28-05	NARIÑO 	52258\n
+750	EL TAMBO	2018-11-13 17:59:38-05	2018-11-13 17:59:38-05	NARIÑO 	52260\n
+751	FUNES	2018-11-13 17:59:48-05	2018-11-13 17:59:48-05	NARIÑO 	52287\n
+752	GUACHUCAL	2018-11-13 18:00:04-05	2018-11-13 18:00:04-05	NARIÑO 	52317\n
+753	GUAITARILLA	2018-11-13 18:00:21-05	2018-11-13 18:00:21-05	NARIÑO 	52320\n
+754	GUALMATÁN	2018-11-13 18:00:34-05	2018-11-13 18:00:34-05	NARIÑO 	52323\n
+755	ILES	2018-11-13 18:00:47-05	2018-11-13 18:00:47-05	NARIÑO 	52352\n
+756	IMUÉS	2018-11-13 18:01:04-05	2018-11-13 18:01:04-05	NARIÑO 	52354\n
+757	IPIALES	2018-11-13 18:01:28-05	2018-11-13 18:01:28-05	NARIÑO 	52356\n
+758	LA CRUZ	2018-11-13 18:01:37-05	2018-11-13 18:01:37-05	NARIÑO 	52378\n
+759	LA FLORIDA	2018-11-13 18:01:47-05	2018-11-13 18:01:47-05	NARIÑO 	52381\n
+760	LA LLANADA	2018-11-13 18:02:11-05	2018-11-13 18:02:11-05	NARIÑO 	52385\n
+761	LA TOLA	2018-11-13 18:02:22-05	2018-11-13 18:02:22-05	NARIÑO 	52390\n
+762	LA UNIÓN	2018-11-13 18:02:34-05	2018-11-13 18:02:34-05	NARIÑO 	52399\n
+763	LEIVA	2018-11-13 18:02:45-05	2018-11-13 18:02:45-05	NARIÑO 	52405\n
+764	LINARES	2018-11-13 18:02:55-05	2018-11-13 18:02:55-05	NARIÑO 	52411\n
+765	LOS ANDES	2018-11-13 18:03:04-05	2018-11-13 18:03:04-05	NARIÑO 	52418\n
+766	MAGUÍ	2018-11-13 18:03:15-05	2018-11-13 18:03:15-05	NARIÑO 	52427\n
+767	MALLAMA	2018-11-13 18:03:27-05	2018-11-13 18:03:27-05	NARIÑO 	52435\n
+768	MOSQUERA	2018-11-13 18:03:38-05	2018-11-13 18:03:38-05	NARIÑO 	52473\n
+769	NARIÑO	2018-11-13 18:03:49-05	2018-11-13 18:03:49-05	NARIÑO 	52480\n
+770	OLAYA HERRERA	2018-11-13 18:04:00-05	2018-11-13 18:04:00-05	NARIÑO 	52490\n
+771	OSPINA	2018-11-13 18:04:13-05	2018-11-13 18:04:13-05	NARIÑO 	52506\n
+772	FRANCISCO PIZARRO	2018-11-13 18:04:29-05	2018-11-13 18:04:29-05	NARIÑO 	52520\n
+773	POLICARPA	2018-11-13 18:04:41-05	2018-11-13 18:04:41-05	NARIÑO 	52540\n
+774	POTOSÍ	2018-11-13 18:04:54-05	2018-11-13 18:04:54-05	NARIÑO 	52560\n
+775	PROVIDENCIA	2018-11-13 18:05:04-05	2018-11-13 18:05:04-05	NARIÑO 	52565\n
+776	PURRES 	2018-11-13 18:05:17-05	2018-11-13 18:05:17-05	NARIÑO 	52573\n
+777	PUPIALES	2018-11-13 18:05:27-05	2018-11-13 18:05:27-05	NARIÑO 	52585\n
+778	RICAURTE	2018-11-13 18:05:41-05	2018-11-13 18:05:41-05	NARIÑO 	52612\n
+779	ROBERTO PAYÁN	2018-11-13 18:05:54-05	2018-11-13 18:05:54-05	NARIÑO 	52621\n
+780	SOMANIEGO	2018-11-13 18:06:06-05	2018-11-13 18:06:06-05	NARIÑO 	52678\n
+781	SANDONÁ	2018-11-13 18:06:23-05	2018-11-13 18:06:23-05	NARIÑO 	52683\n
+782	SAN BERNARDO	2018-11-13 18:06:37-05	2018-11-13 18:06:37-05	NARIÑO 	52685\n
+783	SAN LORENZO	2018-11-13 18:06:47-05	2018-11-13 18:06:47-05	NARIÑO 	52687\n
+784	SAN PABLO	2018-11-13 18:07:02-05	2018-11-13 18:07:02-05	NARIÑO 	52693\n
+785	SAN PEDRO DE CARTAGO	2018-11-13 18:07:13-05	2018-11-13 18:07:13-05	NARIÑO 	52694\n
+786	SANTA BÁRBARA	2018-11-13 18:07:31-05	2018-11-13 18:07:31-05	NARIÑO 	52696\n
+787	SANTA CRUZ	2018-11-13 18:07:42-05	2018-11-13 18:07:42-05	NARIÑO 	52699\n
+788	SAPAUYES	2018-11-13 18:07:54-05	2018-11-13 18:07:54-05	NARIÑO 	52720\n
+789	TAMINANGO	2018-11-13 18:08:08-05	2018-11-13 18:08:08-05	NARIÑO 	52786\n
+790	TANGUA	2018-11-13 18:08:18-05	2018-11-13 18:08:18-05	NARIÑO 	52788\n
+791	TUMACO 	2018-11-13 18:08:32-05	2018-11-13 18:08:32-05	NARIÑO 	52835\n
+792	TÚQUERRES	2018-11-13 18:08:49-05	2018-11-13 18:08:49-05	NARIÑO 	52838\n
+793	YACUANQUER	2018-11-13 18:09:04-05	2018-11-13 18:09:04-05	NARIÑO 	52885\n
+794	CÚCUTA	2018-11-13 18:09:42-05	2018-11-13 18:09:42-05	NORTE DE SANTANDER 	54001\n
+795	ÁBREGO	2018-11-13 18:09:56-05	2018-11-13 18:09:56-05	NORTE DE SANTANDER 	54003\n
+796	ARBOLEDAS 	2018-11-13 18:10:08-05	2018-11-13 18:10:08-05	NORTE DE SANTANDER 	54051\n
+797	BOCHALEMA	2018-11-13 18:10:21-05	2018-11-13 18:10:21-05	NORTE DE SANTANDER 	54099\n
+798	BUCARASICA	2018-11-13 18:10:52-05	2018-11-13 18:10:52-05	NORTE DE SANTANDER 	54109\n
+799	CÁCOTA	2018-11-13 18:11:28-05	2018-11-13 18:11:28-05	NORTE DE SANTANDER 	54125\n
+800	CÁCHIRA	2018-11-13 18:11:40-05	2018-11-13 18:11:40-05	NORTE DE SANTANDER 	54128\n
+801	CHINÁCOTA	2018-11-13 18:11:56-05	2018-11-13 18:11:56-05	NORTE DE SANTANDER 	54172\n
+802	CHITAGÁ	2018-11-13 18:12:07-05	2018-11-13 18:12:07-05	NORTE DE SANTANDER 	54174\n
+803	CONVENCIÓN	2018-11-13 18:12:20-05	2018-11-13 18:12:20-05	NORTE DE SANTANDER 	54206\n
+804	CUCUTILLA	2018-11-13 18:12:32-05	2018-11-13 18:12:32-05	NORTE DE SANTANDER 	54223\n
+805	DURANIA	2018-11-13 18:12:43-05	2018-11-13 18:12:43-05	NORTE DE SANTANDER 	54239\n
+806	EL CARMEN	2018-11-13 18:12:53-05	2018-11-13 18:12:53-05	NORTE DE SANTANDER 	54245\n
+807	EL TARRA	2018-11-13 18:13:03-05	2018-11-13 18:13:03-05	NORTE DE SANTANDER 	54250\n
+808	EL ZULIA	2018-11-13 18:13:20-05	2018-11-13 18:13:20-05	NORTE DE SANTANDER 	54261\n
+809	GRAMALOTE	2018-11-13 18:13:56-05	2018-11-13 18:13:56-05	NORTE DE SANTANDER 	54313\n
+810	HACARÍ	2018-11-13 18:14:10-05	2018-11-13 18:14:10-05	NORTE DE SANTANDER 	54344\n
+811	HERRÁN	2018-11-13 18:14:20-05	2018-11-13 18:14:20-05	NORTE DE SANTANDER 	54347\n
+812	LABATECA	2018-11-13 18:14:30-05	2018-11-13 18:14:30-05	NORTE DE SANTANDER 	54377\n
+813	LA ESPERANZA	2018-11-13 18:14:42-05	2018-11-13 18:14:42-05	NORTE DE SANTANDER 	54385\n
+814	LA PLAYA	2018-11-13 18:14:55-05	2018-11-13 18:14:55-05	NORTE DE SANTANDER 	54398\n
+815	LOS PATIOS 	2018-11-13 18:15:08-05	2018-11-13 18:15:08-05	NORTE DE SANTANDER 	54405\n
+816	LOURDES	2018-11-13 18:15:20-05	2018-11-13 18:15:20-05	NORTE DE SANTANDER 	54418\n
+817	MUTISCUA	2018-11-13 18:15:33-05	2018-11-13 18:15:33-05	NORTE DE SANTANDER 	54480\n
+818	OCAÑA	2018-11-13 18:15:45-05	2018-11-13 18:15:45-05	NORTE DE SANTANDER 	54498\n
+819	PAMPLONA	2018-11-13 18:15:57-05	2018-11-13 18:15:57-05	NORTE DE SANTANDER 	54518\n
+820	PAMPLONITA	2018-11-13 18:16:07-05	2018-11-13 18:16:07-05	NORTE DE SANTANDER 	54520\n
+821	PUERTO SANTANDER 	2018-11-13 18:16:24-05	2018-11-13 18:16:24-05	NORTE DE SANTANDER 	54553\n
+822	RAGONVALIA	2018-11-13 18:16:42-05	2018-11-13 18:16:42-05	NORTE DE SANTANDER 	54599\n
+823	SALAZAR	2018-11-13 18:16:53-05	2018-11-13 18:16:53-05	NORTE DE SANTANDER 	54660\n
+824	SAN CALIXTO 	2018-11-13 18:17:05-05	2018-11-13 18:17:05-05	NORTE DE SANTANDER 	54670\n
+825	SAN CAYETANO 	2018-11-13 18:17:15-05	2018-11-13 18:17:15-05	NORTE DE SANTANDER 	54673\n
+826	SANTIAGO	2018-11-13 18:17:26-05	2018-11-13 18:17:26-05	NORTE DE SANTANDER 	54680\n
+827	SARDINITA	2018-11-13 18:17:37-05	2018-11-13 18:17:37-05	NORTE DE SANTANDER 	54720\n
+828	SILOS	2018-11-13 18:17:49-05	2018-11-13 18:17:49-05	NORTE DE SANTANDER 	54743\n
+829	TEORAMA	2018-11-13 18:18:03-05	2018-11-13 18:18:03-05	NORTE DE SANTANDER 	54800\n
+830	TIBÚ	2018-11-13 18:18:17-05	2018-11-13 18:18:17-05	NORTE DE SANTANDER 	54810\n
+831	TOLEDO	2018-11-13 18:18:34-05	2018-11-13 18:18:34-05	NORTE DE SANTANDER 	54820\n
+832	VILLA CARO 	2018-11-13 18:18:46-05	2018-11-13 18:18:46-05	NORTE DE SANTANDER 	54871\n
+833	VILLA DEL ROSARIO  	2018-11-13 18:18:56-05	2018-11-13 18:18:56-05	NORTE DE SANTANDER 	54874\n
+834	ARMENIA 	2018-11-13 18:19:20-05	2018-11-13 18:19:20-05	QUINDIO 	63001\n
+835	BUENAVISTA 	2018-11-13 18:19:32-05	2018-11-13 18:19:32-05	QUINDIO 	63111\n
+836	CALARCA 	2018-11-13 18:19:42-05	2018-11-13 18:19:42-05	QUINDIO 	63130\n
+837	CIRCASIA 	2018-11-13 18:19:52-05	2018-11-13 18:19:52-05	QUINDIO 	63190\n
+838	CÓRDOBA	2018-11-13 18:20:07-05	2018-11-13 18:20:07-05	QUINDIO 	63212\n
+839	FILANDIA	2018-11-13 18:20:18-05	2018-11-13 18:20:18-05	QUINDIO 	63272\n
+840	GÉNOVA	2018-11-13 18:20:34-05	2018-11-13 18:20:34-05	QUINDIO 	63302\n
+841	LA TEBAIDA	2018-11-13 18:20:49-05	2018-11-13 18:20:49-05	QUINDIO 	63401\n
+842	MONTENEGRO	2018-11-13 18:21:00-05	2018-11-13 18:21:00-05	QUINDIO 	63470\n
+843	PIJAO	2018-11-13 18:21:12-05	2018-11-13 18:21:12-05	QUINDIO 	63548\n
+844	QUIMBAYA	2018-11-13 18:21:23-05	2018-11-13 18:21:23-05	QUINDIO 	63594\n
+845	SALENTO 	2018-11-13 18:21:35-05	2018-11-13 18:21:35-05	QUINDIO 	63690\n
+846	PEREIRA	2018-11-13 18:21:58-05	2018-11-13 18:21:58-05	RISARALDA 	66001\n
+847	APÍA 	2018-11-13 18:22:11-05	2018-11-13 18:22:11-05	RISARALDA 	66045\n
+848	BALBOA	2018-11-13 18:22:21-05	2018-11-13 18:22:21-05	RISARALDA 	66075\n
+849	BELÉN DE UMBRÍA 	2018-11-13 18:22:39-05	2018-11-13 18:22:39-05	RISARALDA 	66088\n
+850	DOS QUEBRADAS 	2018-11-13 18:22:49-05	2018-11-13 18:22:49-05	RISARALDA 	66170\n
+851	CUÁTICA	2018-11-13 18:23:02-05	2018-11-13 18:23:02-05	RISARALDA 	66318\n
+852	LA CELIA	2018-11-13 18:23:16-05	2018-11-13 18:23:16-05	RISARALDA 	66383\n
+853	LA VIRGINIA	2018-11-13 18:23:27-05	2018-11-13 18:23:27-05	RISARALDA 	66400\n
+854	MARASELLA	2018-11-13 18:23:37-05	2018-11-13 18:23:37-05	RISARALDA 	66440\n
+855	MISTRATÓ	2018-11-13 18:23:48-05	2018-11-13 18:23:48-05	RISARALDA 	66456\n
+856	PEUBLO RICO 	2018-11-13 18:24:02-05	2018-11-13 18:24:02-05	RISARALDA 	66572\n
+857	QUINCHÍA 	2018-11-13 18:24:18-05	2018-11-13 18:24:18-05	RISARALDA 	66594\n
+858	SANTA ROSA DE CABAL 	2018-11-13 18:24:35-05	2018-11-13 18:24:35-05	RISARALDA 	66682\n
+859	SANTUARIO 	2018-11-13 18:24:47-05	2018-11-13 18:24:47-05	RISARALDA 	66687\n
+860	BUCARAMANGA  	2018-11-13 18:25:18-05	2018-11-13 18:25:18-05	SANTANDER 	68001\n
+861	AGUADA 	2018-11-13 18:25:28-05	2018-11-13 18:25:28-05	SANTANDER 	68013\n
+862	ALBANIA  	2018-11-13 18:25:36-05	2018-11-13 18:25:36-05	SANTANDER 	68020\n
+863	ARATOCA	2018-11-13 18:25:44-05	2018-11-13 18:25:44-05	SANTANDER 	68051\n
+864	BARBOSA	2018-11-13 18:25:53-05	2018-11-13 18:25:53-05	SANTANDER 	68077\n
+865	BARICHARA 	2018-11-13 18:26:02-05	2018-11-13 18:26:02-05	SANTANDER 	68079\n
+866	BARRANCABERMEJA 	2018-11-13 18:26:15-05	2018-11-13 18:26:15-05	SANTANDER 	68081\n
+867	BETULIA	2018-11-13 18:26:23-05	2018-11-13 18:26:23-05	SANTANDER 	68092\n
+868	BOLIVAR	2018-11-13 18:26:34-05	2018-11-13 18:26:34-05	SANTANDER 	68101\n
+869	CABRERA	2018-11-13 18:26:43-05	2018-11-13 18:26:43-05	SANTANDER 	68121\n
+870	CALIFORNIA 	2018-11-13 18:26:52-05	2018-11-13 18:26:52-05	SANTANDER 	68132\n
+871	CAPITANEJO	2018-11-13 18:27:05-05	2018-11-13 18:27:05-05	SANTANDER 	68147\n
+872	CARCASÍ	2018-11-13 18:27:23-05	2018-11-13 18:27:23-05	SANTANDER 	68152\n
+873	CEPITÁ	2018-11-13 18:27:34-05	2018-11-13 18:27:34-05	SANTANDER 	68160\n
+874	CERRITO	2018-11-13 18:27:46-05	2018-11-13 18:27:46-05	SANTANDER 	68162\n
+875	CHARALÁ	2018-11-13 18:28:01-05	2018-11-13 18:28:01-05	SANTANDER 	68167\n
+876	CHARTA	2018-11-13 18:28:08-05	2018-11-13 18:28:08-05	SANTANDER 	68169\n
+877	CHIMA	2018-11-13 18:28:14-05	2018-11-13 18:28:14-05	SANTANDER 	68176\n
+878	CHIPATÁ	2018-11-13 18:28:32-05	2018-11-13 18:28:32-05	SANTANDER 	68179\n
+879	CIMITARRA	2018-11-13 18:28:46-05	2018-11-13 18:28:46-05	SANTANDER 	68190\n
+880	CONCEPCION 	2018-11-13 18:28:57-05	2018-11-13 18:28:57-05	SANTANDER 	68207\n
+881	CONFINES 	2018-11-13 18:29:07-05	2018-11-13 18:29:07-05	SANTANDER 	68209\n
+882	CONTRATACIÓN 	2018-11-13 18:29:22-05	2018-11-13 18:29:22-05	SANTANDER 	68211\n
+883	COROMORO	2018-11-13 18:29:35-05	2018-11-13 18:29:35-05	SANTANDER 	68217\n
+884	CURITÍ	2018-11-13 18:29:47-05	2018-11-13 18:29:47-05	SANTANDER 	68229\n
+885	EL CARMEN DE CHUCURÍ 	2018-11-13 18:30:04-05	2018-11-13 18:30:04-05	SANTANDER 	68235\n
+886	EL GUACAMAYO 	2018-11-13 18:30:17-05	2018-11-13 18:30:17-05	SANTANDER 	68245\n
+887	EL PEÑÓN 	2018-11-13 18:30:34-05	2018-11-13 18:30:34-05	SANTANDER 	68250\n
+888	EL PLAYÓN	2018-11-13 18:30:44-05	2018-11-13 18:30:44-05	SANTANDER 	68255\n
+889	ENCINO	2018-11-13 18:30:57-05	2018-11-13 18:30:57-05	SANTANDER 	68264\n
+890	ENCISO	2018-11-13 18:31:06-05	2018-11-13 18:31:06-05	SANTANDER 	68266\n
+891	EL FLORIÁN 	2018-11-13 18:31:18-05	2018-11-13 18:31:18-05	SANTANDER 	68271\n
+892	FLORIDABLANCA 	2018-11-13 18:31:30-05	2018-11-13 18:31:30-05	SANTANDER 	68276\n
+893	GALÁN 	2018-11-13 18:31:43-05	2018-11-13 18:31:43-05	SANTANDER 	68296\n
+894	GÁMBITA	2018-11-13 18:32:02-05	2018-11-13 18:32:02-05	SANTANDER 	68298\n
+895	GIRÓN	2018-11-13 18:32:25-05	2018-11-13 18:32:25-05	SANTANDER 	68307\n
+896	GUACA	2018-11-13 18:32:41-05	2018-11-13 18:32:41-05	SANTANDER 	68318\n
+897	GUADALUPE 	2018-11-13 18:32:52-05	2018-11-13 18:32:52-05	SANTANDER 	68320\n
+898	GUAPOTÁ	2018-11-13 18:33:00-05	2018-11-13 18:33:00-05	SANTANDER 	68322\n
+899	GUAVATÁ	2018-11-13 18:33:13-05	2018-11-13 18:33:13-05	SANTANDER 	68324\n
+900	GUEPSA	2018-11-13 18:33:25-05	2018-11-13 18:33:25-05	SANTANDER 	68327\n
+901	HATO	2018-11-13 18:33:35-05	2018-11-13 18:33:35-05	SANTANDER 	68344\n
+902	JESÚS MARÍA 	2018-11-13 18:33:52-05	2018-11-13 18:33:52-05	SANTANDER 	68368\n
+903	JORDÁN	2018-11-13 18:34:08-05	2018-11-13 18:34:08-05	SANTANDER 	68370\n
+904	LA BELLEZA 	2018-11-13 18:34:19-05	2018-11-13 18:34:19-05	SANTANDER 	68377\n
+905	LANDÁZURI	2018-11-13 18:34:40-05	2018-11-13 18:34:40-05	SANTANDER 	68385\n
+906	LA PAZ	2018-11-13 18:34:49-05	2018-11-13 18:34:49-05	SANTANDER 	68397\n
+907	LEBRIJA 	2018-11-13 18:35:02-05	2018-11-13 18:35:02-05	SANTANDER 	68406\n
+908	LOS SANTOS 	2018-11-13 18:35:12-05	2018-11-13 18:35:12-05	SANTANDER 	68418
+909	MACARAVITA	2018-11-13 18:35:26-05	2018-11-13 18:35:26-05	SANTANDER 	68425
+910	MÁLAGA	2018-11-13 18:35:40-05	2018-11-13 18:35:40-05	SANTANDER 	68432
+911	MATANZA	2018-11-13 18:35:53-05	2018-11-13 18:35:53-05	SANTANDER 	68444
+912	MAGOTES 	2018-11-13 18:36:05-05	2018-11-13 18:36:05-05	SANTANDER 	68464
+913	MOLAGAVITA	2018-11-13 18:36:14-05	2018-11-13 18:36:14-05	SANTANDER 	68468
+914	OCAMONTE 	2018-11-13 18:36:26-05	2018-11-13 18:36:26-05	SANTANDER 	68498
+915	OIBA 	2018-11-13 18:36:37-05	2018-11-13 18:36:37-05	SANTANDER 	68500
+916	ONZANGA 	2018-11-13 18:36:46-05	2018-11-13 18:36:46-05	SANTANDER 	68502
+917	PALMAR 	2018-11-13 18:36:57-05	2018-11-13 18:36:57-05	SANTANDER 	68522
+918	PALMAS DEL SOCORRO 	2018-11-13 18:37:09-05	2018-11-13 18:37:09-05	SANTANDER 	68524
+919	PÁRAMO	2018-11-13 18:37:20-05	2018-11-13 18:37:20-05	SANTANDER 	68533
+920	PIEDECUESTA 	2018-11-13 18:37:34-05	2018-11-13 18:37:34-05	SANTANDER 	68547
+921	PINCHOTE 	2018-11-13 18:37:45-05	2018-11-13 18:37:45-05	SANTANDER 	68549
+922	PUERTO PARRA 	2018-11-13 18:41:38-05	2018-11-13 18:41:38-05	SANTANDER 	68573
+923	PUERTO WILCHES 	2018-11-13 18:42:02-05	2018-11-13 18:42:02-05	SANTANDER 	68575
+924	RIONEGRO	2018-11-13 18:42:16-05	2018-11-13 18:42:16-05	SANTANDER 	68615
+925	SABANA DE TORRES 	2018-11-13 18:42:27-05	2018-11-13 18:42:27-05	SANTANDER 	68655
+926	SAN ANDRÉS 	2018-11-13 18:42:46-05	2018-11-13 18:42:46-05	SANTANDER 	68669
+927	SAN BENITO	2018-11-13 18:43:04-05	2018-11-13 18:43:04-05	SANTANDER 	68673
+928	SAN GIL 	2018-11-13 18:43:13-05	2018-11-13 18:43:13-05	SANTANDER 	68679
+929	SAN JOAQUÍN 	2018-11-13 18:43:27-05	2018-11-13 18:43:27-05	SANTANDER 	68682
+930	SAN JOSE DE MIRANA 	2018-11-13 18:43:37-05	2018-11-13 18:43:37-05	SANTANDER 	68684
+931	SAN MIGUEL 	2018-11-13 18:43:51-05	2018-11-13 18:43:51-05	SANTANDER 	68686
+932	SAN VICENTE DE CHUCURÍ	2018-11-13 18:44:13-05	2018-11-13 18:44:13-05	SANTANDER 	68689
+933	SANTA BÁRBARA 	2018-11-13 18:44:36-05	2018-11-13 18:44:36-05	SANTANDER 	68705
+934	SANTA HELENA DEL OPÓN 	2018-11-13 18:44:54-05	2018-11-13 18:44:54-05	SANTANDER 	68720 
+935	SIMACOTA 	2018-11-13 18:45:06-05	2018-11-13 18:45:06-05	SANTANDER 	68745
+936	SOCORRO 	2018-11-13 18:45:17-05	2018-11-13 18:45:17-05	SANTANDER 	68755
+937	SUAITA	2018-11-13 18:45:28-05	2018-11-13 18:45:28-05	SANTANDER 	68770
+938	SUCRE	2018-11-13 18:45:40-05	2018-11-13 18:45:40-05	SANTANDER 	68773
+939	SURATÁ	2018-11-13 18:45:54-05	2018-11-13 18:45:54-05	SANTANDER 	68780
+940	TONA 	2018-11-13 18:46:08-05	2018-11-13 18:46:08-05	SANTANDER 	68820
+941	VALLE DE SAN JOSÉ	2018-11-13 18:46:19-05	2018-11-13 18:46:19-05	SANTANDER 	68855
+942	VÉLEZ	2018-11-13 18:46:36-05	2018-11-13 18:46:36-05	SANTANDER 	68861
+943	VETAS 	2018-11-13 18:46:47-05	2018-11-13 18:46:47-05	SANTANDER 	68867
+944	VILLANUEVA 	2018-11-13 18:46:59-05	2018-11-13 18:46:59-05	SANTANDER 	68872
+945	ZAPATOCA 	2018-11-13 18:47:13-05	2018-11-13 18:47:13-05	SANTANDER 	68895
+946	SINCELEJO 	2018-11-13 18:47:36-05	2018-11-13 18:47:36-05	SUCRE	70001
+947	BUENAVISTA 	2018-11-13 18:47:58-05	2018-11-13 18:47:58-05	SUCRE	70110 
+948	CAIMITO 	2018-11-13 18:48:10-05	2018-11-13 18:48:10-05	SUCRE	70124
+949	COLOSÓ	2018-11-13 18:48:43-05	2018-11-13 18:48:43-05	SUCRE	70204
+950	COROZAL	2018-11-13 18:48:54-05	2018-11-13 18:48:54-05	SUCRE	70215
+951	COVEÑAS	2018-11-13 18:49:02-05	2018-11-13 18:49:02-05	SUCRE	70221
+952	CHALÁN	2018-11-13 18:49:13-05	2018-11-13 18:49:13-05	SUCRE	70230
+953	EL ROBLE 	2018-11-13 18:49:21-05	2018-11-13 18:49:21-05	SUCRE	70233
+954	GALERAS 	2018-11-13 18:49:31-05	2018-11-13 18:49:31-05	SUCRE	70235
+955	GUARANDA 	2018-11-13 18:49:42-05	2018-11-13 18:49:42-05	SUCRE	70265
+956	LA UNIÓN 	2018-11-13 18:49:55-05	2018-11-13 18:49:55-05	SUCRE	70400
+957	LOS PALMITOS 	2018-11-13 18:50:05-05	2018-11-13 18:50:05-05	SUCRE	70418
+958	MAJAGUAL 	2018-11-13 18:50:16-05	2018-11-13 18:50:16-05	SUCRE	70429
+959	MORROA 	2018-11-13 18:50:28-05	2018-11-13 18:50:28-05	SUCRE	70473
+960	OVEJAS 	2018-11-13 18:50:36-05	2018-11-13 18:50:36-05	SUCRE	70508
+961	PALMITO 	2018-11-13 18:50:48-05	2018-11-13 18:50:48-05	SUCRE	70523
+962	SAMPUÉS 	2018-11-13 18:51:02-05	2018-11-13 18:51:02-05	SUCRE	70670
+963	SAN BENITO ABAD	2018-11-13 18:51:14-05	2018-11-13 18:51:14-05	SUCRE	70678
+964	SAN JUAN BETULIA 	2018-11-13 18:51:28-05	2018-11-13 18:51:28-05	SUCRE	70702
+965	SAN MARCOS 	2018-11-13 18:51:36-05	2018-11-13 18:51:36-05	SUCRE	70708
+966	SAN ONOFRE	2018-11-13 18:51:52-05	2018-11-13 18:51:52-05	SUCRE	70713
+967	SAN PADRO	2018-11-13 18:52:07-05	2018-11-13 18:52:07-05	SUCRE	70717
+968	SINCÉ	2018-11-13 18:52:19-05	2018-11-13 18:52:19-05	SUCRE	70742
+969	SUCRE	2018-11-13 18:52:28-05	2018-11-13 18:52:28-05	SUCRE	70771
+970	TOLÚ	2018-11-13 18:52:41-05	2018-11-13 18:52:41-05	SUCRE	70820
+971	TOLUVIEJO 	2018-11-13 18:52:49-05	2018-11-13 18:52:49-05	SUCRE	70823
+972	IBAGUÉ	2018-11-13 18:53:30-05	2018-11-13 18:53:30-05	TOLIMA 	73001
+973	ALPUJARRA	2018-11-13 18:53:43-05	2018-11-13 18:53:43-05	TOLIMA 	73024
+974	ALVARADO 	2018-11-13 18:53:52-05	2018-11-13 18:53:52-05	TOLIMA 	73026
+975	AMBALEMA 	2018-11-13 18:54:01-05	2018-11-13 18:54:01-05	TOLIMA 	73030
+976	ANZOÁTEGUI	2018-11-13 18:54:14-05	2018-11-13 18:54:14-05	TOLIMA 	73043
+977	ARMERO 	2018-11-13 18:54:22-05	2018-11-13 18:54:22-05	TOLIMA 	73055
+978	ATACO 	2018-11-13 18:54:31-05	2018-11-13 18:54:31-05	TOLIMA 	73067
+979	CAJAMARCA 	2018-11-13 18:54:42-05	2018-11-13 18:54:42-05	TOLIMA 	73124
+980	CARMEN APICALÁ	2018-11-13 18:54:53-05	2018-11-13 18:54:53-05	TOLIMA 	73148
+981	CASABIANCA	2018-11-13 18:55:05-05	2018-11-13 18:55:05-05	TOLIMA 	73152
+982	CHAPARRAL 	2018-11-13 18:55:18-05	2018-11-13 18:55:18-05	TOLIMA 	73168
+983	COELLO 	2018-11-13 18:55:28-05	2018-11-13 18:55:28-05	TOLIMA 	73200
+984	COYAIMA 	2018-11-13 18:55:38-05	2018-11-13 18:55:38-05	TOLIMA 	73217
+985	CUNDAY 	2018-11-13 18:55:46-05	2018-11-13 18:55:46-05	TOLIMA 	73226
+986	DOLORES 	2018-11-13 18:55:58-05	2018-11-13 18:55:58-05	TOLIMA 	73236
+987	ESPINAL 	2018-11-13 18:56:10-05	2018-11-13 18:56:10-05	TOLIMA 	73268
+988	FALÁN 	2018-11-13 18:56:20-05	2018-11-13 18:56:20-05	TOLIMA 	73270
+989	FLANDES 	2018-11-13 18:56:29-05	2018-11-13 18:56:29-05	TOLIMA 	73275
+990	FRESNO 	2018-11-13 18:56:38-05	2018-11-13 18:56:38-05	TOLIMA 	73283
+991	GUAMO 	2018-11-13 18:56:51-05	2018-11-13 18:56:51-05	TOLIMA 	73319
+992	HERVEO 	2018-11-13 18:57:04-05	2018-11-13 18:57:04-05	TOLIMA 	73347
+993	HONDA	2018-11-13 18:57:13-05	2018-11-13 18:57:13-05	TOLIMA 	73349
+994	ICONONZO 	2018-11-13 18:57:26-05	2018-11-13 18:57:26-05	TOLIMA 	73352
+995	LÉRIDA 	2018-11-13 18:57:39-05	2018-11-13 18:57:39-05	TOLIMA 	73408
+996	LÍBANO 	2018-11-13 18:57:48-05	2018-11-13 18:57:48-05	TOLIMA 	73411
+997	MARIQUITA 	2018-11-13 18:57:57-05	2018-11-13 18:57:57-05	TOLIMA 	73443
+998	MELGAR 	2018-11-13 18:58:07-05	2018-11-13 18:58:07-05	TOLIMA 	73449
+999	MURILLO 	2018-11-13 18:58:19-05	2018-11-13 18:58:19-05	TOLIMA 	73461
+1000	NATAGAIMA  	2018-11-13 18:58:29-05	2018-11-13 18:58:29-05	TOLIMA 	73483
+1001	ORTEGA 	2018-11-13 18:58:41-05	2018-11-13 18:58:41-05	TOLIMA 	73504
+1002	PALO CABILDO 	2018-11-13 18:58:55-05	2018-11-13 18:58:55-05	TOLIMA 	73520 
+1003	PIEDRAS 	2018-11-13 18:59:06-05	2018-11-13 18:59:06-05	TOLIMA 	73547
+1004	PLANADAS 	2018-11-13 18:59:16-05	2018-11-13 18:59:16-05	TOLIMA 	73555
+1005	PRADO 	2018-11-13 18:59:24-05	2018-11-13 18:59:24-05	TOLIMA 	73563
+1006	PURIFICACIÓN 	2018-11-13 18:59:36-05	2018-11-13 18:59:36-05	TOLIMA 	73585
+1007	RIOBLANCO 	2018-11-13 18:59:51-05	2018-11-13 18:59:51-05	TOLIMA 	73616
+1008	RONCESVALLES 	2018-11-13 19:00:01-05	2018-11-13 19:00:01-05	TOLIMA 	73622
+1009	ROVIRA 	2018-11-13 19:00:13-05	2018-11-13 19:00:13-05	TOLIMA 	73624
+1010	SALDAÑA 	2018-11-13 19:00:24-05	2018-11-13 19:00:24-05	TOLIMA 	73671
+1011	SAN ANTONIO 	2018-11-13 19:00:34-05	2018-11-13 19:00:34-05	TOLIMA 	73675
+1012	SAN LUIS 	2018-11-13 19:00:46-05	2018-11-13 19:00:46-05	TOLIMA 	73678
+1013	SANTA ISABEL 	2018-11-13 19:01:03-05	2018-11-13 19:01:03-05	TOLIMA 	73686
+1014	SUÁREZ 	2018-11-13 19:01:17-05	2018-11-13 19:01:17-05	TOLIMA 	73770 
+1015	VALLE DE SAN JUAN 	2018-11-13 19:01:30-05	2018-11-13 19:01:30-05	TOLIMA 	73854
+1016	VENADILLO  	2018-11-13 19:01:42-05	2018-11-13 19:01:42-05	TOLIMA 	73861
+1017	VILLA HERMOSA  	2018-11-13 19:01:57-05	2018-11-13 19:01:57-05	TOLIMA 	73870 
+1018	VILLARRICA 	2018-11-13 19:02:11-05	2018-11-13 19:02:11-05	TOLIMA 	73873
+1019	CALI 	2018-11-13 19:02:31-05	2018-11-13 19:02:31-05	VALLE DEL CAUCA 	76001
+1020	ALCALÁ	2018-11-13 19:02:40-05	2018-11-13 19:02:40-05	VALLE DEL CAUCA 	76020 
+1021	ANDALUCIA 	2018-11-13 19:02:49-05	2018-11-13 19:02:49-05	VALLE DEL CAUCA 	76036 
+1022	ANSERMANUEVO 	2018-11-13 19:03:03-05	2018-11-13 19:03:03-05	VALLE DEL CAUCA 	76041
+1023	ARGELIA 	2018-11-13 19:03:15-05	2018-11-13 19:03:15-05	VALLE DEL CAUCA 	76054
+1024	BOLÍVAR 	2018-11-13 19:03:27-05	2018-11-13 19:03:27-05	VALLE DEL CAUCA 	76100 
+1025	BUENAVENTURA 	2018-11-13 19:03:37-05	2018-11-13 19:03:37-05	VALLE DEL CAUCA 	76109
+1026	BUGA 	2018-11-13 19:03:47-05	2018-11-13 19:03:47-05	VALLE DEL CAUCA 	76111
+1027	BUGALAGRANDE 	2018-11-13 19:03:53-05	2018-11-13 19:03:53-05	VALLE DEL CAUCA 	76113
+1028	CAICEDONIA 	2018-11-13 19:04:03-05	2018-11-13 19:04:03-05	VALLE DEL CAUCA 	76122
+1029	CALIMA 	2018-11-13 19:04:09-05	2018-11-13 19:04:09-05	VALLE DEL CAUCA 	76126
+1030	CANDELARIA 	2018-11-13 19:04:19-05	2018-11-13 19:04:19-05	VALLE DEL CAUCA 	76130 
+1031	CARTAGO 	2018-11-13 19:04:30-05	2018-11-13 19:04:30-05	VALLE DEL CAUCA 	76147
+1032	DAGUA 	2018-11-13 19:04:42-05	2018-11-13 19:04:42-05	VALLE DEL CAUCA 	76233
+1033	EL ÁGUILA 	2018-11-13 19:04:58-05	2018-11-13 19:04:58-05	VALLE DEL CAUCA 	76243
+1034	EL CAIRO	2018-11-13 19:05:06-05	2018-11-13 19:05:06-05	VALLE DEL CAUCA 	76246 
+1035	EL CERRITO	2018-11-13 19:05:15-05	2018-11-13 19:05:15-05	VALLE DEL CAUCA 	76248 
+1036	EL DOVIO 	2018-11-13 19:05:25-05	2018-11-13 19:05:25-05	VALLE DEL CAUCA 	76250 
+1037	FLORIDA 	2018-11-13 19:05:37-05	2018-11-13 19:05:37-05	VALLE DEL CAUCA 	76275
+1038	GINEBRA 	2018-11-13 19:05:51-05	2018-11-13 19:05:51-05	VALLE DEL CAUCA 	76306
+1039	GUACARÍ 	2018-11-13 19:06:02-05	2018-11-13 19:06:02-05	VALLE DEL CAUCA 	76318
+1040	JAMUNDÍ 	2018-11-13 19:06:13-05	2018-11-13 19:06:13-05	VALLE DEL CAUCA 	76364
+1041	LA CUMBRE 	2018-11-13 19:06:24-05	2018-11-13 19:06:24-05	VALLE DEL CAUCA 	76377
+1042	LA UNIÓN 	2018-11-13 19:06:36-05	2018-11-13 19:06:36-05	VALLE DEL CAUCA 	76400
+1043	LA VICTORIA 	2018-11-13 19:06:47-05	2018-11-13 19:06:47-05	VALLE DEL CAUCA 	76403
+1044	OBANDO 	2018-11-13 19:06:58-05	2018-11-13 19:06:58-05	VALLE DEL CAUCA 	76497
+1045	PALMIRA 	2018-11-13 19:07:06-05	2018-11-13 19:07:06-05	VALLE DEL CAUCA 	76520
+1046	PRADERA 	2018-11-13 19:07:20-05	2018-11-13 19:07:20-05	VALLE DEL CAUCA 	76563
+1047	RESTREPO 	2018-11-13 19:07:34-05	2018-11-13 19:07:34-05	VALLE DEL CAUCA 	76606
+1048	RIOSFRÍO 	2018-11-13 19:07:49-05	2018-11-13 19:07:49-05	VALLE DEL CAUCA 	76616
+1049	ROLDANILLO 	2018-11-13 19:08:00-05	2018-11-13 19:08:00-05	VALLE DEL CAUCA 	76622
+1050	SAN PEDRO 	2018-11-13 19:08:11-05	2018-11-13 19:08:11-05	VALLE DEL CAUCA 	76670
+1051	SEVILLA 	2018-11-13 19:08:25-05	2018-11-13 19:08:25-05	VALLE DEL CAUCA 	76736
+1052	TORO 	2018-11-13 19:08:33-05	2018-11-13 19:08:33-05	VALLE DEL CAUCA 	76823
+1053	TRUJILLO 	2018-11-13 19:08:41-05	2018-11-13 19:08:41-05	VALLE DEL CAUCA 	76828
+1054	TULUÁ	2018-11-13 19:08:54-05	2018-11-13 19:08:54-05	VALLE DEL CAUCA 	76834
+1055	ULLOA 	2018-11-13 19:09:04-05	2018-11-13 19:09:04-05	VALLE DEL CAUCA 	76845
+1056	VERSALLES 	2018-11-13 19:09:12-05	2018-11-13 19:09:12-05	VALLE DEL CAUCA 	76863
+1057	VIJES 	2018-11-13 19:09:20-05	2018-11-13 19:09:20-05	VALLE DEL CAUCA 	76869
+1058	YOTOCO 	2018-11-13 19:09:33-05	2018-11-13 19:09:33-05	VALLE DEL CAUCA 	76890 
+1059	YUMBO 	2018-11-13 19:09:43-05	2018-11-13 19:09:43-05	VALLE DEL CAUCA 	76892
+1060	ZARZAL  	2018-11-13 19:09:50-05	2018-11-13 19:09:50-05	VALLE DEL CAUCA 	76895
+1061	ARAUCA 	2018-11-13 19:10:08-05	2018-11-13 19:10:08-05	ARAUCA 	81001
+1062	ARAUQUITA 	2018-11-13 19:10:23-05	2018-11-13 19:10:23-05	ARAUCA 	81065
+1063	CRAVO NORTE 	2018-11-13 19:10:36-05	2018-11-13 19:10:36-05	ARAUCA 	81220 
+1064	FORTUL 	2018-11-13 19:10:47-05	2018-11-13 19:10:47-05	ARAUCA 	81300 
+1065	PUERTO RONDÓN 	2018-11-13 19:11:03-05	2018-11-13 19:11:03-05	ARAUCA 	81591
+1066	SARAVENA	2018-11-13 19:11:17-05	2018-11-13 19:11:17-05	ARAUCA 	81736
+1067	TAME 	2018-11-13 19:11:30-05	2018-11-13 19:11:30-05	ARAUCA 	81794
+1068	YOPAL 	2018-11-13 19:11:51-05	2018-11-13 19:11:51-05	CASANARE 	85001
+1069	AGUAZUL 	2018-11-13 19:12:18-05	2018-11-13 19:12:18-05	CASANARE 	85010 
+1070	CHÁMEZA 	2018-11-13 19:12:30-05	2018-11-13 19:12:30-05	CASANARE 	85015
+1071	HATO COROZAL 	2018-11-13 19:12:41-05	2018-11-13 19:12:41-05	CASANARE 	85125
+1072	LA SALINA 	2018-11-13 19:12:51-05	2018-11-13 19:12:51-05	CASANARE 	85136
+1073	MANÍ 	2018-11-13 19:12:59-05	2018-11-13 19:12:59-05	CASANARE 	85139
+1074	MONTERREY 	2018-11-13 19:13:13-05	2018-11-13 19:13:13-05	CASANARE 	85162
+1075	NUNCHÍA 	2018-11-13 19:13:23-05	2018-11-13 19:13:23-05	CASANARE 	85225
+1076	OROCUÉ 	2018-11-13 19:13:36-05	2018-11-13 19:13:36-05	CASANARE 	85230 
+1077	PAZ DE ARIPORO 	2018-11-13 19:13:53-05	2018-11-13 19:13:53-05	CASANARE 	85250 
+1078	PORE 	2018-11-13 19:14:02-05	2018-11-13 19:14:02-05	CASANARE 	85263
+1079	RECETOR 	2018-11-13 19:14:14-05	2018-11-13 19:14:14-05	CASANARE 	85279
+1080	CABANALARGA 	2018-11-13 19:14:28-05	2018-11-13 19:14:28-05	CASANARE 	85300
+1081	SÁCAMA 	2018-11-13 19:14:45-05	2018-11-13 19:14:45-05	CASANARE 	85315
+1082	SAN LUIS DE PALENQUE 	2018-11-13 19:14:59-05	2018-11-13 19:14:59-05	CASANARE 	85325
+1083	TÁMARA  	2018-11-13 19:15:11-05	2018-11-13 19:15:11-05	CASANARE 	85400 
+1084	TAURAMENA 	2018-11-13 19:15:25-05	2018-11-13 19:15:25-05	CASANARE 	85410 
+1085	TRINIDAD	2018-11-13 19:15:37-05	2018-11-13 19:15:37-05	CASANARE 	85430 
+1086	VILLANUEVA 	2018-11-13 19:15:46-05	2018-11-13 19:15:46-05	CASANARE 	85440 
+1087	MOCOA 	2018-11-13 19:16:21-05	2018-11-13 19:16:21-05	PUTUMAYO 	86001
+1088	COLÓN 	2018-11-13 19:16:33-05	2018-11-13 19:16:33-05	PUTUMAYO 	86219
+1089	ORITO 	2018-11-13 19:16:44-05	2018-11-13 19:16:44-05	PUTUMAYO 	86320
+1090	PUERTO ASÍS 	2018-11-13 19:16:59-05	2018-11-13 19:16:59-05	PUTUMAYO 	86568
+1091	PUERTO CAICEDO 	2018-11-13 19:17:10-05	2018-11-13 19:17:10-05	PUTUMAYO 	86569
+1092	PUERTO GUZMÁN	2018-11-13 19:17:23-05	2018-11-13 19:17:23-05	PUTUMAYO 	86571
+1093	PUERTO LEGUÍZAMO 	2018-11-13 19:17:33-05	2018-11-13 19:17:33-05	PUTUMAYO 	86573
+1094	SUBUNDOY 	2018-11-13 19:17:48-05	2018-11-13 19:17:48-05	PUTUMAYO 	86749
+1095	SAN FRANCISCO 	2018-11-13 19:18:01-05	2018-11-13 19:18:01-05	PUTUMAYO 	86755
+1096	SAN MIGUEL 	2018-11-13 19:18:10-05	2018-11-13 19:18:10-05	PUTUMAYO 	86757
+1097	SANTIAGO 	2018-11-13 19:18:19-05	2018-11-13 19:18:19-05	PUTUMAYO 	86760
+1098	VALLE DEL GUAMUEZ 	2018-11-13 19:18:39-05	2018-11-13 19:18:39-05	PUTUMAYO 	86865
+1099	VILLAGARZÓN 	2018-11-13 19:18:52-05	2018-11-13 19:18:52-05	PUTUMAYO 	86885
+1100	SAN ANDRÉS 	2018-11-13 19:19:16-05	2018-11-13 19:19:16-05	SAN ANDRÉS	88001
+1101	PROVIDENCIA  	2018-11-13 19:19:31-05	2018-11-13 19:19:31-05	SAN ANDRÉS	88564
+1112	TARAPACÁ	2018-11-13 19:22:14-05	2018-11-13 19:22:14-05	AMAZONAS 	91798
+1102	LETICIA 	2018-11-13 19:19:54-05	2018-11-13 19:19:54-05	AMAZONAS 	91001
+1104	LA CHORRERA 	2018-11-13 19:20:20-05	2018-11-13 19:20:20-05	AMAZONAS 	91405
+1106	LA VICTORIA 	2018-11-13 19:20:43-05	2018-11-13 19:20:43-05	AMAZONAS 	91430 
+1108	PUERTO ALEGRE 	2018-11-13 19:21:17-05	2018-11-13 19:21:17-05	AMAZONAS 	91530 
+1109	PUERTO ARICA 	2018-11-13 19:21:25-05	2018-11-13 19:21:25-05	AMAZONAS 	91536
+1111	PUERTO SANTANDER 	2018-11-13 19:21:47-05	2018-11-13 19:21:47-05	AMAZONAS 	91669
+1107	MIRITÍ- PARANÁ 	2018-11-13 19:21:01-05	2018-11-13 19:21:01-05	AMAZONAS 	91460 
+1105	LA PEDRERA 	2018-11-13 19:20:28-05	2018-11-13 19:20:28-05	AMAZONAS 	91407
+1103	EL ENCANTO 	2018-11-13 19:20:06-05	2018-11-13 19:20:06-05	AMAZONAS 	91263
+1110	PUERTO NARIÑO	2018-11-13 19:21:36-05	2018-11-13 19:21:36-05	AMAZONAS 	91540
+1113	INÍRIDA 	2018-11-13 19:23:42-05	2018-11-13 19:23:42-05	GUANÍA	94001
+1114	BARRANCO MINAS 	2018-11-13 19:24:03-05	2018-11-13 19:24:03-05	GUANÍA	94343
+1115	MAPIRIPANA 	2018-11-13 19:24:20-05	2018-11-13 19:24:20-05	GUANÍA	94663
+1116	SAN FELIPE 	2018-11-13 19:24:32-05	2018-11-13 19:24:32-05	GUANÍA	94883
+1117	PUERTO COLOMBIA 	2018-11-13 19:24:41-05	2018-11-13 19:24:41-05	GUANÍA	94884
+1118	LA GUADALUPE 	2018-11-13 19:24:52-05	2018-11-13 19:24:52-05	GUANÍA	94885
+1119	CACAHUAL 	2018-11-13 19:25:01-05	2018-11-13 19:25:01-05	GUANÍA	94886
+1120	PANA PANA 	2018-11-13 19:25:11-05	2018-11-13 19:25:11-05	GUANÍA	94887
+1121	MORICHAL NUEVO 	2018-11-13 19:25:25-05	2018-11-13 19:25:25-05	GUANÍA	94888
+1122	SAN JOSE DEL GUAVIARE 	2018-11-13 19:25:53-05	2018-11-13 19:25:53-05	GUAVIARE 	95001
+1123	CALAMAR	2018-11-13 19:26:05-05	2018-11-13 19:26:05-05	GUAVIARE 	95015
+1124	EL RETORNO 	2018-11-13 19:26:15-05	2018-11-13 19:26:15-05	GUAVIARE 	95025
+1125	MIRAFLORES 	2018-11-13 19:26:26-05	2018-11-13 19:26:26-05	GUAVIARE 	95200
+1126	MITÚ	2018-11-13 19:26:55-05	2018-11-13 19:26:55-05	VAUPÉS 	97001
+1127	CARURU	2018-11-13 19:27:07-05	2018-11-13 19:27:07-05	VAUPÉS 	97161
+1128	PACOA 	2018-11-13 19:27:15-05	2018-11-13 19:27:15-05	VAUPÉS 	97511
+1129	TARAIRA	2018-11-13 19:27:32-05	2018-11-13 19:27:32-05	VAUPÉS 	97666
+1130	PAPUNAHUA	2018-11-13 19:27:48-05	2018-11-13 19:27:48-05	VAUPÉS 	97777
+1131	YAVARATÉ	2018-11-13 19:28:06-05	2018-11-13 19:28:06-05	VAUPÉS 	97889
+1132	PUERTO CARREÑO 	2018-11-13 19:28:31-05	2018-11-13 19:28:31-05	VICHADA 	99001
+1133	LA PRIMAVERA 	2018-11-13 19:28:46-05	2018-11-13 19:28:46-05	VICHADA 	99524
+1134	SANTA ROSALÍA 	2018-11-13 19:29:01-05	2018-11-13 19:29:01-05	VICHADA 	99624
+1135	CUMARIBO	2018-11-13 19:29:23-05	2018-11-13 19:29:23-05	VICHADA 	99773
+\.
+
+
+--
+-- Data for Name: password_requests; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.password_requests (id, user_id, ip, token, expires, created_at, updated_at) FROM stdin;
+1	1	\N	05ddf04c9cf0d4f43f3480fe0ca506d0d9d1194d	1541016352471	2018-10-31 14:05:55-05	2018-10-31 14:05:55-05
+2	2	186.119.111.209	0089ce13b03eee0d4c0ddf1c7dce61b2760ed18a	1541016384699	2018-10-31 14:06:26-05	2018-10-31 14:06:26-05
+3	1	\N	\N	1541017744742	2018-10-31 14:29:07-05	2018-10-31 14:31:23-05
+4	1	\N	\N	1541017901772	2018-10-31 14:31:43-05	2018-10-31 14:32:02-05
+5	1	\N	\N	1541607686988	2018-11-07 10:21:29-05	2018-11-07 10:23:02-05
+6	1	\N	\N	1541619037558	2018-11-07 13:30:40-05	2018-11-07 13:32:57-05
+7	1	\N	\N	1541728974626	2018-11-08 20:02:56-05	2018-11-08 20:04:39-05
+8	1	\N	\N	1542305642997	2018-11-15 12:14:06-05	2018-11-15 12:14:51-05
+9	1	\N	\N	1543556973650	2018-11-29 23:49:36-05	2018-11-29 23:50:33-05
+10	1	190.65.93.22	\N	1543859270504	2018-12-03 11:47:54-05	2018-12-03 11:48:55-05
+11	9	\N	\N	1544139585057	2018-12-06 17:39:50-05	2018-12-06 17:42:26-05
+12	9	\N	\N	1544139911343	2018-12-06 17:45:13-05	2018-12-06 17:45:51-05
+13	10	\N	\N	1544142864288	2018-12-06 18:34:26-05	2018-12-06 18:34:59-05
+14	11	\N	\N	1544143222579	2018-12-06 18:40:24-05	2018-12-06 18:40:50-05
+15	13	\N	\N	1544143620158	2018-12-06 18:47:02-05	2018-12-06 18:47:26-05
+16	13	190.65.93.121	\N	1544143717092	2018-12-06 18:48:39-05	2018-12-06 18:49:02-05
+17	1	\N	\N	1544144614793	2018-12-06 19:03:36-05	2018-12-06 19:04:38-05
+18	30	\N	\N	1544583838556	2018-12-11 21:04:02-05	2018-12-11 21:05:07-05
+\.
+
+
+--
+-- Data for Name: pivot_consolidacion_cuadre_productos; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.pivot_consolidacion_cuadre_productos (consolidacion_id, cuadre_producto_id) FROM stdin;
+63	14
+64	15
+65	15
+71	17
+67	15
+\.
+
+
+--
+-- Data for Name: pivot_consolidacion_cuadre_rutas; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.pivot_consolidacion_cuadre_rutas (consolidacion_id, cuadre_viaje_id) FROM stdin;
+63	71
+64	74
+65	71
+71	75
+73	72
+77	75
+79	72
+67	74
+\.
+
+
+--
+-- Data for Name: pivot_consolidacion_cuadre_servicios; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.pivot_consolidacion_cuadre_servicios (consolidacion_id, cuadre_servicio_id) FROM stdin;
+63	13
+65	13
+64	15
+71	14
+67	13
+\.
+
+
+--
+-- Data for Name: pivot_cuadre_viaje_rutas; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.pivot_cuadre_viaje_rutas (cuadre_viaje_id, ruta_id) FROM stdin;
+71	12
+72	7
+73	7
+74	14
+75	10
+76	11
+\.
+
+
+--
+-- Data for Name: pivot_cuadre_viaje_vehiculos; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.pivot_cuadre_viaje_vehiculos (cuadre_viaje_id, vehiculo_id) FROM stdin;
+71	1
+72	1
+73	1
+74	1
+75	1
+\.
+
+
+--
+-- Data for Name: pivot_producto_cuadre_productos; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.pivot_producto_cuadre_productos (cuadre_producto_id, producto_id) FROM stdin;
+14	4
+15	2
+16	5
+17	4
+\.
+
+
+--
+-- Data for Name: pivot_rutas_municipios; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.pivot_rutas_municipios (ruta_id, municipio_id) FROM stdin;
+7	149
+7	1019
+8	866
+8	1102
+9	18
+9	149
+10	866
+10	413
+11	701
+11	859
+12	25
+12	4
+13	4
+13	18
+14	4
+14	8
+\.
+
+
+--
+-- Data for Name: pivot_servicio_cuadre_servicios; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.pivot_servicio_cuadre_servicios (cuadre_servicio_id, servicio_id) FROM stdin;
+13	1
+14	2
+15	2
+\.
+
+
+--
+-- Data for Name: productos; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.productos (id, nombre, descripcion, precio, created_at, updated_at) FROM stdin;
+2	ACPM	para camiones	4500	2018-11-27 20:09:33-05	2018-11-27 20:11:42-05
+4	GASOLINA	Por barril	78000	2018-12-13 15:56:11-05	2018-12-13 15:56:11-05
+5	ASFALTO	La tonelada	83000	2018-12-13 15:56:45-05	2018-12-13 15:56:45-05
+\.
+
+
+--
+-- Data for Name: programacion_entregas; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.programacion_entregas (id, consolidacion_id, fecha_solicitud, fecha_despacho, fecha_entrega_programada, fecha_entrega_real, created_at, updated_at) FROM stdin;
+\.
+
+
+--
+-- Data for Name: role_modulos; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.role_modulos (role_id, modulo_id) FROM stdin;
+1	1
+1	2
+2	2
+\.
+
+
+--
+-- Data for Name: role_sub_modulo_permisos; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.role_sub_modulo_permisos (id, role_id, sub_modulo_id, editar, crear, eliminar, created_at, updated_at) FROM stdin;
+1	1	1	t	t	t	\N	\N
+2	1	2	t	t	t	\N	\N
+3	1	3	t	t	t	\N	\N
+4	1	4	t	t	t	\N	\N
+47	2	7	t	t	t	\N	\N
+6	1	7	t	t	t	\N	\N
+7	1	8	t	t	t	\N	\N
+8	1	9	t	t	t	\N	\N
+9	1	10	t	t	t	\N	\N
+10	1	11	t	t	t	\N	\N
+5	1	6	t	t	t	\N	\N
+55	2	4	t	t	t	\N	\N
+56	2	6	t	t	t	\N	\N
+57	2	8	t	t	t	\N	\N
+58	2	9	t	t	t	\N	\N
+59	2	10	t	t	t	\N	\N
+60	2	11	t	t	t	\N	\N
+61	2	12	t	t	t	\N	\N
+\.
+
+
+--
+-- Data for Name: roles; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.roles (id, nombre, description, created_at, updated_at) FROM stdin;
+1	Admin	Administra el sistema	2018-10-25 20:50:16-05	2018-10-25 20:50:16-05
+2	Seguridad	Encargado de la seguridad de los camiones y de mas	2018-10-25 21:42:10-05	2018-12-11 17:07:17-05
+\.
+
+
+--
+-- Data for Name: rutas; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.rutas (id, kilometros, anticipo_sugerido, valor_flete, created_at, updated_at, "pago_conductor_HQ", pago_tercero, pago_cabezote) FROM stdin;
+7	400	200	1200	2018-11-19 16:51:34-05	2018-11-19 16:51:34-05	200	300	150
+8	1600	357	4500	2018-11-21 13:14:19-05	2018-11-21 23:46:18-05	120	154	76
+9	456	100	450	2018-11-23 15:03:17-05	2018-11-23 15:03:17-05	200	100	300
+10	145	250	1800	2018-11-26 10:40:50-05	2018-11-26 10:40:50-05	100	450	250
+11	630	200	630	2018-11-28 16:24:16-05	2018-11-28 16:24:16-05	150	200	100
+12	652	450	350	2018-12-07 15:34:08-05	2018-12-07 15:34:08-05	100	200	150
+13	200	200	500	2018-12-13 21:24:51-05	2018-12-13 21:24:51-05	100	200	50
+14	800	200	900	2018-12-21 15:17:56-05	2018-12-21 15:17:56-05	200	100	100
+\.
+
+
+--
+-- Data for Name: servicios; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.servicios (id, nombre, descripcion, precio, created_at, updated_at) FROM stdin;
+1	Laboratorio	Chequeo de calidad	7500	2018-11-28 21:00:17	2018-11-28 21:00:17
+2	Laboratorio 2	Consistency	2500	2018-11-28 21:01:22	2018-11-28 21:01:44
+\.
+
+
+--
+-- Data for Name: sub_modulos; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.sub_modulos (id, nombre, icono, modulo_id, link) FROM stdin;
+1	Usuarios	mdi mdi-account-multiple	1	Usuarios
+2	Roles	mdi mdi-account-card-details	1	Roles
+3	Logs	mdi mdi-account-key	1	Logs
+4	Clientes	mdi mdi-account-multiple-outline	2	Clientes
+6	Vehiculos	mdi mdi-truck	2	Vehiculos
+7	Trailers	mdi mdi-truck-trailer	2	Trailers
+8	Conductores	mdi mdi-account-circle	2	Conductores
+9	Rutas	mdi mdi-map	2	Rutas
+10	Productos	mdi mdi-barrel	2	Productos
+11	Servicios	mdi mdi-worker	2	Servicios
+12	Cuadro de viajes	mdi mdi-table	2	cuadro-de-viajes
+13	Backups	mdi mdi-database	1	Backups
+\.
+
+
+--
+-- Data for Name: tokens; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.tokens (id, user_id, token, type, is_revoked, created_at, updated_at) FROM stdin;
+\.
+
+
+--
+-- Data for Name: trailers; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.trailers (id, vehiculo_id, placa, tipo_de_vehiculo, tipo_de_configuracion, tenedor, modelo, propietario, tipo_de_flota, poseedor, color, marca_trailer, peso, tipo_carroceria, estado, radica_rndc, created_at, updated_at) FROM stdin;
+2	1	RTHD856	10 pies	HG652352	TRIPLE	2010	EFRAIN QUINTANA	LARGA	HQ	NEGRO	FREITH	1TN	8 EJES	NORMAL	t	2018-12-14 15:56:13-05	2018-12-27 20:16:00-05
+1	4	BENY345	20 pies	Ruda	3x	2009	Fernando	Camion	HQ	Amarillo	Peter jackson	3	3 ejes	Normal	t	2018-10-25 22:49:22-05	2019-01-04 11:18:28-05
+\.
+
+
+--
+-- Data for Name: user_logs; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.user_logs (id, user_id, ip, token, is_revoke, entrada, salida) FROM stdin;
+60	1	127.0.0.1	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjEsImlhdCI6MTU0NTg0Mjk5NH0.pGxVyWmm1MrsRE6nzTLFLbImFwMEBO-372N2EKA24oc	t	2018-12-26 11:49:54.82881-05	2018-12-26 11:50:07.339-05
+61	1	127.0.0.1	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjEsImlhdCI6MTU0NTg0MzAxN30.WlybnDOkGhWnciZqbrnq0sp99niURTpttoKFYtVeg7Y	t	2018-12-26 11:50:17.83136-05	2018-12-26 11:55:18.611-05
+62	1	127.0.0.1	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjEsImlhdCI6MTU0NTg0NDIyOX0.B82rWCU1Q49GrYS9Wwz42LjU9cPxkHdYXX3UFjmZkKw	t	2018-12-26 12:10:29.836188-05	2018-12-26 12:11:52.535-05
+63	1	127.0.0.1	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjEsImlhdCI6MTU0NTg0NDMyN30.-Tb4bFcVvH46ogbYaxrvSfDe1JEEjC7G_pYQOWgE_bI	f	2018-12-26 12:12:07.456874-05	\N
+\.
+
+
+--
+-- Data for Name: user_roles; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.user_roles (user_id, role_id) FROM stdin;
+34	1
+1	1
+\.
+
+
+--
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.users (id, nombre, apellido, cedula, tel_fijo, tel_mobil, direccion, ciudad, departamento, username, email, password, created_at, updated_at, estado) FROM stdin;
+1	Hans	Aranzalez	1215161718	3321714	3108389763	Carrera 91 #16-48	Cali	Valle	hans	haranzalez@gmail.com	$2a$10$8txyVeh5jSWqzbZEBwatbuyBGLsIursUDJuNpq1RXUubU2a/VcwPK	2018-10-25 18:20:17-05	2018-12-06 19:04:38-05	t
+34	Carlos Andres 	Gonzalez Benavides	1130632586	6640019	3168330612	Calle 8 # 38-80 	Yumbo 	Valle	cgonzalez	carlos.gonzalez@humbertoquintero.com	$2a$10$5PhjCAdG3XXjYYnxGFCDFO8u4WDLK57Q281yFEgTF.rY9crqhJXqu	2018-12-07 14:22:04-05	2018-12-07 14:22:04-05	t
+\.
+
+
+--
+-- Data for Name: vehiculos; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.vehiculos (id, placa, numero_chasis, tipo_de_vehiculo, tipo_configuracion, modelo, numero_motor, tipo_de_flota, marca_cabezote, linea_cabezote, tipo_de_combustible, color, peso, capasidad_carga, created_at, updated_at, estado, consolidacion_id) FROM stdin;
+4	ETR896	7537251	Flota	Cong	2005	737452	Other	Ford	5266	ACPM	Negro	2	4	2019-01-04 11:18:18-05	2019-01-04 11:18:28-05	disponible	79
+1	BENY728	38237492837	Camion	6 ejes	Mercedez	9123847012	Camion	Diesel	RX	ACPM	Rojo	3	10	2018-10-25 22:50:48-05	2019-01-01 23:48:07-05	disponible	67
+\.
+
+
+--
+-- Name: historial_id_seq; Type: SEQUENCE SET; Schema: logging; Owner: postgres
+--
+
+SELECT pg_catalog.setval('logging.historial_id_seq', 3, true);
+
+
+--
+-- Name: Servicios_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public."Servicios_id_seq"', 2, true);
+
+
+--
+-- Name: cliente_tipo_negociacions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.cliente_tipo_negociacions_id_seq', 7, true);
+
+
+--
+-- Name: clientes_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.clientes_id_seq', 23, true);
+
+
+--
+-- Name: comentarios_rutas_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.comentarios_rutas_id_seq', 24, true);
+
+
+--
+-- Name: conductores_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.conductores_id_seq', 8, true);
+
+
+--
+-- Name: consolidacions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.consolidacions_id_seq', 80, true);
+
+
+--
+-- Name: cuadre_productos_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.cuadre_productos_id_seq', 17, true);
+
+
+--
+-- Name: cuadre_servicios_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.cuadre_servicios_id_seq', 15, true);
+
+
+--
+-- Name: cuadre_viajes_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.cuadre_viajes_id_seq', 76, true);
+
+
+--
+-- Name: datos_bancarios_conductores_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.datos_bancarios_conductores_id_seq', 3, true);
+
+
+--
+-- Name: deposito_cliente_aplicados_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.deposito_cliente_aplicados_id_seq', 1, false);
+
+
+--
+-- Name: deposito_clientes_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.deposito_clientes_id_seq', 5, true);
+
+
+--
+-- Name: licencias_conductores_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.licencias_conductores_id_seq', 5, true);
+
+
+--
+-- Name: modulos_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.modulos_id_seq', 1, false);
+
+
+--
+-- Name: municipios_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.municipios_id_seq', 1135, true);
+
+
+--
+-- Name: password_requests_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.password_requests_id_seq', 18, true);
+
+
+--
+-- Name: productos_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.productos_id_seq', 5, true);
+
+
+--
+-- Name: programacion_entregas_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.programacion_entregas_id_seq', 1, false);
+
+
+--
+-- Name: role_sub_modulo_permisos_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.role_sub_modulo_permisos_id_seq', 72, true);
+
+
+--
+-- Name: roles_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.roles_id_seq', 8, true);
+
+
+--
+-- Name: rutas_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.rutas_id_seq', 14, true);
+
+
+--
+-- Name: sub_modulo_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.sub_modulo_id_seq', 1, true);
+
+
+--
+-- Name: tokens_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.tokens_id_seq', 1, false);
+
+
+--
+-- Name: trailers_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.trailers_id_seq', 2, true);
+
+
+--
+-- Name: user_logs_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.user_logs_id_seq', 63, true);
+
+
+--
+-- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.users_id_seq', 36, true);
+
+
+--
+-- Name: vehiculos_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.vehiculos_id_seq', 4, true);
+
+
+--
+-- Name: cliente_tipo_negociacions cliente_tipo_negociacions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.cliente_tipo_negociacions
+    ADD CONSTRAINT cliente_tipo_negociacions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: clientes clientes_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.clientes
+    ADD CONSTRAINT clientes_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: comentarios_rutas comentarios_rutas_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.comentarios_rutas
+    ADD CONSTRAINT comentarios_rutas_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: conductores conductores_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.conductores
+    ADD CONSTRAINT conductores_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: consolidacions consolidacions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.consolidacions
+    ADD CONSTRAINT consolidacions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: cuadre_servicios cuadre_id; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.cuadre_servicios
+    ADD CONSTRAINT cuadre_id PRIMARY KEY (id);
+
+
+--
+-- Name: cuadre_productos cuadre_productos_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.cuadre_productos
+    ADD CONSTRAINT cuadre_productos_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: cuadre_viajes cuadre_viajes_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.cuadre_viajes
+    ADD CONSTRAINT cuadre_viajes_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: datos_bancarios_conductores datos_bancarios_conductores_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.datos_bancarios_conductores
+    ADD CONSTRAINT datos_bancarios_conductores_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: deposito_cliente_aplicados deposito_cliente_aplicados_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.deposito_cliente_aplicados
+    ADD CONSTRAINT deposito_cliente_aplicados_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: deposito_clientes deposito_clientes_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.deposito_clientes
+    ADD CONSTRAINT deposito_clientes_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: servicios id; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.servicios
+    ADD CONSTRAINT id PRIMARY KEY (id);
+
+
+--
+-- Name: licencias_conductores licencias_conductores_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.licencias_conductores
+    ADD CONSTRAINT licencias_conductores_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: modulos modulos_nombre_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.modulos
+    ADD CONSTRAINT modulos_nombre_unique UNIQUE (nombre);
+
+
+--
+-- Name: modulos modulos_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.modulos
+    ADD CONSTRAINT modulos_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: municipios municipios_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.municipios
+    ADD CONSTRAINT municipios_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: password_requests password_requests_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.password_requests
+    ADD CONSTRAINT password_requests_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: productos productos_nombre_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.productos
+    ADD CONSTRAINT productos_nombre_unique UNIQUE (nombre);
+
+
+--
+-- Name: productos productos_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.productos
+    ADD CONSTRAINT productos_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: programacion_entregas programacion_entregas_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.programacion_entregas
+    ADD CONSTRAINT programacion_entregas_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: role_sub_modulo_permisos role_sub_modulo_permisos_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.role_sub_modulo_permisos
+    ADD CONSTRAINT role_sub_modulo_permisos_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: roles roles_nombre_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.roles
+    ADD CONSTRAINT roles_nombre_unique UNIQUE (nombre);
+
+
+--
+-- Name: roles roles_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.roles
+    ADD CONSTRAINT roles_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: rutas rutas_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.rutas
+    ADD CONSTRAINT rutas_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: sub_modulos sub_modulo_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.sub_modulos
+    ADD CONSTRAINT sub_modulo_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: tokens tokens_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.tokens
+    ADD CONSTRAINT tokens_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: tokens tokens_token_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.tokens
+    ADD CONSTRAINT tokens_token_unique UNIQUE (token);
+
+
+--
+-- Name: trailers trailers_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.trailers
+    ADD CONSTRAINT trailers_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: trailers trailers_placa_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.trailers
+    ADD CONSTRAINT trailers_placa_unique UNIQUE (placa);
+
+
+--
+-- Name: user_logs user_logs_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.user_logs
+    ADD CONSTRAINT user_logs_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: users users_email_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_email_unique UNIQUE (email);
+
+
+--
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: users users_username_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_username_unique UNIQUE (username);
+
+
+--
+-- Name: vehiculos vehiculos_numero_chasis_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.vehiculos
+    ADD CONSTRAINT vehiculos_numero_chasis_unique UNIQUE (numero_chasis);
+
+
+--
+-- Name: vehiculos vehiculos_numero_motor_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.vehiculos
+    ADD CONSTRAINT vehiculos_numero_motor_unique UNIQUE (numero_motor);
+
+
+--
+-- Name: vehiculos vehiculos_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.vehiculos
+    ADD CONSTRAINT vehiculos_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: vehiculos vehiculos_placa_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.vehiculos
+    ADD CONSTRAINT vehiculos_placa_unique UNIQUE (placa);
+
+
+--
+-- Name: role_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX role_id ON public.user_roles USING btree (role_id);
+
+
+--
+-- Name: tokens_token_index; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX tokens_token_index ON public.tokens USING btree (token);
+
+
+--
+-- Name: user_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX user_id ON public.user_roles USING btree (user_id);
+
+
+--
+-- Name: cliente_tipo_negociacions cliente_tipo_negociacions; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER cliente_tipo_negociacions BEFORE INSERT OR DELETE OR UPDATE ON public.cliente_tipo_negociacions FOR EACH ROW EXECUTE PROCEDURE public.change_trigger();
+
+
+--
+-- Name: clientes clientes; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER clientes BEFORE INSERT OR DELETE OR UPDATE ON public.clientes FOR EACH ROW EXECUTE PROCEDURE public.change_trigger();
+
+
+--
+-- Name: comentarios_rutas comentarios_rutas; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER comentarios_rutas BEFORE INSERT OR DELETE OR UPDATE ON public.comentarios_rutas FOR EACH ROW EXECUTE PROCEDURE public.change_trigger();
+
+
+--
+-- Name: conductores conductores; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER conductores BEFORE INSERT OR DELETE OR UPDATE ON public.conductores FOR EACH ROW EXECUTE PROCEDURE public.change_trigger();
+
+
+--
+-- Name: consolidacions consolidacions; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER consolidacions BEFORE INSERT OR DELETE OR UPDATE ON public.consolidacions FOR EACH ROW EXECUTE PROCEDURE public.change_trigger();
+
+
+--
+-- Name: cuadre_productos cuadre_productos; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER cuadre_productos BEFORE INSERT OR DELETE OR UPDATE ON public.cuadre_productos FOR EACH ROW EXECUTE PROCEDURE public.change_trigger();
+
+
+--
+-- Name: cuadre_servicios cuadre_servicios; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER cuadre_servicios BEFORE INSERT OR DELETE OR UPDATE ON public.cuadre_servicios FOR EACH ROW EXECUTE PROCEDURE public.change_trigger();
+
+
+--
+-- Name: cuadre_viajes cuadre_viajes; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER cuadre_viajes BEFORE INSERT OR DELETE OR UPDATE ON public.cuadre_viajes FOR EACH ROW EXECUTE PROCEDURE public.change_trigger();
+
+
+--
+-- Name: datos_bancarios_conductores datos_bancarios_conductores; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER datos_bancarios_conductores BEFORE INSERT OR DELETE OR UPDATE ON public.datos_bancarios_conductores FOR EACH ROW EXECUTE PROCEDURE public.change_trigger();
+
+
+--
+-- Name: deposito_cliente_aplicados deposito_cliente_aplicados; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER deposito_cliente_aplicados BEFORE INSERT OR DELETE OR UPDATE ON public.deposito_cliente_aplicados FOR EACH ROW EXECUTE PROCEDURE public.change_trigger();
+
+
+--
+-- Name: deposito_clientes deposito_clientes; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER deposito_clientes BEFORE INSERT OR DELETE OR UPDATE ON public.deposito_clientes FOR EACH ROW EXECUTE PROCEDURE public.change_trigger();
+
+
+--
+-- Name: licencias_conductores licencias_conductores; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER licencias_conductores BEFORE INSERT OR DELETE OR UPDATE ON public.licencias_conductores FOR EACH ROW EXECUTE PROCEDURE public.change_trigger();
+
+
+--
+-- Name: municipios municipios; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER municipios BEFORE INSERT OR DELETE OR UPDATE ON public.municipios FOR EACH ROW EXECUTE PROCEDURE public.change_trigger();
+
+
+--
+-- Name: productos productos; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER productos BEFORE INSERT OR DELETE OR UPDATE ON public.productos FOR EACH ROW EXECUTE PROCEDURE public.change_trigger();
+
+
+--
+-- Name: programacion_entregas programacion_entregas; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER programacion_entregas BEFORE INSERT OR DELETE OR UPDATE ON public.programacion_entregas FOR EACH ROW EXECUTE PROCEDURE public.change_trigger();
+
+
+--
+-- Name: roles roles; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER roles BEFORE INSERT OR DELETE OR UPDATE ON public.roles FOR EACH ROW EXECUTE PROCEDURE public.change_trigger();
+
+
+--
+-- Name: rutas rutas; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER rutas BEFORE INSERT OR DELETE OR UPDATE ON public.rutas FOR EACH ROW EXECUTE PROCEDURE public.change_trigger();
+
+
+--
+-- Name: servicios servicios; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER servicios BEFORE INSERT OR DELETE OR UPDATE ON public.servicios FOR EACH ROW EXECUTE PROCEDURE public.change_trigger();
+
+
+--
+-- Name: trailers trailers; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER trailers BEFORE INSERT OR DELETE OR UPDATE ON public.trailers FOR EACH ROW EXECUTE PROCEDURE public.change_trigger();
+
+
+--
+-- Name: user_logs user_logs; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER user_logs BEFORE INSERT OR DELETE OR UPDATE ON public.user_logs FOR EACH ROW EXECUTE PROCEDURE public.change_trigger();
+
+
+--
+-- Name: users users; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER users BEFORE INSERT OR DELETE OR UPDATE ON public.users FOR EACH ROW EXECUTE PROCEDURE public.change_trigger();
+
+
+--
+-- Name: vehiculos vehiculos; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER vehiculos BEFORE INSERT OR DELETE OR UPDATE ON public.vehiculos FOR EACH ROW EXECUTE PROCEDURE public.change_trigger();
+
+
+--
+-- Name: cuadre_viajes cliente_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.cuadre_viajes
+    ADD CONSTRAINT cliente_id FOREIGN KEY (cliente_id) REFERENCES public.clientes(id) ON DELETE CASCADE;
+
+
+--
+-- Name: cuadre_productos cliente_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.cuadre_productos
+    ADD CONSTRAINT cliente_id FOREIGN KEY (cliente_id) REFERENCES public.clientes(id) ON DELETE CASCADE;
+
+
+--
+-- Name: cuadre_servicios cliente_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.cuadre_servicios
+    ADD CONSTRAINT cliente_id FOREIGN KEY (cliente_id) REFERENCES public.clientes(id) ON DELETE CASCADE;
+
+
+--
+-- Name: cliente_tipo_negociacions cliente_tipo_negociacions_cliente_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.cliente_tipo_negociacions
+    ADD CONSTRAINT cliente_tipo_negociacions_cliente_id_foreign FOREIGN KEY (cliente_id) REFERENCES public.clientes(id) ON DELETE CASCADE;
+
+
+--
+-- Name: comentarios_rutas comentarios_rutas_ruta_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.comentarios_rutas
+    ADD CONSTRAINT comentarios_rutas_ruta_id_foreign FOREIGN KEY (ruta_id) REFERENCES public.rutas(id) ON DELETE CASCADE;
+
+
+--
+-- Name: conductores conductores_vehiculo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.conductores
+    ADD CONSTRAINT conductores_vehiculo_id_foreign FOREIGN KEY (vehiculo_id) REFERENCES public.vehiculos(id) ON DELETE SET NULL;
+
+
+--
+-- Name: pivot_consolidacion_cuadre_rutas consolidacion_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pivot_consolidacion_cuadre_rutas
+    ADD CONSTRAINT consolidacion_id FOREIGN KEY (consolidacion_id) REFERENCES public.consolidacions(id) ON DELETE CASCADE;
+
+
+--
+-- Name: pivot_consolidacion_cuadre_productos consolidacion_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pivot_consolidacion_cuadre_productos
+    ADD CONSTRAINT consolidacion_id FOREIGN KEY (consolidacion_id) REFERENCES public.consolidacions(id) ON DELETE CASCADE;
+
+
+--
+-- Name: pivot_consolidacion_cuadre_servicios consolidacion_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pivot_consolidacion_cuadre_servicios
+    ADD CONSTRAINT consolidacion_id FOREIGN KEY (consolidacion_id) REFERENCES public.consolidacions(id) ON DELETE CASCADE;
+
+
+--
+-- Name: vehiculos consolidacion_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.vehiculos
+    ADD CONSTRAINT consolidacion_id FOREIGN KEY (consolidacion_id) REFERENCES public.consolidacions(id) ON DELETE CASCADE;
+
+
+--
+-- Name: consolidacions consolidacions_cliente_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.consolidacions
+    ADD CONSTRAINT consolidacions_cliente_id_foreign FOREIGN KEY (cliente_id) REFERENCES public.clientes(id) ON DELETE CASCADE;
+
+
+--
+-- Name: pivot_consolidacion_cuadre_productos cuadre_producto_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pivot_consolidacion_cuadre_productos
+    ADD CONSTRAINT cuadre_producto_id FOREIGN KEY (cuadre_producto_id) REFERENCES public.cuadre_productos(id) ON DELETE CASCADE;
+
+
+--
+-- Name: pivot_consolidacion_cuadre_rutas cuadre_ruta_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pivot_consolidacion_cuadre_rutas
+    ADD CONSTRAINT cuadre_ruta_id FOREIGN KEY (cuadre_viaje_id) REFERENCES public.cuadre_viajes(id) ON DELETE CASCADE;
+
+
+--
+-- Name: pivot_servicio_cuadre_servicios cuadre_servicio_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pivot_servicio_cuadre_servicios
+    ADD CONSTRAINT cuadre_servicio_id FOREIGN KEY (cuadre_servicio_id) REFERENCES public.cuadre_servicios(id) ON DELETE CASCADE;
+
+
+--
+-- Name: pivot_consolidacion_cuadre_servicios cuadre_servicio_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pivot_consolidacion_cuadre_servicios
+    ADD CONSTRAINT cuadre_servicio_id FOREIGN KEY (cuadre_servicio_id) REFERENCES public.cuadre_servicios(id) ON DELETE CASCADE;
+
+
+--
+-- Name: datos_bancarios_conductores datos_bancarios_conductores_conductor_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.datos_bancarios_conductores
+    ADD CONSTRAINT datos_bancarios_conductores_conductor_id_foreign FOREIGN KEY (conductor_id) REFERENCES public.conductores(id) ON DELETE CASCADE;
+
+
+--
+-- Name: deposito_cliente_aplicados deposito_cliente_aplicados_consolidacion_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.deposito_cliente_aplicados
+    ADD CONSTRAINT deposito_cliente_aplicados_consolidacion_id_foreign FOREIGN KEY (consolidacion_id) REFERENCES public.consolidacions(id) ON DELETE CASCADE;
+
+
+--
+-- Name: deposito_cliente_aplicados deposito_cliente_aplicados_deposito_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.deposito_cliente_aplicados
+    ADD CONSTRAINT deposito_cliente_aplicados_deposito_id_foreign FOREIGN KEY (deposito_id) REFERENCES public.deposito_clientes(id) ON DELETE CASCADE;
+
+
+--
+-- Name: deposito_clientes deposito_clientes_cliente_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.deposito_clientes
+    ADD CONSTRAINT deposito_clientes_cliente_id_foreign FOREIGN KEY (cliente_id) REFERENCES public.clientes(id) ON DELETE CASCADE;
+
+
+--
+-- Name: licencias_conductores licencias_conductores_conductor_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.licencias_conductores
+    ADD CONSTRAINT licencias_conductores_conductor_id_foreign FOREIGN KEY (conductor_id) REFERENCES public.conductores(id) ON DELETE CASCADE;
+
+
+--
+-- Name: pivot_cuadre_viaje_rutas pivot_cuadre_viaje_rutas_cuadre_viaje_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pivot_cuadre_viaje_rutas
+    ADD CONSTRAINT pivot_cuadre_viaje_rutas_cuadre_viaje_id_foreign FOREIGN KEY (cuadre_viaje_id) REFERENCES public.cuadre_viajes(id) ON DELETE CASCADE;
+
+
+--
+-- Name: pivot_cuadre_viaje_rutas pivot_cuadre_viaje_rutas_ruta_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pivot_cuadre_viaje_rutas
+    ADD CONSTRAINT pivot_cuadre_viaje_rutas_ruta_id_foreign FOREIGN KEY (ruta_id) REFERENCES public.rutas(id) ON DELETE CASCADE;
+
+
+--
+-- Name: pivot_cuadre_viaje_vehiculos pivot_cuadre_viaje_vehiculos_cuadre_viaje_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pivot_cuadre_viaje_vehiculos
+    ADD CONSTRAINT pivot_cuadre_viaje_vehiculos_cuadre_viaje_id_foreign FOREIGN KEY (cuadre_viaje_id) REFERENCES public.cuadre_viajes(id) ON DELETE CASCADE;
+
+
+--
+-- Name: pivot_cuadre_viaje_vehiculos pivot_cuadre_viaje_vehiculos_vehiculo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pivot_cuadre_viaje_vehiculos
+    ADD CONSTRAINT pivot_cuadre_viaje_vehiculos_vehiculo_id_foreign FOREIGN KEY (vehiculo_id) REFERENCES public.vehiculos(id) ON DELETE CASCADE;
+
+
+--
+-- Name: pivot_producto_cuadre_productos pivot_producto_cuadre_productos_cuadre_producto_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pivot_producto_cuadre_productos
+    ADD CONSTRAINT pivot_producto_cuadre_productos_cuadre_producto_id_foreign FOREIGN KEY (cuadre_producto_id) REFERENCES public.cuadre_productos(id) ON DELETE CASCADE;
+
+
+--
+-- Name: pivot_producto_cuadre_productos pivot_producto_cuadre_productos_producto_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pivot_producto_cuadre_productos
+    ADD CONSTRAINT pivot_producto_cuadre_productos_producto_id_foreign FOREIGN KEY (producto_id) REFERENCES public.productos(id) ON DELETE CASCADE;
+
+
+--
+-- Name: pivot_rutas_municipios pivot_rutas_municipios_municipio_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pivot_rutas_municipios
+    ADD CONSTRAINT pivot_rutas_municipios_municipio_id_foreign FOREIGN KEY (municipio_id) REFERENCES public.municipios(id) ON DELETE CASCADE;
+
+
+--
+-- Name: pivot_rutas_municipios pivot_rutas_municipios_ruta_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pivot_rutas_municipios
+    ADD CONSTRAINT pivot_rutas_municipios_ruta_id_foreign FOREIGN KEY (ruta_id) REFERENCES public.rutas(id) ON DELETE CASCADE;
+
+
+--
+-- Name: programacion_entregas programacion_entregas_consolidacion_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.programacion_entregas
+    ADD CONSTRAINT programacion_entregas_consolidacion_id_foreign FOREIGN KEY (consolidacion_id) REFERENCES public.consolidacions(id) ON DELETE CASCADE;
+
+
+--
+-- Name: role_modulos role_modulos_modulo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.role_modulos
+    ADD CONSTRAINT role_modulos_modulo_id_foreign FOREIGN KEY (modulo_id) REFERENCES public.modulos(id) ON DELETE CASCADE;
+
+
+--
+-- Name: role_modulos role_modulos_role_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.role_modulos
+    ADD CONSTRAINT role_modulos_role_id_foreign FOREIGN KEY (role_id) REFERENCES public.roles(id) ON DELETE CASCADE;
+
+
+--
+-- Name: role_sub_modulo_permisos role_sub_modulo_permisos_role_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.role_sub_modulo_permisos
+    ADD CONSTRAINT role_sub_modulo_permisos_role_id_foreign FOREIGN KEY (role_id) REFERENCES public.roles(id) ON DELETE CASCADE;
+
+
+--
+-- Name: role_sub_modulo_permisos role_sub_modulo_permisos_sub_modulo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.role_sub_modulo_permisos
+    ADD CONSTRAINT role_sub_modulo_permisos_sub_modulo_id_foreign FOREIGN KEY (sub_modulo_id) REFERENCES public.sub_modulos(id) ON DELETE CASCADE;
+
+
+--
+-- Name: pivot_servicio_cuadre_servicios servicio_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pivot_servicio_cuadre_servicios
+    ADD CONSTRAINT servicio_id FOREIGN KEY (servicio_id) REFERENCES public.servicios(id) ON DELETE CASCADE;
+
+
+--
+-- Name: sub_modulos sub_modulo_modulo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.sub_modulos
+    ADD CONSTRAINT sub_modulo_modulo_id_foreign FOREIGN KEY (modulo_id) REFERENCES public.modulos(id) ON DELETE CASCADE;
+
+
+--
+-- Name: tokens tokens_user_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.tokens
+    ADD CONSTRAINT tokens_user_id_foreign FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: trailers trailers_vehiculo_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.trailers
+    ADD CONSTRAINT trailers_vehiculo_id_foreign FOREIGN KEY (vehiculo_id) REFERENCES public.vehiculos(id) ON DELETE SET NULL;
+
+
+--
+-- Name: user_logs user_logs_user_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.user_logs
+    ADD CONSTRAINT user_logs_user_id_foreign FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
+-- Name: user_roles user_roles_role_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.user_roles
+    ADD CONSTRAINT user_roles_role_id_foreign FOREIGN KEY (role_id) REFERENCES public.roles(id) ON DELETE CASCADE;
+
+
+--
+-- Name: user_roles user_roles_user_id_foreign; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.user_roles
+    ADD CONSTRAINT user_roles_user_id_foreign FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
+-- PostgreSQL database dump complete
+--
+

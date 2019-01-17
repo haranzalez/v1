@@ -21,6 +21,9 @@ import productos from './productos'
 import servicios from './servicios'
 import consolidaciones from './consolidaciones'
 import backups from './backups'
+import logger from './logger'
+import transportadoras from './transportadoras'
+import sharedValues from './sharedValues'
 
 
 Vue.use(Vuex)
@@ -50,6 +53,9 @@ export default new Vuex.Store({
 		servicios,
 		consolidaciones,
 		backups,
+		logger,
+		transportadoras,
+		sharedValues,
 	},
 	mutations: {
 	},

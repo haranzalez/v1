@@ -9,7 +9,7 @@
                     <el-form-item label="Placa">
                         <el-input size="mini"
                         @input="setPlaca"
-                        placeholder="Placa">
+                        >
                         </el-input>
                     </el-form-item>
 				</el-col>
@@ -17,7 +17,7 @@
                     <el-form-item label="Modelo">
                         <el-input size="mini"
                         @input="setModelo"
-                        placeholder="Peter Jackson..">
+                        >
                         </el-input>
                     </el-form-item>
 				</el-col>
@@ -33,10 +33,74 @@
                     <el-form-item label="Color">
                         <el-input size="mini"
                         @input="setColor"
-                        placeholder="Negro..">
+                        >
                         </el-input>
                     </el-form-item>
 				</el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Propietario">
+                        <el-row>
+                            <el-col :span="11" :md="11" :sm="24" :xs="24">
+                                <el-input 
+                                size="mini"
+                                @input="setPropietario"
+                                placeholder="Nombre">
+                                </el-input>
+                            </el-col>
+                            <el-col style="text-align: center;" :span="2" :md="2" :sm="24" :xs="24">
+                                |
+                            </el-col>
+                            <el-col :span="11" :md="11" :sm="24" :xs="24">
+                                <el-input 
+                                size="mini"
+                                @input="setCedulaPropietario"
+                                placeholder="Nit/Cedula">
+                                </el-input>
+                            </el-col>
+                        </el-row>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Poseedor">
+                        <el-row>
+                            <el-col :span="11" :md="11" :sm="24" :xs="24">
+                                <el-input 
+                                size="mini"
+                                @input="setPoseedor"
+                                placeholder="Nombre">
+                                </el-input>
+                            </el-col>
+                            <el-col style="text-align: center;" :span="2" :md="2" :sm="24" :xs="24">
+                                |
+                            </el-col>
+                            <el-col :span="11" :md="11" :sm="24" :xs="24">
+                                <el-input 
+                                size="mini"
+                                @input="setCedulaPoseedor"
+                                placeholder="Nit/Cedula">
+                                </el-input>
+                            </el-col>
+                        </el-row>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Transportadora" prop="transportadora">
+                        <el-select 
+                        size="mini" 
+                        filterable 
+                        clearable
+                        @change="setTransportadora"
+                        :value="vehiculo.transportadora_id"
+                        placeholder="Seleccione">
+                            <el-option
+                            v-for="item in transportadorasList"
+                            :key="item.id"
+                            :label="item.razon_social"
+                            :value="item.id">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <h3>Informacion adicional</h3>
                 </el-col>
@@ -44,7 +108,7 @@
                     <el-form-item label="Linea cabezote">
                         <el-input size="mini"
                         @input="setLineaCabezote"
-                        placeholder="">
+                        >
                         </el-input>
                     </el-form-item>
 				</el-col>
@@ -52,7 +116,7 @@
                     <el-form-item label="Numero Motor">
                         <el-input size="mini"
                         @input="setNumeroMotor"
-                        placeholder="No. Motor">
+                        >
                         </el-input>
                     </el-form-item>
 				</el-col>
@@ -60,7 +124,7 @@
                     <el-form-item label="Numero chasis">
                         <el-input size="mini"
                         @input="setNumeroChasis"
-                        placeholder="No. Chasis">
+                        >
                         </el-input>
                     </el-form-item>
 				</el-col>
@@ -79,36 +143,63 @@
                 </el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Tipo de vehiculo">
-                        <el-input size="mini"
-                        @input="setTipoDeVehiculo"
-                        placeholder="Tipo">
-                        </el-input>
+                        <el-select size="mini" v-model="tipo_de_vehiculo_selected" placeholder="Select">
+                            <el-option
+                            v-for="item in tipo_de_vehiculo_options"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                            </el-option>
+                        </el-select>
                     </el-form-item>
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Tipo de flota">
-                        <el-input size="mini"
-                        @input="setTipoDeFlota"
-                        placeholder="flota">
-                        </el-input>
+                        <el-select size="mini" v-model="tipo_de_flota_selected" placeholder="Select">
+                            <el-option
+                            v-for="item in tipo_de_flota_options"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                            </el-option>
+                        </el-select>
                     </el-form-item>
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Tipo configuracion">
-                        <el-input size="mini"
-                        @input="setTipoConfiguracion"
-                        placeholder="Configuracion">
-                        </el-input>
+                        <el-select size="mini" v-model="tipo_de_configuracion_selected" placeholder="Select">
+                            <el-option
+                            v-for="item in tipo_de_configuracion_options"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                            </el-option>
+                        </el-select>
                     </el-form-item>
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Tipo de combustible">
-                        <el-input size="mini"
-                        @input="setTipoDeCombustible"
-                        placeholder="Diesel..">
-                        </el-input>
+                        <el-select size="mini" v-model="tipo_de_combustible_selected" placeholder="Select">
+                            <el-option
+                            v-for="item in tipo_de_combustible_options"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                            </el-option>
+                        </el-select>
                     </el-form-item>
 				</el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Radica RNDC">
+                        <el-switch
+                            v-model="radicaRndc"
+                            active-color="#13ce66"
+                            inactive-color="#ff4949"
+                            active-text="Si"
+                            inactive-text="No">
+                        </el-switch>
+                    </el-form-item>
+                </el-col>
 
         </el-row>
         
@@ -128,16 +219,69 @@ export default {
 	name: 'VehiculoCreateForm',
 	data () {
       	return {
-              capacidadNum: 1,
-              pesoNum: 1,
+            capacidadNum: 1,
+            pesoNum: 1,
+           
 		}
 	},
 	computed: {
+        tipo_de_combustible_selected: {
+            get(){
+                return this.vehiculo.tipo_de_combustible
+            },
+            set(value){
+                this.setTipoDeCombustible(value)
+            }
+        },
+        tipo_de_vehiculo_selected: {
+            get(){
+                return this.vehiculo.tipo_de_vehiculo
+            },
+            set(value){
+                this.setTipoDeVehiculo(value)
+            }
+        },
+        tipo_de_flota_selected: {
+            get(){
+                return this.vehiculo.tipo_de_flota
+            },
+            set(value){
+                this.setTipoDeFlota(value)
+            }
+        },
+        tipo_de_configuracion_selected: {
+            get(){
+                return this.vehiculo.tipo_configuracion
+            },
+            set(value){
+                this.setTipoConfiguracion(value)
+            }
+        },
+        radicaRndc: {
+             get(){
+                return this.vehiculo.radica_rndc
+            },
+            set(value){
+                this.setRadicaRndc(value)
+            }
+        },
         
         ...mapState('authentication', [
 			'permisos',
         ]),
+        ...mapState('transportadoras', [
+			'transportadorasList',
+        ]),
+        ...mapState('sharedValues', [
+			'tipo_de_vehiculo_options',
+            'tipo_de_flota_options',
+            'tipo_de_configuracion_options',
+            'tipo_de_combustible_options',
+            'estado_options',
+            'corroceria_options',
+        ]),
         ...mapState('vehiculos', [
+            'vehiculo',
             'headings',
             'vehiculosList',
             'dataReady',
@@ -167,6 +311,12 @@ export default {
             'setColor',
             'setPeso',
             'setCapasidadCarga',
+            'setRadicaRndc',
+            'setPoseedor',
+            'setPropietario',
+            'setCedulaPropietario',
+            'setCedulaPoseedor',
+            'setTransportadora',
         ]),
         title(field){
             field = field.split('_').join(' ')
@@ -179,11 +329,13 @@ export default {
             'assignTrailer',
             'createVehiculo',
         ]),
+        ...mapActions('transportadoras',[
+            'fetchTransportadorasList',
+        ]),
     },
     created: function(){
+        this.fetchTransportadorasList()
         this.fetchVehiculosList()
-        this.fetchConductoresList()
-        this.fetchTrailersList()
 	}
 
 }

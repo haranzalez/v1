@@ -19,7 +19,13 @@ export default {
             tipo_de_combustible: null,
             color: null,
             peso: null,
-            capasidad_carga: null
+            capasidad_carga: null,
+            radica_rndc: false,
+            propietario: null,
+            poseedor: null,
+            cedula_poseedor: null,
+            cedula_propietario: null,
+            transportadora_id: null,
         },
         vehiculosList: null,
         selectedConductor: null,
@@ -31,21 +37,7 @@ export default {
     },
     actions: {
         createVehiculo({state, dispatch}){
-            HTTP().local.post('api/vehiculos/crear', {
-                placa: state.vehiculo.placa,
-                numero_chasis: state.vehiculo.numero_chasis,
-                tipo_de_vehiculo: state.vehiculo.tipo_de_vehiculo,
-                tipo_configuracion: state.vehiculo.tipo_configuracion,
-                modelo: state.vehiculo.modelo,
-                numero_motor: state.vehiculo.numero_motor,
-                tipo_de_flota: state.vehiculo.tipo_de_flota,
-                marca_cabezote: state.vehiculo.marca_cabezote,
-                linea_cabezote: state.vehiculo.linea_cabezote,
-                tipo_de_combustible: state.vehiculo.tipo_de_combustible,
-                color: state.vehiculo.color,
-                peso: state.vehiculo.peso,
-                capasidad_carga: state.vehiculo.capasidad_carga,
-            })
+            HTTP().local.post('api/vehiculos/crear', state.vehiculo)
             .then(d => {
                 Message({
                     type: 'success',
@@ -59,23 +51,8 @@ export default {
             })
         },
         editVehiculo({state, dispatch}){
-            HTTP().local.put('api/vehiculos/'+state.vehiculo.id+'/update', {
-                placa: state.vehiculo.placa,
-                numero_chasis: state.vehiculo.numero_chasis,
-                tipo_de_vehiculo: state.vehiculo.tipo_de_vehiculo,
-                tipo_configuracion: state.vehiculo.tipo_configuracion,
-                modelo: state.vehiculo.modelo,
-                numero_motor: state.vehiculo.numero_motor,
-                tipo_de_flota: state.vehiculo.tipo_de_flota,
-                marca_cabezote: state.vehiculo.marca_cabezote,
-                linea_cabezote: state.vehiculo.linea_cabezote,
-                tipo_de_combustible: state.vehiculo.tipo_de_combustible,
-                color: state.vehiculo.color,
-                peso: state.vehiculo.peso,
-                capasidad_carga: state.vehiculo.capasidad_carga,
-            })
+            HTTP().local.put('api/vehiculos/'+state.vehiculo.id+'/update', state.vehiculo)
             .then(d => {
-                console.log(d)
                 Message({
                     type: 'success',
                     showClose: true,
@@ -106,7 +83,6 @@ export default {
         assignConductor({state, dispatch},e){
             HTTP().local.get('api/vehiculos/'+state.assignVehicleId+'/assign/conductor/'+e)
             .then(d => {
-                console.log(d)
                 Message({
                     showClose: true,
                     message: 'Cambio de Conductor exitoso!'
@@ -119,7 +95,6 @@ export default {
             })
         },
         assignTrailer({state, dispatch},e){
-            console.log(state.assignVehicleId)
             HTTP().local.get('api/vehiculos/'+state.assignVehicleId+'/assign/trailer/'+e)
             .then(d => {
                 Message({
@@ -137,7 +112,6 @@ export default {
             commit('setLoadingVehiculosTable', true)
             HTTP().local.get('api/vehiculos')
             .then(d => {
-                console.log(d.data)
                 commit('setVehiculosList', d.data)
                 if(resource == null){
                     dispatch('renderSelectedConductores')
@@ -249,7 +223,25 @@ export default {
         },
         setLoadingVehiculosTable(state, value){
             state.loadingVehiculosTable = value
-        }
+        },
+        setRadicaRndc(state, value){
+            state.vehiculo.radica_rndc = value
+        },
+        setPoseedor(state, value){
+            state.vehiculo.poseedor = value
+        },
+        setPropietario(state, value){
+            state.vehiculo.propietario = value
+        },
+        setCedulaPropietario(state, value){
+            state.vehiculo.cedula_propietario = value
+        },
+        setCedulaPoseedor(state, value){
+            state.vehiculo.cedula_poseedor = value
+        },
+        setTransportadora(state, value){
+            state.vehiculo.transportadora_id = value
+        },
         
     },
 

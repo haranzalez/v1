@@ -1,12 +1,37 @@
 'use strict'
 const Ruta = use('App/Models/Ruta');
 const Comentario = use('App/Models/ComentariosRuta');
+const Database = use('Database')
 
 class RutaController {
 
 //===================================================================
 //READ
 //===================================================================
+    async get_filtered_rutas({ params }){
+        var { filter } = params
+        filter = filter.replace(/%20/g, ' ')
+        const rutas = await Ruta.query().with('municipios').where('tipo_de_vehiculo', filter).fetch()
+        for(let prop in rutas.rows)
+        {
+            let muni = await rutas.rows[prop].municipios().fetch()
+            if(muni.rows.length > 0){
+                rutas.rows[prop]['municipio_origen_id'] = (muni.rows[0]['id'] != undefined)?muni.rows[0]['id']:null
+                rutas.rows[prop]['municipio_destino_id'] =(muni.rows[1]['id'] != undefined)?muni.rows[1]['id']:null
+                rutas.rows[prop]['nombre_municipio_origen'] = muni.rows[0]['nombre_municipio']
+                rutas.rows[prop]['nombre_municipio_destino'] = muni.rows[1]['nombre_municipio']
+            }else{
+                rutas.rows[prop]['municipio_origen_id'] = null
+                rutas.rows[prop]['municipio_destino_id'] = null
+                rutas.rows[prop]['nombre_municipio_origen'] = 'No aplica'
+                rutas.rows[prop]['nombre_municipio_destino'] = 'No aplica'
+            }
+            rutas.rows[prop]['nombre_ruta'] = muni.rows[0]['nombre_municipio'] + ' - ' + muni.rows[1]['nombre_municipio']
+            
+        }
+        return rutas
+    }
+
      async get_all_rutas({ params }){
         const rutas = await Ruta.query()
         .with('comentarios')
@@ -50,12 +75,14 @@ class RutaController {
     }
     async get_ruta_basic({ params }){
         const { id } = params;
+        console.log(id)
         return await Ruta.find(id)
     }
     async get_ruta({ params }){
         const { id } = params;
+        console.log(id)
         const ruta = await Ruta.find(id)
-       
+        console.log(ruta)
         let muni = await ruta.municipios().fetch()
         ruta['municipio_id'] = muni.rows[0]['municipio_id']
         ruta['nombre_municipio'] = muni.rows[0]['nombre_municipio']
@@ -79,7 +106,8 @@ class RutaController {
 //CREATE
 //===================================================================
     async create_ruta({auth, request }){
-        const user = auth.user
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         
         const {
             kilometros,
@@ -90,6 +118,7 @@ class RutaController {
             pago_cabezote,
             municipio_origen_id,
             municipio_destino_id,
+            tipo_de_vehiculo,
         } = request.all()
        
         const ruta = await Ruta.create({
@@ -99,6 +128,7 @@ class RutaController {
             pago_conductor_HQ,
             pago_tercero,
             pago_cabezote,
+            tipo_de_vehiculo,
         })
 
         /*if(comentario && user){
@@ -141,7 +171,8 @@ class RutaController {
     }
 
     async create_comment({auth,request}){
-        const user = auth.user
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const {
             ruta_id,
             comentario,
@@ -159,7 +190,8 @@ class RutaController {
 //===================================================================
 
     async update_ruta({ auth, request, params }){
-        const user = auth.user
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const { id } = params;
         const ruta = await Ruta.find(id)
         if(ruta == null){
@@ -176,6 +208,7 @@ class RutaController {
             pago_cabezote,
             municipio_origen_id,
             municipio_destino_id,
+            tipo_de_vehiculo,
         } = request.all()
         let municipio = []
        
@@ -199,6 +232,7 @@ class RutaController {
         ruta.pago_conductor_HQ = Number(pago_conductor_HQ.replace(/\$/g,'').replace(/\,/g,''));
         ruta.pago_tercero = Number(pago_tercero.replace(/\$/g,'').replace(/\,/g,''));
         ruta.pago_cabezote = Number(pago_cabezote.replace(/\$/g,'').replace(/\,/g,''));
+        ruta.tipo_de_vehiculo = tipo_de_vehiculo
         ruta.save()
         ruta['municipio'] = await ruta.municipios().fetch()
         return {
@@ -210,7 +244,9 @@ class RutaController {
 //===================================================================
 //DELETE
 //===================================================================
-     async delete_ruta({ params }){
+     async delete_ruta({ auth, params }){
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const { id } = params
         const ruta = await Ruta.find(id)
         return ruta.delete()

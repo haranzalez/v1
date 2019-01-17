@@ -112,6 +112,17 @@
                             </el-input>
                         </el-form-item>
                     </el-col>
+                    <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                        <el-form-item label="Radica RNDC">
+                            <el-switch
+                            v-model="radicaRn"
+                            active-color="#13ce66"
+                            inactive-color="#ff4949"
+                            active-text="Si"
+                            inactive-text="No">
+                            </el-switch>
+                        </el-form-item>
+                    </el-col>
         </el-row>
     </el-form>
    </vue-scroll>
@@ -132,7 +143,14 @@ export default {
 		}
 	},
 	computed: {
-        
+        radicaRn: {
+            get(){
+                return this.cliente.radica_rndc
+            },
+            set(value){
+                this.setRadicaRndc(value)
+            }
+        },
         ...mapState('authentication', [
 			'permisos',
         ]),
@@ -176,6 +194,7 @@ export default {
             'setSelectedContrato',
             'setSelectedDias',
             'setCupo',
+            'setRadicaRndc',
         ]),
        
     },

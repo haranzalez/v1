@@ -15,7 +15,7 @@
 				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Tipo de identificacion" prop="tipo_de_identificacion">
                         <el-select size="mini" 
-                        v-model="conductor.tipo_de_identificacion" 
+                        :value="conductor.tipo_de_identificacion" 
                         placeholder="Select"
                         @change="setTipoDeiIdentificacion">
                             <el-option
@@ -123,10 +123,41 @@
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Transportadora" prop="transportadora">
-                        <el-input size="mini" 
-                        @input="setTransportadora"
-                        placeholder="">
-                        </el-input>
+                        <el-select 
+                        size="mini" 
+                        filterable 
+                        @change="setTransportadora"
+                        :value="conductor.transportadora_id"
+                        placeholder="Seleccione">
+                            <el-option
+                            v-for="item in transportadorasList"
+                            :key="item.id"
+                            :label="item.razon_social"
+                            :value="item.id">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+				</el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Radica RNDC">
+                        <el-switch
+                        v-model="radicaRn"
+                        active-color="#13ce66"
+                        inactive-color="#ff4949"
+                        active-text="Si"
+                        inactive-text="No">
+                        </el-switch>
+                    </el-form-item>
+				</el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Anticipo">
+                        <el-switch
+                        v-model="anticipoState"
+                        active-color="#13ce66"
+                        inactive-color="#ff4949"
+                        active-text="Si"
+                        inactive-text="No">
+                        </el-switch>
                     </el-form-item>
 				</el-col>
 
@@ -207,12 +238,38 @@ export default {
 		}
 	},
 	computed: {
-        
+        anticipoState: {
+            get(){
+                return this.conductor.anticipo
+            },
+            set(value){
+                this.setAnticipo(value)
+            }
+        },
+        radicaRn: {
+            get(){
+                return this.conductor.radica_rndc
+            },
+            set(value){
+                this.setRadicaRndc(value)
+            }
+        },
+        transportadora_selected: {
+            get(){
+                return this.conductor.transportadora_id
+            },
+            set(value){
+                this.setTransportadora(value)
+            }
+        },
         ...mapState('authentication', [
 			'permisos',
         ]),
         ...mapState('conductores', [
 			'conductor',
+        ]),
+        ...mapState('transportadoras', [
+			'transportadorasList',
         ]),
 
 	},
@@ -227,9 +284,6 @@ export default {
                 this.back()
             }
         },
-        back() {
-			router.push('/COnductores')
-		},
         ...mapMutations('conductores', [
             'setSelectedTipoIdentificacion',
             'setCodigo',
@@ -246,6 +300,8 @@ export default {
             'setTelefono2',
             'setCelular',
             'setTransportadora',
+            'setRadicaRndc',
+            'setAnticipo',
         ]),
         title(field){
             field = field.split('_').join(' ')
@@ -255,9 +311,12 @@ export default {
         ...mapActions('conductores',[
             'createConductor',
         ]),
+        ...mapActions('transportadoras',[
+            'fetchTransportadorasList',
+        ]),
     },
     created: function(){
-       
+       this.fetchTransportadorasList()
 	}
 
 }

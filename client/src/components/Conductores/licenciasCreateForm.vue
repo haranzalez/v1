@@ -15,15 +15,20 @@
                 </el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Categoria">
-                        <el-input size="mini" 
-                        @input="setCategoria"
-                        placeholder="">
-                        </el-input>
+                        <el-select size="mini" v-model="tipo_de_licencia_selected" placeholder="Seleccione..">
+                            <el-option
+                            v-for="item in tipo_licencia_options"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                            </el-option>
+                        </el-select>
                     </el-form-item>
                 </el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Fecha de vencimiento">
                         <el-date-picker
+                        size="mini"
                         v-model="fechaVencimiento"
                         type="date"
                         placeholder="Escoja fecha">
@@ -58,12 +63,23 @@ export default {
                 this.setFechaVencimiento(value)
             }
         },
+        tipo_de_licencia_selected: {
+            get(){
+                return this.licencia.categoria
+            },
+            set(value){
+               this.setCategoria(value)
+            }
+        },
         ...mapState('authentication', [
 			'permisos',
         ]),
         ...mapState('conductores', [
             'conductor',
             'licencia',
+        ]),
+        ...mapState('sharedValues', [
+            'tipo_licencia_options',
         ]),
        
 	},

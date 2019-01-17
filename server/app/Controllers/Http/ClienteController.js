@@ -75,6 +75,7 @@ class ClienteController {
             contrato,
             cupo,
             dias,
+            radica_rndc,
         } = request.all()
             
         const cliente = await Cliente.create({
@@ -87,6 +88,7 @@ class ClienteController {
             celular,
             persona_de_contacto,
             direccion_envio_de_factura,
+            radica_rndc,
         })
 
         await TipoNegociacion.create({
@@ -119,6 +121,7 @@ class ClienteController {
             contrato,
             cupo,
             dias,
+            radica_rndc,
         } = request.all()
 
         cliente.nombre_razon_social = nombre_razon_social 
@@ -130,6 +133,7 @@ class ClienteController {
         cliente.celular = celular
         cliente.persona_de_contacto = persona_de_contacto
         cliente.direccion_envio_de_factura = direccion_envio_de_factura
+        cliente.radica_rndc = radica_rndc
         cliente.save()
 
         const neg = await cliente.tipo_negociacion().fetch()
@@ -177,7 +181,9 @@ class ClienteController {
         return await Database.from('deposito_clientes').where('id', deposito_id)
      }
 
-    async create_deposito({ params, request }) {
+    async create_deposito({ auth, params, request }) {
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const { id } = params
         const { 
             cantidad,
@@ -195,7 +201,9 @@ class ClienteController {
         }
 
     }
-    async update_deposito({ params, request }) {
+    async update_deposito({ auth, params, request }) {
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const { id, deposito_id } = params
         const { 
             cantidad,

@@ -2,6 +2,7 @@
 const CuadreProducto = use('App/Models/CuadreProducto')
 const Cliente = use('App/Models/Cliente')
 const Producto = use('App/Models/Producto')
+const Database = use('Database')
 class CuadroProductoController {
 
     async get_all_cuadres(){
@@ -20,7 +21,9 @@ class CuadroProductoController {
         pkg['precio_producto'] = cliente.rows[0].$relations.cuadre_producto.rows[0].$relations.producto.rows[0].precio
         return pkg
     }
-    async create_cuadre({ request }){
+    async create_cuadre({ auth, request }){
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const {
             cliente_id,
             producto_id,
@@ -47,7 +50,9 @@ class CuadroProductoController {
             message: 'Operacion Cancelada: El cliente no existe registrado en la base de datos',
         }
     }
-    async update_cuadre({ params, request }){
+    async update_cuadre({ auth, params, request }){
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const { id } = params;
         const cuadre = await CuadreProducto.find(id)
         const {
@@ -69,7 +74,9 @@ class CuadroProductoController {
         }
     }
     //DELETE
-    async delete_cuadre({ params }){
+    async delete_cuadre({ auth, params }){
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         console.log(params)
         const { id } = params
         const cuadre = await CuadreProducto.find(id)

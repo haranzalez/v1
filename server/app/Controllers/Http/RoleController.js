@@ -32,7 +32,9 @@ class RoleController {
    * Render a form to be used for creating a new role.
    * GET roles/create
    */
-  async create ({ request }) {
+  async create ({ auth, request }) {
+    const user = await auth.getUser()
+    await Database.raw('SET hq.usuario = ' + user.nombre)
     const { nombre, description, modulos } = request.all();
     const role = await Role.create({
       nombre, 
@@ -63,7 +65,9 @@ class RoleController {
    * Update role details.
    * PUT or PATCH roles/:id
    */
-  async update ({ params, request }) {
+  async update ({ auth, params, request }) {
+    const user = await auth.getUser()
+    await Database.raw('SET hq.usuario = ' + user.nombre)
     const { id } = params;
     const { modulos, nombre, description } = request.all();
     const allMods =  await Modulo.all()
@@ -88,8 +92,7 @@ class RoleController {
     await role.save();
     role.modulos = await role.modulos().fetch()
     return {
-      message: 'Updated!',
-      role,
+      message: 'Updated!'
     }
   }
 
@@ -97,7 +100,9 @@ class RoleController {
    * Delete a role with id.
    * DELETE roles/:id
    */
-  async destroy ({ params }) {
+  async destroy ({ auth, params }) {
+    const user = await auth.getUser()
+    await Database.raw('SET hq.usuario = ' + user.nombre)
     const { id } = params;
     const role = await Role.find(id)
     role.delete();

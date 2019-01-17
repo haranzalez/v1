@@ -1,5 +1,6 @@
 'use strict'
 const Municipio = use('App/Models/Municipio');
+const Database = use('Database')
 
 class MunicipioController {
      //READ
@@ -13,7 +14,9 @@ class MunicipioController {
         .where('id', id).fetch()
     }
     //CREATE
-    async create_municipio({ request }){
+    async create_municipio({ auth, request }){
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const {
             codigo_dane,
             nombre_municipio,
@@ -32,7 +35,9 @@ class MunicipioController {
 
     }
 
-    async update_municipio({ request, params }){
+    async update_municipio({ auth, request, params }){
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const { id } = params;
         const municipio = await Municipio.find(id)
         const {
@@ -49,7 +54,9 @@ class MunicipioController {
     }
 
      //DELETE
-     async delete_municipio({ params }){
+     async delete_municipio({ auth, params }){
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const { id } = params
         const municipio = await Municipio.find(id)
         return municipio.delete()

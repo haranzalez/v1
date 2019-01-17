@@ -15,35 +15,43 @@
 	  fixed
       prop="ruta"
       label="Ruta"
-	  min-width="250">
+	  min-width="210">
+    </el-table-column>
+	<el-table-column
+	  sortable
+	  align="center"
+      prop="tipo_de_vehiculo"
+      label="Tipo de vehiculo"
+	  min-width="170"
+      >
     </el-table-column>
     <el-table-column
 	  sortable
 	  align="center"
       prop="flete"
       label="Flete"
-      min-width="100">
+      min-width="150">
     </el-table-column>
 	<el-table-column
-	  align="center"
 	  sortable
-      prop="anticipo"
-      label="Anticipo"
-      min-width="100">
+	  align="center"
+      prop="pago_conductor"
+      label="Pago conductor"
+      min-width="150">
     </el-table-column>
 	<el-table-column
+	  sortable
 	  align="center"
-	  sortable
-      prop="ajuste"
-      label="Ajuste"
-      min-width="100">
+      prop="pago_tercero"
+      label="Pago tercero"
+      min-width="150">
     </el-table-column>
-   <el-table-column
-      align="center"
+	<el-table-column
 	  sortable
-      prop="debe"
-      label="Debe"
-      min-width="100">
+	  align="center"
+      prop="pago_cabezote"
+      label="Pago cabezote"
+      min-width="150">
     </el-table-column>
 	
   </el-table>
@@ -107,7 +115,7 @@ export default {
 				this.$refs.clientsCuadreRutaTable.setCurrentRow(val);
 				return
 			}
-            this.fetchCuadreRuta({id: val.id})
+			this.fetchCuadreRuta({id: val.id})
 			this.$refs.clientsCuadreRutaTable.setCurrentRow(val);
 
 		},
@@ -117,6 +125,9 @@ export default {
         ]),
         ...mapActions('cuadreViajes', [
             'fetchCuadreRuta',
+		]),
+		...mapActions('rutas', [
+			'fetchFilteredByTipoVehiculoRutasList',
         ]),
 
 		back(){

@@ -22,6 +22,9 @@ export default {
             tipo_carroceria: null,
             estado: null,
             radica_rndc: false,
+            cedula_poseedor: null,
+            cedula_propietario: null,
+            transportadora_id: null,
         },
         trailersList: null,
         trailersDataReady: false,
@@ -31,51 +34,19 @@ export default {
 
     actions: {
         createTrailer({state}){
-            HTTP().local.post('api/trailers/crear', {
-                placa: state.trailer.placa,
-                tipo_de_vehiculo: state.trailer.tipo_de_vehiculo,
-                tipo_de_configuracion: state.trailer.tipo_de_configuracion,
-                tenedor: state.trailer.tenedor,
-                modelo: state.trailer.modelo,
-                propietario: state.trailer.propietario,
-                tipo_de_flota: state.trailer.tipo_de_flota,
-                poseedor: state.trailer.poseedor,
-                color: state.trailer.color,
-                marca_trailer: state.trailer.marca_trailer,
-                peso: state.trailer.peso,
-                tipo_carroceria: state.trailer.tipo_carroceria,
-                estado: state.trailer.estado,
-                radica_rndc: state.trailer.radica_rndc,
-                
-            })
+            HTTP().local.post('api/trailers/crear', state.trailer)
             .then(d => {
                 Message({
                     showClose: true,
                     message: 'Trailer creado.'
                 })
-                router.push('/Trailers')
             })
             .catch(err => {
                 console.log(err)
             })
         },
         editTrailer({state}){
-            HTTP().local.put('api/trailers/'+state.trailer.id+'/update', {
-                placa: state.trailer.placa,
-                tipo_de_vehiculo: state.trailer.tipo_de_vehiculo,
-                tipo_de_configuracion: state.trailer.tipo_de_configuracion,
-                tenedor: state.trailer.tenedor,
-                modelo: state.trailer.modelo,
-                propietario: state.trailer.propietario,
-                tipo_de_flota: state.trailer.tipo_de_flota,
-                poseedor: state.trailer.poseedor,
-                color: state.trailer.color,
-                marca_trailer: state.trailer.marca_trailer,
-                peso: state.trailer.peso,
-                tipo_carroceria: state.trailer.tipo_carroceria,
-                estado: state.trailer.estado,
-                radica_rndc: state.trailer.radica_rndc,
-            })
+            HTTP().local.put('api/trailers/'+state.trailer.id+'/update', state.trailer)
             .then(d => {
                 Message({
                     showClose: true,
@@ -189,6 +160,15 @@ export default {
         setLoadingTrailersTable(state, value){
             state.loadingTrailersTable = value
         },
+        setCedulaPropietario(state, value){
+            state.trailer.cedula_propietario = value
+        },
+        setCedulaPoseedor(state, value){
+            state.trailer.cedula_poseedor = value
+        },
+        setTransportadora(state, value){
+            state.trailer.transportadora_id = value
+        },
         resetTrailerVars(state, value){
             state.trailer = {
                 placa: null,
@@ -204,7 +184,8 @@ export default {
                 peso: null,
                 tipo_carroceria: null,
                 estado: null,
-                radica_rndc: null,
+                radica_rndc: false,
+                transportadora_id: null,
             }
         }
         

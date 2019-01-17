@@ -1,5 +1,6 @@
 'use strict'
 const Servicio = use('App/Models/Servicio');
+const Database = use('Database')
 
 class ServicioController {
      //READ
@@ -14,7 +15,9 @@ class ServicioController {
     }
     
     //CREATE
-    async create_servicio({ request }){
+    async create_servicio({ auth, request }){
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const {
            nombre,
            descripcion,
@@ -32,7 +35,9 @@ class ServicioController {
 
     }
     //UPDATE
-    async update_servicio({ request, params }){
+    async update_servicio({ auth, request, params }){
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const { id } = params;
         const servicio = await Servicio.find(id)
         const {
@@ -53,7 +58,9 @@ class ServicioController {
     }
 
      //DELETE
-     async delete_servicio({ params }){
+     async delete_servicio({ auth, params }){
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const { id } = params
         const servicio = await Servicio.find(id)
         servicio.delete()

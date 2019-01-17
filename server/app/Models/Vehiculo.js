@@ -6,6 +6,9 @@ class Vehiculo extends Model {
     consolidacion(){
         return this.belongsTo('App/Models/Consolidacion')
     }
+    transportadora(){
+        return this.belongsTo('App/Models/Transportadora')
+    }
     conductor(){
         return this.hasOne('App/Models/Conductore')
     }

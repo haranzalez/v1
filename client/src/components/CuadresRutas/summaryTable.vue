@@ -1,12 +1,17 @@
 <template>
    <vue-scroll class="page-summary-viaje">
-           <h3 style="text-align:left;width:60%;margin-left:auto;">Resumen</h3>
-           <el-row style="text-align:right;width:60%;margin-left:auto;" v-for="(value, key) in summary" :key="key" >
-               <el-col style="border-bottom: 1px solid #ccc" :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-                   <strong>{{key}}</strong>
+           <h3 style="text-align:left;width:70%;margin-left:auto;">Valores por defecto</h3>
+           <el-row style="width:70%;margin-left:auto;" v-for="(value, key) in summary" :key="key" >
+               <el-col style="font-size: 15px;font-weigth: bold;" :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+                  {{key}}
                </el-col>
-               <el-col style="border-bottom: 1px solid #ccc" :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+               <el-col style="font-size: 25px;font-weigth: bold;color:green;" :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
                   {{value}}
+               </el-col>
+           </el-row>
+           <el-row style="width:70%;margin-left:auto;margin-top:15px;">
+               <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+                  <el-button :disabled="btnEnabled" size="mini" type="success" @click="setDefaultValues">Aplicar valores</el-button>
                </el-col>
            </el-row>
    </vue-scroll>
@@ -17,6 +22,7 @@ import HTTP from '../../http';
 import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
 import moment from 'moment-timezone'
 import router from '../../router'
+import NumberFormatting from '../../services/NumberFormattingService.js'
 
 export default {
 	name: 'summaryViaje',
@@ -26,6 +32,13 @@ export default {
 		}
 	},
 	computed: {
+        btnEnabled(){
+            if(this.ruta.valor_flete > 0){
+                return false
+            }else{
+                return true
+            }
+        },
         ...mapState('rutas', [
             'ruta',
         ]),
@@ -37,19 +50,14 @@ export default {
         ]),
         summary(){
             let flete = Number(this.ruta.valor_flete)
-            let cuadre = Number(this.cuadre.flete)
-            let anticipo = Number(this.cuadre.anticipo)
-            let ajuste = (cuadre > 0 && flete > 0)?cuadre - flete:0
-            let total = flete + ajuste
-            let debe = cuadre - anticipo
-            this.setAjuste(ajuste)
-            this.setDebe(debe)
-            
+            let pago_conductor = Number(this.ruta.pago_conductor_HQ)
+            let pago_tercero = Number(this.ruta.pago_tercero)
+            let pago_cabezote = Number(this.ruta.pago_cabezote)
             return {
-                flete,
-                ajuste,
-                cuadre,
-                debe
+                Flete: '$'+NumberFormatting.formatToCurrencyV2(flete),
+                'Pago conductor': '$'+NumberFormatting.formatToCurrencyV2(pago_conductor),
+                'Pago tercero': '$'+NumberFormatting.formatToCurrencyV2(pago_tercero),
+                'Pago cabezote': '$'+NumberFormatting.formatToCurrencyV2(pago_cabezote),
             }
         }
 	},
@@ -57,9 +65,17 @@ export default {
 	},
     methods: {
         ...mapMutations('cuadreViajes', [
-            'setAjuste',
-            'setDebe'
-        ])
+            'setFlete',
+            'setPagoConductor',
+            'setPagoTercero',
+            'setPagoCabezote',
+        ]),
+        setDefaultValues(){
+            this.setFlete(this.ruta.valor_flete)
+            this.setPagoConductor(this.ruta.pago_conductor_HQ)
+            this.setPagoTercero(this.ruta.pago_tercero)
+            this.setPagoCabezote(this.ruta.pago_cabezote)
+        }
     },
 }
 </script>

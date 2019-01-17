@@ -18,7 +18,9 @@ class TrailerController {
     }
     
     //CREATE
-    async create_trailer({ request }){
+    async create_trailer({ auth, request }){
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const {
             placa,
             tipo_de_vehiculo,
@@ -33,8 +35,9 @@ class TrailerController {
             peso,
             tipo_carroceria,
             estado,
-            radica_rndc
-        } = request.all()
+            radica_rndc,
+            transportadora_id,
+        } = request.all();
 
         return await Trailer.create({
             placa,
@@ -50,12 +53,15 @@ class TrailerController {
             peso,
             tipo_carroceria,
             estado,
-            radica_rndc
-        })
+            radica_rndc,
+            transportadora_id,
+        });
 
     }
     //UPDATE
-    async update_trailer({ request, params }){
+    async update_trailer({ auth, request, params }){
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const { id } = params;
         const trailer = await Trailer.find(id)
         const {
@@ -72,7 +78,8 @@ class TrailerController {
             peso,
             tipo_carroceria,
             estado,
-            radica_rndc
+            radica_rndc,
+            transportadora_id
         } = request.all()
 
         trailer.placa = placa
@@ -89,6 +96,7 @@ class TrailerController {
         trailer.tipo_carroceria = tipo_carroceria
         trailer.estado = estado
         trailer.radica_rndc = radica_rndc
+        trailer.transportadora_id = transportadora_id
         trailer.save()
 
         return trailer
@@ -96,7 +104,9 @@ class TrailerController {
     }
 
      //DELETE
-     async delete_trailer({ params }){
+     async delete_trailer({ auth, params }){
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const { id } = params
         const trailer = await Trailer.find(id)
         return trailer.delete()

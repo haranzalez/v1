@@ -96,12 +96,13 @@
             </el-popover>
            <el-select 
 		   size="mini"
+		   v-if="conductoresDataReady"
            v-popover="scope.row.placa" 
            v-model="selectedConductor[scope.row.placa]" 
            placeholder="Seleccione.."
            @change="assignConductorToVehicle($event, scope.row.id)">
                 <el-option 
-				v-if="conductoresDataReady"
+				
                 v-for="item in conductoresList"
                 :key="item.nombres"
                 :label="item.nombres"
@@ -130,13 +131,14 @@
             </div>
             </el-popover>
            <el-select 
+		   v-if="trailersDataReady"
 		   size="mini"
            v-popover="scope.row.placa+'-trailer'" 
            v-model="selectedTrailer[scope.row.placa]" 
            placeholder="Seleccione.."
            @change="assignTrailerToVehicle($event, scope.row.id)">
                 <el-option
-				v-if="trailersDataReady"
+				
                 v-for="item in trailersList"
                 :key="item.placa"
                 :label="item.placa"

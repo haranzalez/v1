@@ -1,5 +1,6 @@
 'use strict'
 const Producto = use('App/Models/Producto');
+const Database = use('Database')
 
 class ProductoController {
      //READ
@@ -14,7 +15,9 @@ class ProductoController {
     }
     
     //CREATE
-    async create_producto({ request }){
+    async create_producto({ auth, request }){
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const {
            nombre,
            descripcion,
@@ -32,7 +35,9 @@ class ProductoController {
 
     }
     //UPDATE
-    async update_producto({ request, params }){
+    async update_producto({ auth, request, params }){
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const { id } = params;
         const producto = await Producto.find(id)
         const {
@@ -53,7 +58,9 @@ class ProductoController {
     }
 
      //DELETE
-     async delete_producto({ params }){
+     async delete_producto({ auth, params }){
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const { id } = params
         const producto = await Producto.find(id)
         producto.delete()

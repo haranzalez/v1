@@ -25,6 +25,7 @@ export default {
             pago_cabezote: null,
             municipio_origen_id: null,
             municipio_destino_id: null,
+            tipo_de_vehiculo: null,
         },
         municipio_origen: {
             nombre_municipio: null,
@@ -41,6 +42,7 @@ export default {
         valor_anticipo_formatted: 0,
         comentarios_list: null,
         rutasList: null,
+        filteredRutasList: null,
         municipios_list: null,
         dataReady: false,
         headings: [],   
@@ -70,16 +72,7 @@ export default {
             })
         },
         createRuta({state}){
-            HTTP().local.post('api/rutas/crear', {
-                kilometros: state.ruta.kilometros,
-                anticipo_sugerido: state.ruta.anticipo_sugerido,
-                valor_flete: state.ruta.valor_flete,
-                pago_conductor_HQ: state.ruta.pago_conductor_HQ,
-                pago_tercero: state.ruta.pago_tercero,
-                pago_cabezote: state.ruta.pago_cabezote,
-                municipio_destino_id: state.ruta.municipio_destino_id,
-                municipio_origen_id: state.ruta.municipio_origen_id,
-            })
+            HTTP().local.post('api/rutas/crear', state.ruta)
             .then(d => {
                 if(d.data.message == "success"){
                     Message({
@@ -97,16 +90,7 @@ export default {
             })
         },
         editRuta({state}){
-            HTTP().local.put('api/rutas/'+state.ruta.id+'/update', {
-                kilometros: state.ruta.kilometros,
-                anticipo_sugerido: state.ruta.anticipo_sugerido,
-                valor_flete: state.ruta.valor_flete,
-                pago_conductor_HQ: state.ruta.pago_conductor_HQ,
-                pago_tercero: state.ruta.pago_tercero,
-                pago_cabezote: state.ruta.pago_cabezote,
-                municipio_destino_id: state.ruta.municipio_destino_id,
-                municipio_origen_id: state.ruta.municipio_origen_id,
-            })
+            HTTP().local.put('api/rutas/'+state.ruta.id+'/update', state.ruta)
             .then(d => {
                 if(d.data.message == 'success'){
                     Message({
@@ -136,12 +120,19 @@ export default {
                 console.log(err)
             })
         },
+        fetchFilteredByTipoVehiculoRutasList({commit}, filter){
+            HTTP().local.get('api/rutas/'+filter+'/filter')
+            .then(d => {
+               commit('setFilteredByTipoVehiculoRutasList', d.data)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
         fetchRutasList({commit, dispatch}){
             HTTP().local.get('api/rutas')
             .then(d => {
- 
                 dispatch('formatValuesInRutasList', d.data)
-                //commit('setRutaList', d.data)
                 commit('setDataReady', true)
                 dispatch('renderTableHeadings')
             })
@@ -294,11 +285,16 @@ export default {
             state.municipio.departamento = value
         },
         setMunicipioOrigenId(state, value){
-            console.warn(value)
             state.ruta.municipio_origen_id = value
         },
         setMunicipioDestinoId(state, value){
             state.ruta.municipio_destino_id = value
+        },
+        setFilteredByTipoVehiculoRutasList(state, value){
+            state.filteredRutasList = value
+        },
+        setTipoDeVehiculo(state, value){
+            state.ruta.tipo_de_vehiculo = value
         },
         rutaReset(state, value){
             state.ruta = {
@@ -310,11 +306,12 @@ export default {
                 comentario: null,
                 nombre_municipio: null,
                 departamento: null,
-                pago_conductor_HQ: null,
-                pago_tercero: null,
-                pago_cabezote: null,
+                pago_conductor_HQ: 0,
+                pago_tercero: 0,
+                pago_cabezote: 0,
                 municipio_origen_id: null,
                 municipio_destino_id: null,
+                tipo_de_vehiculo: null,
             }
         }
         

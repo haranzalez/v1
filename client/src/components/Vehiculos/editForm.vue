@@ -42,6 +42,74 @@
                     </el-form-item>
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Propietario">
+                        <el-row>
+                            <el-col :span="11" :md="11" :sm="24" :xs="24">
+                                <el-input 
+                                size="mini"
+                                :value="vehiculo.propietario"
+                                @input="setPropietario"
+                                placeholder="Nombre">
+                                </el-input>
+                            </el-col>
+                            <el-col style="text-align: center;" :span="2" :md="2" :sm="24" :xs="24">
+                                |
+                            </el-col>
+                            <el-col :span="11" :md="11" :sm="24" :xs="24">
+                                <el-input 
+                                size="mini"
+                                :value="vehiculo.cedula_propietario"
+                                @input="setCedulaPropietario"
+                                placeholder="Nit/Cedula">
+                                </el-input>
+                            </el-col>
+                        </el-row>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Poseedor">
+                        <el-row>
+                            <el-col :span="11" :md="11" :sm="24" :xs="24">
+                                <el-input 
+                                size="mini"
+                                @input="setPoseedor"
+                                :value="vehiculo.poseedor"
+                                placeholder="Nombre">
+                                </el-input>
+                            </el-col>
+                            <el-col style="text-align: center;" :span="2" :md="2" :sm="24" :xs="24">
+                                |
+                            </el-col>
+                            <el-col :span="11" :md="11" :sm="24" :xs="24">
+                                <el-input 
+                                size="mini"
+                                :value="vehiculo.cedula_poseedor"
+                                @input="setCedulaPoseedor"
+                                placeholder="Nit/Cedula">
+                                </el-input>
+                            </el-col>
+                        </el-row>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Transportadora" prop="transportadora">
+                        <el-select 
+                        size="mini" 
+                        filterable 
+                        clearable
+                        @change="setTransportadora"
+                        :value="vehiculo.transportadora_id"
+                        placeholder="Seleccione">
+                            <el-option
+                            v-for="item in transportadorasList"
+                            :key="item.id"
+                            :label="item.razon_social"
+                            :value="item.id">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <h3>Informacion adicional</h3>
                 </el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
@@ -148,6 +216,9 @@ export default {
         ...mapState('authentication', [
 			'permisos',
         ]),
+        ...mapState('transportadoras', [
+			'transportadorasList',
+        ]),
         ...mapState('vehiculos', [
             'dataReady',
             'vehiculo',
@@ -157,9 +228,6 @@ export default {
 	components: {
 	},
     methods: {
-        back() {
-			router.push('/Vehiculos')
-		},
         ...mapMutations('vehiculos', [
             'setVehicleId',
             'setPlaca',
@@ -175,6 +243,12 @@ export default {
             'setColor',
             'setPeso',
             'setCapasidadCarga',
+            'setRadicaRndc',
+            'setPoseedor',
+            'setPropietario',
+            'setCedulaPropietario',
+            'setCedulaPoseedor',
+            'setTransportadora',
         ]),
         title(field){
             field = field.split('_').join(' ')
@@ -184,6 +258,9 @@ export default {
         ...mapActions('vehiculos',[
             'editVehiculo',
             'delVehiculo',
+        ]),
+        ...mapActions('transportadoras',[
+            'fetchTransportadorasList',
         ]),
         del(){
             this.$confirm('Esta operacion eliminara permanentemente este registro. Continuar?', 'Atencion!', {
@@ -200,6 +277,9 @@ export default {
             });
         }
     },
+    created: function(){
+        this.fetchTransportadorasList()
+	}
 
 }
 </script>

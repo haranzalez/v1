@@ -2,10 +2,10 @@
 const CuadreViaje = use('App/Models/CuadreViaje')
 const Cliente = use('App/Models/Cliente')
 const Ruta = use('App/Models/Ruta')
+const Database = use('Database')
 class CuadroViajeController {
     async get_all_cuadres(){
         const cuadre = await CuadreViaje.query()
-        .with('vehiculo')
         .with('ruta.municipios')
         .fetch()
 
@@ -21,9 +21,6 @@ class CuadroViajeController {
             delete cuadre.rows[prop].$relations.ruta.rows[0].$attributes.updated_at;
             delete cuadre.rows[prop].$relations.ruta.rows[0].$relations['pivot'];
             delete cuadre.rows[prop].$relations.ruta.rows[0].$relations['municipios'];
-            delete cuadre.rows[prop].$relations.vehiculo.rows[0].$relations['pivot'];
-            delete cuadre.rows[prop].$relations.vehiculo.rows[0].$attributes.created_at;
-            delete cuadre.rows[prop].$relations.vehiculo.rows[0].$attributes.updated_at;
            
         }
         
@@ -33,36 +30,44 @@ class CuadroViajeController {
         const { id } = params;
         const cuadre = await CuadreViaje.find(id)
         const ruta = await cuadre.ruta().with('municipios').fetch()
-        const vehiculo = await cuadre.vehiculo().fetch()
-        
-        cuadre['placa_vehiculo'] = (vehiculo.rows.length > 0)?vehiculo.rows[0].placa:'';
-        cuadre['vehiculo_id'] = (vehiculo.rows.length > 0)?vehiculo.rows[0].id:null;
+       
         cuadre['valor_flete'] =  (ruta.rows.length > 0)?ruta.rows[0].valor_flete:0;
+        cuadre['pago_conductor'] =  (ruta.rows.length > 0)?ruta.rows[0].valor_flete:0;
+        cuadre['pago_tercero'] =  (ruta.rows.length > 0)?ruta.rows[0].valor_flete:0;
+        cuadre['pago_cabezote'] =  (ruta.rows.length > 0)?ruta.rows[0].valor_flete:0;
         cuadre['ruta_id'] = (ruta.rows.length > 0)?ruta.rows[0].id:null;
         cuadre['ruta'] = (ruta.rows.length > 0)?ruta.rows[0].$relations.municipios.rows[0].nombre_municipio + ' - ' + ruta.rows[0].$relations.municipios.rows[1].nombre_municipio:'';
        
         return cuadre
     }
-    async create_cuadre({ request }){
+    async create_cuadre({ auth, request }){
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         let {
             cliente_id,
             flete,
             ruta_id,
             anticipo,
-            vehiculo_id,
             ajuste,
-            debe
+            debe,
+            pago_conductor,
+            pago_tercero,
+            pago_cabezote,
+            tipo_de_vehiculo,
+            tipo_de_negociacion,
         } = request.all()
         const cuadre = await CuadreViaje.create({
             cliente_id,
             flete,
             anticipo,
             ajuste,
-            debe
+            debe,
+            pago_conductor,
+            pago_tercero,
+            pago_cabezote,
+            tipo_de_vehiculo,
+            tipo_de_negociacion,
         })
-        if(vehiculo_id){
-            await cuadre.vehiculo().attach(vehiculo_id)
-        }
         if(ruta_id){
             await cuadre.ruta().attach(ruta_id)
         }
@@ -70,7 +75,9 @@ class CuadroViajeController {
             message: 'success'
         }
     }
-    async update_cuadre({ params, request }){
+    async update_cuadre({ auth, params, request }){
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const { id } = params;
         //Get request variables
         let {
@@ -78,9 +85,13 @@ class CuadroViajeController {
             flete,
             ruta_id,
             anticipo,
-            vehiculo_id,
             ajuste,
-            debe
+            debe,
+            pago_conductor,
+            pago_tercero,
+            pago_cabezote,
+            tipo_de_vehiculo,
+            tipo_de_negociacion,
         } = request.all()
         //find cuadre to update
         const cuadre = await CuadreViaje.find(id)//returns Object
@@ -94,19 +105,17 @@ class CuadroViajeController {
         cuadre.anticipo = anticipo
         cuadre.ajuste = ajuste
         cuadre.debe = debe
+        cuadre.pago_conductor = pago_conductor
+        cuadre.pago_tercero = pago_tercero
+        cuadre.pago_cabezote = pago_cabezote
+        cuadre.tipo_de_vehiculo = tipo_de_vehiculo
+        cuadre.tipo_de_negociacion = tipo_de_negociacion
         if(ruta_id){
             const rut = await cuadre.ruta().fetch()
             if(rut.rows.length > 0){
                 await cuadre.ruta().detach([rut.rows[0]['id']])
             }
             await cuadre.ruta().attach(ruta_id)
-        }
-        if(vehiculo_id){
-            const veh = await cuadre.vehiculo().fetch()
-            if(veh.rows.length > 0){
-                await cuadre.ruta().detach([veh.rows[0]['id']])
-            }
-            await cuadre.vehiculo().attach(vehiculo_id)
         }
         cuadre.save()
 
@@ -155,7 +164,9 @@ class CuadroViajeController {
     }
         
     //DELETE
-    async delete_cuadre({ params }){
+    async delete_cuadre({ auth, params }){
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const { id } = params
         const cuadre = await CuadreViaje.find(id)
         return cuadre.delete()

@@ -107,7 +107,11 @@
 	</el-dialog>
 	
 	<!--Create viaje form -->
-	<el-dialog center width="30%" top="15vh" title="Cuadre ruta" :visible.sync="createViajeFormVisible">
+	<el-dialog fullscreen center width="43%" top="15vh" title="Ruta" :visible.sync="createViajeFormVisible">
+		<ul>
+			<li>Para seleccionar rutas disponibles, seleccione primero el <b>Tipo de vehiculo</b></li>
+			<li>Para ver los valores por defecto y desea aplicarlos, seleccione <b>Ruta</b></li>
+		</ul>
 		<ViajeCreateForm></ViajeCreateForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button size="mini" type="primary" @click="create_cuadre_viaje(cliente.id)">Crear cuadre</el-button>
@@ -200,7 +204,7 @@
     <el-table-column
 	  sortable
       prop="nombre_razon_social"
-      label="Razon social"
+      label="Nombre razon social"
       min-width="220">
     </el-table-column>
 	<el-table-column
@@ -456,6 +460,7 @@ export default {
 		
 		...mapMutations('rutas',[
 			'rutaReset',
+			'setFilteredByTipoVehiculoRutasList',
 		]),
 		...mapMutations('productos',[
 			'productoReset',
@@ -470,7 +475,9 @@ export default {
 		clearForm(form){
 			if('createRuta'){
 				this.resetSelections()
+				this.resetCuadreRuta()
 				this.rutaReset()
+				this.setFilteredByTipoVehiculoRutasList(null)
 			}
 			if('createProducto'){
 				this.resetSelections()

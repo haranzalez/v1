@@ -41,6 +41,10 @@ import ProductosTable from '../views/Productos/productosTable.vue'
 import ServiciosTable from '../views/Servicios/serviciosTable.vue'
 //Backups
 import BackupsTable from '../views/Backups/backups.vue'
+//Logger
+import LoggerTable from '../views/Logger/logger.vue'
+//Transportadoras
+import TransportadorasTable from '../views/Transportadoras/transportadoras.vue'
 
 
 //pages
@@ -65,13 +69,13 @@ const router = new Router({
 		//=========================================================================
 		{
 			path: '/',
-			alias: '/cuadro-de-viajes',
-			name: 'Cuadro de viajes',
+			alias: '/Programacion-despachos',
+			name: 'Programacion de despachos',
 			component: Consolidaciones,
 			meta: {
 				auth: true,
 				layout: layouts.navLeft,
-				searchable: true,
+				searchable: false,
 				tags: ['app']
 			}
 		},
@@ -86,6 +90,20 @@ const router = new Router({
 				auth: true,
 				layout: layouts.navLeft,
 				searchable: true,
+				tags: ['Logistica']
+			}
+		},
+		//=========================================================================
+		//Transportadoras
+		//=========================================================================
+		{
+			path: '/Transportadoras',
+			name: 'transportadoras',
+			component: TransportadorasTable,
+			meta: {
+				auth: true,
+				layout: layouts.navLeft,
+				searchable: false,
 				tags: ['Logistica']
 			}
 		},
@@ -431,6 +449,20 @@ const router = new Router({
 			path: '/Backups',
 			name: 'backups',
 			component: BackupsTable,
+			meta: {
+				auth: true,
+				layout: layouts.navLeft,
+				searchable: false,
+				tags: ['Sistema']
+			}
+		},
+		//=========================================================================
+		//Logger
+		//=========================================================================
+		{
+			path: '/Logger',
+			name: 'logger',
+			component: LoggerTable,
 			meta: {
 				auth: true,
 				layout: layouts.navLeft,

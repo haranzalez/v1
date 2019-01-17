@@ -69,7 +69,9 @@ class UserController {
    * Render a form to be used for creating a new user.
    * GET users/create
    */
-  async create ({ request }) {
+  async create ({ auth, request }) {
+    const user = await auth.getUser()
+    await Database.raw('SET hq.usuario = ' + user.nombre)
     const { roles,
       nombre,
       apellido,
@@ -111,7 +113,9 @@ class UserController {
    * Update user details.
    * PUT or PATCH users/:id
    */
-  async update ({ params, request }) {
+  async update ({ auth, params, request }) {
+    const user = await auth.getUser()
+    await Database.raw('SET hq.usuario = ' + user.nombre)
     const { id } = params;
     const { roles,
       nombre, 
@@ -160,7 +164,9 @@ class UserController {
    * Delete a user with id.
    * DELETE users/:id
    */
-  async destroy ({ params }) {
+  async destroy ({ auth, params }) {
+    const user = await auth.getUser()
+    await Database.raw('SET hq.usuario = ' + user.nombre)
     const { id } = params;
     const user = await User.find(id)
     user.delete();
@@ -294,7 +300,9 @@ class UserController {
      
     }
 
-    async changeState({ params, request }){
+    async changeState({ auth, params, request }){
+      const user = await auth.getUser()
+      await Database.raw('SET hq.usuario = ' + user.nombre)
       const { id } = params
       const { estado } = request.all()
 

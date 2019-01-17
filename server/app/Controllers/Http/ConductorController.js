@@ -17,7 +17,9 @@ class ConductorController {
     }
     
     //CREATE
-    async create_conductor({ request }){
+    async create_conductor({ auth, request }){
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const {
             codigo,
             tipo_de_identificacion,
@@ -32,7 +34,8 @@ class ConductorController {
             telefono_1,
             telefono_2,
             celular,
-            transportadora
+            transportadora_id,
+            radica_rndc,
         } = request.all()
 
         return await Conductor.create({
@@ -49,11 +52,14 @@ class ConductorController {
             telefono_1,
             telefono_2,
             celular,
-            transportadora
+            transportadora_id,
+            radica_rndc,
         })
 
     }
-    async create_datos_bancarios({ request, params }){
+    async create_datos_bancarios({ auth, request, params }){
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const { id } = params
         const {
             titular,
@@ -82,7 +88,9 @@ class ConductorController {
         }
 
     }
-    async update_datos_bancarios({ request, params }){
+    async update_datos_bancarios({ auth, request, params }){
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const { id } = params
         var res = await Database
         .table('datos_bancarios_conductores')
@@ -111,7 +119,9 @@ class ConductorController {
         return await Database.from('licencias_conductores').where('conductor_id', id)
     }
 
-    async create_licence({ request, params }){
+    async create_licence({ auth, request, params }){
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const { id } = params
         const {
             numero_de_licencia,
@@ -132,7 +142,9 @@ class ConductorController {
 
     }
 
-    async update_licence({ request, params }){
+    async update_licence({ auth, request, params }){
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const { id } = params
         const {
             numero_de_licencia,
@@ -158,7 +170,9 @@ class ConductorController {
    
     
     //UPDATE
-    async update_conductor({ request, params }){
+    async update_conductor({ auth, request, params }){
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const { id } = params;
         const conductor = await Conductor.find(id)
         const {
@@ -175,7 +189,8 @@ class ConductorController {
             telefono_1,
             telefono_2,
             celular,
-            transportadora
+            transportadora_id,
+            radica_rndc,
         } = request.all()
 
         conductor.codigo = codigo,
@@ -191,7 +206,8 @@ class ConductorController {
         conductor.telefono_1 = telefono_1,
         conductor.telefono_2 = telefono_2,
         conductor.celular = celular,
-        conductor.transportadora = transportadora
+        conductor.transportadora_id = transportadora_id
+        conductor.radica_rndc = radica_rndc
         conductor.save()
         return conductor
 
@@ -204,19 +220,25 @@ class ConductorController {
     
     
     //DELETE
-    async delete_conductor({ params }){
+    async delete_conductor({ auth, params }){
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const { id } = params
         const conductor = await Conductor.find(id)
         return conductor.delete()
 
     }
-    async delete_conductor_licence({ params }){
+    async delete_conductor_licence({ auth, params }){
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const { id } = params
         const licence = await Database.table('licencias_conductores')
         .query().where('id', id)
         return licence.delete()
     }
-    async delete_conductor_bank_account({ params }){
+    async delete_conductor_bank_account({ auth, params }){
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const { id } = params
         const bank = await Database.table('datos_bancarios_conductores')
         .query().where('id', id)

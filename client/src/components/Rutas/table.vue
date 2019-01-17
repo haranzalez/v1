@@ -26,7 +26,7 @@
 	<!-- dialog create ruta -->
 	<el-dialog 
 	top="5vh"
-	width="38%"
+	width="30%"
 	title="Nueva ruta" 
 	:visible.sync="dialogFormVisible"
 	:close-on-press-escape="true"
@@ -35,7 +35,7 @@
 		<el-form label-position="top">
 			
 			<el-row>
-			<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+			<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
 				<el-form-item label="Origen" :label-width="formLabelWidth">
 					<el-select size="mini" @change="setMunicipioOrigenId" filterable :value="ruta.municipio_origen_id" placeholder="Seleccione..">
 						<el-option
@@ -47,7 +47,7 @@
 					</el-select>
 				</el-form-item>
 			</el-col>
-			<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+			<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
 				<el-form-item label="Destino" :label-width="formLabelWidth">
 					<el-select size="mini" @change="setMunicipioDestinoId" filterable :value="ruta.municipio_destino_id" placeholder="Seleccione..">
 						<el-option
@@ -118,6 +118,18 @@
 					</el-input>
 				</el-form-item>
 			</el-col>
+			<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+				<el-form-item label="Tipo de vehiculo">
+					<el-select size="mini" v-model="tipo_de_vehiculo_selected" placeholder="Seleccione..">
+						<el-option
+						v-for="item in tipo_de_vehiculo_options"
+						:key="item.value"
+						:label="item.label"
+						:value="item.value">
+						</el-option>
+					</el-select>
+				</el-form-item>
+			</el-col>
 		</el-row>
 		</el-form>
 		<span slot="footer" class="dialog-footer">
@@ -129,7 +141,7 @@
 	<!-- dialog edit ruta -->
 	<el-dialog 
 	top="5vh"
-	width="38%"
+	width="30%"
 	title="Actualizando ruta" 
 	:visible.sync="dialogFormEditVisible"
 	:close-on-press-escape="true"
@@ -301,6 +313,9 @@ export default {
 		}
 	},
 	computed: {
+		...mapState('sharedValues', [
+			'tipo_de_vehiculo_options',
+        ]),
         ...mapState('authentication', [
 			'permisos',
         ]),
@@ -316,6 +331,14 @@ export default {
 			'pago_tercero_formatted',
 			'pago_cabezote_formatted',
 		]),
+		tipo_de_vehiculo_selected: {
+            get(){
+                return this.ruta.tipo_de_vehiculo
+            },
+            set(value){
+                this.setTipoDeVehiculo(value)
+            }
+        },
         filtered(){
 			if(this.dataReady){
 				if(this.filter !== ''){
@@ -359,6 +382,7 @@ export default {
 			'setPagoCabezote',
 			'setMunicipioOrigenId',
 			'setMunicipioDestinoId',
+			'setTipoDeVehiculo',
 		]),
         ...mapActions('rutas',[
 			'fetchRutasList',

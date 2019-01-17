@@ -80,7 +80,9 @@ class VehiculoController {
     }
     
     //CREATE
-    async create_vehicle({ request }){
+    async create_vehicle({ auth, request }){
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const {
             placa,
             numero_chasis,
@@ -94,7 +96,9 @@ class VehiculoController {
             tipo_de_combustible,
             color,
             peso,
-            capasidad_carga
+            capasidad_carga,
+            radica_rndc,
+            transportadora_id,
         } = request.all()
 
         return await Vehiculo.create({
@@ -111,13 +115,17 @@ class VehiculoController {
             color,
             peso,
             capasidad_carga,
+            radica_rndc,
+            transportadora_id,
             estado: 'en espera'
         })
 
     }
 
     //UPDATE
-    async update_vehicle({ request, params }){
+    async update_vehicle({ auth, request, params }){
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const { id } = params;
         const vehiculo = await Vehiculo.find(id)
         const {
@@ -133,7 +141,9 @@ class VehiculoController {
             tipo_de_combustible,
             color,
             peso,
-            capasidad_carga
+            capasidad_carga,
+            radica_rndc,
+            transportadora_id,
         } = request.all()
 
         vehiculo.placa = placa
@@ -149,6 +159,8 @@ class VehiculoController {
         vehiculo.color = color
         vehiculo.peso = peso
         vehiculo.capasidad_carga = capasidad_carga
+        vehiculo.radica_rndc = radica_rndc
+        vehiculo.transportadora_id = transportadora_id
         vehiculo.save()
 
         return vehiculo
@@ -156,7 +168,9 @@ class VehiculoController {
     }
 
      //DELETE
-     async delete_vehiculo({ params }){
+     async delete_vehiculo({ auth, params }){
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const { id } = params
         const vehiculo = await Vehiculo.find(id)
         return vehiculo.delete()

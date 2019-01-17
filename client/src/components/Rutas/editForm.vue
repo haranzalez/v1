@@ -5,7 +5,7 @@
             <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                 <h3>Info</h3>
             </el-col>
-            <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+            <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                 <el-form-item label="Origen" label-width="200px">
                     <el-select 
                     size="mini" 
@@ -23,7 +23,7 @@
                     </el-select>
                 </el-form-item>
             </el-col>
-            <el-col :span="12" :md="12" :sm="24" :xs="24" class="col-p">
+            <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                 <el-form-item label="Destino" label-width="200px">
                     <el-select 
                     size="mini" 
@@ -102,16 +102,24 @@
                     </el-input>
                 </el-form-item>
             </el-col>
+            <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="col-p">
+				<el-form-item label="Tipo de vehiculo">
+					<el-select size="mini" v-model="tipo_de_vehiculo_selected" placeholder="Seleccione..">
+						<el-option
+						v-for="item in tipo_de_vehiculo_options"
+						:key="item.value"
+						:label="item.label"
+						:value="item.value">
+						</el-option>
+					</el-select>
+				</el-form-item>
+			</el-col>
             <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                 <h3>Comentarios</h3>
                 <el-button @click="comentar" style="font-size: 25px;float: right; padding: 3px 0" type="text"><i class="mdi mdi-comment-plus-outline"></i></el-button>
             </el-col>
             <el-col style="margin:0 !important;" :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                
-             
-                   
-                        
-            
+
                     <div class="text item">
                         <el-table
                         height="300"
@@ -160,7 +168,9 @@ export default {
 		}
 	},
 	computed: {
-        
+        ...mapState('sharedValues', [
+			'tipo_de_vehiculo_options',
+        ]),
         ...mapState('authentication', [
 			'permisos',
         ]),
@@ -169,6 +179,14 @@ export default {
             'municipios_list',
             'comentarios_list',
         ]),
+        tipo_de_vehiculo_selected: {
+            get(){
+                return this.ruta.tipo_de_vehiculo
+            },
+            set(value){
+                this.setTipoDeVehiculo(value)
+            }
+        },
 
 	},
 	components: {
@@ -226,6 +244,7 @@ export default {
             'setPagoCabezote',
             'setMunicipioOrigenId',
             'setMunicipioDestinoId',
+            'setTipoDeVehiculo',
 
         ]),
         title(field){

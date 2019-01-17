@@ -48,6 +48,10 @@ Route.group(() => {
   Route.post('roles/:role_id/subModulo/:sub_modulo_id/setPermisos', 'RoleController.setPermisosV2').middleware('auth');
   Route.patch('roles/:id/modulos/updatePermisos', 'RoleController.updatePermisos').middleware('auth');
   //======================================================================================================================================
+  //Logger
+  //======================================================================================================================================
+  Route.get('logger', 'LoggerController.get_logs').middleware('auth');
+  //======================================================================================================================================
   //Backups
   //======================================================================================================================================
   Route.get('backup', 'BackupsController.backup').middleware('auth');
@@ -109,6 +113,7 @@ Route.group(() => {
   //======================================================================================================================================
   //GET
   Route.get('rutas', 'RutaController.get_all_rutas').middleware('auth')
+  Route.get('rutas/:filter/filter', 'RutaController.get_filtered_rutas').middleware('auth')
   Route.get('rutas/:id', 'RutaController.get_ruta').middleware('auth')
   Route.get('rutas/comentario/:ruta_id', 'RutaController.get_comments').middleware('auth')
   Route.get('rutas/:id/basic', 'RutaController.get_ruta_basic').middleware('auth')
@@ -181,6 +186,18 @@ Route.group(() => {
   Route.delete('conductores/:id/delete', 'ConductorController.delete_conductor').middleware('auth')
   Route.delete('conductores/datos-bancarios/:id/delete', 'ConductorController.delete_conductor_bank_account').middleware('auth')
   Route.delete('conductores/licencia/:id/delete', 'ConductorController.delete_conductor_licence').middleware('auth')
+  //======================================================================================================================================
+  //Transportadoras
+  //======================================================================================================================================
+  //GET
+  Route.get('transportadoras', 'TransportadorasController.get_all_transportadoras').middleware('auth')
+  Route.get('transportadoras/:id', 'TransportadorasController.get_transportadora').middleware('auth')
+  //POST
+  Route.post('transportadoras/crear', 'TransportadorasController.create_transportadora').middleware('auth')
+  //PUT
+  Route.put('transportadoras/:id/update', 'TransportadorasController.update_transportadora').middleware('auth')
+  //DELETE
+  Route.delete('transportadoras/:id/delete', 'TransportadorasController.delete_transportadora').middleware('auth')
   //======================================================================================================================================
   //Clientes
   //======================================================================================================================================

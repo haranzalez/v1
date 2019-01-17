@@ -37,7 +37,8 @@
 		</span>
 	</el-dialog>
 	<!--Edit dialog form -->
-	<el-dialog fullscreen width="30%" top="5vh" :title="conductor.nombres + ' ' + conductor.primer_apellido + ' ' + conductor.segundo_apellido" :visible.sync="editFormVisible">
+	<el-dialog fullscreen width="30%" top="5vh" :visible.sync="editFormVisible">
+		<h3 style="text-align:center;" slot="title">{{conductor.nombres + ' ' + conductor.primer_apellido + ' ' + conductor.segundo_apellido}}</h3>
 		<ConductoresEditForm></ConductoresEditForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button @click="editFormVisible = false">Cancelar</el-button>
@@ -45,7 +46,8 @@
 		</span>
 	</el-dialog>
 	<!--Create dialog form -->
-	<el-dialog fullscreen width="30%" top="10vh" title="Nuevo conductor" :visible.sync="createFormVisible">
+	<el-dialog fullscreen width="30%" top="10vh" :visible.sync="createFormVisible">
+		<h3 style="text-align:center;" slot="title">Nuevo conductor</h3>
 		<ConductoresCreateForm></ConductoresCreateForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button @click="createFormVisible = false">Cancelar</el-button>
@@ -152,12 +154,6 @@
       prop="celular"
       label="Celular"
       width="120">
-    </el-table-column>
-     <el-table-column
-	  sortable
-      prop="transportadora"
-      label="Transportadora"
-      width="150">
     </el-table-column>
     
   </el-table>

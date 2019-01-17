@@ -20,17 +20,19 @@ export default {
             telefono_1: null,
             telefono_2: null,
             celular: null,
-            transportadora: null,
+            transportadora_id: null,
+            radica_rndc: false,
+            anticipo: false,
         },
         datosBancarios:{
-          id: null,
-          titular: null,
-          tipo_de_id: null,
-          numero_cuenta_bancaria: null,
-          tipo_cuenta_bancaria: null,
-          banco: null,
-          cuenta_propia: null,
-          radica_rndc: null,
+            id: null,
+            titular: null,
+            tipo_de_id: null,
+            numero_cuenta_bancaria: null,
+            tipo_cuenta_bancaria: null,
+            banco: null,
+            cuenta_propia: null,
+            radica_rndc: null,
         },
         licencia: {
             id: null,
@@ -77,7 +79,7 @@ export default {
                 telefono_1: state.conductor.telefono_1,
                 telefono_2: state.conductor.telefono_2,
                 celular: state.conductor.celular,
-                transportadora: state.conductor.transportadora,
+                transportadora_id: state.conductor.transportadora_id,
             })
             .then(d => {
                 commit('setFullConductor', d.data)
@@ -106,7 +108,7 @@ export default {
                 telefono_1: state.conductor.telefono_1,
                 telefono_2: state.conductor.telefono_2,
                 celular: state.conductor.celular,
-                transportadora: state.conductor.transportadora,
+                transportadora_id: state.conductor.transportadora_id,
             })
             .then(d => {
                 Message({
@@ -290,7 +292,7 @@ export default {
             state.conductor.codigo = value
         },
         setTipoDeiIdentificacion(state, value){
-                state.conductor.tipo_de_identificacion = value
+            state.conductor.tipo_de_identificacion = value
         },
         setCedula(state, value){
             state.conductor.cedula = value
@@ -326,13 +328,19 @@ export default {
             state.conductor.celular = value
         },
         setTransportadora(state, value){
-            state.conductor.transportadora = value
+            state.conductor.transportadora_id = value
         },
         setFullConductor(state, value){
             state.conductor = value
         },
         setLoadingConductoresTable(state, value){
             state.loadingConductoresTable = value
+        },
+        setRadicaRndc(state, value){
+            state.conductor.radica_rndc = value
+        },
+        setAnticipo(state, value){
+            state.conductor.anticipo = value
         },
         resetConductoresVars(state){
             state.conductor = {
@@ -349,7 +357,9 @@ export default {
                 telefono_1: null,
                 telefono_2: null,
                 celular: null,
-                transportadora: null,
+                transportadora_id: null,
+                radica_rndc: false,
+                anticipo: false,
             }
         },
 
@@ -380,14 +390,6 @@ export default {
             }
             
             state.datosBancarios.cuenta_propia = pkg.value
-        },
-        setRadica_rndc(state, pkg){
-            if(pkg.op == 'create'){
-                state.radicaRndcSwitchCreate = pkg.value
-            }else{
-                state.radicaRndcSwitchEdit = pkg.value
-            }
-            state.datosBancarios.radica_rndc = pkg.value
         },
        
         resetDatosBancarios(state){

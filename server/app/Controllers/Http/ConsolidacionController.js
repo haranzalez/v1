@@ -80,7 +80,9 @@ class ConsolidacionController {
         .with('cuadre_servicio.servicio')
         .fetch()
     }
-    async create_consolidacion({ params }){
+    async create_consolidacion({ auth, params }){
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const { cliente_id } = params
         await Consolidacion.create({
             cliente_id
@@ -163,7 +165,9 @@ class ConsolidacionController {
         }
     }
     //UPDATE
-    async update_consolidacion({ request, params }){
+    async update_consolidacion({ auth, request, params }){
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const { id } = params;
         const consolidacion = await Consolidacion.find(id)
         const {
@@ -176,7 +180,9 @@ class ConsolidacionController {
     }
 
      //DELETE
-     async delete_consolidacion({ params }){
+     async delete_consolidacion({ auth, params }){
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const { id } = params
         const consolidacion = await Consolidacion.find(id)
         return consolidacion.delete()

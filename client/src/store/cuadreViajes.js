@@ -7,14 +7,14 @@ export default {
     namespaced: true,
     state: {
         cuadre:{
-            id: null,
             cliente_id: null,
             flete: null,
             ruta_id: null,
-            anticipo: null,
-            vehiculo_id: null,
-            ajuste: null,
-            debe: null,
+            tipo_de_vehiculo: null,
+            pago_conductor: null,
+            pago_tercero: null,
+            pago_cabezote: null,
+            tipo_de_negociacion: null,
         },
         cuadresList: null,
         selectedVehiculo: null,
@@ -63,16 +63,10 @@ export default {
                 console.log(err)
             })
         },
-        createCuadreRuta({state, dispatch}, cliente_id){
-            HTTP().local.post('api/cuadre-viajes/crear', {
-                cliente_id: cliente_id,
-                ruta_id: state.selectedCreateRuta,
-                vehiculo_id: state.selectedCreateVehiculo,
-                flete: state.cuadre.flete,
-                anticipo: state.cuadre.anticipo,
-                ajuste: state.cuadre.ajuste,
-                debe: state.cuadre.debe,
-            })
+        createCuadreRuta({state, commit, dispatch}, cliente_id){
+            commit('setClienteId', cliente_id)
+
+            HTTP().local.post('api/cuadre-viajes/crear', state.cuadre)
             .then(d => {
                 if(d.data.message == 'success'){
                     dispatch('fetchCuadresRutaList')
@@ -85,15 +79,7 @@ export default {
             })
         },
         editCuadreRuta({state}, cliente_id){
-            HTTP().local.put('api/cuadre-viajes/'+state.cuadre.id+'/update', {
-                cliente_id: cliente_id,
-                ruta_id: state.selectedRutaEdit,
-                vehiculo_id: state.selectedVehiculoEdit,
-                flete: state.cuadre.flete,
-                anticipo: state.cuadre.anticipo,
-                ajuste: state.cuadre.ajuste,
-                debe: state.cuadre.debe,
-            })
+            HTTP().local.put('api/cuadre-viajes/'+state.cuadre.id+'/update', state.cuadre)
             .then(d => {
                 Message({
                     showClose: true,
@@ -114,7 +100,7 @@ export default {
                 console.log(err)
             })
         },
-        fetchCuadreRuta({commit, dispatch},pkg){
+        fetchCuadreRuta({state, commit, dispatch},pkg){
        
             HTTP().local.get('api/cuadre-viajes/'+pkg.id)
             .then(d => {
@@ -122,8 +108,8 @@ export default {
                commit('setFullCuadre', d.data)
                commit('setFlete', d.data.flete)
                commit('rutas/setValorflete', d.data.valor_flete.toString(), {root: true})
-               commit('setSelectedRutaEdit', d.data.ruta_id)
-               commit('setSelectedVehiculoEdit', d.data.vehiculo_id)
+               dispatch('rutas/fetchFilteredByTipoVehiculoRutasList', state.cuadre.tipo_de_vehiculo, {root: true})
+               commit('setRutaId', d.data.ruta_id)
                dispatch('renderSelectedRuta', 'single')
             })
             .catch(err => {
@@ -191,11 +177,11 @@ export default {
         
     },
     mutations: {
-      
+        setClienteId(state, value){
+            state.cuadre.cliente_id = value
+        },
         setFullCuadre(state, value){
-            
             state.cuadre = value
-            console.log(state.cuadre)
         },
         setCuadresList(state, list){
             state.cuadresList = list
@@ -214,18 +200,6 @@ export default {
         },
         setFlete(state, value){
             state.cuadre.flete = value
-        },
-        setAnticipo(state, value){
-            state.cuadre.anticipo = value
-        },
-        setAjuste(state, value){
-            state.cuadre.ajuste = value
-        },
-        setDebe(state, value){
-            state.cuadre.debe = value
-        },
-        setSelectedVehiculoEdit(state, value){
-            state.selectedVehiculoEdit = value
         },
         setSelectedRutaEdit(state, value){
             state.selectedRutaEdit = value
@@ -250,16 +224,31 @@ export default {
             state.selectedCreateRuta = null;
             state.selectedCreateProducto = null;
         },
+        setTipoDeVehiculo(state, value){
+            state.cuadre.tipo_de_vehiculo = value
+        },
+        setPagoConductor(state, value){
+            state.cuadre.pago_conductor = value
+        },
+        setPagoTercero(state, value){
+            state.cuadre.pago_tercero = value
+        },
+        setPagoCabezote(state, value){
+            state.cuadre.pago_cabezote = value
+        },
+        setTipoDeNegociacion(state, value){
+            state.cuadre.tipo_de_negociacion = value
+        },
         resetCuadreRuta(state){
             state.cuadre = {
-                id: null,
                 cliente_id: null,
                 flete: null,
                 ruta_id: null,
-                anticipo: null,
-                vehiculo_id: null,
-                ajuste: null,
-                debe: null,
+                tipo_de_vehiculo: null,
+                pago_conductor: null,
+                pago_tercero: null,
+                pago_cabezote: null,
+                tipo_de_negociacion: null,
             }
         }
     },

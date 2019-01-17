@@ -114,7 +114,7 @@
 	</el-dialog>
 	<!--Table-->
 	<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
-		<h1>Cuadro de viajes</h1>
+		<h1>Programacion de despachos</h1>
 		<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
 			<div class="serachBar-ctn">
 				<el-input size="mini" placeholder="Buscar" v-model="filter" class="input-with-select">

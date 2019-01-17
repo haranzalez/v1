@@ -1,6 +1,7 @@
 'use strict'
 const CuadreServicio = use('App/Models/CuadreServicio')
 const Cliente = use('App/Models/Cliente')
+const Database = use('Database')
 class CuadroServicioController {
     async get_all(){
         return await CuadreServicio.all()
@@ -19,7 +20,9 @@ class CuadroServicioController {
         console.log(pkg)
         return pkg
     }
-    async create_cuadre({ request }){
+    async create_cuadre({ auth, request }){
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const {
             cliente_id,
             servicio_id,
@@ -47,7 +50,9 @@ class CuadroServicioController {
         }
     }
 
-    async update_cuadre({ params, request }){
+    async update_cuadre({ auth, params, request }){
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const { id } = params;
         const cuadre = await CuadreServicio.find(id)
         const {
@@ -67,7 +72,9 @@ class CuadroServicioController {
         }
     }
     //DELETE
-    async delete_cuadre({ params }){
+    async delete_cuadre({ auth, params }){
+        const user = await auth.getUser()
+        await Database.raw('SET hq.usuario = ' + user.nombre)
         const { id } = params
         const cuadre = await CuadreServicio.find(id)
         cuadre.delete()

@@ -84,6 +84,29 @@
                     </el-form-item>
                 </el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Tenedor">
+                        <el-row>
+                            <el-col :span="11" :md="11" :sm="24" :xs="24">
+                                <el-input 
+                                size="mini"
+                                @input="setTenedor"
+                                placeholder="Nombre">
+                                </el-input>
+                            </el-col>
+                            <el-col style="text-align: center;" :span="2" :md="2" :sm="24" :xs="24">
+                                |
+                            </el-col>
+                            <el-col :span="11" :md="11" :sm="24" :xs="24">
+                                <el-input 
+                                size="mini"
+                                @input="setCedulaTenedor"
+                                placeholder="Nit/Cedula">
+                                </el-input>
+                            </el-col>
+                        </el-row>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Transportadora" prop="transportadora">
                         <el-select 
                         size="mini" 
@@ -190,6 +213,42 @@
                     </el-form-item>
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Conductor">
+                        <el-select size="mini" v-model="conductor_selected" placeholder="Select">
+                            <el-option
+                            v-for="item in conductoresList"
+                            :key="item.id"
+                            :label="item.nombres"
+                            :value="item.id">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+				</el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Trailer">
+                        <el-select size="mini" v-model="trailer_selected" placeholder="Select">
+                            <el-option
+                            v-for="item in trailersList"
+                            :key="item.id"
+                            :label="item.placa"
+                            :value="item.id">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+				</el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Estado">
+                        <el-select clearable size="mini" v-model="estado_selected" placeholder="Select">
+                            <el-option
+                            v-for="item in estado_options"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Radica RNDC">
                         <el-switch
                             v-model="radicaRndc"
@@ -200,11 +259,7 @@
                         </el-switch>
                     </el-form-item>
                 </el-col>
-
         </el-row>
-        
-        
-            
         </el-form>
    </vue-scroll>
 </template>
@@ -225,6 +280,30 @@ export default {
 		}
 	},
 	computed: {
+        trailer_selected: {
+            get(){
+                return this.selectedTrailer
+            },
+            set(value){
+                this.setSelectedTrailer(value)
+            }
+        },
+        conductor_selected: {
+            get(){
+                return this.selectedConductor
+            },
+            set(value){
+                this.setSelectedConductor(value)
+            }
+        },
+        estado_selected: {
+            get(){
+                return this.vehiculo.estado
+            },
+            set(value){
+                this.setEstado(value)
+            }
+        },
         tipo_de_combustible_selected: {
             get(){
                 return this.vehiculo.tipo_de_combustible
@@ -288,6 +367,12 @@ export default {
             'selectedConductor',
             'selectedTrailer',
         ]),
+        ...mapState('conductores', [
+            'conductoresList',
+        ]),
+        ...mapState('trailers', [
+            'trailersList',
+        ]),
 
 	},
 	components: {
@@ -314,9 +399,15 @@ export default {
             'setRadicaRndc',
             'setPoseedor',
             'setPropietario',
+            'setTenedor',
+            'setCedulaTenedor',
             'setCedulaPropietario',
             'setCedulaPoseedor',
             'setTransportadora',
+            'setEstado',
+            'setSelectedTrailer',
+            'setSelectedConductor',
+            'resetVehicleVariables',
         ]),
         title(field){
             field = field.split('_').join(' ')
@@ -329,13 +420,20 @@ export default {
             'assignTrailer',
             'createVehiculo',
         ]),
+        ...mapActions('conductores',[
+            'fetchConductoresList',
+        ]),
+        ...mapActions('trailers',[
+            'fetchTrailersList',
+        ]),
         ...mapActions('transportadoras',[
             'fetchTransportadorasList',
         ]),
     },
     created: function(){
         this.fetchTransportadorasList()
-        this.fetchVehiculosList()
+        this.fetchConductoresList()
+        this.fetchTrailersList()
 	}
 
 }

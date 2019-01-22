@@ -23,16 +23,18 @@ export default {
             radica_rndc: false,
             propietario: null,
             poseedor: null,
+            tenedor: null,
             cedula_poseedor: null,
             cedula_propietario: null,
+            cedula_tenedor: null,
             transportadora_id: null,
+            estado: null,
         },
         vehiculosList: null,
         selectedConductor: null,
         selectedTrailer: null,
         vehiculosDataReady: false,
         headings: [], 
-        assignVehicleId: null, 
         loadingVehiculosTable: false, 
     },
     actions: {
@@ -44,6 +46,8 @@ export default {
                     showClose: true,
                     message: 'Vehiculo creado.'
                 })
+                dispatch('assignConductor')
+                dispatch('assignTrailer')
                 dispatch('fetchVehiculosList')
             })
             .catch(err => {
@@ -58,7 +62,9 @@ export default {
                     showClose: true,
                     message: 'Actualizacion Exitosa.'
                 })
-                dispatch('fetchVehiculosList')
+                dispatch('assignConductor')
+                dispatch('assignTrailer')
+                
             })
             .catch(err => {
                 console.log(err)
@@ -80,44 +86,35 @@ export default {
                 console.log(err)
             })
         },
-        assignConductor({state, dispatch},e){
-            HTTP().local.get('api/vehiculos/'+state.assignVehicleId+'/assign/conductor/'+e)
+        assignConductor({state}){
+            HTTP().local.get('api/vehiculos/'+state.vehiculo.id+'/assign/conductor/'+state.selectedConductor)
             .then(d => {
-                Message({
-                    showClose: true,
-                    message: 'Cambio de Conductor exitoso!'
-                })
-                dispatch('fetchVehiculosList')
-                dispatch('renderSelectedConductores')
+               console.log('Conductor asignado')
+                
             })
             .catch(err => {
                 console.log(err)
             })
         },
-        assignTrailer({state, dispatch},e){
-            HTTP().local.get('api/vehiculos/'+state.assignVehicleId+'/assign/trailer/'+e)
+        assignTrailer({state, dispatch}){
+            HTTP().local.get('api/vehiculos/'+state.vehiculo.id+'/assign/trailer/'+state.selectedTrailer)
             .then(d => {
-                Message({
-                    showClose: true,
-                    message: 'Cambio de Trailer exitoso!.'
-                })
-                dispatch('fetchVehiculosList')
-                dispatch('renderSelectedTrailers')
+                if(d.data.message == 'success'){
+                    console.log('Trailer asignado')
+                    dispatch('fetchVehiculosList')
+                }
             })
             .catch(err => {
                 console.log(err)
             })
         },
-        fetchVehiculosList({commit, dispatch}, resource){
+        fetchVehiculosList({commit, dispatch}){
             commit('setLoadingVehiculosTable', true)
             HTTP().local.get('api/vehiculos')
             .then(d => {
+                console.log(d.data)
                 commit('setVehiculosList', d.data)
-                if(resource == null){
-                    dispatch('renderSelectedConductores')
-                    dispatch('renderSelectedTrailers')
-                    dispatch('renderTableHeadings')
-                }
+                dispatch('renderTableHeadings')
                 commit('setDataReady', true)
                 commit('setLoadingVehiculosTable', false)
             })
@@ -125,10 +122,10 @@ export default {
                 console.log(err)
             })
         },
-        fetchVehiculo({commit}, resource){
-            HTTP().local.get('api/vehiculos/'+resource.id)
+        fetchVehiculo({commit}, id){
+            HTTP().local.get('api/vehiculos/'+id)
             .then(d => {
-                commit('setFullVehiculo', d.data)
+                commit('setFullVehiculo', d.data[0])
             })
             .catch(err => {
                 console.log(err)
@@ -145,24 +142,13 @@ export default {
             }
             commit('setTableHeadings', pkg)
         },
-        renderSelectedConductores({ state, commit }){
-            let obj = {}
-            for(let prop in state.vehiculosList){
-                obj[state.vehiculosList[prop]['placa']] = (state.vehiculosList[prop]['conductor'] !== null)?state.vehiculosList[prop]['conductor']['nombres']:''
-            }
-            commit('setSelectedConductorList', obj)
-        },
-        renderSelectedTrailers({ state, commit }){
-            let obj = {}
-            for(let prop in state.vehiculosList){
-                obj[state.vehiculosList[prop]['placa']] = (state.vehiculosList[prop]['trailer'] !== null)?state.vehiculosList[prop]['trailer']['placa'] : ''
-            }
-            commit('setSelectedTrailersList', obj) 
-        },
+
     },
     mutations: {
         setFullVehiculo(state, value){
             state.vehiculo = value
+            state.selectedConductor = (value.conductor === null)?null:value.conductor.id
+            state.selectedTrailer = (value.trailer === null)?null:value.trailer.id
         },
         setVehiculosList(state, list){
             state.vehiculosList = list
@@ -172,15 +158,6 @@ export default {
         },
         setDataReady(state, ready){
             state.vehiculosDataReady = ready
-        },
-        setSelectedConductorList(state, list){
-            state.selectedConductor = list
-        },
-        setSelectedTrailersList(state, list){
-            state.selectedTrailer = list
-        },
-        setVehicleId(state, id){
-            state.assignVehicleId = id
         },
         setPlaca(state, value){
             state.vehiculo.placa = value
@@ -233,15 +210,58 @@ export default {
         setPropietario(state, value){
             state.vehiculo.propietario = value
         },
+        setTenedor(state, value){
+            state.vehiculo.tenedor = value
+        },
         setCedulaPropietario(state, value){
             state.vehiculo.cedula_propietario = value
         },
         setCedulaPoseedor(state, value){
             state.vehiculo.cedula_poseedor = value
         },
+        setCedulaTenedor(state, value){
+            state.vehiculo.cedula_poseedor = value
+        },
         setTransportadora(state, value){
             state.vehiculo.transportadora_id = value
         },
+        setEstado(state, value){
+            state.vehiculo.estado = value
+        },
+        setSelectedTrailer(state, value){
+            state.selectedTrailer = value
+        },
+        setSelectedConductor(state, value){
+            state.selectedConductor = value
+        },
+        resetVehicleVariables(state){
+            state.vehiculo = {
+                placa: null,
+                numero_chasis: null,
+                tipo_de_vehiculo: null,
+                tipo_configuracion: null,
+                modelo: null,
+                numero_motor: null,
+                tipo_de_flota: null,
+                marca_cabezote: null,
+                linea_cabezote: null,
+                tipo_de_combustible: null,
+                color: null,
+                peso: null,
+                capasidad_carga: null,
+                radica_rndc: false,
+                propietario: null,
+                poseedor: null,
+                tenedor: null,
+                cedula_poseedor: null,
+                cedula_propietario: null,
+                cedula_tenedor: null,
+                transportadora_id: null,
+                estado: null,
+            }
+            state.selectedConductor = null
+            state.selectedTrailer = null
+        }
         
     },
 

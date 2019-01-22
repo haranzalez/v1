@@ -104,10 +104,9 @@ export default {
        
             HTTP().local.get('api/cuadre-viajes/'+pkg.id)
             .then(d => {
-                console.log(d.data)
                commit('setFullCuadre', d.data)
                commit('setFlete', d.data.flete)
-               commit('rutas/setValorflete', d.data.valor_flete.toString(), {root: true})
+               dispatch('rutas/fetchRuta', d.data.ruta_id, {root: true})
                dispatch('rutas/fetchFilteredByTipoVehiculoRutasList', state.cuadre.tipo_de_vehiculo, {root: true})
                commit('setRutaId', d.data.ruta_id)
                dispatch('renderSelectedRuta', 'single')
@@ -120,7 +119,6 @@ export default {
 
             HTTP().local.get('api/cuadre-viajes')
             .then(d => {
-                console.log(d.data)
                 commit('setCuadresList', d.data)
                 commit('setDataReady', true)
                 dispatch('renderTableHeadings')
@@ -171,7 +169,6 @@ export default {
             if(type == 'single'){
                 obj['v-'+state.cuadre.id] = state.cuadre.placa_vehiculo
             }
-            console.log(obj)
             commit('setSelectedVehiculo', obj)
         },
         

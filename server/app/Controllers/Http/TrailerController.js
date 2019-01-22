@@ -79,7 +79,7 @@ class TrailerController {
             tipo_carroceria,
             estado,
             radica_rndc,
-            transportadora_id
+            transportadora_id,
         } = request.all()
 
         trailer.placa = placa

@@ -138,10 +138,10 @@
                         </el-select>
                     </el-form-item>
 				</el-col>
-                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Radica RNDC">
+                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Anticipo">
                         <el-switch
-                        v-model="radicaRn"
+                        v-model="anticipoState"
                         active-color="#13ce66"
                         inactive-color="#ff4949"
                         active-text="Si"
@@ -150,9 +150,20 @@
                     </el-form-item>
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Anticipo">
+                    <el-form-item label="Estado">
                         <el-switch
-                        v-model="anticipoState"
+                        v-model="estado"
+                        active-color="#13ce66"
+                        inactive-color="#ff4949"
+                        active-text="Activo"
+                        inactive-text="Inactivo">
+                        </el-switch>
+                    </el-form-item>
+				</el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Radica RNDC">
+                        <el-switch
+                        v-model="radicaRn"
                         active-color="#13ce66"
                         inactive-color="#ff4949"
                         active-text="Si"
@@ -191,53 +202,17 @@ export default {
                     label: 'Pasaporte',
                 },
               ],
-              rules: {
-                codigo: [
-                    { required: true, trigger: 'blur' }
-                ],
-                tipo_de_identificacion: [
-                    { required: true,  trigger: 'blur' }
-                ],
-                cedula: [
-                    { required: true,  trigger: 'blur' }
-                ],
-                municipio_documento: [
-                    { required: true,  trigger: 'blur' }
-                ],
-                nombres: [
-                    { required: true,  trigger: 'blur' }
-                ],
-                primer_apellido: [
-                    { required: true,  trigger: 'blur' }
-                ],
-                segundo_apellido: [
-                    { required: true,  trigger: 'blur' }
-                ],
-                tipo_conductor: [
-                    { required: true,  trigger: 'blur' }
-                ],
-                direccion: [
-                    { required: true,  trigger: 'blur' }
-                ],
-                municipio: [
-                    { required: true,  trigger: 'blur' }
-                ],
-                telefono_1: [
-                    { required: true,  trigger: 'blur' }
-                ],
-                telefono_2: [
-                    { required: true, trigger: 'blur' }
-                ],
-                celular: [
-                    { required: true, trigger: 'blur' }
-                ],
-                transportadora: [
-                    { required: true, trigger: 'blur' }
-                ],
-            }
-		}
+        }
 	},
 	computed: {
+        estado: {
+            get(){
+                return this.conductor.estado
+            },
+            set(value){
+                this.setEstado(value)
+            }
+        },
         anticipoState: {
             get(){
                 return this.conductor.anticipo
@@ -302,6 +277,7 @@ export default {
             'setTransportadora',
             'setRadicaRndc',
             'setAnticipo',
+            'setEstado',
         ]),
         title(field){
             field = field.split('_').join(' ')

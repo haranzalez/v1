@@ -82,7 +82,7 @@
 	</el-dialog>
 	
 	<!--edit viaje form -->
-	<el-dialog center width="30%" top="15vh" title="Cuadre ruta" :visible.sync="cuadreViajeEditFormVisible">
+	<el-dialog fullscreen center width="43%" top="15vh" title="Cuadre ruta" :visible.sync="cuadreViajeEditFormVisible">
 		<ViajeEditForm></ViajeEditForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button size="mini" type="primary" @click="editCuadreRuta(cliente.id)">Actualizar</el-button>
@@ -343,9 +343,6 @@ export default {
 //=============================//
 //========== Local Variables =========//
 //=============================//
-		computeDisable(){
-
-		},
 		DepositosCreateFormVisible: {
 			get(){
 				return this.depositosCreateFormVisible

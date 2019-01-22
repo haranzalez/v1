@@ -9,58 +9,44 @@ class VehiculoController {
 
     async assign_conductor({ params }){
         const { conductor_id, vehiculo_id } = params
+        if(conductor_id == 'null'){
+            return;
+        }
         const check = await Conductor.query().where('vehiculo_id', vehiculo_id).fetch()
-        const vehicleCheck = await Vehiculo.query()
-        .with('trailer')
-        .with('conductor')
-        .where('id', vehiculo_id).fetch()
-
+        
         if(check !== null){
             await Conductor.query().where('vehiculo_id', vehiculo_id).update({
                 vehiculo_id: null
             })
         }
         const conductor = await Conductor.find(conductor_id)
-        if(conductor.vehiculo_id !== null){
-            await Vehiculo.query().where('id', conductor.vehiculo_id).update({
-                estado: 'en espera'
-            })
-        }
-        
         conductor.vehiculo_id = vehiculo_id
         conductor.save()
-        let estado = (vehicleCheck.rows[0].$relations.trailer !== null) ? 'disponible' : 'en espera'
-        await Vehiculo.query().where('id', vehiculo_id).update({
-            estado: estado
-        })
-        return conductor
+        return {
+            message: 'success'
+        }
     }
 
     async assign_trailer({ params }){
         const { trailer_id, vehiculo_id } = params
+        console.log(trailer_id)
+        if(trailer_id == 'null'){
+            return;
+        }
         const check = await Trailer.query().where('vehiculo_id', vehiculo_id).fetch()
-        const vehicleCheck = await Vehiculo.query()
-        .with('trailer')
-        .with('conductor')
-        .where('id', vehiculo_id).fetch()
+       
         if(check !== null){
             await Trailer.query().where('vehiculo_id', vehiculo_id).update({
                 vehiculo_id: null
             })
         }
         const trailer = await Trailer.find(trailer_id)
-        if(trailer.vehiculo_id !== null){
-            await Vehiculo.query().where('id', trailer.vehiculo_id).update({
-                estado: 'en espera'
-            })
-        }
+        
         trailer.vehiculo_id = vehiculo_id
         trailer.save()
-        let estado = (vehicleCheck.rows[0].$relations.conductor !== null) ? 'disponible' : 'en espera'
-        await Vehiculo.query().where('id', vehiculo_id).update({
-            estado: estado
-        })
-        return trailer
+        return {
+            message: 'success'
+        }
     }
 
     //READ
@@ -99,9 +85,16 @@ class VehiculoController {
             capasidad_carga,
             radica_rndc,
             transportadora_id,
+            estado,
+            propietario,
+            poseedor,
+            tenedor,
+            cedula_poseedor,
+            cedula_propietario,
+            cedula_tenedor,
         } = request.all()
 
-        return await Vehiculo.create({
+        await Vehiculo.create({
             placa,
             numero_chasis,
             tipo_de_vehiculo,
@@ -117,8 +110,18 @@ class VehiculoController {
             capasidad_carga,
             radica_rndc,
             transportadora_id,
-            estado: 'en espera'
+            estado,
+            propietario,
+            poseedor,
+            tenedor,
+            cedula_poseedor,
+            cedula_propietario,
+            cedula_tenedor,
         })
+
+        return {
+            message: 'success'
+        }
 
     }
 
@@ -144,6 +147,13 @@ class VehiculoController {
             capasidad_carga,
             radica_rndc,
             transportadora_id,
+            estado,
+            propietario,
+            poseedor,
+            tenedor,
+            cedula_poseedor,
+            cedula_propietario,
+            cedula_tenedor,
         } = request.all()
 
         vehiculo.placa = placa
@@ -161,9 +171,18 @@ class VehiculoController {
         vehiculo.capasidad_carga = capasidad_carga
         vehiculo.radica_rndc = radica_rndc
         vehiculo.transportadora_id = transportadora_id
+        vehiculo.estado = estado
+        vehiculo.propietario = propietario
+        vehiculo.poseedor = poseedor
+        vehiculo.tenedor = tenedor
+        vehiculo.cedula_poseedor = cedula_poseedor
+        vehiculo.cedula_propietario = cedula_propietario
+        vehiculo.cedula_tenedor = cedula_tenedor
         vehiculo.save()
 
-        return vehiculo
+        return {
+            message: 'success'
+        }
 
     }
 

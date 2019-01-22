@@ -80,18 +80,6 @@
       label="Razon social"
       width="190">
     </el-table-column>
-	<el-table-column
-	  sortable
-      prop="direccion"
-      label="Direccion"
-      width="120">
-    </el-table-column>
-	<el-table-column
-	  sortable
-      prop="telefono"
-      label="Telefono"
-      width="120">
-    </el-table-column>
     <el-table-column
 	  sortable
       prop="contacto"
@@ -99,6 +87,7 @@
       width="170">
     </el-table-column>
     <el-table-column
+	  align="center"
 	  sortable
       prop="anticipo"
       label="Anticipo"
@@ -107,13 +96,24 @@
           <el-tag :type="(scope.row.anticipo)?'success':'danger'">{{(scope.row.anticipo)?'Si':'No'}}</el-tag>
       </template>
     </el-table-column>
-     <el-table-column
+    <el-table-column
+	  align="center"
 	  sortable
       prop="pagos"
       label="Pagos"
       width="120">
        <template slot-scope="scope">
           <el-tag :type="(scope.row.pagos)?'success':'danger'">{{(scope.row.pagos)?'Si':'No'}}</el-tag>
+      </template>
+    </el-table-column>
+	<el-table-column
+	  align="center"
+	  sortable
+      prop="radica_rndc"
+      label="Radica RNDC"
+      width="120">
+       <template slot-scope="scope">
+          <el-tag :type="(scope.row.radica_rndc)?'success':'danger'">{{(scope.row.radica_rndc)?'Si':'No'}}</el-tag>
       </template>
     </el-table-column>
   </el-table>

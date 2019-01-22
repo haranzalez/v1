@@ -59,15 +59,6 @@
                  
                     </el-form-item>
 				</el-col>
-				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Radica RNDC">
-                       <el-switch
-                        v-model="radicaRndcSwitch"
-                        active-text="Si"
-                        inactive-text="No">
-                        </el-switch>
-                    </el-form-item>
-				</el-col>
 		
 			
 

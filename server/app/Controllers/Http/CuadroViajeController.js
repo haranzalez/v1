@@ -31,10 +31,6 @@ class CuadroViajeController {
         const cuadre = await CuadreViaje.find(id)
         const ruta = await cuadre.ruta().with('municipios').fetch()
        
-        cuadre['valor_flete'] =  (ruta.rows.length > 0)?ruta.rows[0].valor_flete:0;
-        cuadre['pago_conductor'] =  (ruta.rows.length > 0)?ruta.rows[0].valor_flete:0;
-        cuadre['pago_tercero'] =  (ruta.rows.length > 0)?ruta.rows[0].valor_flete:0;
-        cuadre['pago_cabezote'] =  (ruta.rows.length > 0)?ruta.rows[0].valor_flete:0;
         cuadre['ruta_id'] = (ruta.rows.length > 0)?ruta.rows[0].id:null;
         cuadre['ruta'] = (ruta.rows.length > 0)?ruta.rows[0].$relations.municipios.rows[0].nombre_municipio + ' - ' + ruta.rows[0].$relations.municipios.rows[1].nombre_municipio:'';
        

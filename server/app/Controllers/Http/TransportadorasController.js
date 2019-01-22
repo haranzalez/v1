@@ -28,6 +28,7 @@ class TransportadorasController {
             pagos,
             anticipo,
             tipo_de_cuenta,
+            radica_rndc
         } = request.all()
 
         await Database
@@ -43,6 +44,7 @@ class TransportadorasController {
             pagos,
             anticipo,
             tipo_de_cuenta,
+            radica_rndc
         })
 
         return {
@@ -66,6 +68,7 @@ class TransportadorasController {
             pagos,
             anticipo,
             tipo_de_cuenta,
+            radica_rndc
         } = request.all()
 
         await Database
@@ -82,6 +85,7 @@ class TransportadorasController {
             pagos,
             anticipo,
             tipo_de_cuenta,
+            radica_rndc
          })
 
         return {

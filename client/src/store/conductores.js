@@ -23,6 +23,7 @@ export default {
             transportadora_id: null,
             radica_rndc: false,
             anticipo: false,
+            estado: false,
         },
         datosBancarios:{
             id: null,
@@ -65,22 +66,7 @@ export default {
             })
         },
         createConductor({state, commit}){
-            HTTP().local.post('api/conductores/crear', {
-                codigo: state.conductor.codigo,
-                tipo_de_identificacion: state.conductor.tipo_de_identificacion,
-                cedula: state.conductor.cedula,
-                municipio_documento: state.conductor.municipio_documento,
-                nombres: state.conductor.nombres,
-                primer_apellido: state.conductor.primer_apellido,
-                segundo_apellido: state.conductor.segundo_apellido,
-                tipo_de_conductor: state.conductor.tipo_de_conductor,
-                direccion: state.conductor.direccion,
-                municipio: state.conductor.municipio,
-                telefono_1: state.conductor.telefono_1,
-                telefono_2: state.conductor.telefono_2,
-                celular: state.conductor.celular,
-                transportadora_id: state.conductor.transportadora_id,
-            })
+            HTTP().local.post('api/conductores/crear', state.conductor)
             .then(d => {
                 commit('setFullConductor', d.data)
                 commit('setDatosBancariosCreateFormVisible', true)
@@ -94,22 +80,7 @@ export default {
             })
         },
         editConductor({state}){
-            HTTP().local.put('api/conductores/'+state.conductor.id+'/update', {
-                codigo: state.conductor.codigo,
-                tipo_de_identificacion: state.conductor.tipo_de_identificacion,
-                cedula: state.conductor.cedula,
-                municipio_documento: state.conductor.municipio_documento,
-                nombres: state.conductor.nombres,
-                primer_apellido: state.conductor.primer_apellido,
-                segundo_apellido: state.conductor.segundo_apellido,
-                tipo_de_conductor: state.conductor.tipo_de_conductor,
-                direccion: state.conductor.direccion,
-                municipio: state.conductor.municipio,
-                telefono_1: state.conductor.telefono_1,
-                telefono_2: state.conductor.telefono_2,
-                celular: state.conductor.celular,
-                transportadora_id: state.conductor.transportadora_id,
-            })
+            HTTP().local.put('api/conductores/'+state.conductor.id+'/update', state.conductor)
             .then(d => {
                 Message({
                     type: 'success',
@@ -342,6 +313,9 @@ export default {
         setAnticipo(state, value){
             state.conductor.anticipo = value
         },
+        setEstado(state, value){
+            state.conductor.estado = value
+        },
         resetConductoresVars(state){
             state.conductor = {
                 codigo: null,
@@ -360,6 +334,7 @@ export default {
                 transportadora_id: null,
                 radica_rndc: false,
                 anticipo: false,
+                estado: false,
             }
         },
 

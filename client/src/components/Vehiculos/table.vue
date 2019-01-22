@@ -60,7 +60,6 @@
     style="width: 100%">
     <el-table-column
 	  sortable
-      fixed
       prop="id"
       label="ID"
       width="70">
@@ -81,108 +80,80 @@
 	  sortable
       label="Conductor"
       width="170">
-       <template slot-scope="scope">
+       	<template slot-scope="scope">
            <el-popover
-            :ref="scope.row.placa"
+		   	v-if="scope.row.conductor !== null"
+            :ref="scope.row.placa+'-conductor'"
             placement="right"
             width="400"
             trigger="hover">
-				<div v-for="(item, key) in scope.row.conductor" :key="key">
-					<el-row>
+				<div v-for="(item, key) in scope.row.conductor" v-if="item !== null" :key="item.id">
+					<el-row >
 						<el-col :xs="10" :sm="10" :md="10" :lg="10" :xl="10"><b>{{title(key)}}</b></el-col>
 						<el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12">{{item}}</el-col>
 					</el-row>
 				</div>
-            </el-popover>
-           <el-select 
-		   size="mini"
-		   v-if="conductoresDataReady"
-           v-popover="scope.row.placa" 
-           v-model="selectedConductor[scope.row.placa]" 
-           placeholder="Seleccione.."
-           @change="assignConductorToVehicle($event, scope.row.id)">
-                <el-option 
-				
-                v-for="item in conductoresList"
-                :key="item.nombres"
-                :label="item.nombres"
-                :value="item.id">
-                </el-option>
-            </el-select>
-      </template>
+           </el-popover>
+		   <el-button size="mini" v-popover="scope.row.placa+'-conductor'">
+			   {{(scope.row.conductor)?scope.row.conductor.nombres:'N/A'}}
+		   </el-button>
+      	</template>
     </el-table-column>
-
     <el-table-column
 	  sortable
       label="Trailer"
       width="170">
-       <template slot-scope="scope">
-		  
+        <template slot-scope="scope">
            <el-popover
+		   v-if="scope.row.trailer !== null"
             :ref="scope.row.placa+'-trailer'"
             placement="right"
             width="400"
             trigger="hover">
-            <div v-for="(item, key) in scope.row.trailer" :key="item.id">
-                <el-row>
-                    <el-col :xs="10" :sm="10" :md="10" :lg="10" :xl="10"><b>{{title(key)}}</b></el-col>
-                    <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12">{{item}}</el-col>
-                </el-row>
-            </div>
-            </el-popover>
-           <el-select 
-		   v-if="trailersDataReady"
-		   size="mini"
-           v-popover="scope.row.placa+'-trailer'" 
-           v-model="selectedTrailer[scope.row.placa]" 
-           placeholder="Seleccione.."
-           @change="assignTrailerToVehicle($event, scope.row.id)">
-                <el-option
-				
-                v-for="item in trailersList"
-                :key="item.placa"
-                :label="item.placa"
-                :value="item.id">
-                </el-option>
-            </el-select>
-      </template>
+				<div v-for="(item, key) in scope.row.trailer" v-if="item !== null" :key="item.id">
+					<el-row >
+						<el-col :xs="10" :sm="10" :md="10" :lg="10" :xl="10"><b>{{title(key)}}</b></el-col>
+						<el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12">{{item}}</el-col>
+					</el-row>
+				</div>
+           </el-popover>
+		   <el-button size="mini" v-popover="scope.row.placa+'-trailer'">
+			   {{(scope.row.trailer)?scope.row.trailer.placa:'N/A'}}
+		   </el-button>
+      	</template>
     </el-table-column>
-
 	<el-table-column
       label="Tipo de flota"
 	  prop="tipo_de_flota"
       width="120">
     </el-table-column>
-
 	<el-table-column
       label="Capasidad carga"
 	  prop="capasidad_carga"
       width="150">
     </el-table-column>
-
 	<el-table-column
       label="Peso"
 	  prop="peso"
       width="120">
     </el-table-column>
-
 	<el-table-column
 	  fixed="right"
       prop="estado"
       label="Estado"
       width="100"
-      :filters="[{ text: 'en espera', value: 'en espera' },{ text: 'disponible', value: 'disponible' }]"
+      :filters="[{ text: 'Activo', value: 'Activo' },{ text: 'Desactivo', value: 'Desactivo' },{ text: 'Taller', value: 'Taller' }]"
       :filter-method="filterTag"
       filter-placement="bottom-end">
       <template slot-scope="scope">
         <el-tag
           :type="determineEstado(scope.row.estado)"
-          disable-transitions>{{scope.row.estado}}</el-tag>
+          disable-transitions>
+		  {{scope.row.estado}}
+		</el-tag>
       </template>
     </el-table-column>
-
   </el-table>
-
   </el-col>
 
 </div>
@@ -206,12 +177,7 @@ export default {
       	return {
 			editFormVisible: false,
 			createFormVisible: false,
-			tableDdataReady: () => {
-				if(this.vehiculosDataReady && this.conductoresDataReady && this.trailersDataReady){
-					return this.filtered()
-				}
-				return []
-			},
+			
             selectTypeOfSearch: 'ID',
             filter: '',
 		}
@@ -239,24 +205,25 @@ export default {
             'conductoresList',
             'conductoresDataReady',
 		]),
-		
-        filtered(){
-			if(this.vehiculosDataReady && this.conductoresDataReady && this.trailersDataReady){
-				if(this.filter !== ''){
-					let type = this.selectTypeOfSearch.toLowerCase()
-					type = type.replace(' ', '_')
-					type = type.replace(' ', '_')
-					console.log(type)
-					return this.vehiculosList.filter(conductor => {
-						if(isNaN(conductor[type])){
-							return conductor[type].toLowerCase().includes(this.filter.toLowerCase())
-						}
-						return conductor[type].toString().includes(this.filter.toString())
-					})
-				}
-				return this.vehiculosList
+		tableDdataReady: () => {
+			if(this.vehiculosDataReady){
+				return this.filtered()
 			}
 			return []
+		},
+        filtered(){
+			if(this.filter !== ''){
+				let type = this.selectTypeOfSearch.toLowerCase()
+				type = type.replace(' ', '_')
+				type = type.replace(' ', '_')
+				return this.vehiculosList.filter(item => {
+					if(isNaN(item[type])){
+						return item[type].toLowerCase().includes(this.filter.toLowerCase())
+					}
+					return item[type].toString().includes(this.filter.toString())
+				})
+			}
+			return this.vehiculosList
         },
 
         
@@ -266,14 +233,16 @@ export default {
 		VehiculosCreateForm,
 	},
     methods: {
+		
 		reloadTable(){
-			this.fetchVehiculosList() 
+			this.fetchVehiculosList()
         },
         exportTable(){
 			exportService.toXLS(this.vehiculosList, 'Vehiculos', true)
 		},
 		handleAction(e, row){
             if(e == 'create'){
+				this.resetVehicleVariables()
 				this.createFormVisible = true;
             }
              if(e == 'edit'){
@@ -288,18 +257,18 @@ export default {
 				this.$refs.vehiculosTable.setCurrentRow(val);
 				return
 			}
-			this.setFullVehiculo(val)
+			console.log(val.id)
+			this.fetchVehiculo(val.id)
 			this.$refs.vehiculosTable.setCurrentRow(val);
 		},
 		pushTo(resource){
 			router.push('/'+resource)
 		},
 		determineEstado(row){
-			
-			if(row == 'ocupado'){
+			if(row == 'Desactivo'){
 				return 'danger'
 			}
-			if(row == 'disponible'){
+			if(row == 'Activo'){
 				return 'success'
 			}
 			return 'warning'
@@ -318,12 +287,16 @@ export default {
             return field
         },
         ...mapActions('vehiculos',[
-            'fetchVehiculosList',
+			'fetchVehiculosList',
+			'fetchVehiculo',
             'assignConductor',
 			'assignTrailer',
 			'editVehiculo',
 			'delVehiculo',
 			'createVehiculo',
+		]),
+		...mapMutations('vehiculos',[
+           'resetVehicleVariables',
         ]),
         ...mapActions('conductores',[
 			'fetchConductoresList',
@@ -331,15 +304,6 @@ export default {
         ...mapActions('trailers',[
 			'fetchTrailersList',
         ]),
-        
-        assignConductorToVehicle(e,id){
-            this.setVehicleId(id)
-            this.assignConductor(e)
-        },
-        assignTrailerToVehicle(e,id){
-            this.setVehicleId(id)
-            this.assignTrailer(e)
-		},
 		pushToEdit(row){
 			this.setFullVehiculo(row)
 			this.editFormVisible = true
@@ -369,9 +333,7 @@ export default {
 		}
     },
     created: function(){
-        this.fetchVehiculosList(null)
-		this.fetchConductoresList()
-        this.fetchTrailersList()
+		this.fetchVehiculosList()
 	}
 }
 </script>

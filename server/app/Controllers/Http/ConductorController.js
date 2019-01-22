@@ -36,6 +36,7 @@ class ConductorController {
             celular,
             transportadora_id,
             radica_rndc,
+            estado,
         } = request.all()
 
         return await Conductor.create({
@@ -54,6 +55,7 @@ class ConductorController {
             celular,
             transportadora_id,
             radica_rndc,
+            estado,
         })
 
     }
@@ -191,23 +193,25 @@ class ConductorController {
             celular,
             transportadora_id,
             radica_rndc,
+            estado,
         } = request.all()
 
-        conductor.codigo = codigo,
-        conductor.tipo_de_identificacion = tipo_de_identificacion,
+        conductor.codigo = codigo
+        conductor.tipo_de_identificacion = tipo_de_identificacion
         conductor.cedula = cedula,
-        conductor.municipio_documento = municipio_documento,
-        conductor.nombres = nombres,
-        conductor.primer_apellido = primer_apellido,
-        conductor.segundo_apellido = segundo_apellido,
-        conductor.tipo_de_conductor = tipo_de_conductor,
-        conductor.direccion = direccion,
-        conductor.municipio = municipio,
-        conductor.telefono_1 = telefono_1,
-        conductor.telefono_2 = telefono_2,
-        conductor.celular = celular,
+        conductor.municipio_documento = municipio_documento
+        conductor.nombres = nombres
+        conductor.primer_apellido = primer_apellido
+        conductor.segundo_apellido = segundo_apellido
+        conductor.tipo_de_conductor = tipo_de_conductor
+        conductor.direccion = direccion
+        conductor.municipio = municipio
+        conductor.telefono_1 = telefono_1
+        conductor.telefono_2 = telefono_2
+        conductor.celular = celular
         conductor.transportadora_id = transportadora_id
         conductor.radica_rndc = radica_rndc
+        conductor.estado = estado
         conductor.save()
         return conductor
 

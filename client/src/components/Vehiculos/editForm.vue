@@ -92,6 +92,31 @@
                     </el-form-item>
                 </el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Tenedor">
+                        <el-row>
+                            <el-col :span="11" :md="11" :sm="24" :xs="24">
+                                <el-input 
+                                size="mini"
+                                @input="setTenedor"
+                                :value="vehiculo.tenedor"
+                                placeholder="Nombre">
+                                </el-input>
+                            </el-col>
+                            <el-col style="text-align: center;" :span="2" :md="2" :sm="24" :xs="24">
+                                |
+                            </el-col>
+                            <el-col :span="11" :md="11" :sm="24" :xs="24">
+                                <el-input 
+                                size="mini"
+                                @input="setCedulaTenedor"
+                                :value="vehiculo.cedula_tenedor"
+                                placeholder="Nit/Cedula">
+                                </el-input>
+                            </el-col>
+                        </el-row>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Transportadora" prop="transportadora">
                         <el-select 
                         size="mini" 
@@ -152,42 +177,101 @@
                     <el-input-number :value="vehiculo.capasidad_carga" size="mini" v-model="capacidadNum" controls-position="right" @change="setCapasidadCarga" :min="1" :max="1000"></el-input-number>
                     </el-form-item>
                 </el-col>
-                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Tipo de vehiculo">
-                        <el-input size="mini"
-                        :value="vehiculo.tipo_de_vehiculo"
-                        @input="setTipoDeVehiculo"
-                        placeholder="Tipo">
-                        </el-input>
+                        <el-select size="mini" v-model="tipo_de_vehiculo_selected" placeholder="Select">
+                            <el-option
+                            v-for="item in tipo_de_vehiculo_options"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                            </el-option>
+                        </el-select>
                     </el-form-item>
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Tipo de flota">
-                        <el-input size="mini"
-                        :value="vehiculo.tipo_de_flota"
-                        @input="setTipoDeFlota"
-                        placeholder="flota">
-                        </el-input>
+                        <el-select size="mini" v-model="tipo_de_flota_selected" placeholder="Select">
+                            <el-option
+                            v-for="item in tipo_de_flota_options"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                            </el-option>
+                        </el-select>
                     </el-form-item>
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Tipo configuracion">
-                        <el-input size="mini"
-                        :value="vehiculo.tipo_configuracion"
-                        @input="setTipoConfiguracion"
-                        placeholder="Configuracion">
-                        </el-input>
+                        <el-select size="mini" v-model="tipo_de_configuracion_selected" placeholder="Select">
+                            <el-option
+                            v-for="item in tipo_de_configuracion_options"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                            </el-option>
+                        </el-select>
                     </el-form-item>
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Tipo de combustible">
-                        <el-input size="mini"
-                        :value="vehiculo.tipo_de_combustible"
-                        @input="setTipoDeCombustible"
-                        placeholder="Diesel..">
-                        </el-input>
+                        <el-select size="mini" v-model="tipo_de_combustible_selected" placeholder="Select">
+                            <el-option
+                            v-for="item in tipo_de_combustible_options"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                            </el-option>
+                        </el-select>
                     </el-form-item>
 				</el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Conductor">
+                        <el-select size="mini" v-model="conductor_selected" placeholder="Select">
+                            <el-option
+                            v-for="item in conductoresList"
+                            :key="item.id"
+                            :label="item.nombres"
+                            :value="item.id">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+				</el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Trailer">
+                        <el-select size="mini" v-model="trailer_selected" placeholder="Select">
+                            <el-option
+                            v-for="item in trailersList"
+                            :key="item.id"
+                            :label="item.placa"
+                            :value="item.id">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+				</el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Estado">
+                        <el-select clearable size="mini" v-model="estado_selected" placeholder="Select">
+                            <el-option
+                            v-for="item in estado_options"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Radica RNDC">
+                        <el-switch
+                            v-model="radicaRndc"
+                            active-color="#13ce66"
+                            inactive-color="#ff4949"
+                            active-text="Si"
+                            inactive-text="No">
+                        </el-switch>
+                    </el-form-item>
+                </el-col>
 
         </el-row>
         
@@ -212,6 +296,70 @@ export default {
 		}
 	},
 	computed: {
+        trailer_selected: {
+            get(){
+                return this.selectedTrailer
+            },
+            set(value){
+                this.setSelectedTrailer(value)
+            }
+        },
+        conductor_selected: {
+            get(){
+                return this.selectedConductor
+            },
+            set(value){
+                this.setSelectedConductor(value)
+            }
+        },
+        estado_selected: {
+            get(){
+                return this.vehiculo.estado
+            },
+            set(value){
+                this.setEstado(value)
+            }
+        },
+        tipo_de_combustible_selected: {
+            get(){
+                return this.vehiculo.tipo_de_combustible
+            },
+            set(value){
+                this.setTipoDeCombustible(value)
+            }
+        },
+        tipo_de_vehiculo_selected: {
+            get(){
+                return this.vehiculo.tipo_de_vehiculo
+            },
+            set(value){
+                this.setTipoDeVehiculo(value)
+            }
+        },
+        tipo_de_flota_selected: {
+            get(){
+                return this.vehiculo.tipo_de_flota
+            },
+            set(value){
+                this.setTipoDeFlota(value)
+            }
+        },
+        tipo_de_configuracion_selected: {
+            get(){
+                return this.vehiculo.tipo_configuracion
+            },
+            set(value){
+                this.setTipoConfiguracion(value)
+            }
+        },
+        radicaRndc: {
+             get(){
+                return this.vehiculo.radica_rndc
+            },
+            set(value){
+                this.setRadicaRndc(value)
+            }
+        },
         
         ...mapState('authentication', [
 			'permisos',
@@ -219,15 +367,36 @@ export default {
         ...mapState('transportadoras', [
 			'transportadorasList',
         ]),
+        ...mapState('sharedValues', [
+			'tipo_de_vehiculo_options',
+            'tipo_de_flota_options',
+            'tipo_de_configuracion_options',
+            'tipo_de_combustible_options',
+            'estado_options',
+            'corroceria_options',
+        ]),
         ...mapState('vehiculos', [
-            'dataReady',
             'vehiculo',
+            'headings',
+            'vehiculosList',
+            'dataReady',
+            'selectedConductor',
+            'selectedTrailer',
+        ]),
+        ...mapState('conductores', [
+            'conductoresList',
+        ]),
+        ...mapState('trailers', [
+            'trailersList',
         ]),
 
 	},
 	components: {
 	},
     methods: {
+        back() {
+			router.push('/Vehiculos')
+		},
         ...mapMutations('vehiculos', [
             'setVehicleId',
             'setPlaca',
@@ -246,9 +415,15 @@ export default {
             'setRadicaRndc',
             'setPoseedor',
             'setPropietario',
+            'setTenedor',
+            'setCedulaTenedor',
             'setCedulaPropietario',
             'setCedulaPoseedor',
             'setTransportadora',
+            'setEstado',
+            'setSelectedTrailer',
+            'setSelectedConductor',
+            'resetVehicleVariables',
         ]),
         title(field){
             field = field.split('_').join(' ')
@@ -256,29 +431,25 @@ export default {
             return field
         },
         ...mapActions('vehiculos',[
-            'editVehiculo',
-            'delVehiculo',
+            'fetchVehiculosList',
+            'assignConductor',
+            'assignTrailer',
+            'createVehiculo',
+        ]),
+        ...mapActions('conductores',[
+            'fetchConductoresList',
+        ]),
+        ...mapActions('trailers',[
+            'fetchTrailersList',
         ]),
         ...mapActions('transportadoras',[
             'fetchTransportadorasList',
         ]),
-        del(){
-            this.$confirm('Esta operacion eliminara permanentemente este registro. Continuar?', 'Atencion!', {
-                confirmButtonText: 'OK',
-                cancelButtonText: 'Cancelar',
-                type: 'warning'
-            }).then(() => {
-                this.delVehiculo()
-            }).catch(() => {
-                this.$message({
-                    type: 'info',
-                    message: 'Cancelado'
-                });          
-            });
-        }
     },
     created: function(){
         this.fetchTransportadorasList()
+        this.fetchConductoresList()
+        this.fetchTrailersList()
 	}
 
 }

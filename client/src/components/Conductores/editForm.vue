@@ -172,27 +172,38 @@
                 </el-form-item>
             </el-col>
             <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                <el-form-item label="Radica RNDC">
-                    <el-switch
-                    v-model="radicaRn"
-                    active-color="#13ce66"
-                    inactive-color="#ff4949"
-                    active-text="Si"
-                    inactive-text="No">
-                    </el-switch>
-                </el-form-item>
-            </el-col>
-            <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                <el-form-item label="Anticipo">
-                    <el-switch
-                    v-model="anticipoState"
-                    active-color="#13ce66"
-                    inactive-color="#ff4949"
-                    active-text="Si"
-                    inactive-text="No">
-                    </el-switch>
-                </el-form-item>
-            </el-col>
+                    <el-form-item label="Anticipo">
+                        <el-switch
+                        v-model="anticipoState"
+                        active-color="#13ce66"
+                        inactive-color="#ff4949"
+                        active-text="Si"
+                        inactive-text="No">
+                        </el-switch>
+                    </el-form-item>
+				</el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Estado">
+                        <el-switch
+                        v-model="estado"
+                        active-color="#13ce66"
+                        inactive-color="#ff4949"
+                        active-text="Activo"
+                        inactive-text="Inactivo">
+                        </el-switch>
+                    </el-form-item>
+				</el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Radica RNDC">
+                        <el-switch
+                        v-model="radicaRn"
+                        active-color="#13ce66"
+                        inactive-color="#ff4949"
+                        active-text="Si"
+                        inactive-text="No">
+                        </el-switch>
+                    </el-form-item>
+				</el-col>
 		
 
 
@@ -232,6 +243,14 @@ export default {
 		}
 	},
 	computed: {
+        estado: {
+            get(){
+                return this.conductor.estado
+            },
+            set(value){
+                this.setEstado(value)
+            }
+        },
         anticipoState: {
             get(){
                 return this.conductor.anticipo
@@ -303,6 +322,7 @@ export default {
             'setTransportadora',
             'setRadicaRndc',
             'setAnticipo',
+            'setEstado',
         ]),
         title(field){
             field = field.split('_').join(' ')

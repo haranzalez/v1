@@ -17,6 +17,7 @@ export default {
             numero_de_cuenta: null,
             pagos: false,
             anticipo: false,
+            radica_rndc: false,
         },
         loadingTransportadorasTable: false,
         transportadorasList: null,
@@ -25,18 +26,7 @@ export default {
 
     actions: {
         createTransportadora({state}){
-            HTTP().local.post('api/transportadoras/crear', {
-                nit: state.transportadora.nit,
-                razon_social: state.transportadora.razon_social,
-                direccion: state.transportadora.direccion,
-                telefono: state.transportadora.telefono,
-                contacto: state.transportadora.contacto,
-                banco: state.transportadora.banco,
-                numero_de_cuenta: state.transportadora.numero_de_cuenta,
-                pagos: state.transportadora.pagos,
-                anticipo: state.transportadora.anticipo,
-                tipo_de_cuenta: state.transportadora.tipo_de_cuenta,
-            })
+            HTTP().local.post('api/transportadoras/crear', state.transportadora)
             .then(d => {
                 Message({
                     type: 'success',
@@ -49,18 +39,7 @@ export default {
             })
         },
         editTransportadora({state}){
-            HTTP().local.put('api/transportadoras/'+state.transportadora.id+'/update', {
-                nit: state.transportadora.nit,
-                razon_social: state.transportadora.razon_social,
-                direccion: state.transportadora.direccion,
-                telefono: state.transportadora.telefono,
-                contacto: state.transportadora.contacto,
-                banco: state.transportadora.banco,
-                numero_de_cuenta: state.transportadora.numero_de_cuenta,
-                pagos: state.transportadora.pagos,
-                anticipo: state.transportadora.anticipo,
-                tipo_de_cuenta: state.transportadora.tipo_de_cuenta,
-            })
+            HTTP().local.put('api/transportadoras/'+state.transportadora.id+'/update', state.transportadora)
             .then(d => {
                 Message({
                     type: 'success',
@@ -155,6 +134,9 @@ export default {
         setTipoDeCuenta(state, value){
             state.transportadora.tipo_de_cuenta = value
         },
+        setRadicaRndc(state, value){
+            state.transportadora.radica_rndc = value
+        },
         setLoadingTransportadorasTable(state, value){
             state.loadingTransportadorasTable = value
         },
@@ -170,6 +152,7 @@ export default {
                 pagos: false,
                 anticipo: false,
                 tipo_de_cuenta: null,
+                radica_rndc: false,
             }
         }
         

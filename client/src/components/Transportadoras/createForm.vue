@@ -73,6 +73,17 @@
                     </el-form-item>
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Radica RNDC">
+                        <el-switch
+                            v-model="radica_rndc"
+                            active-color="#13ce66"
+                            inactive-color="#ff4949"
+                            active-text="Si"
+                            inactive-text="No">
+                        </el-switch>
+                    </el-form-item>
+				</el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <h3>Informacion bancaria</h3>
                 </el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
@@ -133,7 +144,15 @@ export default {
 		}
 	},
 	computed: {
-         trans_pagos: {
+        radica_rndc: {
+            get(){
+                return this.transportadora.radica_rndc
+            },
+            set(value){
+                this.setRadicaRndc(value)
+            }
+        },
+        trans_pagos: {
              get(){
                 return this.transportadora.pagos
             },
@@ -184,6 +203,7 @@ export default {
             'setPagos',
             'setAnticipo',
             'setTipoDeCuenta',
+            'setRadicaRndc',
         ]),
         title(field){
             field = field.split('_').join(' ')

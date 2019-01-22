@@ -43,9 +43,6 @@ class CuadroViajeController {
             cliente_id,
             flete,
             ruta_id,
-            anticipo,
-            ajuste,
-            debe,
             pago_conductor,
             pago_tercero,
             pago_cabezote,
@@ -55,9 +52,6 @@ class CuadroViajeController {
         const cuadre = await CuadreViaje.create({
             cliente_id,
             flete,
-            anticipo,
-            ajuste,
-            debe,
             pago_conductor,
             pago_tercero,
             pago_cabezote,
@@ -80,9 +74,6 @@ class CuadroViajeController {
             cliente_id,
             flete,
             ruta_id,
-            anticipo,
-            ajuste,
-            debe,
             pago_conductor,
             pago_tercero,
             pago_cabezote,
@@ -98,9 +89,6 @@ class CuadroViajeController {
         }
         cuadre.cliente_id = cliente_id
         cuadre.flete = flete
-        cuadre.anticipo = anticipo
-        cuadre.ajuste = ajuste
-        cuadre.debe = debe
         cuadre.pago_conductor = pago_conductor
         cuadre.pago_tercero = pago_tercero
         cuadre.pago_cabezote = pago_cabezote

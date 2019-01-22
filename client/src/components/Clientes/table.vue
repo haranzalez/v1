@@ -257,7 +257,7 @@
     </el-table-column>
 	<el-table-column
 	  sortable
-      prop="tipo_contrato"
+      prop="contrato"
       label="Tipo de contrato"
       min-width="160">
     </el-table-column>

@@ -53,37 +53,48 @@ export default {
         selectedDias: '', 
         contratoOptions: [
             {
-                tipo: 'Mandato',
+                value: 'Mandato',
+                label: 'Mandato'
+            }, 
+            {
+                value: 'Contrato',
+                label: 'Contrato'
             },
             {
-                tipo: 'Contrato',
+                value: 'Factura',
+                label: 'Factura'
             },
             {
-                tipo: 'Factura',
+                value: 'Contado',
+                label: 'Contado'
             },
-            {
-                tipo: 'Contado',
-            },
+            
         ],
         diasOptions: [
             {
-                dias: '5 dias.',
-            },
+                value: '5 dias',
+                label: '5 dias'
+            }, 
             {
-                dias: '8 dias.',
-            },
+                value: '8 dias',
+                label: '8 dias'
+            }, 
             {
-                dias: '15 dias.',
-            },
+                value: '15 dias',
+                label: '15 dias'
+            }, 
             {
-                dias: '30 dias.',
-            },
+                value: '30 dias',
+                label: '30 dias'
+            }, 
             {
-                dias: '45 dias.',
-            },
+                value: '45 dias',
+                label: '45 dias'
+            }, 
             {
-                dias: '60 dias.',
-            }
+                value: '60 dias',
+                label: '60 dias'
+            }, 
         ] 
     },
 
@@ -220,7 +231,6 @@ export default {
             console.log(id)
             HTTP().local.get('api/clientes/'+id)
             .then(d => {
-                console.log(d.data)
                 commit('setFullCliente', d.data)
             })
             .catch(err => {
@@ -231,9 +241,6 @@ export default {
             console.log(id)
             HTTP().local.get('api/clientes/'+id)
             .then(d => {
-                console.log(d.data)
-                commit('setSelectedContrato', d.data.tipo_negociacion.contrato)
-                commit('setSelectedDias', d.data.tipo_negociacion.dias)
                 commit('setFullCliente', d.data)
                 dispatch('fetchCuadresRutas')
                 dispatch('fetchCuadresProductos')
@@ -260,7 +267,6 @@ export default {
         renderTableHeadings({state, commit}){
             let pkg = []
             for(let prop2 in state.clientesList[0]){
-                console.log(prop2)
                 if(prop2 == 'created_at' || prop2 == 'updated_at'){
                     continue;
                 }else{
@@ -278,7 +284,6 @@ export default {
             commit('setDepositoTableLoading', true)
             HTTP().local.get('api/clientes/'+state.cliente.id+'/depositos')
             .then(d => {
-                console.log(d.data)
                 commit('setDepositosList', d.data)
                 commit('setDepositoTableLoading', false)
                 dispatch('calculateBalace')
@@ -290,7 +295,6 @@ export default {
         fetchDeposito({ state, commit }, deposito_id){
             HTTP().local.get('api/clientes/'+state.cliente.id+'/depositos/'+deposito_id)
             .then(d => {
-                console.log(d.data)
                 commit('setFullDeposito', d.data[0])
             })
             .catch(err => {
@@ -300,7 +304,6 @@ export default {
         create_deposito({ state }){
             HTTP().local.post('api/clientes/'+state.cliente.id+'/createDeposito', state.deposito)
             .then(d => {
-                console.log(d.data)
                 if(d.data.message == 'success'){
                     Message({
                         type: 'success',
@@ -317,7 +320,6 @@ export default {
         update_deposito({ state }){
             HTTP().local.put('api/clientes/'+state.cliente.id+'/updateDeposito/'+state.deposito.id, state.deposito)
             .then(d => {
-                console.log(d.data)
                 if(d.data.message == 'success'){
                     Message({
                         type: 'success',
@@ -407,12 +409,9 @@ export default {
         },
         setSelectedContrato(state, value){
             state.cliente.contrato = value
-            state.selectedContrato = value
         },
-        
         setSelectedDias(state, value){
             state.cliente.dias = value
-            state.selectedDias = value
         },
         setCupo(state, value){
             state.cliente.cupo = value
@@ -421,7 +420,6 @@ export default {
             state.cliente.celular = value
         },
         setCurrentCuadresTab(state, value){
-            console.log(value)
             state.currentCuadresTab = value
         },
         paramsReset(state){
@@ -438,6 +436,8 @@ export default {
                 direccion_envio_de_factura: null,
                 tipo_contrato: null,
                 created_at: null,
+                contrato: null,
+                dias: null,
                 radica_rndc: false,
                 anticipo: false,
             }

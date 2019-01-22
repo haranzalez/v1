@@ -82,24 +82,24 @@
                 </el-col>
                    <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                         <el-form-item label="Contrato">
-                            <el-select @change="setSelectedContrato" :value="selectedContrato" placeholder="Select">
+                            <el-select v-model="selectedContrato" placeholder="Select">
                                 <el-option
                                 v-for="item in contratoOptions"
-                                :key="item.tipo"
-                                :label="item.tipo"
-                                :value="item.tipo">
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
                                 </el-option>
                             </el-select>
                         </el-form-item>
                     </el-col>
                     <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                        <el-form-item label="Dias" class="padding">
-                            <el-select @change="setSelectedDias" :value="selectedDias" placeholder="Select">
+                        <el-form-item label="Dias">
+                            <el-select v-model="selectedDias" placeholder="Select">
                                 <el-option
                                 v-for="item in diasOptions"
-                                :key="item.dias"
-                                :label="item.dias"
-                                :value="item.dias">
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
                                 </el-option>
                             </el-select>
                         </el-form-item>
@@ -138,11 +138,26 @@ export default {
 	name: 'RutasCreateForm',
 	data () {
       	return {
-            selectedContrato: '',
-            selectedDias: '',
+          
 		}
 	},
 	computed: {
+        selectedContrato: {
+            get(){
+                return this.cliente.contrato
+            },
+            set(value){
+                this.setSelectedContrato(value)
+            }   
+        },
+        selectedDias: {
+            get(){
+                return this.cliente.dias
+            },
+            set(value){
+                this.setSelectedDias(value)
+            }   
+        },
         radicaRn: {
             get(){
                 return this.cliente.radica_rndc
@@ -158,27 +173,12 @@ export default {
             'cliente',
             'contratoOptions',
             'diasOptions',
-          
         ]),
 
-    },
-     watch: {
-        'selectedContrato': function(value){
-            this.setSelectedContrato(value)
-        },
-        'selectedDias': function(value){
-            this.setSelectedDias(value)
-        },
     },
 	components: {
 	},
     methods: {
-        back() {
-			router.push('/Clientes')
-        },
-        ...mapActions('clientes',[
-            'createCliente',
-        ]),
         ...mapMutations('clientes', [
             'setNombreRazonSocial',
             'setNit',
@@ -198,10 +198,7 @@ export default {
         ]),
        
     },
-    created(){
-        this.selectedDias = ''
-        this.selectedContrato = ''
-    }
+ 
 
 
 }

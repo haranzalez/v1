@@ -89,14 +89,17 @@ class ClienteController {
             persona_de_contacto,
             direccion_envio_de_factura,
             radica_rndc,
-        })
-
-        await TipoNegociacion.create({
-            cliente_id: cliente.id,
             contrato,
             cupo,
             dias,
         })
+
+        /*await TipoNegociacion.create({
+            cliente_id: cliente.id,
+            contrato,
+            cupo,
+            dias,
+        })*/
 
         return {
             message: "success"
@@ -133,6 +136,8 @@ class ClienteController {
         cliente.celular = celular
         cliente.persona_de_contacto = persona_de_contacto
         cliente.direccion_envio_de_factura = direccion_envio_de_factura
+        cliente.contrato = contrato
+        cliente.dias = dias
         cliente.radica_rndc = radica_rndc
         cliente.save()
 

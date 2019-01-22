@@ -194,9 +194,15 @@
 	@current-change="handleCurrentTableChange"
     :data="filtered"
     style="width: 100%">
-    <el-table-column
+	<el-table-column
 	  sortable
 	  fixed
+      prop="id"
+      label="ID"
+	  min-width="60">
+    </el-table-column>
+    <el-table-column
+	  sortable
       prop="nit"
       label="NIT"
 	  min-width="110">

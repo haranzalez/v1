@@ -48,9 +48,24 @@ Route.group(() => {
   Route.post('roles/:role_id/subModulo/:sub_modulo_id/setPermisos', 'RoleController.setPermisosV2').middleware('auth');
   Route.patch('roles/:id/modulos/updatePermisos', 'RoleController.updatePermisos').middleware('auth');
   //======================================================================================================================================
+  //Reports
+  //======================================================================================================================================
+  Route.get('reports/tables', 'ReportsController.tables_names').middleware('auth');
+  Route.get('reports/fields/:tname', 'ReportsController.table_fields').middleware('auth');
+  Route.get('reports/table/:table/field/:field', 'ReportsController.table_field_data').middleware('auth');
+  //======================================================================================================================================
   //Logger
   //======================================================================================================================================
-  Route.get('logger', 'LoggerController.get_logs').middleware('auth');
+  Route.get('logger/:page', 'LoggerController.get_logs').middleware('auth');
+  Route.get('logger-num-of-records', 'LoggerController.get_num_of_records').middleware('auth');
+  //======================================================================================================================================
+  //Aseguradoras
+  //======================================================================================================================================
+  Route.get('aseguradoras', 'AseguradorasController.get_aseguradoras_list').middleware('auth');
+  Route.get('aseguradoras/:id', 'AseguradorasController.get_aseguradora').middleware('auth');
+  Route.post('aseguradoras/create', 'AseguradorasController.create_aseguradora').middleware('auth');
+  Route.put('aseguradoras/:id/update', 'AseguradorasController.update_aseguradora').middleware('auth');
+  Route.delete('aseguradoras/:id/delete', 'AseguradorasController.delete_aseguradora').middleware('auth');
   //======================================================================================================================================
   //Backups
   //======================================================================================================================================
@@ -79,6 +94,7 @@ Route.group(() => {
   Route.get('cuadre-servicios/client/:id', 'CuadroServicioController.get_client_cuadres').middleware('auth')
   //POST
   Route.post('cuadre-servicios/crear', 'CuadroServicioController.create_cuadre').middleware('auth')
+  Route.post('cuadre-servicios/history', 'CuadroServicioController.get_cuadres_servicios_history').middleware('auth')
   //PUT
   Route.put('cuadre-servicios/:id/update', 'CuadroServicioController.update_cuadre').middleware('auth')
   //DELETE
@@ -104,6 +120,7 @@ Route.group(() => {
   Route.get('cuadre-productos/client/:id', 'CuadroProductoController.get_client_cuadres').middleware('auth')
   //POST
   Route.post('cuadre-productos/crear', 'CuadroProductoController.create_cuadre').middleware('auth')
+  Route.post('cuadre-productos/history', 'CuadroProductoController.get_cuadres_productos_history').middleware('auth')
   //PUT
   Route.put('cuadre-productos/:id/update', 'CuadroProductoController.update_cuadre').middleware('auth')
   //DELETE
@@ -152,6 +169,18 @@ Route.group(() => {
   Route.put('vehiculos/:id/update', 'VehiculoController.update_vehicle').middleware('auth')
   //DELETE
   Route.delete('vehiculos/:id/delete', 'VehiculoController.delete_vehiculo').middleware('auth')
+  //======================================================================================================================================
+  //Documentos vehiculos
+  //======================================================================================================================================
+  //GET
+  Route.get('documentos-vehiculo/:vehiculo_id', 'DocumentosVehiculoController.get_documentos_list').middleware('auth')
+  Route.get('documento/:id', 'DocumentosVehiculoController.get_documento').middleware('auth')
+  //POST
+  Route.post('documentos-vehiculo/create', 'DocumentosVehiculoController.create_documento').middleware('auth')
+  //PUT
+  Route.put('documentos-vehiculo/:id/update', 'DocumentosVehiculoController.update_documento').middleware('auth')
+  //DELETE
+  Route.delete('documentos-vehiculo/:id/delete', 'DocumentosVehiculoController.delete_documento').middleware('auth')
   //======================================================================================================================================
   //Trailers
   //======================================================================================================================================
@@ -228,7 +257,7 @@ Route.group(() => {
   Route.get('consolidaciones/:cliente_id/crear', 'ConsolidacionController.create_consolidacion').middleware('auth')
   Route.get('consolidaciones/:consolidacion_id/add-cuadre-ruta/:cuadre_ruta_id', 'ConsolidacionController.add_ruta').middleware('auth')
   Route.get('consolidaciones/:consolidacion_id/add-cuadre-producto/:cuadre_producto_id', 'ConsolidacionController.add_producto').middleware('auth')
-  Route.get('consolidaciones/:consolidacion_id/add-cuadre-servicio/:cuadre_servicio_id', 'ConsolidacionController.add_servicio').middleware('auth')
+  Route.post('consolidaciones/:consolidacion_id/add-cuadre-servicio', 'ConsolidacionController.add_servicio').middleware('auth')
   Route.get('consolidaciones/:consolidacion_id/add-vehiculo/:vehiculo_id', 'ConsolidacionController.add_vehiculo').middleware('auth')
   Route.get('consolidaciones/:consolidacion_id/get-cuadre-ruts', 'ConsolidacionController.get_ruta').middleware('auth')
   Route.get('consolidaciones/:consolidacion_id/get-cuadre-producto', 'ConsolidacionController.get_producto').middleware('auth')
@@ -249,6 +278,7 @@ Route.group(() => {
   Route.get('cuadre-viajes/:id/ruta/:ruta_id', 'CuadroViajeController.assign_ruta').middleware('auth')
   //POST
   Route.post('cuadre-viajes/crear', 'CuadroViajeController.create_cuadre').middleware('auth')
+  Route.post('cuadre-viajes/history', 'CuadroViajeController.get_cuadres_history').middleware('auth')
   //PUT
   Route.put('cuadre-viajes/:id/update', 'CuadroViajeController.update_cuadre').middleware('auth')
   //DELETE

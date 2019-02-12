@@ -14,16 +14,11 @@
 					</div>
 				</el-col>
 				<el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-					
 					<div style="text-align:right;">
 						<el-button type="default" size="mini" @click="reloadTable" style="margin-right:5px;"><i class="mdi mdi-reload"></i></el-button>
 					</div>
 				</el-col>
 			</el-row>
-			
-			
-			
-		
 			<el-table
 			v-loading.body="loadingLoggerTable"
 			size="mini"
@@ -32,7 +27,7 @@
 			highlight-current-row
 			:data="filtered"
 			:default-sort = "{prop: 'id', order: 'descending'}"
-			style="width: 100%">
+			style="width: 100%;">
 			<el-table-column
 			sortable
 			fixed
@@ -46,7 +41,7 @@
 			<el-table-column
 			sortable
 			prop="nombre_tabla"
-			label="Tabla">
+			label="Nombre tabla">
 			</el-table-column>
             <el-table-column
 			sortable
@@ -72,7 +67,7 @@
                 placement="right"
                 width="400"
                 trigger="hover">
-                <div v-for="(item, key) in scope.row.valor_nuevo" :key="(item)?item.id:''">
+                <div v-for="(item, key) in scope.row.valor_nuevo" :key="key">
                     <el-row>
                         <el-col :xs="10" :sm="10" :md="10" :lg="10" :xl="10"><b>{{title(key)}}</b></el-col>
                         <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12">{{ itemSel(key, item) }}</el-col>
@@ -93,7 +88,7 @@
                 placement="right"
                 width="400"
                 trigger="hover">
-                <div v-for="(item, key) in scope.row.valor_anterior" :key="(item)?item.id:''">
+                <div v-for="(item, key) in scope.row.valor_anterior" :key="key">
                     <el-row>
                         <el-col :xs="10" :sm="10" :md="10" :lg="10" :xl="10"><b>{{title(key)}}</b></el-col>
                         <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12">{{ itemSel(key, item) }}</el-col>
@@ -107,9 +102,17 @@
 			</el-table>
 
 		</el-col>
+		<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+			<el-pagination
+			style="margin:10px auto; width:50%;"
+			background
+			@current-change="currentChange"
+			layout="prev, pager, next"
+			:total="totalRecords">
+			</el-pagination>
+		</el-col>
 	</el-row>
 	<!-- searchbar -->
-	
 
 </div>
 	
@@ -140,12 +143,12 @@ export default {
 			'loggerList',
             'headings',
 			'loadingLoggerTable',
+			'totalRecords',
         ]),
        
         filtered(){
-            console.log(this.loggerList)
             if(this.filter !== ''){
-                let type = this.selectTypeOfSearch.toLowerCase()
+				let type = this.selectTypeOfSearch.toLowerCase()
                 return this.loggerList.filter(item => {
                     if(isNaN(item[type])){
                         return item[type].toLowerCase().includes(this.filter.toLowerCase())
@@ -159,7 +162,11 @@ export default {
 	components: {
 	},
     methods: {
-         fecha(d){
+		currentChange(page){
+			this.setPage(page)
+			this.fetchLoggerList()
+		},
+        fecha(d){
            return DateService.fechav2(d)
         },
         operacion(o){
@@ -192,15 +199,17 @@ export default {
 			this.fetchLoggerList() 
         },
 		...mapMutations('logger', [
-
+			'setPage',
         ]),
         ...mapActions('logger', [
-            'fetchLoggerList',
+			'fetchLoggerList',
+			'fetchNumberOfRecords',
 		]),
         
     },
     created: function(){
 		this.fetchLoggerList()
+		this.fetchNumberOfRecords()
 	}
 }
 </script>

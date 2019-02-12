@@ -19,20 +19,20 @@
 		</span>
 	</el-dialog>
 	<!--datos bancarios create form -->
-	<el-dialog fullscreen width="30%" top="5vh" :visible.sync="DatosBancariosCreateFormVisible">
+	<el-dialog fullscreen width="30%" top="5vh" :visible.sync="_datosBancariosCreateFormVisible">
 		<h3 style="text-align:center;" slot="title">{{conductor.nombres + ' ' + conductor.primer_apellido}}</h3>
 		<DatosBancariosCreateForm></DatosBancariosCreateForm>
 		<span slot="footer" class="dialog-footer">
-			<el-button size="mini" @click="DatosBancariosCreateFormVisible = false">Cerrar</el-button>
+			<el-button size="mini" @click="_datosBancariosCreateFormVisible = false">Cerrar</el-button>
 			<el-button size="mini" type="primary" @click="create_datos_bancarios">Crear</el-button>
 		</span>
 	</el-dialog>
 	<!--datos bancarios edit form -->
-	<el-dialog fullscreen width="30%" top="5vh"  :visible.sync="DatosBancariosEditFormVisible">
+	<el-dialog fullscreen width="30%" top="5vh"  :visible.sync="_datosBancariosEditFormVisible">
 		<h3 style="text-align:center;" slot="title">{{conductor.nombres + ' ' + conductor.primer_apellido + ' ' + conductor.segundo_apellido}}</h3>
 		<DatosBancariosEditForm></DatosBancariosEditForm>
 		<span slot="footer" class="dialog-footer">
-			<el-button @click="DatosBancariosEditFormVisible = false">Cerrar</el-button>
+			<el-button @click="_datosBancariosEditFormVisible = false">Cerrar</el-button>
 			<el-button type="primary" @click="update_datos_bancarios">Actualizar</el-button>
 		</span>
 	</el-dialog>
@@ -97,6 +97,7 @@
 	size="mini"
 	id="conductores_table"
     :data="filtered"
+	v-if="filtered"
 	:default-sort = "{prop: 'id', order: 'descending'}"
     style="width: 100%"
 	>
@@ -135,25 +136,22 @@
 	  sortable
       prop="tipo_de_conductor"
       label="Tipo"
-      width="120">
+    >
     </el-table-column>
-    <el-table-column
-	  sortable
-      prop="telefono_1"
-      label="Telefono 1"
-      width="120">
-    </el-table-column>
-    <el-table-column
-	  sortable
-      prop="telefono_2"
-      label="Telefono 2"
-      width="120">
-    </el-table-column>
-     <el-table-column
-	  sortable
-      prop="celular"
-      label="Celular"
-      width="120">
+	<el-table-column
+      prop="estado"
+      label="Estado"
+      width="100"
+      :filters="[{ text: 'Activo', value: true },{ text: 'Inactivo', value: false }]"
+      :filter-method="filterTag"
+      filter-placement="bottom-end">
+      <template slot-scope="scope">
+        <el-tag
+          :type="determineEstado(scope.row.estado)"
+          disable-transitions>
+		  {{(scope.row.estado)?'Activo':'Inactivo'}}
+		</el-tag>
+      </template>
     </el-table-column>
     
   </el-table>
@@ -194,7 +192,7 @@ export default {
 		}
 	},
 	computed: {
-		DatosBancariosCreateFormVisible: {
+		_datosBancariosCreateFormVisible: {
 			get(){
 				return this.datosBancariosCreateFormVisible
 			},
@@ -202,7 +200,7 @@ export default {
 				this.setDatosBancariosCreateFormVisible(value)
 			}
 		},
-		DatosBancariosEditFormVisible: {
+		_datosBancariosEditFormVisible: {
 			get(){
 				return this.datosBancariosEditFormVisible
 			},
@@ -248,7 +246,14 @@ export default {
 		LicenciaEditForm,
 	},
     methods: {
-		
+		determineEstado(row){
+			if(row == false){
+				return 'danger'
+			}
+			if(row == true){
+				return 'success'
+			}
+		},
 		reloadTable(){
 			this.fetchConductoresList() 
         },

@@ -56,6 +56,22 @@
 	</el-dialog>
 	<!--cuadres table -->
 	<el-dialog fullscreen width="65%" top="10vh" :visible.sync="cuadresTableVisible">
+		<!-- history tables -->
+		<!-- ruta -->
+		<el-dialog align="center" :append-to-body="true" :visible.sync="cuadreHistoryRutasDialogVisible">
+			<h4 slot="title">{{selectedRutaForHistoryTable}}</h4>
+			<CuadreRutasHistoryTable></CuadreRutasHistoryTable>
+		</el-dialog>
+		<!-- prudcto -->
+		<el-dialog align="center" :append-to-body="true" :visible.sync="cuadreHistoryProductoDialogVisible">
+			<h4 slot="title">{{selectedProductoForHistoryTable}}</h4>
+			<CuadreProductosHistoryTable></CuadreProductosHistoryTable>
+		</el-dialog>
+		<!-- servicios -->
+		<el-dialog align="center" :append-to-body="true" :visible.sync="cuadreHistoryServicioDialogVisible">
+			<h4 slot="title">{{selectedServicioForHistoryTable}}</h4>
+			<CuadreServiciosHistoryTable></CuadreServiciosHistoryTable>
+		</el-dialog>
 		<div slot="title">
 			<p style="margin-bottom: 2px;">
 				<b style="font-size:20px;">{{cliente.nombre_razon_social}} </b>
@@ -73,6 +89,7 @@
 				<el-dropdown-item :disabled="(permisos['Clientes'].crear)? false:true" :command="'create'+currentCuadresTab"><i class="mdi mdi-plus mr-10"></i>Crear</el-dropdown-item>
 				<el-dropdown-item :disabled="(permisos['Clientes'].editar)? false:true" :command="'edit'+currentCuadresTab"><i class="mdi mdi-lead-pencil mr-10"></i>Editar</el-dropdown-item>
 				<el-dropdown-item :disabled="(permisos['Clientes'].eliminar)? false:true" :command="'del'+currentCuadresTab"><i class="mdi mdi-delete mr-10"></i>Eliminar</el-dropdown-item>
+				<el-dropdown-item :disabled="(permisos['Clientes'].eliminar)? false:true" :command="'historia'+currentCuadresTab" divided><i class="mdi mdi-history mr-10"></i>Historia de precios</el-dropdown-item>
 			</el-dropdown-menu>
 		</el-dropdown>
 		</div>
@@ -90,7 +107,7 @@
 		</span>
 	</el-dialog>
 	<!--edit producto form -->
-	<el-dialog center width="30%" top="15vh" title="Cuadre producto" :visible.sync="cuadreProductoEditFormVisible">
+	<el-dialog center width="40%" top="15vh" title="Cuadre producto" :visible.sync="cuadreProductoEditFormVisible">
 		<ProductoEditForm></ProductoEditForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button size="mini" type="primary" @click="editCuadreProducto(cliente.id)">Actualizar</el-button>
@@ -98,7 +115,7 @@
 		</span>
 	</el-dialog>
 	<!--edit servicio form -->
-	<el-dialog center width="30%" top="15vh" title="Cuadre servicio edit" :visible.sync="cuadreServicioEditFormVisible">
+	<el-dialog center width="40%" top="15vh" title="Cuadre servicio edit" :visible.sync="cuadreServicioEditFormVisible">
 		<ServicioEditForm></ServicioEditForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button size="mini" type="primary" @click="editCuadreServicio(cliente.id)">Actualizar</el-button>
@@ -118,14 +135,14 @@
 		</span>
 	</el-dialog>
 	<!--Create producto form -->
-	<el-dialog center width="30%" top="15vh" title="Cuadre producto" :visible.sync="createProductoFormVisible">
+	<el-dialog center width="40%" top="15vh" title="Cuadre producto" :visible.sync="createProductoFormVisible">
 		<ProductoCreateForm></ProductoCreateForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button size="mini" type="primary" @click="create_cuadre_producto(cliente.id)">Cuadrar Producto</el-button>
 		</span>
 	</el-dialog>
 	<!--Create servicio form -->
-	<el-dialog center width="30%" top="15vh" title="Cuadre servicio" :visible.sync="createServicioFormVisible">
+	<el-dialog center width="40%" top="15vh" title="Cuadre servicio" :visible.sync="createServicioFormVisible">
 		<ServicioCreateForm></ServicioCreateForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button size="mini" type="primary" @click="create_cuadre_servicio(cliente.id)">Cuadrar Servicio</el-button>
@@ -192,6 +209,7 @@
 	max-height="250"
 	highlight-current-row
 	@current-change="handleCurrentTableChange"
+	v-if="filtered"
     :data="filtered"
     style="width: 100%">
 	<el-table-column
@@ -199,7 +217,7 @@
 	  fixed
       prop="id"
       label="ID"
-	  min-width="60">
+	  min-width="55">
     </el-table-column>
     <el-table-column
 	  sortable
@@ -212,24 +230,6 @@
       prop="nombre_razon_social"
       label="Nombre razon social"
       min-width="220">
-    </el-table-column>
-	<el-table-column
-	  sortable
-      prop="direccion"
-      label="Direccion"
-      min-width="190">
-    </el-table-column>
-	<el-table-column
-	  sortable
-      prop="ciudad"
-      label="Ciudad"
-      min-width="120">
-    </el-table-column>
-   <el-table-column
-	  sortable
-      prop="email"
-      label="Email"
-      min-width="150">
     </el-table-column>
 	<el-table-column
 	  sortable
@@ -248,24 +248,6 @@
       prop="persona_de_contacto"
       label="Persona de contacto"
       min-width="200">
-    </el-table-column>
-	<el-table-column
-	  sortable
-      prop="direccion_envio_de_factura"
-      label="Direccion envio de facturas"
-      min-width="220">
-    </el-table-column>
-	<el-table-column
-	  sortable
-      prop="contrato"
-      label="Tipo de contrato"
-      min-width="160">
-    </el-table-column>
-	<el-table-column
-	  sortable
-      prop="created_at"
-      label="Fecha creacion"
-      min-width="300">
     </el-table-column>
   </el-table>
 
@@ -301,6 +283,9 @@ import JsonExcel from 'json-to-excel';
 import DepositosTable from './depositosTable'
 import DepositosCreateForm from './depositosCreateForm'
 import DepositosEditForm from './depositosEditForm'
+import CuadreRutasHistoryTable from './cuadreRutaHistoryTable'
+import CuadreProductosHistoryTable from './cuadreProductosHistoryTable'
+import CuadreServiciosHistoryTable from './cuadreServicioHistoryTable'
 
 export default {
 	name: 'ClientesTable',
@@ -309,6 +294,9 @@ export default {
 			diabled: true,
 			currentRow: null,
 			reportDialogVisible: false,
+			cuadreHistoryRutasDialogVisible: false,
+			cuadreHistoryProductoDialogVisible: false,
+			cuadreHistoryServicioDialogVisible: false,
 			editFormVisible: false,
 			createFormVisible: false,
 			depositosTableVisible: false,
@@ -334,7 +322,16 @@ export default {
 //=============================//
         ...mapState('authentication', [
 			'permisos',
-        ]),
+		]),
+		 ...mapState('cuadreViajes', [
+			'selectedRutaForHistoryTable',
+		]),
+		...mapState('cuadreProductos', [
+			'selectedProductoForHistoryTable',
+		]),
+		...mapState('cuadreServicios', [
+			'selectedServicioForHistoryTable',
+		]),
         ...mapState('clientes', [
 			'clientesList',
 			'headings',
@@ -403,6 +400,9 @@ export default {
 		DepositosTable,
 		DepositosCreateForm,
 		DepositosEditForm,
+		CuadreRutasHistoryTable,
+		CuadreProductosHistoryTable,
+		CuadreServiciosHistoryTable,
 	},
     methods: {
 //=============================//
@@ -438,16 +438,19 @@ export default {
 			'createCuadreRuta',
 			'editCuadreRuta',
 			'delCuadreRuta',
+			'getCuadreRutaHistory',
 		]),
 		...mapActions('cuadreProductos',[
 			'createCuadreProducto',
 			'editCuadreProducto',
 			'delCuadreProducto',
+			'fetchCuadreProductoHistory',
 		]),
 		...mapActions('cuadreServicios',[
 			'createCuadreServicio',
 			'editCuadreServicio',
-			'delCuadreServicio'
+			'delCuadreServicio',
+			'fetchCuadreServicioHistory'
 		]),
 //MUTATIONS===================================
 		...mapMutations('cuadreViajes', [
@@ -596,6 +599,18 @@ export default {
 			}
 			if(e == 'depositos'){
 				this.depositosTableVisible = true
+			}
+			if(e == 'historiaRuta'){
+				this.getCuadreRutaHistory()
+				this.cuadreHistoryRutasDialogVisible = true
+			}
+			if(e == 'historiaProducto'){
+				this.fetchCuadreProductoHistory()
+				this.cuadreHistoryProductoDialogVisible = true
+			}
+			if(e == 'historiaServicio'){
+				this.fetchCuadreServicioHistory()
+				this.cuadreHistoryServicioDialogVisible = true
 			}
 			
 		},

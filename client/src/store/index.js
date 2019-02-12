@@ -24,6 +24,9 @@ import backups from './backups'
 import logger from './logger'
 import transportadoras from './transportadoras'
 import sharedValues from './sharedValues'
+import reportes from './reportes'
+import aseguradoras from './aseguradoras';
+import documentosVehiculos from './documentosVehiculos';
 
 
 Vue.use(Vuex)
@@ -56,6 +59,9 @@ export default new Vuex.Store({
 		logger,
 		transportadoras,
 		sharedValues,
+		reportes,
+		aseguradoras,
+		documentosVehiculos,
 	},
 	mutations: {
 	},

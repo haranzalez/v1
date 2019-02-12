@@ -1,7 +1,7 @@
 import HTTP from '../http';
 import router from '../router'
 import UserServices from '../services/UserServices'
-import { Notification, Message, Confirm } from 'element-ui'
+import { Notification, Message, Loading } from 'element-ui'
 import { mapGetters } from 'vuex';
 
 export default {
@@ -24,6 +24,7 @@ export default {
             radica_rndc: false,
             cedula_poseedor: null,
             cedula_propietario: null,
+            cedula_tenedor: null,
             transportadora_id: null,
         },
         trailersList: null,
@@ -33,31 +34,36 @@ export default {
     },
 
     actions: {
-        createTrailer({state}){
+        createTrailer({state, rootState}){
+            var load = Loading.service(rootState.sharedValues.loading_options)
             HTTP().local.post('api/trailers/crear', state.trailer)
             .then(d => {
                 Message({
                     showClose: true,
                     message: 'Trailer creado.'
                 })
+                load.close()
             })
             .catch(err => {
                 console.log(err)
             })
         },
-        editTrailer({state}){
+        editTrailer({state, rootState}){
+            var load = Loading.service(rootState.sharedValues.loading_options)
             HTTP().local.put('api/trailers/'+state.trailer.id+'/update', state.trailer)
             .then(d => {
                 Message({
                     showClose: true,
                     message: 'Actualizacion exitosa.'
                 })
+                load.close()
             })
             .catch(err => {
                 console.log(err)
             })
         },
-        delTrailer({state}){
+        delTrailer({state, rootState}){
+            var load = Loading.service(rootState.sharedValues.loading_options)
             HTTP().local.delete('api/trailers/'+state.trailer.id+'/delete')
             .then(d => {
                 if(d){
@@ -68,6 +74,7 @@ export default {
                     })
                     router.push('/Trailers')
                 }
+                load.close()
             })
             .catch(err => {
                 console.log(err)
@@ -87,7 +94,6 @@ export default {
         },
         renderTableHeadings({state, commit}){
             let pkg = []
-           
             for(let prop2 in state.trailersList[0]){
                 if(prop2 !== 'created_at' || prop2 !== 'updated_at'){
                     prop2 = prop2.split('_').join(' ')
@@ -96,7 +102,6 @@ export default {
                 }
                 
             }
-            
             commit('setTableHeadings', pkg)
             commit('setLoadingTrailersTable', false)
         },
@@ -166,6 +171,9 @@ export default {
         setCedulaPoseedor(state, value){
             state.trailer.cedula_poseedor = value
         },
+        setCedulaTenedor(state, value){
+            state.trailer.cedula_tenedor = value
+        },
         setTransportadora(state, value){
             state.trailer.transportadora_id = value
         },
@@ -185,6 +193,9 @@ export default {
                 tipo_carroceria: null,
                 estado: null,
                 radica_rndc: false,
+                cedula_poseedor: null,
+                cedula_propietario: null,
+                cedula_tenedor: null,
                 transportadora_id: null,
             }
         }

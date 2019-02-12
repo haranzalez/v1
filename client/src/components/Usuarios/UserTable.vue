@@ -49,7 +49,6 @@
 							<el-dropdown-item command="create"><i class="mdi mdi-plus mr-10"></i> Nuevo usuario</el-dropdown-item>
 							<el-dropdown-item :disabled="btnsDisable" command="edit"><i class="mdi mdi-lead-pencil mr-10"></i> Editar</el-dropdown-item>
 							<el-dropdown-item :disabled="btnsDisable" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
-							<el-dropdown-item :disabled="btnsDisable" command="logs" divided><i class="mdi mdi-briefcase mr-10"></i> Ver logs</el-dropdown-item>
 						</el-dropdown-menu>
 					</el-dropdown>
 				</el-row>
@@ -63,6 +62,7 @@
 	max-height="250"
 	highlight-current-row
 	@current-change="handleCurrentTableChange"
+	v-if="filtered"
     :data="filtered"
 	:default-sort = "{prop: 'id', order: 'descending'}"
     style="width: 100%">
@@ -85,42 +85,7 @@
       label="Apellido"
       min-width="150">
     </el-table-column>
-    <el-table-column
-	  sortable
-      prop="cedula"
-      label="Cedula"
-      min-width="120">
-    </el-table-column>
-    <el-table-column
-	  sortable
-      prop="tel_mobil"
-      label="Celular"
-      min-width="130">
-    </el-table-column>
-    <el-table-column
-	  sortable
-      prop="tel_fijo"
-      label="Telefono"
-      min-width="150">
-    </el-table-column>
-	<el-table-column
-	  sortable
-      prop="direccion"
-      label="Direccion"
-      min-width="220">
-    </el-table-column>
-	<el-table-column
-	  sortable
-      prop="ciudad"
-      label="Ciudad"
-      min-width="120">
-    </el-table-column>
-	<el-table-column
-	  sortable
-      prop="departamento"
-      label="Departamento"
-      min-width="150">
-    </el-table-column>
+   
 	<el-table-column
 	  fixed="right"
 	  sortable
@@ -169,7 +134,7 @@ export default {
 	data () {
       	return {
 			reportDialogVisible: false,
-			dialogWidth: '35%',
+			dialogWidth: '30%',
 			editFormVisible: false,
 			createFormVisible: false,  
 			selectTypeOfSearch: 'Nombre',

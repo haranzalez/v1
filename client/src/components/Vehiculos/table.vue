@@ -1,7 +1,7 @@
 <template>
 <div>
 	<!--Edit dialog form -->
-	<el-dialog center fullscreen width="30%" top="10vh" :visible.sync="editFormVisible">
+	<el-dialog center fullscreen width="60%" top="10vh" :visible.sync="editFormVisible">
 		<div slot="title">
 			<h2>{{vehiculo.placa}}</h2>
 		</div>
@@ -12,7 +12,7 @@
 		</span>
 	</el-dialog>
 	<!--Create dialog form -->
-	<el-dialog center fullscreen width="30%" top="10vh" title="Nuevo vehiculo" :visible.sync="createFormVisible">
+	<el-dialog center fullscreen width="35%" top="10vh" title="Nuevo vehiculo" :visible.sync="createFormVisible">
 		<VehiculosCreateForm></VehiculosCreateForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button size="mini" @click="createFormVisible = false">Cancelar</el-button>
@@ -55,6 +55,7 @@
 	@current-change="handleCurrentTableChange"
 	ref="vehiculosTable"
 	size="mini"
+	v-if="filtered"
     :data="filtered"
 	:default-sort = "{prop: 'id', order: 'descending'}"
     style="width: 100%">
@@ -79,10 +80,10 @@
 	<el-table-column
 	  sortable
       label="Conductor"
-      width="170">
+    >
        	<template slot-scope="scope">
            <el-popover
-		   	v-if="scope.row.conductor !== null"
+		   	v-if="scope.row.conductor"
             :ref="scope.row.placa+'-conductor'"
             placement="right"
             width="400"
@@ -94,7 +95,7 @@
 					</el-row>
 				</div>
            </el-popover>
-		   <el-button size="mini" v-popover="scope.row.placa+'-conductor'">
+		   <el-button type="text" :disabled="scope.row.conductor === null" size="mini" v-popover="scope.row.placa+'-conductor'">
 			   {{(scope.row.conductor)?scope.row.conductor.nombres:'N/A'}}
 		   </el-button>
       	</template>
@@ -102,41 +103,31 @@
     <el-table-column
 	  sortable
       label="Trailer"
-      width="170">
+      >
         <template slot-scope="scope">
            <el-popover
-		   v-if="scope.row.trailer !== null"
+		    v-if="scope.row.trailer"
             :ref="scope.row.placa+'-trailer'"
             placement="right"
             width="400"
             trigger="hover">
-				<div v-for="(item, key) in scope.row.trailer" v-if="item !== null" :key="item.id">
+				<div v-for="(item, key) in scope.row.trailer" v-if="item != null" :key="item.id">
 					<el-row >
 						<el-col :xs="10" :sm="10" :md="10" :lg="10" :xl="10"><b>{{title(key)}}</b></el-col>
 						<el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12">{{item}}</el-col>
 					</el-row>
 				</div>
            </el-popover>
-		   <el-button size="mini" v-popover="scope.row.placa+'-trailer'">
+		   <el-button type="text" :disabled="scope.row.trailer === null" size="mini" v-popover="scope.row.placa+'-trailer'">
 			   {{(scope.row.trailer)?scope.row.trailer.placa:'N/A'}}
 		   </el-button>
       	</template>
     </el-table-column>
 	<el-table-column
       label="Tipo de flota"
-	  prop="tipo_de_flota"
-      width="120">
+	  prop="tipo_de_flota">
     </el-table-column>
-	<el-table-column
-      label="Capasidad carga"
-	  prop="capasidad_carga"
-      width="150">
-    </el-table-column>
-	<el-table-column
-      label="Peso"
-	  prop="peso"
-      width="120">
-    </el-table-column>
+	
 	<el-table-column
 	  fixed="right"
       prop="estado"
@@ -171,22 +162,23 @@ import exportService from '../../services/exportService'
 import VehiculosEditForm from '@/components/Vehiculos/editForm'
 import VehiculosCreateForm from '@/components/Vehiculos/createForm'
 
+
 export default {
 	name: 'VehiculoTable',
 	data () {
       	return {
 			editFormVisible: false,
 			createFormVisible: false,
-			
-            selectTypeOfSearch: 'ID',
-            filter: '',
+		
+			selectTypeOfSearch: 'ID',
+			filter: '',
 		}
 	},
 	computed: {
         
         ...mapState('authentication', [
 			'permisos',
-        ]),
+		]),
         ...mapState('vehiculos', [
 			'loadingVehiculosTable',
 			'vehiculo',
@@ -245,11 +237,12 @@ export default {
 				this.resetVehicleVariables()
 				this.createFormVisible = true;
             }
-             if(e == 'edit'){
+        if(e == 'edit'){
+				this.fetchDocumentosList()
 				this.editFormVisible = true;
-            }
-             if(e == 'del'){
-                 this.pushToDel(row)
+        }
+				if(e == 'del'){
+						this.pushToDel(row)
 			}
         },
         handleCurrentTableChange(val) {
@@ -257,12 +250,8 @@ export default {
 				this.$refs.vehiculosTable.setCurrentRow(val);
 				return
 			}
-			console.log(val.id)
 			this.fetchVehiculo(val.id)
 			this.$refs.vehiculosTable.setCurrentRow(val);
-		},
-		pushTo(resource){
-			router.push('/'+resource)
 		},
 		determineEstado(row){
 			if(row == 'Desactivo'){
@@ -289,7 +278,7 @@ export default {
         ...mapActions('vehiculos',[
 			'fetchVehiculosList',
 			'fetchVehiculo',
-            'assignConductor',
+      'assignConductor',
 			'assignTrailer',
 			'editVehiculo',
 			'delVehiculo',
@@ -297,13 +286,17 @@ export default {
 		]),
 		...mapMutations('vehiculos',[
            'resetVehicleVariables',
-        ]),
+				]),
+				
         ...mapActions('conductores',[
 			'fetchConductoresList',
         ]),
         ...mapActions('trailers',[
 			'fetchTrailersList',
-        ]),
+				]),
+			...mapActions('documentosVehiculos',[
+			'fetchDocumentosList',
+      ]),
 		pushToEdit(row){
 			this.setFullVehiculo(row)
 			this.editFormVisible = true

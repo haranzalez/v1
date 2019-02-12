@@ -1,7 +1,7 @@
 import HTTP from '../http';
 import router from '../router'
 import UserServices from '../services/UserServices'
-import { Notification } from 'element-ui'
+import { Notification, Loading } from 'element-ui'
 import { mapGetters } from 'vuex';
 
 export default {
@@ -36,7 +36,6 @@ export default {
         fetchUser({ commit, state },id){
             HTTP().local.get('api/users/'+id)
             .then(d => {
-                console.log(d.data[0])
                 commit('setFullUser', d.data[0])
                 commit('setSelectedRoles', state.usuario.roles[0].nombre)
             })
@@ -75,7 +74,8 @@ export default {
             
             commit('setTableHeadings', pkg)
         },
-        editUser({state, commit}, roles){
+        editUser({state, rootState}){
+            var load = Loading.service(rootState.sharedValues.loading_options)
             HTTP().local.patch('api/users/update/'+state.usuario.id,{
                 nombre: state.usuario.nombre,
                 apellido: state.usuario.apellido,
@@ -96,6 +96,7 @@ export default {
                         position: 'bottom-right',
                     });
                 }
+                load.close()
                
             }).catch(err => {
                 Notification.warning({
@@ -103,10 +104,12 @@ export default {
                     message: 'Se a producido un error tratando de guardar la informacion. Porfavor notifique al administrador',
                     position: 'bottom-right',
                 });
+                load.close()
             })
         },
    
-        createUser({ state, dispatch }){
+        createUser({ state, dispatch, rootState }){
+            var load = Loading.service(rootState.sharedValues.loading_options)
             HTTP().local.post('api/users/create',{
                 nombre: state.usuario.nombre,
                 apellido: state.usuario.apellido,
@@ -130,17 +133,19 @@ export default {
                         position: 'bottom-right',
                     });
                     dispatch('fetchUsersList')
+                    load.close()
                 }
             }).catch(err => {
-                console.log(err)
                 Notification.warning({
                     title: 'Atencion!',
                     message: 'Se a producido un error tratando de crear el registro.',
                     position: 'bottom-right',
                 });
+                load.close()
             })
         },
-        deleteUser({state, commit}){
+        deleteUser({state, rootState}){
+            var load = Loading.service(rootState.sharedValues.loading_options)
             HTTP().local.delete('api/users/destroy/'+state.usuario.id)
             .then(d => {
                 if(d.request.status == 200){
@@ -150,13 +155,14 @@ export default {
                         position: 'bottom-right',
                     });
                 }
+                load.close()
             }).catch(err => {
-                console.log(err)
                 Notification.warning({
                     title: 'Atencion!',
                     message: 'Se produjo un problema. Porfavor contactarse con el administrador',
                     position: 'bottom-right',
                 });
+                load.close()
             })
         },
         
@@ -195,7 +201,8 @@ export default {
             commit('setEstadosObj', pkg)
             console.log(state.estados)
         },
-        changeEstado({ state }){
+        changeEstado({ state, rootState }){
+            var load = Loading.service(rootState.sharedValues.loading_options)
             HTTP().local.patch('api/users/change-state/'+state.usuario.id,{
                     estado: state.estados[state.usuario.id],
                 }).then(d => {
@@ -206,6 +213,7 @@ export default {
                         position: 'bottom-right',
                     });
                 }
+                load.close()
                
             }).catch(err => {
                 Notification.warning({
@@ -285,7 +293,6 @@ export default {
             state.headings = headings;
         },
         setEstado(state, value){
-            console.log(value)
             state.usuario.estado = value
         },
         paramsReset(state){
@@ -302,6 +309,7 @@ export default {
                 username: null,
                 password: null,
                 roles: null,
+                estado: false,
             }
             state.selected = []
         }

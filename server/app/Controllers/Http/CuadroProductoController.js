@@ -19,7 +19,12 @@ class CuadroProductoController {
         const pkg = cliente.rows[0].$relations.cuadre_producto;
         pkg['nombre_producto'] = cliente.rows[0].$relations.cuadre_producto.rows[0].$relations.producto.rows[0].nombre
         pkg['precio_producto'] = cliente.rows[0].$relations.cuadre_producto.rows[0].$relations.producto.rows[0].precio
+        pkg['producto_id'] = cliente.rows[0].$relations.cuadre_producto.rows[0].$relations.producto.rows[0].id
         return pkg
+    }
+    async get_cuadres_productos_history({request}){
+        const { cuadre_producto_id } = request.all()
+        return await Database.from('historial_precios_productos').where({cuadre_producto_id})
     }
     async create_cuadre({ auth, request }){
         const user = await auth.getUser()
@@ -27,21 +32,28 @@ class CuadroProductoController {
         const {
             cliente_id,
             producto_id,
-            precio,
-            ajuste,
+            precio_producto,
+            precio_negociado,
         } = request.all()
         const cliente = await Cliente.find(cliente_id)
     
         if(cliente){
             const cuadre = await CuadreProducto.create({
                 cliente_id,
-                precio,
-                ajuste,
+                precio_negociado,
             })
            
             if(producto_id){
                 await cuadre.producto().attach(producto_id)
             }
+            //historial
+            await Database.table('historial_precios_productos')
+            .insert({ 
+                cuadre_producto_id: cuadre.id,
+                precio_producto,
+                precio_negociado,
+                fecha: new Date()
+            })
             return {
                 message: 'success',
             }
@@ -57,18 +69,24 @@ class CuadroProductoController {
         const cuadre = await CuadreProducto.find(id)
         const {
             producto_id,
-            precio,
-            ajuste,
+            precio_producto,
+            precio_negociado,
         } = request.all()
 
-        cuadre.precio = precio
-        cuadre.ajuste = ajuste
+        cuadre.precio_negociado = precio_negociado
         cuadre.save()
-        console.log(producto_id)
         if(producto_id){
+            await Database.table('pivot_producto_cuadre_productos').where('cuadre_producto_id', id).delete()
             await cuadre.producto().attach(producto_id)
         }
-        
+         //historial
+         await Database.table('historial_precios_productos')
+         .insert({ 
+            cuadre_producto_id: id,
+            precio_producto,
+            precio_negociado,
+            fecha: new Date()
+         })
         return {
             message: 'success',
         }
@@ -77,7 +95,6 @@ class CuadroProductoController {
     async delete_cuadre({ auth, params }){
         const user = await auth.getUser()
         await Database.raw('SET hq.usuario = ' + user.nombre)
-        console.log(params)
         const { id } = params
         const cuadre = await CuadreProducto.find(id)
         return cuadre.delete()

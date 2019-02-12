@@ -17,7 +17,7 @@ export default {
         consolidacionesList: null,
         selectedRuta: null,
         selectedProducto: null,
-        selectedServicio: null,
+        selectedServicio: [],
         selectedVehiculo: null,
         dataReady: false,
         headings: [],  
@@ -57,8 +57,8 @@ export default {
                 console.log(err)
             })
         },
-        setServicio({ state, dispatch }, cuadre_servicio_id){
-            HTTP().local.get('api/consolidaciones/'+state.consolidacion.id+'/add-cuadre-servicio/'+cuadre_servicio_id)
+        setServicio({ state, dispatch }){
+            HTTP().local.post('api/consolidaciones/'+state.consolidacion.id+'/add-cuadre-servicio', state.selectedServicio)
             .then(d => {
                 if(d.data.message == 'success'){
                     Message({
@@ -106,12 +106,10 @@ export default {
             })
         },
         fetchConsolidacion({commit, dispatch},id){
-            console.log(id)
             HTTP().local.get('api/consolidaciones/'+id)
             .then(d => {
                 console.log(d.data[0])
                 commit('setFullConsolidacion', d.data[0])
-                
                 dispatch('clientes/fetchClienteConsolidacion', d.data[0].cliente_id, {root: true})
             })
             .catch(err => {
@@ -123,7 +121,6 @@ export default {
             commit('setLoadingConsolidacionesTable', true)
             HTTP().local.get('api/consolidaciones')
             .then(d => {
-                console.log(d.data)
                 commit('setConsolidacionesList', d.data)
                 dispatch('renderTableHeadings')
                 dispatch('renderSelectedRuta')

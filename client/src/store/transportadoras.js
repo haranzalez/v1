@@ -1,7 +1,7 @@
 import HTTP from '../http';
 import router from '../router'
 import UserServices from '../services/UserServices'
-import { Notification, Message, Confirm } from 'element-ui'
+import { Notification, Message, Loading } from 'element-ui'
 import { mapGetters } from 'vuex';
 
 export default {
@@ -25,7 +25,8 @@ export default {
     },
 
     actions: {
-        createTransportadora({state}){
+        createTransportadora({state, rootState}){
+            var load = Loading.service(rootState.sharedValues.loading_options)
             HTTP().local.post('api/transportadoras/crear', state.transportadora)
             .then(d => {
                 Message({
@@ -33,12 +34,14 @@ export default {
                     showClose: true,
                     message: 'Transportadora creada.'
                 })
+                load.close()
             })
             .catch(err => {
                 console.log(err)
             })
         },
-        editTransportadora({state}){
+        editTransportadora({state, rootState}){
+            var load = Loading.service(rootState.sharedValues.loading_options)
             HTTP().local.put('api/transportadoras/'+state.transportadora.id+'/update', state.transportadora)
             .then(d => {
                 Message({
@@ -46,12 +49,14 @@ export default {
                     showClose: true,
                     message: 'Actualizacion exitosa.'
                 })
+                load.close()
             })
             .catch(err => {
                 console.log(err)
             })
         },
-        delTrailer({state}){
+        delTrailer({state, rootState}){
+            var load = Loading.service(rootState.sharedValues.loading_options)
             HTTP().local.delete('api/transportadoras/'+state.transportadora.id+'/delete')
             .then(d => {
                 if(d){
@@ -61,6 +66,7 @@ export default {
                         message: 'Transportadora eliminada exitosamente'
                     })
                 }
+                load.close()
             })
             .catch(err => {
                 console.log(err)

@@ -45,7 +45,8 @@ import BackupsTable from '../views/Backups/backups.vue'
 import LoggerTable from '../views/Logger/logger.vue'
 //Transportadoras
 import TransportadorasTable from '../views/Transportadoras/transportadoras.vue'
-
+import Reportes from '../views/Reportes/index.vue'
+import AseguradorasTable from '../views/Aseguradoras/index.vue'
 
 //pages
 import Login from '../views/pages/authentication/Login.vue'
@@ -457,12 +458,40 @@ const router = new Router({
 			}
 		},
 		//=========================================================================
+		//Aseguradoras
+		//=========================================================================
+		{
+			path: '/Aseguradoras',
+			name: 'aseguradoras',
+			component: AseguradorasTable,
+			meta: {
+				auth: true,
+				layout: layouts.navLeft,
+				searchable: false,
+				tags: ['Logistica']
+			}
+		},
+		//=========================================================================
 		//Logger
 		//=========================================================================
 		{
 			path: '/Logger',
 			name: 'logger',
 			component: LoggerTable,
+			meta: {
+				auth: true,
+				layout: layouts.navLeft,
+				searchable: false,
+				tags: ['Sistema']
+			}
+		},
+		//=========================================================================
+		//Reportes
+		//=========================================================================
+		{
+			path: '/Reportes',
+			name: 'reportes',
+			component: Reportes,
 			meta: {
 				auth: true,
 				layout: layouts.navLeft,
@@ -521,7 +550,7 @@ router.beforeEach((to, from, next) => {
 	if(to && to.meta && to.meta.auth)
 		authrequired = true
 
-	console.log('authrequired', authrequired, to.name)
+	//console.log('authrequired', authrequired, to.name)
 	
 
 	if(authrequired) {

@@ -1,6 +1,6 @@
 import HTTP from '../http';
 import router from '../router'
-import { Notification, Message, Confirm } from 'element-ui'
+import { Notification, Message, Loading } from 'element-ui'
 
 
 export default {
@@ -17,6 +17,9 @@ export default {
             tipo_de_negociacion: null,
         },
         cuadresList: null,
+        cuadreHistoryList: null,
+        loadingCuadreRutaHistoryTable: false,
+        selectedRutaForHistoryTable: '',
         selectedVehiculo: null,
         selectedRuta: null,
         selectedVehiculoEdit: null,
@@ -63,22 +66,42 @@ export default {
                 console.log(err)
             })
         },
-        createCuadreRuta({state, commit, dispatch}, cliente_id){
+        getCuadreRutaHistory({ state, commit, rootState }){
+            commit('setLoadingCuadreRutaHistoryTable', true)
+            HTTP().local.post('api/cuadre-viajes/history', {
+                cliente_id: state.cuadre.cliente_id,
+                ruta_id: state.cuadre.ruta_id
+            })
+            .then(d => {
+                console.log(d.data)
+                commit('setCuadreRutaHistory', d.data)
+                commit('setLoadingCuadreRutaHistoryTable', false)
+            })
+            .catch(err => {
+                console.log(err)
+                commit('setLoadingCuadreRutaHistoryTable', false)
+            })
+        },
+        createCuadreRuta({state, commit, dispatch, rootState}, cliente_id){
+            var load = Loading.service(rootState.sharedValues.loading_options)
             commit('setClienteId', cliente_id)
-
             HTTP().local.post('api/cuadre-viajes/crear', state.cuadre)
             .then(d => {
                 if(d.data.message == 'success'){
                     dispatch('fetchCuadresRutaList')
+                    load.close()
                     return true
                 }
-               
+
+               load.close()
             })
             .catch(err => {
                 console.log(err)
+                load.close()
             })
         },
-        editCuadreRuta({state}, cliente_id){
+        editCuadreRuta({state, rootState}, cliente_id){
+            var load = Loading.service(rootState.sharedValues.loading_options)
             HTTP().local.put('api/cuadre-viajes/'+state.cuadre.id+'/update', state.cuadre)
             .then(d => {
                 Message({
@@ -86,14 +109,17 @@ export default {
                     typr: "success",
                     message: 'Actualizacion Exitosa.'
                 })
+                load.close()
             })
             .catch(err => {
                 console.log(err)
             })
         },
-        delCuadreRuta({state}){
+        delCuadreRuta({state, rootState}){
+            var load = Loading.service(rootState.sharedValues.loading_options)
             HTTP().local.delete('api/cuadre-viajes/'+state.cuadre.id+'/delete')
             .then(d => {
+                load.close()
                return d
             })
             .catch(err => {
@@ -235,6 +261,15 @@ export default {
         },
         setTipoDeNegociacion(state, value){
             state.cuadre.tipo_de_negociacion = value
+        },
+        setCuadreRutaHistory(state, value){
+            state.cuadreHistoryList = value
+        },
+        setLoadingCuadreRutaHistoryTable(state, value){
+            state.loadingCuadreRutaHistoryTable = value
+        },
+        setSelectedRutaForHistoryTable(state, value){
+            state.selectedRutaForHistoryTable = value
         },
         resetCuadreRuta(state){
             state.cuadre = {

@@ -34,7 +34,7 @@
 							<i class="mdi mdi-settings"></i>
 						</el-button>
 						<el-dropdown-menu slot="dropdown">
-							<el-dropdown-item :disabled="(permisos['Usuarios'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Crear</el-dropdown-item>
+							<el-dropdown-item :disabled="(permisos['Roles'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Crear</el-dropdown-item>
 							<el-dropdown-item :disabled="btnsDisable" command="edit"><i class="mdi mdi-settings-box mr-10"></i> Configurar</el-dropdown-item>
 							<el-dropdown-item :disabled="btnsDisable" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
 						</el-dropdown-menu>

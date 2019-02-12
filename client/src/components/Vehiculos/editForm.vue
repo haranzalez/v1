@@ -2,6 +2,7 @@
    <vue-scroll class="page-vehiculos-create">
        <el-form label-position="top" ref="form" label-width="120px">
          <el-row>
+              <el-col :span="12" :md="12" :sm="24" :xs="24">
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <h3>Informacion basica</h3>
                 </el-col>
@@ -272,6 +273,16 @@
                         </el-switch>
                     </el-form-item>
                 </el-col>
+        </el-col>
+        <el-col :span="12" :md="12" :sm="24" :xs="24">
+            <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                <h3>Polizas</h3>
+            </el-col>
+            <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                <documentosTable></documentosTable>
+            </el-col>
+            
+        </el-col>
 
         </el-row>
         
@@ -286,6 +297,7 @@ import HTTP from '../../http';
 import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
 import moment from 'moment-timezone'
 import router from '../../router'
+import documentosTable from './documentosTable.vue'
 
 export default {
 	name: 'VehiculoEditForm',
@@ -392,6 +404,7 @@ export default {
 
 	},
 	components: {
+        documentosTable,
 	},
     methods: {
         back() {

@@ -8,7 +8,7 @@
 		width="25%"
 	>
 		<p>Porfavor seleccione un cliente para crear un nuevo viaje</p>
-		<el-select filterable @change="handleClienteChange" :value="selectedEditCliente" placeholder="Select">
+		<el-select filterable @change="handleClienteChange" :value="selectedEditCliente" placeholder="Seleccione..">
 			<el-option
 			v-for="item in clientesList"
 			:key="item.id"
@@ -27,7 +27,7 @@
 		:visible.sync="selectVehiculoDialogVisible"
 		width="25%"
 	>
-		<el-select filterable @change="handleVehiculoChange" :value="selectedEditVehiculo" placeholder="Select">
+		<el-select filterable @change="handleVehiculoChange" :value="selectedEditVehiculo" placeholder="Seleccione..">
 			<el-option
 			v-for="item in vehiculosList"
 			:key="item.id"
@@ -46,7 +46,7 @@
 		:visible.sync="selectProductoDialogVisible"
 		width="25%"
 	>
-		<el-select @change="handleProductChange" :value="selectedEditProducto" placeholder="Select">
+		<el-select @change="handleProductChange" :value="selectedEditProducto" placeholder="Seleccione..">
 			<el-option
 			v-for="item in cuadreProductosList"
 			:key="item.id"
@@ -63,9 +63,13 @@
 		align="center"
 		title="Servicios"
 		:visible.sync="selectServicioDialogVisible"
-		width="25%"
-	>
-		<el-select @change="handleServicioChange" :value="selectedEditServicio" placeholder="Select">
+		width="25%">
+		<el-select 
+		multiple
+    	collapse-tags 
+		v-if="selectedServicio === []"
+		v-model="selected_servicio"
+		placeholder="Seleccione..">
 			<el-option
 			v-for="item in cuadreServiciosList"
 			:key="item.id"
@@ -84,7 +88,7 @@
 		:visible.sync="selectRutaDialogVisible"
 		width="25%"
 	>
-		<el-select @change="handleRutaChange" :value="selectedEditRuta" placeholder="Select">
+		<el-select @change="handleRutaChange" :value="selectedEditRuta" placeholder="Seleccione..">
 			<el-option
 			v-for="item in cuadreRutasList"
 			:key="item.id"
@@ -101,7 +105,7 @@
 		
 		<span slot="footer" class="dialog-footer">
 			<el-button @click="editFormVisible = false">Cancelar</el-button>
-			<el-button type="primary" @click="">Actualizar</el-button>
+			<el-button type="primary">Actualizar</el-button>
 		</span>
 	</el-dialog>
 	<!--Create dialog form -->
@@ -109,7 +113,7 @@
 		
 		<span slot="footer" class="dialog-footer">
 			<el-button @click="createFormVisible = false">Cancelar</el-button>
-			<el-button type="primary" @click="">Crear</el-button>
+			<el-button type="primary">Crear</el-button>
 		</span>
 	</el-dialog>
 	<!--Table-->
@@ -251,7 +255,6 @@
 		   <el-button size="mini" :type="(scope.row.servicio !== null)?'text':'default'" @click="setServicioSelect(scope.row.cliente_id, scope.row.servicio)" v-popover="scope.row.id+'-servicio'">{{(scope.row.servicio !== null)?scope.row.servicio.nombre:'Seleccionar'}}</el-button>
       </template>
     </el-table-column>
-	
 	<el-table-column
 	  sortable
 	  align="center"
@@ -293,7 +296,7 @@ export default {
 			createFormVisible: false,
 			selectTypeOfSearch: 'id',
 			selectedEditProducto: '',
-			selectedEditServicio: '',
+			selectedEditServicio: [],
 			selectedEditRuta: '',
 			selectedEditVehiculo: '',
 			selectedEditCliente: '',
@@ -306,6 +309,16 @@ export default {
 		}
 	},
 	computed: {
+		selected_servicio: {
+			get(){
+				console.log(this.selectedServicio)
+				return this.selectedServicio
+			},
+			set(value){
+				console.log(value)
+
+			}
+		},
 		
         ...mapState('authentication', [
 			'permisos',
@@ -502,6 +515,7 @@ export default {
 		},
 		...mapMutations('consolidaciones', [
 			'consolidacionesClearParams',
+			'setSelectedServicio',
 		]),
 		...mapActions('consolidaciones',[
 			'fetchConsolidacionesList',

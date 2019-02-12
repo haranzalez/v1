@@ -91,7 +91,7 @@
                             <el-col :span="11" :md="11" :sm="24" :xs="24">
                                 <el-input 
                                 size="mini"
-                                :value="trailer.cedula_propietario"
+                                :value="trailer.cedula_poseedor"
                                 @input="setCedulaPoseedor"
                                 placeholder="Nit/Cedula">
                                 </el-input>
@@ -99,6 +99,31 @@
                         </el-row>
                     </el-form-item>
                 </el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                <el-form-item label="Tenedor">
+                    <el-row>
+                        <el-col :span="11" :md="11" :sm="24" :xs="24">
+                            <el-input 
+                            size="mini"
+                            :value="trailer.tenedor"
+                            @input="setTenedor"
+                            placeholder="Nombre">
+                            </el-input>
+                        </el-col>
+                        <el-col style="text-align: center;" :span="2" :md="2" :sm="24" :xs="24">
+                            |
+                        </el-col>
+                        <el-col :span="11" :md="11" :sm="24" :xs="24">
+                            <el-input 
+                            size="mini"
+                            :value="trailer.cedula_tenedor"
+                            @input="setCedulaTenedor"
+                            placeholder="Nit/Cedula">
+                            </el-input>
+                        </el-col>
+                    </el-row>
+                </el-form-item>
+            </el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Transportadora" prop="transportadora">
                         <el-select 
@@ -181,17 +206,6 @@
                         </el-select>
                     </el-form-item>
                 </el-col>
-                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Tenedor">
-                        <el-input 
-                        size="mini"
-                        :value="trailer.tenedor"
-                        v-model="trailer.tenedor"
-                        @input="setTenedor"
-                        placeholder="">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Peso">
                         <el-input
@@ -291,6 +305,14 @@ export default {
         },
          ...mapState('transportadoras', [
 			'transportadorasList',
+        ]),
+        ...mapState('sharedValues', [
+			'tipo_de_vehiculo_options',
+            'tipo_de_flota_options',
+            'tipo_de_configuracion_options',
+            'tipo_de_combustible_options',
+            'estado_options',
+            'corroceria_options',
         ]),
         ...mapState('authentication', [
 			'permisos',

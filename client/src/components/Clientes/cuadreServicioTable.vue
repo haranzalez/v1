@@ -7,7 +7,6 @@
 	@current-change="handleCurrentTableChange"
 	size="mini"
 	stripe
-	height="400"
     :data="filtered"
     style="width: 100%">
     <el-table-column
@@ -15,7 +14,7 @@
 	  fixed
       prop="nombre_servicio"
       label="Servicio"
-	  min-width="230">
+	  max-width="100">
     </el-table-column>
     <el-table-column
 	  sortable
@@ -24,19 +23,12 @@
       label="Precio"
       min-width="100">
     </el-table-column>
-	<el-table-column
-	  align="center"
-	  sortable
-      prop="ajuste"
-      label="Ajuste"
-      min-width="100">
-    </el-table-column>
 	 <el-table-column
 	 style="color:green !important;font-weight:bold;"
 	  sortable
 	  align="center"
-      prop="precio"
-      label="Cuadre"
+      prop="precio_negociado"
+      label="Precio negociado"
       min-width="100">
     </el-table-column>
 	

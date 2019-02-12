@@ -1,6 +1,6 @@
 import HTTP from '../http'
 import router from '../router'
-import { Notification, Message } from 'element-ui'
+import { Notification, Message, Loading } from 'element-ui'
 import TableServices from '../services/TableServices'
 
 export default {
@@ -79,7 +79,8 @@ export default {
                 });
             })
         },
-        backupNow({ dispatch }){
+        backupNow({ dispatch, rootState }){
+            var load = Loading.service(rootState.sharedValues.loading_options)
             HTTP().local.get('/api/backup')
             .then(res => {
                 if(res.data.message == 'success'){
@@ -90,6 +91,7 @@ export default {
                         position: 'bottom-right',
                     });
                 }
+                load.close()
             }).catch(err => {
                 console.log(err)
                  Notification.warning({

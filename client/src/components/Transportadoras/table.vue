@@ -59,6 +59,7 @@
 	ref="transportadorasTable"
 	size="mini"
     :data="filtered"
+	v-if="filtered"
 	:default-sort = "{prop: 'id', order: 'descending'}"
     style="width: 100%">
     <el-table-column

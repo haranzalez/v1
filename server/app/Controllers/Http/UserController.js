@@ -40,7 +40,6 @@ class UserController {
     var user = await User.query().where('username', username).fetch()
     var res = await User.find(user.rows[0].id)
     res = await res.roles().fetch()
-    console.log(res.rows[0].id)
     user = await User.query()
     .where('username', username).with('roles.modulos.subModulo.permisos', (builder) => {
       builder.where('role_id', res.rows[0].id)
@@ -70,8 +69,8 @@ class UserController {
    * GET users/create
    */
   async create ({ auth, request }) {
-    const user = await auth.getUser()
-    await Database.raw('SET hq.usuario = ' + user.nombre)
+    const u = await auth.getUser()
+    await Database.raw('SET hq.usuario = ' + u.nombre)
     const { roles,
       nombre,
       apellido,
@@ -100,7 +99,7 @@ class UserController {
     }) 
 
     if(roles.length > 0){
-      await user.roles().attach(roles)
+      await user.roles().attach([roles])
     }
 
     this.sendPassword(request.only(['email']))
@@ -114,8 +113,8 @@ class UserController {
    * PUT or PATCH users/:id
    */
   async update ({ auth, params, request }) {
-    const user = await auth.getUser()
-    await Database.raw('SET hq.usuario = ' + user.nombre)
+    const u = await auth.getUser()
+    await Database.raw('SET hq.usuario = ' + u.nombre)
     const { id } = params;
     const { roles,
       nombre, 
@@ -129,6 +128,7 @@ class UserController {
       username, 
       estado, } = request.all();
     const user = await User.find(id);
+    console.log(roles)
     if(roles){
       const oldRoles = await user.roles().fetch()
       if(oldRoles.rows.length > 0){
@@ -165,8 +165,8 @@ class UserController {
    * DELETE users/:id
    */
   async destroy ({ auth, params }) {
-    const user = await auth.getUser()
-    await Database.raw('SET hq.usuario = ' + user.nombre)
+    const u = await auth.getUser()
+    await Database.raw('SET hq.usuario = ' + u.nombre)
     const { id } = params;
     const user = await User.find(id)
     user.delete();

@@ -185,6 +185,7 @@
 			</div>
 		</el-col>
 	<el-table
+	v-loading.body="loadingRutasTable"
 	ref="rutasTable"
 	size="mini"
 	stripe
@@ -192,7 +193,7 @@
 	highlight-current-row
 	@current-change="handleCurrentTableChange"
     :data="filtered"
-	
+	v-if="filtered"
 	:default-sort = "{prop: 'id', order: 'descending'}"
     style="width: 100%">
     <el-table-column
@@ -207,13 +208,13 @@
 	  sortable
       prop="nombre_municipio_origen"
       label="Origen"
-      min-width="120">
+      min-width="150">
     </el-table-column>
-	 <el-table-column
+	<el-table-column
 	  sortable
       prop="nombre_municipio_destino"
       label="Destino"
-      min-width="120">
+      min-width="150">
     </el-table-column>
     <el-table-column
 	  sortable
@@ -261,11 +262,9 @@
 	  fixed="right"
 	  align="center"
       label="Comentarios"
-      min-width="100"
-	>
+      min-width="100">
 	  <template slot-scope="scope">
 		    <el-popover
-			:ref="'ruta_'+scope.row.id"
 			placement="left"
 			width="450"
 			trigger="click">
@@ -274,14 +273,13 @@
 				<el-table-column width="100" property="usuario" label="Usuario"></el-table-column>
 				<el-table-column width="300" property="comentario" label="Comentario"></el-table-column>
 			</el-table>
+			<el-button size="mini" slot="reference"><i class="mdi mdi-eye"></i></el-button>
 			</el-popover>
-			<el-button size="mini" v-popover="'ruta_'+scope.row.id"><i class="mdi mdi-eye"></i></el-button>
+			
 	  </template>
     </el-table-column>
   </el-table>
-
   </el-col>
-
 </div>
 	
 </template>
@@ -322,6 +320,7 @@ export default {
         ...mapState('rutas', [
 			'rutasList',
 			'headings',
+			'loadingRutasTable',
 			'dataReady',
 			'ruta',
 			'municipios_list',
@@ -383,6 +382,7 @@ export default {
 			'setMunicipioOrigenId',
 			'setMunicipioDestinoId',
 			'setTipoDeVehiculo',
+			'setLoadingRutasTable',
 		]),
         ...mapActions('rutas',[
 			'fetchRutasList',

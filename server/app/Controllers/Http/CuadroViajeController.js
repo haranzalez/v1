@@ -8,7 +8,6 @@ class CuadroViajeController {
         const cuadre = await CuadreViaje.query()
         .with('ruta.municipios')
         .fetch()
-
         for(let prop in cuadre.rows){
             let origen = cuadre.rows[prop]['$relations']['ruta']['rows'][0]['$relations']['municipios']['rows'][0]['nombre_municipio'];
             let destino = cuadre.rows[prop]['$relations']['ruta']['rows'][0]['$relations']['municipios']['rows'][1]['nombre_municipio'];
@@ -21,9 +20,7 @@ class CuadroViajeController {
             delete cuadre.rows[prop].$relations.ruta.rows[0].$attributes.updated_at;
             delete cuadre.rows[prop].$relations.ruta.rows[0].$relations['pivot'];
             delete cuadre.rows[prop].$relations.ruta.rows[0].$relations['municipios'];
-           
         }
-        
         return cuadre
     }
     async get_cuadre({ params }){
@@ -35,6 +32,10 @@ class CuadroViajeController {
         cuadre['ruta'] = (ruta.rows.length > 0)?ruta.rows[0].$relations.municipios.rows[0].nombre_municipio + ' - ' + ruta.rows[0].$relations.municipios.rows[1].nombre_municipio:'';
        
         return cuadre
+    }
+    async get_cuadres_history({request}){
+        const { cliente_id, ruta_id } = request.all()
+        return await Database.from('historial_precios_rutas').where({cliente_id, ruta_id})
     }
     async create_cuadre({ auth, request }){
         const user = await auth.getUser()
@@ -61,6 +62,19 @@ class CuadroViajeController {
         if(ruta_id){
             await cuadre.ruta().attach(ruta_id)
         }
+        //historial
+        await Database.table('historial_precios_rutas')
+        .insert({ 
+            cliente_id,
+            flete,
+            ruta_id,
+            pago_conductor,
+            pago_tercero,
+            pago_cabezote,
+            tipo_de_vehiculo,
+            tipo_de_negociacion,
+            fecha: new Date()
+        })
         return {
             message: 'success'
         }
@@ -102,6 +116,20 @@ class CuadroViajeController {
             await cuadre.ruta().attach(ruta_id)
         }
         cuadre.save()
+
+        //historial
+        await Database.table('historial_precios_rutas')
+        .insert({ 
+            cliente_id,
+            flete,
+            ruta_id,
+            pago_conductor,
+            pago_tercero,
+            pago_cabezote,
+            tipo_de_vehiculo,
+            tipo_de_negociacion,
+            fecha: new Date()
+        })
 
        return {
            message: 'success'
@@ -146,7 +174,6 @@ class CuadroViajeController {
             message: 'success'
         }
     }
-        
     //DELETE
     async delete_cuadre({ auth, params }){
         const user = await auth.getUser()

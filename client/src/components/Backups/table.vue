@@ -2,8 +2,9 @@
 <div>
 	<!-- presets form -->
 	<el-dialog align="center" width="25%" top="5vh" :visible.sync="presetsFormVisible">
-		<h3 style="text-align:center;" slot="title">Programador</h3>
-		<el-select v-model="programSelected" placeholder="Select">
+		<h3 style="text-align:center;margin-bottom:0;" slot="title">Programador</h3>
+		<p style="margin-top:0;">Es importante tener en cuenta que la programacion de backups tomara efecto siempre y cuando el servidor este en vivo y no se reinicie despues de haber programado un back up.</p>
+		<el-select v-model="programSelected" placeholder="Seleccione programacion">
 			<el-option
 			v-for="item in programOptions"
 			:key="item.value"

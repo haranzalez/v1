@@ -358,6 +358,7 @@ export default {
             'tipo_de_combustible_options',
             'estado_options',
             'corroceria_options',
+            'full_loading',
         ]),
         ...mapState('vehiculos', [
             'vehiculo',

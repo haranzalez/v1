@@ -35,7 +35,6 @@ export default {
         
         var date = f[0];
         var time = f[1];
-        console.log(time)
         return date.charAt(0)+date.charAt(1)+'/'+date.charAt(2)+date.charAt(3)+'/20'+date.charAt(4)+date.charAt(5)+' '+
         time.charAt(0)+time.charAt(1)+':'+time.charAt(2)+time.charAt(3)+':'+time.charAt(4)+time.charAt(5);
     }

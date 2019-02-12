@@ -88,6 +88,29 @@
                 </el-form-item>
             </el-col>
             <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                <el-form-item label="Tenedor">
+                    <el-row>
+                        <el-col :span="11" :md="11" :sm="24" :xs="24">
+                            <el-input 
+                            size="mini"
+                            @input="setTenedor"
+                            placeholder="Nombre">
+                            </el-input>
+                        </el-col>
+                        <el-col style="text-align: center;" :span="2" :md="2" :sm="24" :xs="24">
+                            |
+                        </el-col>
+                        <el-col :span="11" :md="11" :sm="24" :xs="24">
+                            <el-input 
+                            size="mini"
+                            @input="setCedulaTenedor"
+                            placeholder="Nit/Cedula">
+                            </el-input>
+                        </el-col>
+                    </el-row>
+                </el-form-item>
+            </el-col>
+            <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                 <el-form-item label="Transportadora" prop="transportadora">
                     <el-select 
                     size="mini" 
@@ -171,19 +194,10 @@
                 </el-form-item>
             </el-col>
              <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                <el-form-item label="Peso">
+                <el-form-item label="Peso en Kg.">
                     <el-input 
                     size="mini"
                     @input="setPeso"
-                    placeholder="">
-                    </el-input>
-                </el-form-item>
-            </el-col>
-            <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                <el-form-item label="Tenedor">
-                    <el-input 
-                    size="mini"
-                    @input="setTenedor"
                     placeholder="">
                     </el-input>
                 </el-form-item>
@@ -310,6 +324,7 @@ export default {
             'setRadicaRndc',
             'setCedulaPropietario',
             'setCedulaPoseedor',
+            'setCedulaTenedor',
             'setTransportadora',
         ]),
         title(field){

@@ -143,16 +143,17 @@ class ConsolidacionController {
             message: 'success'
         }
     }
-    async add_servicio({ params }){
-        const { consolidacion_id, cuadre_servicio_id } = params
+    async add_servicio({ params, request }){
+        const { consolidacion_id } = params
+        const { servicios } = request
         //await CuadreServicio.query().where('consolidacion_id', consolidacion_id).update({ consolidacion_id: null })
-        const cuadreServicio = await CuadreServicio.find(cuadre_servicio_id)
         const cons = await Database.from('pivot_consolidacion_cuadre_servicios').where('consolidacion_id', consolidacion_id)
-       
+        
+
         if(cons.length > 0){
             await Database.table('pivot_consolidacion_cuadre_servicios').where('consolidacion_id', consolidacion_id).delete()
         }
-        await cuadreServicio.consolidacion().attach([consolidacion_id])
+        await Consolidacion.cuadre_servicio().attach(servicios)
         return {
             message: 'success'
         }

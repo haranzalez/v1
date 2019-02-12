@@ -1,7 +1,7 @@
 import HTTP from '../http';
 import router from '../router'
 import UserServices from '../services/UserServices'
-import { Notification, Message, Confirm } from 'element-ui'
+import { Notification, Message, Loading } from 'element-ui'
 import { mapGetters } from 'vuex';
 
 export default {
@@ -42,7 +42,8 @@ export default {
                 console.log(err)
             })
         },
-        createProducto({state, dispatch}){
+        createProducto({state, dispatch, rootState}){
+            var load = Loading.service(rootState.sharedValues.loading_options)
             HTTP().local.post('api/productos/crear', {
                 id: state.producto.id,
                 nombre: state.producto.nombre,
@@ -58,14 +59,15 @@ export default {
                     })
                     dispatch('fetchProductosList')
                 }
-                
+                load.close()
                
             })
             .catch(err => {
                 console.log(err)
             })
         },
-        editProducto({state}){
+        editProducto({state, rootState}){
+            var load = Loading.service(rootState.sharedValues.loading_options)
             HTTP().local.put('api/productos/'+state.producto.id+'/update', {
                 id: state.producto.id,
                 nombre: state.producto.nombre,
@@ -81,12 +83,14 @@ export default {
                     })
                     dispatch('fetchProductosList')
                 }
+                load.close()
             })
             .catch(err => {
                 console.log(err)
             })
         },
-        delProducto({state, dispatch}){
+        delProducto({state, dispatch, rootState}){
+            var load = Loading.service(rootState.sharedValues.loading_options)
             HTTP().local.delete('api/productos/'+state.producto.id+'/delete')
             .then(d => {
                 if(d.data.message == 'success'){
@@ -97,6 +101,7 @@ export default {
                     })
                     dispatch('fetchProductosList')
                 }
+                load.close()
             })
             .catch(err => {
                 console.log(err)

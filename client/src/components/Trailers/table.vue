@@ -47,9 +47,6 @@
     		</el-dropdown>
 			</div>
 		</el-col>
-		
-		
-	
 	<el-table
 	v-loading.body="loadingTrailersTable"
 	stripe
@@ -59,32 +56,21 @@
 	ref="trailersTable"
 	size="mini"
     :data="filtered"
+	v-if="filtered"
 	:default-sort = "{prop: 'id', order: 'descending'}"
     style="width: 100%">
-    <el-table-column
+	 <el-table-column
 	  sortable
 	  fixed
+      prop="id"
+      label="ID"
+      width="55">
+    </el-table-column>
+    <el-table-column
+	  sortable
       prop="placa"
       label="Placa"
       width="80">
-    </el-table-column>
-    <el-table-column
-	  sortable
-      prop="tipo_de_vehiculo"
-      label="Tipo de vehiculo"
-      width="150">
-    </el-table-column>
-	<el-table-column
-	  sortable
-      prop="tipo_de_configuracion"
-      label="Tipo de configuracion"
-      width="190">
-    </el-table-column>
-	<el-table-column
-	  sortable
-      prop="tenedor"
-      label="Tenedor"
-      width="120">
     </el-table-column>
 	<el-table-column
 	  sortable
@@ -92,64 +78,33 @@
       label="Modelo"
       width="120">
     </el-table-column>
-    <el-table-column
-	  sortable
-      prop="propietario"
-      label="Propietario"
-      width="170">
-    </el-table-column>
-    <el-table-column
-	  sortable
-      prop="tipo_de_flota"
-      label="Tipo de flota"
-      width="150">
-    </el-table-column>
-     <el-table-column
-	  sortable
-      prop="poseedor"
-      label="Poseedor"
-      width="120">
-    </el-table-column>
-     <el-table-column
-	  sortable
-      prop="color"
-      label="Color"
-      width="150">
-    </el-table-column>
-     <el-table-column
+	 <el-table-column
 	  sortable
       prop="marca_trailer"
       label="Marca"
       width="150">
     </el-table-column>
-     <el-table-column
-	  sortable
-      prop="peso"
-      label="Peso"
-      width="150">
-    </el-table-column>
     <el-table-column
 	  sortable
-      prop="tipo_carroceria"
-      label="Tipo carroceria"
-      width="150">
+      prop="tipo_de_vehiculo"
+      label="Tipo de vehiculo"
+    >
     </el-table-column>
+	
     <el-table-column
-	  sortable
       prop="estado"
       label="Estado"
-      width="150">
-    </el-table-column>
-    <el-table-column
-	  sortable
-      label="Radica RNDC"
-      width="150"
-	  align="center">
-	  <template slot-scope="scope">
-		  <el-tag
-          :type="(scope.row.radica_rndc)?'success':'danger'"
-          disable-transitions>{{(scope.row.radica_rndc)?'Si':'No'}}</el-tag>
-	  </template>
+      width="100"
+      :filters="[{ text: 'Activo', value: 'Activo' },{ text: 'Desactivo', value: 'Desactivo' },{ text: 'Taller', value: 'Taller' }]"
+      :filter-method="filterTag"
+      filter-placement="bottom-end">
+      <template slot-scope="scope">
+        <el-tag
+          :type="determineEstado(scope.row.estado)"
+          disable-transitions>
+		  {{scope.row.estado}}
+		</el-tag>
+      </template>
     </el-table-column>
   </el-table>
 
@@ -210,6 +165,15 @@ export default {
 		TrailersCreateForm,
 	},
     methods: {
+		determineEstado(row){
+			if(row == 'Desactivo'){
+				return 'danger'
+			}
+			if(row == 'Activo'){
+				return 'success'
+			}
+			return 'warning'
+		},
 		reloadTable(){
 			this.fetchTrailersList() 
         },

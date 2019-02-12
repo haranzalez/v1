@@ -1,7 +1,7 @@
 import HTTP from '../http';
 import router from '../router'
 import UserServices from '../services/UserServices'
-import { Notification, Message, Confirm } from 'element-ui'
+import { Notification, Message, Loading } from 'element-ui'
 
 
 export default {
@@ -42,7 +42,8 @@ export default {
                 console.log(err)
             })
         },
-        createServicio({state, dispatch}){
+        createServicio({state, dispatch, rootState}){
+            var load = Loading.service(rootState.sharedValues.loading_options)
             HTTP().local.post('api/servicios/crear', {
                 id: state.servicio.id,
                 nombre: state.servicio.nombre,
@@ -57,6 +58,7 @@ export default {
                         message: 'Servicio creado.'
                     })
                     dispatch('fetchServiciosList')
+                    load.close()
                 }
                 
                
@@ -65,7 +67,8 @@ export default {
                 console.log(err)
             })
         },
-        editServicio({state}){
+        editServicio({state, rootState}){
+            var load = Loading.service(rootState.sharedValues.loading_options)
             HTTP().local.put('api/servicios/'+state.servicio.id+'/update', {
                 id: state.servicio.id,
                 nombre: state.servicio.nombre,
@@ -80,13 +83,15 @@ export default {
                         message: 'Servicio actualizado.'
                     })
                     dispatch('fetchServiciosList')
+                    load.close()
                 }
             })
             .catch(err => {
                 console.log(err)
             })
         },
-        delServicio({state, dispatch}){
+        delServicio({state, dispatch, rootState}){
+            var load = Loading.service(rootState.sharedValues.loading_options)
             HTTP().local.delete('api/servicios/'+state.servicio.id+'/delete')
             .then(d => {
                 if(d.data.message == 'success'){
@@ -97,6 +102,7 @@ export default {
                     })
                     dispatch('fetchServiciosList')
                 }
+                load.close()
             })
             .catch(err => {
                 console.log(err)

@@ -23,10 +23,10 @@
                      <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
                         <el-form-item label="Precio">
                             <el-input
-                                :value="cuadreServicioEdit.precio"
+                                :value="cuadre.precio_negociado"
                                 size="mini"
                                 placeholder="$0"
-                                @input="setPrecioServicioEdit">
+                                @input="setPrecioServicioNegociado">
                             </el-input>
                         </el-form-item>
                     </el-col>
@@ -61,7 +61,7 @@ export default {
 			'permisos',
         ]),
         ...mapState('cuadreServicios', [
-           'cuadreServicioEdit',
+           'cuadre',
            'selectedServicio',
         ]),
         ...mapState('servicios', [
@@ -74,7 +74,7 @@ export default {
 	},
     methods: {
         ...mapMutations('cuadreServicios', [
-            'setPrecioServicioEdit',
+            'setPrecioServicioNegociado',
             'setSelectedServicio',
             'setSummaryType',
         ]),

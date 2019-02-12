@@ -1,6 +1,6 @@
 import HTTP from '../http';
 import router from '../router'
-import { Notification, Message, Confirm } from 'element-ui'
+import { Notification, Message, Confirm, Loading } from 'element-ui'
 
 
 export default {
@@ -38,7 +38,8 @@ export default {
         loadingVehiculosTable: false, 
     },
     actions: {
-        createVehiculo({state, dispatch}){
+        createVehiculo({state, dispatch, rootState }){
+            var load = Loading.service(rootState.sharedValues.loading_options)
             HTTP().local.post('api/vehiculos/crear', state.vehiculo)
             .then(d => {
                 Message({
@@ -49,12 +50,14 @@ export default {
                 dispatch('assignConductor')
                 dispatch('assignTrailer')
                 dispatch('fetchVehiculosList')
+                load.close()
             })
             .catch(err => {
                 console.log(err)
             })
         },
-        editVehiculo({state, dispatch}){
+        editVehiculo({state, dispatch, rootState}){
+            var load = Loading.service(rootState.sharedValues.loading_options)
             HTTP().local.put('api/vehiculos/'+state.vehiculo.id+'/update', state.vehiculo)
             .then(d => {
                 Message({
@@ -64,13 +67,14 @@ export default {
                 })
                 dispatch('assignConductor')
                 dispatch('assignTrailer')
-                
+                load.close()
             })
             .catch(err => {
                 console.log(err)
             })
         },
-        delVehiculo({state, dispatch}){
+        delVehiculo({state, dispatch, rootState}){
+            var load = Loading.service(rootState.sharedValues.loading_options)
             HTTP().local.delete('api/vehiculos/'+state.vehiculo.id+'/delete')
             .then(d => {
                 if(d){
@@ -80,6 +84,7 @@ export default {
                         message: 'Vehiculo eliminado exitosamente'
                     })
                     dispatch('fetchVehiculosList')
+                    load.close()
                 }
             })
             .catch(err => {
@@ -220,7 +225,7 @@ export default {
             state.vehiculo.cedula_poseedor = value
         },
         setCedulaTenedor(state, value){
-            state.vehiculo.cedula_poseedor = value
+            state.vehiculo.cedula_tenedor = value
         },
         setTransportadora(state, value){
             state.vehiculo.transportadora_id = value

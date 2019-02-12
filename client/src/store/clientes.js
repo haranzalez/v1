@@ -1,14 +1,13 @@
 import HTTP from '../http';
 import router from '../router'
 import UserServices from '../services/UserServices'
-import { Notification, Message, Confirm } from 'element-ui'
+import { Notification, Message, Loading } from 'element-ui'
 import { mapGetters } from 'vuex';
 
 export default {
     namespaced: true,
     state: {
         cliente:{
-           id: null,
            nombre_razon_social: null,
            nit: null,
            direccion: null,
@@ -25,7 +24,6 @@ export default {
            radica_rndc: false,
         },
         deposito: {
-            id: null,
             cliente_id: null,
             cantidad: null,
             fecha_deposito: null,
@@ -100,12 +98,10 @@ export default {
 
     actions: {
         fetchCuadresRutas({state, commit}, id){
-            console.log(id)
             commit('setLoadingCuadreRutaTable', true)
             id = (id)?id:state.cliente.id
             HTTP().local.get('api/clientes/'+id+'/cuadre-viajes')
             .then(d => {
-                console.log(d.data[0])
                 commit('setCuadreRutasList', d.data)
                 commit('setLoadingCuadreRutaTable', false)
             })
@@ -131,7 +127,6 @@ export default {
             id = (id)?id:state.cliente.id
             HTTP().local.get('api/clientes/'+id+'/cuadre-servicios')
             .then(d => {
-                console.log(d.data)
                 commit('setCuadreServiciosList', d.data)
                 commit('setLoadingCuadreServicioTable', false)
             })
@@ -139,7 +134,8 @@ export default {
                 console.log(err)
             })
         },
-        create_consolidacion({ state }){
+        create_consolidacion({ state, rootState}){
+            var load = Loading.service(rootState.sharedValues.loading_options)
             HTTP().local.get('api/consolidaciones/'+state.cliente.id+'/crear')
             .then(d => {
                 if(d.data.message == "success"){
@@ -149,26 +145,15 @@ export default {
                         message: 'Consolidacion creada.'
                     })
                 }
+                load.close()
             })
             .catch(err => {
                 console.log(err)
             })
         },
-        createCliente({state, dispatch}){
-            HTTP().local.post('api/clientes/crear', {
-                nombre_razon_social: state.cliente.nombre_razon_social,
-                nit: state.cliente.nit,
-                direccion: state.cliente.direccion,
-                ciudad: state.cliente.ciudad,
-                email: state.cliente.email,
-                telefono: state.cliente.telefono,
-                celular: state.cliente.celular,
-                persona_de_contacto: state.cliente.persona_de_contacto,
-                direccion_envio_de_factura: state.cliente.direccion_envio_de_factura,
-                contrato: state.cliente.contrato,
-                cupo: state.cliente.cupo,
-                dias: state.cliente.dias,
-            })
+        createCliente({state, dispatch, rootState}){
+            var load = Loading.service(rootState.sharedValues.loading_options)
+            HTTP().local.post('api/clientes/crear', state.cliente)
             .then(d => {
                 if(d.data.message == "success"){
                     Message({
@@ -178,27 +163,16 @@ export default {
                     })
                     dispatch('fetchClientesList')
                 }
+                load.close()
                 return false
             })
             .catch(err => {
                 console.log(err)
             })
         },
-        editCliente({state, dispatch}){
-            HTTP().local.put('api/clientes/'+state.cliente.id+'/update', {
-                nombre_razon_social: state.cliente.nombre_razon_social,
-                nit: state.cliente.nit,
-                direccion: state.cliente.direccion,
-                ciudad: state.cliente.ciudad, 
-                email: state.cliente.email,
-                telefono: state.cliente.telefono,
-                celular: state.cliente.celular,
-                persona_de_contacto: state.cliente.persona_de_contacto,
-                direccion_envio_de_factura: state.cliente.direccion_envio_de_factura,
-                contrato: state.cliente.contrato,
-                cupo: state.cliente.cupo,
-                dias: state.cliente.dias,
-            })
+        editCliente({state, dispatch, rootState}){
+            var load = Loading.service(rootState.sharedValues.loading_options)
+            HTTP().local.put('api/clientes/'+state.cliente.id+'/update', state.cliente)
             .then(d => {
                 Message({
                     type: 'success',
@@ -206,12 +180,14 @@ export default {
                     message: 'Actualizacion exitosa.'
                 })
                 dispatch('fetchClientesList')
+                load.close()
             })
             .catch(err => {
                 console.log(err)
             })
         },
-        delCliente({state, dispatch}){
+        delCliente({state, dispatch, rootState}){
+            var load = Loading.service(rootState.sharedValues.loading_options)
             HTTP().local.delete('api/clientes/'+state.cliente.id+'/delete')
             .then(d => {
                 if(d){
@@ -221,6 +197,7 @@ export default {
                         message: 'Cliente eliminado exitosamente'
                     })
                     dispatch('fetchClientesList')
+                    load.close()
                 }
             })
             .catch(err => {
@@ -228,7 +205,6 @@ export default {
             })
         },
         fetchClienteConsolidacion({commit, dispatch}, id){
-            console.log(id)
             HTTP().local.get('api/clientes/'+id)
             .then(d => {
                 commit('setFullCliente', d.data)
@@ -238,7 +214,6 @@ export default {
             })
         },
         fetchCliente({commit, dispatch}, id){
-            console.log(id)
             HTTP().local.get('api/clientes/'+id)
             .then(d => {
                 commit('setFullCliente', d.data)
@@ -424,7 +399,6 @@ export default {
         },
         paramsReset(state){
             state.cliente = {
-                id: null,
                 nombre_razon_social: null,
                 nit: null,
                 direccion: null,
@@ -434,19 +408,17 @@ export default {
                 celular: null,
                 persona_de_contacto: null,
                 direccion_envio_de_factura: null,
-                tipo_contrato: null,
-                created_at: null,
                 contrato: null,
+                cupo: null,
                 dias: null,
+                created_at: null,
                 radica_rndc: false,
-                anticipo: false,
             }
         },
         setFullCLienteConsolidacion(state, value){
             state.clienteConsolidacion = value
         },
         setLoadingConsolidacionTableBtnsPkg(state, value){
-            console.log(value)
             state.loadingConsolidacionTableBtnsPkg = value
         },
         setDataready(state, value){

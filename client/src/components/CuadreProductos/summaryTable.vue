@@ -1,13 +1,17 @@
 <template>
    <vue-scroll class="page-summary-viaje">
-           <h3 style="text-align:left;width:60%;margin-left:auto;">Resumen</h3>
-           <el-row style="text-align:right;width:60%;margin-left:auto;" v-for="(value, key) in summary" :key="key" >
-                
-               <el-col style="border-bottom: 1px solid #ccc" :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-                   <strong>{{key}}</strong>
+           <h3 style="text-align:left;width:70%;margin-left:auto;">Valor por defecto</h3>
+           <el-row style="width:70%;margin-left:auto;" v-for="(value, key) in summary" :key="key" >
+               <el-col style="font-size: 15px;font-weigth: bold;" :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+                  {{key}}
                </el-col>
-               <el-col style="border-bottom: 1px solid #ccc" :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+               <el-col style="font-size: 25px;font-weigth: bold;color:green;" :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
                   {{value}}
+               </el-col>
+           </el-row>
+           <el-row style="width:70%;margin-left:auto;margin-top:15px;">
+               <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+                  <el-button :disabled="btnEnabled" size="mini" type="success" @click="setDefaultValues">Aplicar valores</el-button>
                </el-col>
            </el-row>
    </vue-scroll>
@@ -27,6 +31,13 @@ export default {
 		}
 	},
 	computed: {
+        btnEnabled(){
+            if(this.producto.precio > 0){
+                return false
+            }else{
+                return true
+            }
+        },
         ...mapState('rutas', [
             'ruta',
         ]),
@@ -37,24 +48,21 @@ export default {
             'cuadre',
         ]),
         summary(){
-            let cuadre = (this.cuadre.precio != null)?Number(this.cuadre.precio):0
             let producto = (this.producto.precio != null)?Number(this.producto.precio):0
-            let ajuste = (cuadre > 0 && producto > 0)?cuadre - producto:0
-            let total = producto + ajuste
-            this.setAjuste(ajuste)
             return {
                 producto,
-                ajuste,
-                cuadre,
-                total
             }
         }
 	},
 	components: {
 	},
     methods: {
+        setDefaultValues(){
+            this.setPrecioCuadreProducto(this.producto.precio)
+        },
         ...mapMutations('cuadreProductos', [
             'setAjuste',
+            'setPrecioCuadreProducto',
         ])
     },
 }

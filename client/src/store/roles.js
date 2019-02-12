@@ -1,7 +1,6 @@
 import HTTP from '../http';
 import router from '../router'
-import { Notification, Message } from 'element-ui'
-import { Loading } from 'element-ui';
+import { Notification, Message, Loading } from 'element-ui'
 export default {
     namespaced: true,
     state: {
@@ -54,7 +53,8 @@ export default {
             })
         },
   
-        createRole({state, commit}){
+        createRole({state, commit, rootState}){
+            var load = Loading.service(rootState.sharedValues.loading_options)
             commit('setLoadingCrear', true)
             let pkg = {
             nombre: state.roleToCreate.nombre,
@@ -71,18 +71,19 @@ export default {
                     })
                     commit('setLoadingCrear', false)
                 }
+                load.close()
             }).catch(err => {
                 console.log(err)
             })
         },
-        editRole({state, commit, dispatch}){
+        editRole({state, commit, dispatch, rootState}){
+            var load = Loading.service(rootState.sharedValues.loading_options)
             commit('setLoadingActualizar', true)
             let pkg = {
                nombre: state.roleToEdit.nombre,
                description: state.roleToEdit.description,
                modulos: state.selectedModulos,
             }
-            console.log(pkg)
             HTTP().local.patch('api/roles/update/'+state.roleToEdit.id, pkg)
             .then(d => {
                 if(d.status == 200){
@@ -94,6 +95,7 @@ export default {
                     dispatch('fetchRoles')
                     commit('setLoadingActualizar', false)
                 }
+                load.close()
             }).catch(err => {
                 console.log(err)
             })
@@ -207,21 +209,22 @@ export default {
                 console.log(res)
             })
         },
-        delRole({state, dispatch}){
-				HTTP().local.delete('api/roles/destroy/'+state.roleToEdit.id)
-                .then(res => {
-                    if(res.data.message == 'success'){
-                        Message({
-                            showClose: true,
-                            message: 'Role eliminado.',
-                            type: 'success'
-                        })
-                        dispatch('fetchRoles')
-                    }
-                    
-                }).catch(err => {
-                    console.log(err)
-                })
+        delRole({state, dispatch, rootState}){
+            var load = Loading.service(rootState.sharedValues.loading_options)
+            HTTP().local.delete('api/roles/destroy/'+state.roleToEdit.id)
+            .then(res => {
+                if(res.data.message == 'success'){
+                    Message({
+                        showClose: true,
+                        message: 'Role eliminado.',
+                        type: 'success'
+                    })
+                    dispatch('fetchRoles')
+                }
+                load.close()
+            }).catch(err => {
+                console.log(err)
+            })
 			
             
         },

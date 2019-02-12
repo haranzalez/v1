@@ -1,7 +1,7 @@
 import HTTP from '../http';
 import router from '../router'
 import UserServices from '../services/UserServices'
-import { Notification, Message, Confirm } from 'element-ui'
+import { Notification, Message, Loading } from 'element-ui'
 import { mapGetters } from 'vuex';
 import NumbersService from '../services/NumberFormattingService'
 const formatter = new Intl.NumberFormat({
@@ -35,6 +35,7 @@ export default {
             nombre_municipio: null,
             codigo_municipio: null,
         },
+        loadingRutasTable: false,
         valor_flete_formatted: 0,
         pago_conductor_formatted: 0,
         pago_tercero_formatted: 0,
@@ -49,7 +50,8 @@ export default {
     },
 
     actions: {
-        create_municipio({ state }){
+        create_municipio({ state, rootState }){
+            var load = Loading.service(rootState.sharedValues.loading_options)
             HTTP().local.post('api/municipios/crear', {
                 nombre_municipio: state.municipio.nombre_municipio,
                 codigo_dane: state.municipio.codigo_municipio,
@@ -63,6 +65,7 @@ export default {
                     })
                     return true
                 }
+                load.close()
                 return false
                 
                 
@@ -71,7 +74,8 @@ export default {
                 console.log(err)
             })
         },
-        createRuta({state}){
+        createRuta({state, rootState}){
+            var load = Loading.service(rootState.sharedValues.loading_options)
             HTTP().local.post('api/rutas/crear', state.ruta)
             .then(d => {
                 if(d.data.message == "success"){
@@ -81,6 +85,7 @@ export default {
                     })
                     return true
                 }
+                load.close()
                 return false
                 
                 
@@ -89,7 +94,8 @@ export default {
                 console.log(err)
             })
         },
-        editRuta({state}){
+        editRuta({state, rootState}){
+            var load = Loading.service(rootState.sharedValues.loading_options)
             HTTP().local.put('api/rutas/'+state.ruta.id+'/update', state.ruta)
             .then(d => {
                 if(d.data.message == 'success'){
@@ -99,13 +105,15 @@ export default {
                         message: 'Actualizacion exitosa.'
                     })
                 }
+                load.close()
                 
             })
             .catch(err => {
                 console.log(err)
             })
         },
-        delRuta({state}){
+        delRuta({state, rootState}){
+            var load = Loading.service(rootState.sharedValues.loading_options)
             HTTP().local.delete('api/rutas/'+state.ruta.id+'/delete')
             .then(d => {
                 if(d){
@@ -115,6 +123,7 @@ export default {
                         message: 'Ruta eliminada exitosamente'
                     })
                 }
+                load.close()
             })
             .catch(err => {
                 console.log(err)
@@ -130,13 +139,16 @@ export default {
             })
         },
         fetchRutasList({commit, dispatch}){
+            commit('setLoadingRutasTable', true)
             HTTP().local.get('api/rutas')
             .then(d => {
                 dispatch('formatValuesInRutasList', d.data)
                 commit('setDataReady', true)
                 dispatch('renderTableHeadings')
+                commit('setLoadingRutasTable', false)
             })
             .catch(err => {
+                commit('setLoadingRutasTable', false)
                 console.log(err)
             })
         },
@@ -223,7 +235,6 @@ export default {
                 data[prop]['pago_tercero'] = '$'+formatter.format(parseInt(data[prop]['pago_tercero']))
                 data[prop]['pago_cabezote'] = '$'+formatter.format(parseInt(data[prop]['pago_cabezote']))
             }
-            console.log(data)
             commit('setRutaList', data)
         },
     },
@@ -295,6 +306,9 @@ export default {
         },
         setTipoDeVehiculo(state, value){
             state.ruta.tipo_de_vehiculo = value
+        },
+        setLoadingRutasTable(state, value){
+            state.loadingRutasTable = value
         },
         rutaReset(state, value){
             state.ruta = {

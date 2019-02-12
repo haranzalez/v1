@@ -131,12 +131,10 @@ export default {
 	},
 	computed:{
 		selectedRoles: {
-			get: function(value){
-				console.log(value)
+			get: function(){
 				return this.selected
 			},
 			set: function(value){
-				console.log(value)
 				this.setSelectedRoles(value)
 			}
 		},
@@ -175,9 +173,6 @@ export default {
             'fetchRolesList',
 			'createUser',
         ]),
-		onSubmit() {
-			this.createUser(this.selectedRoles)
-		},
 		resizeLabelPosition() {
 			if(window.innerWidth <= 768) {
 				this.labelPosition = 'top'	

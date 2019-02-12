@@ -36,6 +36,9 @@ class TrailerController {
             tipo_carroceria,
             estado,
             radica_rndc,
+            cedula_poseedor,
+            cedula_propietario,
+            cedula_tenedor,
             transportadora_id,
         } = request.all();
 
@@ -54,6 +57,9 @@ class TrailerController {
             tipo_carroceria,
             estado,
             radica_rndc,
+            cedula_poseedor,
+            cedula_propietario,
+            cedula_tenedor,
             transportadora_id,
         });
 
@@ -79,6 +85,9 @@ class TrailerController {
             tipo_carroceria,
             estado,
             radica_rndc,
+            cedula_poseedor,
+            cedula_propietario,
+            cedula_tenedor,
             transportadora_id,
         } = request.all()
 
@@ -97,10 +106,11 @@ class TrailerController {
         trailer.estado = estado
         trailer.radica_rndc = radica_rndc
         trailer.transportadora_id = transportadora_id
+        trailer.cedula_poseedor = cedula_poseedor
+        trailer.cedula_propietario = cedula_propietario
+        trailer.cedula_tenedor = cedula_tenedor
         trailer.save()
-
         return trailer
-
     }
 
      //DELETE

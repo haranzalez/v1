@@ -81,7 +81,7 @@ import moment from 'moment-timezone'
 import router from '../../router'
 
 export default {
-	name: 'ConductorDatosBancarios - Editar',
+	name: 'conductorDatosBancariosEditar',
 	data () {
       	return {
             

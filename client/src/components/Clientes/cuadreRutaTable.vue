@@ -7,7 +7,7 @@
 	@current-change="handleCurrentTableChange"
 	size="mini"
 	stripe
-	height="400"
+
     :data="filtered"
     style="width: 100%">
     <el-table-column
@@ -78,7 +78,7 @@ export default {
 	data () {
       	return {
               filter: '',
-              createViajeEditFormVisible: false,
+			  createViajeEditFormVisible: false,
 		}
 	},
 	computed: {
@@ -91,6 +91,7 @@ export default {
         ...mapState('cuadreViajes', [
 			'cuadre',
 			'loading',
+			'selectedRutaForHistoryTable',
         ]),
         filtered(){
 			if(this.filter !== ''){
@@ -115,11 +116,15 @@ export default {
 				this.$refs.clientsCuadreRutaTable.setCurrentRow(val);
 				return
 			}
+
+			this.setSelectedRutaForHistoryTable(val.ruta)
 			this.fetchCuadreRuta({id: val.id})
 			this.$refs.clientsCuadreRutaTable.setCurrentRow(val);
 
 		},
-
+		 ...mapMutations('cuadreViajes', [
+            'setSelectedRutaForHistoryTable',
+		]),
         ...mapActions('clientes', [
             'fetchCuadresRutas',
         ]),

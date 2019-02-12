@@ -1,88 +1,107 @@
 import HTTP from '../http';
 import router from '../router'
-import { Notification, Message, Confirm } from 'element-ui'
+import { Notification, Message, Loading } from 'element-ui'
 
 
 export default {
     namespaced: true,
     state: {
         cuadre:{
-            id: null,
             cliente_id: null,
-            precio: null,
-            ajuste: null,
+            precio_negociado: null,
             servicio: null,
             precio_servicio: null,
         },
-        cuadreServicioEdit:{
-            id: null,
-            cliente_id: null,
-            precio: null,
-            ajuste: null,
-            servicio: null,
-            precio_servicio: null,
-        },
+        cuadreHistoryList: null,
+        loadingCuadreServicioHistoryTable: false,
+        selectedServicioForHistoryTable: '',
         cuadreServiciosList: null,
         selectedServicio: null,
         headings: [],  
         summaryType: 'create',
     },
     actions: {
-        createCuadreServicio({state}, cliente_id){
+        createCuadreServicio({state, rootState}, cliente_id){
+            console.log(state.cuadre.precio_servicio)
+            var load = Loading.service(rootState.sharedValues.loading_options)
             HTTP().local.post('api/cuadre-servicios/crear', {
                 cliente_id: cliente_id,
                 servicio_id: state.selectedServicio,
-                precio: state.cuadre.precio,
-                ajuste: state.cuadre.ajuste,
+                precio_negociado: state.cuadre.precio_negociado,
+                precio_servicio: state.cuadre.precio_servicio,
             })
             .then(d => {
                 if(d.data.message == 'success'){
+                    load.close()
                     return true
                 }
+                load.close()
                 return d.data.message
             })
             .catch(err => {
                 console.log(err)
             })
         },
-        editCuadreServicio({state}, cliente_id){
+        editCuadreServicio({state, rootState}, cliente_id){
+            var load = Loading.service(rootState.sharedValues.loading_options)
+
             HTTP().local.put('api/cuadre-servicios/'+state.cuadre.id+'/update', {
                 cliente_id: cliente_id,
                 servicio_id: state.selectedServicio,
-                precio: state.cuadreServicioEdit.precio,
-                ajuste: state.cuadreServicioEdit.ajuste,
+                precio_negociado: state.cuadre.precio_negociado,
+                precio_servicio: state.cuadre.precio_servicio,
             })
             .then(d => {
-                console.log(d)
                 Message({
                     showClose: true,
                     typr: "success",
                     message: 'Actualizacion Exitosa.'
                 })
+                load.close()
             })
             .catch(err => {
+                console.log(err)
+                load.close()
+            })
+        },
+        delCuadreServicio({state, rootState}){
+            var load = Loading.service(rootState.sharedValues.loading_options)
+            HTTP().local.delete('api/cuadre-servicios/'+state.cuadre.id+'/delete')
+            .then(d => {
+                if(d.data.message == 'success'){
+                    load.close()
+                    return true
+                }
+                load.close()
+            })
+            .catch(err => {
+                load.close()
                 console.log(err)
             })
         },
-        delCuadreServicio({state}){
-            HTTP().local.delete('api/cuadre-servicios/'+state.cuadreServicioEdit.id+'/delete')
+        fetchCuadreServicioHistory({ state, commit, rootState }){
+            commit('setLoadingCuadreServicioHistoryTable', true)
+            HTTP().local.post('api/cuadre-servicios/history', {
+                cuadre_servicio_id: state.cuadre.id
+            })
             .then(d => {
-                if(d.data.message == 'success'){
-                    return true
-                }
+                console.log(d.data)
+                commit('setCuadreServicioHistoryList', d.data)
+                commit('setLoadingCuadreServicioHistoryTable', false)
             })
             .catch(err => {
                 console.log(err)
+                commit('setLoadingCuadreServicioHistoryTable', false)
             })
         },
         fetchCuadreServicio({commit}, pkg){
             HTTP().local.get('api/cuadre-servicios/'+pkg.id)
             .then(d => {
-                console.log(d.data)
+               console.log(d.data)
+               d.data[0]['precio_servicio'] = d.data[0].servicio[0].precio
                commit('setFullCuadreServicio', d.data[0])
-               commit('setPrecioCuadreServicio', d.data[0].precio)
                commit('servicios/setPrecioServicio', d.data[0].servicio[0].precio, {root: true})
-               commit('setSelectedServicio', d.data[0].servicio[0].nombre)
+               commit('setSelectedServicio', d.data[0].servicio[0].id)
             })
             .catch(err => {
                 console.log(err)
@@ -115,7 +134,7 @@ export default {
     },
     mutations: {
         setFullCuadreServicio(state, value){
-            state.cuadreServicioEdit = value
+            state.cuadre = value
         },
         setCuadreServiciosList(state, list){
             state.cuadreServiciosList = list
@@ -128,18 +147,13 @@ export default {
         },
         setPrecioCuadreServicio(state, value){
             state.cuadre.precio_servicio = value
+            state.cuadre.precio_negociado = value
+        },
+        setPrecioServicioNegociado(state, value){
+            state.cuadre.precio_negociado = value
         },
         setPrecioServicio(state, value){
-            state.cuadre.precio = value
-        },
-        setPrecioServicioEdit(state, value){
-            state.cuadreServicioEdit.precio = value
-        },
-        setAjuste(state, value){
-            state.cuadre.ajuste = value
-        },
-        setAjusteEdit(state, value){
-            state.cuadreServicioEdit.ajuste = value
+            state.cuadre.precio_servicio = value
         },
         setSelectedServicio(state, value){
             state.selectedServicio = value
@@ -147,20 +161,19 @@ export default {
         setSummaryType(state, value){
             state.summaryType = value
         },
+        setCuadreServicioHistoryList(state, value){
+            state.cuadreHistoryList = value
+        },
+        setLoadingCuadreServicioHistoryTable(state, value){
+            state.loadingCuadreServicioHistoryTable = value
+        },
+        setSelectedServicioForHistoryTable(state, value){
+            state.selectedServicioForHistoryTable = value
+        },
         resetCuadreServicio(state){
             state.cuadre = {
-                id: null,
                 cliente_id: null,
-                precio: null,
-                ajuste: null,
-                servicio: null,
-                precio_servicio: null,
-            }
-            state.cuadreServicioEdit = {
-                id: null,
-                cliente_id: null,
-                precio: null,
-                ajuste: null,
+                precio_negociado: null,
                 servicio: null,
                 precio_servicio: null,
             }

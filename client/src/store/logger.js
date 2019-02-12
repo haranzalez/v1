@@ -9,19 +9,18 @@ export default {
         loggerList: null,
         loadingLoggerTable: false,
         headings: null,
+        totalRecords: 0,
+        page: 1,
     },
     actions: {
-      
-        fetchLoggerList({ commit }){
+        fetchLoggerList({ state, commit }){
             commit('setLoadingLoggerTable', true)
-            HTTP().local.get('/api/logger')
+            HTTP().local.get('/api/logger/'+state.page)
             .then(res => {
-               console.log(res.data)
                commit('setTableHeadings', res.data[0])
                commit('setLoggerList', res.data)
                commit('setLoadingLoggerTable', false)
             }).catch(err => {
-                console.log(err)
                 Notification.warning({
                     title: 'Atencion!',
                     message: 'Se produjo un error',
@@ -29,6 +28,19 @@ export default {
                 });
             })
         },
+        fetchNumberOfRecords({ commit }){
+            HTTP().local.get('/api/logger-num-of-records')
+            .then(res => {
+               console.log(res.data)
+               commit('setTotalRecords', res.data)
+            }).catch(err => {
+                Notification.warning({
+                    title: 'Atencion!',
+                    message: 'Se produjo un error',
+                    position: 'bottom-right',
+                });
+            })
+        }
       
     },
     mutations: {
@@ -41,6 +53,12 @@ export default {
         setLoadingLoggerTable(state, value){
             state.loadingLoggerTable = value
         },
+        setTotalRecords(state, value){
+            state.totalRecords = value
+        },
+        setPage(state, value){
+            state.page = value
+        }
       
     },
 };

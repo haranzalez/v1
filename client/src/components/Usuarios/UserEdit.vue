@@ -86,7 +86,6 @@
 				<el-form-item>
 					<el-select
 						v-model="selectedRoles"
-						@change="handleSelectedRole"
 						class="select-wide"
 						filterable
 						no-match-text
@@ -100,11 +99,26 @@
 					</el-select>
 				</el-form-item>
 			</el-col>
-
+			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+				<h3>Credenciales</h3>
+			</el-col>
+			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+				<el-form-item label="Username">
+						<el-input
+						:value="usuario.username"  
+						@input="setUsername"
+						/>
+					</el-form-item>
+			</el-col>
+			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+				<el-form-item label="Contraseña">
+					<el-input :value="usuario.password" @input="setPassword">
+					</el-input>
+				</el-form-item>
+			</el-col>
 			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
 				<h3>Estado</h3>
 			</el-col>
-
 			<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
 				<el-form-item>
 					<el-switch
@@ -117,8 +131,6 @@
 					</el-switch>
 				</el-form-item>
 			</el-col>
-			
-			
 		</el-form>
 
 	</div>

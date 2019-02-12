@@ -27,7 +27,8 @@
                                 class="inputWidth"
                                 size="mini"
                                 placeholder="$0"
-                                @input="setPrecioProducto">
+                                :value="cuadre.precio_negociado"
+                                @input="setPrecioNegociado">
                             </el-input>
                         </el-form-item>
                     </el-col>
@@ -62,6 +63,7 @@ export default {
 			'permisos',
         ]),
         ...mapState('cuadreProductos', [
+           'cuadre',
            'selectedProducto',
         ]),
          ...mapState('rutas', [
@@ -93,7 +95,8 @@ export default {
             
         ]),
         ...mapMutations('cuadreProductos', [
-            'setPrecioProducto',
+            'setPrecioCuadreProducto',
+            'setPrecioNegociado',
             'setSelectedProducto',
         ]),
         ...mapActions('rutas', [

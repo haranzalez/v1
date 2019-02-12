@@ -7,7 +7,7 @@
 	@current-change="handleCurrentTableChange"
 	size="mini"
 	stripe
-	height="400"
+	
     :data="filtered"
     style="width: 100%">
     <el-table-column
@@ -15,29 +15,22 @@
 	  fixed
       prop="producto"
       label="Producto"
-	  min-width="230">
+	  max-width="150">
     </el-table-column>
     <el-table-column
 	  sortable
 	  align="center"
       prop="precio_producto"
       label="Precio"
-      min-width="100">
-    </el-table-column>
-	<el-table-column
-	  align="center"
-	  sortable
-      prop="ajuste"
-      label="Ajuste"
-      min-width="100">
+      max-width="100">
     </el-table-column>
 	 <el-table-column
 	 style="color:green !important;font-weight:bold;"
 	  sortable
 	  align="center"
-      prop="precio"
-      label="Cuadre"
-      min-width="100">
+      prop="precio_negociado"
+      label="Precio negociado"
+      max-width="150">
     </el-table-column>
 	
   </el-table>
@@ -95,7 +88,6 @@ export default {
 	},
     methods: {
         handleCurrentTableChange(val) {
-			console.log(val)
 			if(val == null){
 				this.$refs.clientsCuadreProductoTable.setCurrentRow(val);
 				return

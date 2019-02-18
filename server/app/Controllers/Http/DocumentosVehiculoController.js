@@ -24,22 +24,34 @@ class DocumentosVehiculoController {
             fecha_de_vencimiento, 
             vehiculo_id 
         } = request.all()
-        const res = await Database.table('documentos_vehiculos').insert({
-            aseguradora_id, 
-            tipo_de_poliza, 
-            numero_de_poliza, 
-            fecha_de_vencimiento, 
-            vehiculo_id
+        const polizaComparison = await Database.from('documentos_vehiculos').where({
+            vehiculo_id,
+            tipo_de_poliza
         })
 
-        if(res){
+        if(polizaComparison.length == 0){
+            const res = await Database.table('documentos_vehiculos').insert({
+                aseguradora_id, 
+                tipo_de_poliza, 
+                numero_de_poliza, 
+                fecha_de_vencimiento, 
+                vehiculo_id
+            })
+    
+            if(res){
+                return {
+                    message: 'success'
+                }
+            }
             return {
-                message: 'success'
+                message: 'fail'
+            }
+        }else{
+            return {
+                message: 'Ya existe un registro con tipo de poliza '+tipo_de_poliza+' para este vehiculo.'
             }
         }
-        return {
-            message: 'fail'
-        }
+        
         
     }
     async update_documento({ params, request }){

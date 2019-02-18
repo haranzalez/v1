@@ -1,7 +1,7 @@
 <template>
 <div>
 	<!--Edit dialog form -->
-	<el-dialog fullscreen center width="30%" top="5vh" :title="trailer.placa" :visible.sync="editFormVisible">
+	<el-dialog fullscreen center width="35%" top="5vh" :title="trailer.placa" :visible.sync="editFormVisible">
 		<TrailersEditForm></TrailersEditForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button size="mini" @click="editFormVisible = false">Cancelar</el-button>
@@ -9,7 +9,7 @@
 		</span>
 	</el-dialog>
 	<!--Create dialog form -->
-	<el-dialog fullscreen center width="30%" top="5vh" :visible.sync="createFormVisible">
+	<el-dialog fullscreen center width="35%" top="5vh" :visible.sync="createFormVisible">
 		<div slot="title">
 			<h2>{{(trailer.placa !== null)?trailer.placa:'Nuevo Trailer'}}</h2>
 		</div>
@@ -165,6 +165,9 @@ export default {
 		TrailersCreateForm,
 	},
     methods: {
+		filterTag(value, row) {
+			return row.estado === value;
+		},
 		determineEstado(row){
 			if(row == 'Desactivo'){
 				return 'danger'
@@ -176,8 +179,8 @@ export default {
 		},
 		reloadTable(){
 			this.fetchTrailersList() 
-        },
-        exportTable(){
+    },
+    exportTable(){
 			exportService.toXLS(this.trailersList, 'Vehiculos', true)
 		},
 		handleAction(e, row){
@@ -186,7 +189,8 @@ export default {
         		
 				this.createFormVisible = true;
             }
-             if(e == 'edit'){
+        if(e == 'edit'){
+				this.fetchTecnomecanicaList()
 				this.editFormVisible = true;
             }
              if(e == 'del'){
@@ -205,11 +209,14 @@ export default {
 			'setFullTrailer',
 			'resetTrailerVars',
 		]),
-        ...mapActions('trailers',[
+    ...mapActions('trailers',[
 			'fetchTrailersList',
 			'editTrailer',
 			'createTrailer',
 			'delTrailer',
+		]),
+		...mapActions('tecnomecanicaTrailers',[
+			'fetchTecnomecanicaList',
 		]),
         pushToEdit(row){
 			this.setFullTrailer(row)

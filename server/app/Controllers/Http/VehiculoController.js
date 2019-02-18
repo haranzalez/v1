@@ -6,7 +6,24 @@ const Conductor = use('App/Models/Conductore');
 const Trailer = use('App/Models/Trailer');
 
 class VehiculoController {
-
+    async get_marcas_vehiculos({ request }){
+        const { keyword } = request.all()
+        var keytrans = keyword.toUpperCase()
+        const res = await Database.raw("SELECT * FROM marcas_vehiculos WHERE descripcion LIKE '"+keytrans+"%'")
+        return res.rows
+    }
+    async get_colores_vehiculos({ request }){
+        const { keyword } = request.all()
+        var keytrans = keyword.toUpperCase()
+        const res = await Database.raw("SELECT * FROM colores_vehiculos WHERE nombrecolor LIKE '"+keytrans+"%'")
+        return res.rows
+    }
+    async get_lineas_vehiculos({ request }){
+        const { keyword } = request.all()
+        var keytrans = keyword.toUpperCase()
+        const res = await Database.raw("SELECT * FROM linea_vehiculos WHERE descripcion LIKE '"+keytrans+"%'")
+        return res.rows
+    }
     async assign_conductor({ params }){
         const { conductor_id, vehiculo_id } = params
         if(conductor_id == 'null'){

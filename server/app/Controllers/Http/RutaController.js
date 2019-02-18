@@ -42,7 +42,7 @@ class RutaController {
             let muni = await rutas.rows[prop].municipios().fetch()
             if(muni.rows.length > 0){
                 rutas.rows[prop]['municipio_origen_id'] = (muni.rows[0]['id'] != undefined)?muni.rows[0]['id']:null
-                rutas.rows[prop]['municipio_destino_id'] =(muni.rows[1]['id'] != undefined)?muni.rows[1]['id']:null
+                rutas.rows[prop]['municipio_destino_id'] = (muni.rows[1]['id'] != undefined)?muni.rows[1]['id']:null
                 rutas.rows[prop]['nombre_municipio_origen'] = muni.rows[0]['nombre_municipio']
                 rutas.rows[prop]['nombre_municipio_destino'] = muni.rows[1]['nombre_municipio']
             }else{

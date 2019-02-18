@@ -1,29 +1,29 @@
 <template>
 		<div>
-			<!-- create documento form -->
+			<!-- create Tecnomecanica form -->
 			<el-dialog
 			title="Nueva poliza"
-			:visible.sync="documentosVehiculoCreateFormDialogVisible"
+			:visible.sync="tecnomecanicaVehiculoCreateFormDialogVisible"
 			width="30%"
 			:append-to-body="true"
 			>
-			<DocumentosVehiculosCreateForm></DocumentosVehiculosCreateForm>
+			<tecnomecanicaVehiculosCreateForm></tecnomecanicaVehiculosCreateForm>
 			<span slot="footer" class="dialog-footer">
-				<el-button @click="documentosVehiculoCreateFormDialogVisible = false">Cerrar</el-button>
-				<el-button type="primary" @click="createDocumento(); documentosVehiculoCreateFormDialogVisible = false">Crear</el-button>
+				<el-button @click="tecnomecanicaVehiculoCreateFormDialogVisible = false">Cerrar</el-button>
+				<el-button type="primary" @click="createTecnomecanica(); tecnomecanicaVehiculoCreateFormDialogVisible = false">Crear</el-button>
 			</span>
 		</el-dialog>
-		<!--edit documento form -->
+		<!--edit Tecnomecanica form -->
 			<el-dialog
 			title="Nueva poliza"
-			:visible.sync="documentosVehiculoEditFormDialogVisible"
+			:visible.sync="tecnomecanicaVehiculoEditFormDialogVisible"
 			width="30%"
 			:append-to-body="true"
 			>
-			<DocumentosVehiculosEditForm></DocumentosVehiculosEditForm>
+			<tecnomecanicaVehiculosEditForm></tecnomecanicaVehiculosEditForm>
 			<span slot="footer" class="dialog-footer">
-				<el-button @click="documentosVehiculoEditFormDialogVisible = false">Cerrar</el-button>
-				<el-button type="primary" @click="editDocumento(); documentosVehiculoEditFormDialogVisible = false">Actualizar</el-button>
+				<el-button @click="tecnomecanicaVehiculoEditFormDialogVisible = false">Cerrar</el-button>
+				<el-button type="primary" @click="editTecnomecanica(); tecnomecanicaVehiculoEditFormDialogVisible = false">Actualizar</el-button>
 			</span>
 		</el-dialog>
 
@@ -37,8 +37,8 @@
 				</el-button>
 				<el-dropdown-menu slot="dropdown">
 				<el-dropdown-item :disabled="(permisos['Vehiculos'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Crear</el-dropdown-item>
-									<el-dropdown-item :disabled="(permisos['Vehiculos'].editar)? false:true" command="edit"><i class="mdi mdi-pencil mr-10"></i> Editar</el-dropdown-item>
-									<el-dropdown-item :disabled="(permisos['Vehiculos'].eliminar)? false:true" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
+                <el-dropdown-item :disabled="(permisos['Vehiculos'].editar)? false:true" command="edit"><i class="mdi mdi-pencil mr-10"></i> Editar</el-dropdown-item>
+                <el-dropdown-item :disabled="(permisos['Vehiculos'].eliminar)? false:true" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
 				</el-dropdown-menu>
     		</el-dropdown>
 			</div>
@@ -46,23 +46,17 @@
     <el-table
 		highlight-current-row
 		@current-change="handleCurrentTableChange"
-		ref="documentosTable"
+		ref="tecnomecanicaTable"
 		size="mini"
-    :data="documentosList"
+    :data="tecnomecanicaList"
     style="width: 100%">
-    <el-table-column type="expand">
-      <template slot-scope="props">
-        <p>Numero de poliza: {{ props.row.numero_de_poliza }}</p>
-        <p>Fecha de vencimiento: {{ props.row.fecha_de_vencimiento }}</p>
-      </template>
+    <el-table-column
+      label="Numero tecnicomecanica"
+      prop="numero_tecnomecanica">
     </el-table-column>
     <el-table-column
-      label="Aseguradora"
-      prop="aseguradora[0].nombre">
-    </el-table-column>
-    <el-table-column
-      label="Tipo de poliza"
-      prop="tipo_de_poliza">
+      label="Fecha de vencimiento"
+      prop="fecha_de_vencimiento">
     </el-table-column>
   	</el-table>
 		</div>
@@ -76,15 +70,15 @@ import router from '../../router'
 //servicios
 import exportService from '../../services/exportService'
 //componentes
-import DocumentosVehiculosCreateForm from '@/components/Vehiculos/documentosCreateForm'
-import DocumentosVehiculosEditForm from '@/components/Vehiculos/documentosEditForm'
+import tecnomecanicaVehiculosCreateForm from '@/components/Vehiculos/tecnomecanicaCreateForm'
+import tecnomecanicaVehiculosEditForm from '@/components/Vehiculos/tecnomecanicaEditForm'
 
 export default {
-	name: 'DocumentosVehiculoTable',
+	name: 'tecnomecanicaVehiculoTable',
 	data () {
     return {
-			documentosVehiculoCreateFormDialogVisible: false,
-			documentosVehiculoEditFormDialogVisible: false,
+			tecnomecanicaVehiculoCreateFormDialogVisible: false,
+			tecnomecanicaVehiculoEditFormDialogVisible: false,
 		}
 	},
 	computed: {
@@ -92,43 +86,43 @@ export default {
     ...mapState('authentication', [
 			'permisos',
 		]),
-    ...mapState('documentosVehiculos', [
-			'documento',
-      'documentosList',
+    ...mapState('tecnomecanicaVehiculos', [
+			'tecnomecanica',
+      'tecnomecanicaList',
     ]),
     filtered(){
 			if(this.filter !== ''){
 				let type = this.selectTypeOfSearch.toLowerCase()
 				type = type.replace(' ', '_')
 				type = type.replace(' ', '_')
-				return this.documentosList.filter(item => {
+				return this.tecnomecanicaList.filter(item => {
 					if(isNaN(item[type])){
 						return item[type].toLowerCase().includes(this.filter.toLowerCase())
 					}
 						return item[type].toString().includes(this.filter.toString())
 					})
 				}
-			return this.documentosList
+			return this.tecnomecanicaList
     },
 	},
 	components: {
-		DocumentosVehiculosCreateForm,
-		DocumentosVehiculosEditForm,
+		tecnomecanicaVehiculosCreateForm,
+		tecnomecanicaVehiculosEditForm,
 	},
     methods: {
 		reloadTable(){
-			this.fetchDocumentosList()
+			this.fetchTecnomecanicaList()
 		},
 		exportTable(){
-			exportService.toXLS(this.documentosList, 'Vehiculos', true)
+			exportService.toXLS(this.tecnomecanicaList, 'Vehiculos', true)
 		},
 		handleAction(e, row){
         if(e == 'create'){
-					this.documentoFormReset()
-					this.documentosVehiculoCreateFormDialogVisible = true;
+					this.tecnomecanicaFormReset()
+					this.tecnomecanicaVehiculoCreateFormDialogVisible = true;
 				}
 				if(e == 'edit'){ 
-					this.documentosVehiculoEditFormDialogVisible = true;
+					this.tecnomecanicaVehiculoEditFormDialogVisible = true;
 				} 
 				if(e == 'del'){
 						this.pushToDel(row)
@@ -136,16 +130,16 @@ export default {
     },
     handleCurrentTableChange(val) {
 			if(val == null){
-				this.$refs.documentosTable.setCurrentRow(val);
+				this.$refs.tecnomecanicaTable.setCurrentRow(val);
 				return
 			}
-			this.fetchDocumento(val.id)
-			this.$refs.documentosTable.setCurrentRow(val);
+			this.fetchTecnomecanica(val.id)
+			this.$refs.tecnomecanicaTable.setCurrentRow(val);
 		},
 		
-    ...mapMutations('documentosVehiculos', [
-			'setFullDocumento',
-			'documentoFormReset',
+    ...mapMutations('tecnomecanicaVehiculos', [
+			'setFullTecnomecanica',
+			'tecnomecanicaFormReset',
 		]),
 		
 		title(field){
@@ -153,12 +147,12 @@ export default {
 				field = field.charAt(0).toUpperCase() + field.slice(1)
 				return field
 		},
-    ...mapActions('documentosVehiculos',[
-			'fetchDocumentosList',
-			'fetchDocumento',
-			'createDocumento',
-			'editDocumento',
-			'delDocumento',
+    ...mapActions('tecnomecanicaVehiculos',[
+			'fetchTecnomecanicaList',
+			'fetchTecnomecanica',
+			'createTecnomecanica',
+			'editTecnomecanica',
+			'delTecnomecanica',
 		]),
 	
 	
@@ -168,7 +162,7 @@ export default {
                 cancelButtonText: 'Cancelar',
                 type: 'warning'
             }).then(() => {
-				this.delDocumento()
+				this.delTecnomecanica()
             }).catch(() => {
                 this.$message({
                     type: 'warning',
@@ -179,7 +173,7 @@ export default {
 		}
     },
     created: function(){
-		this.fetchDocumentosList()
+		this.fetchTecnomecanicaList()
 	}
 }
 </script>

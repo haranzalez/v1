@@ -188,12 +188,69 @@ export default {
                 value: 'Hidrocarburos',
                 label: 'Hidrocarburos'
             }, 
-        ]
+        ],
+        marcas_vehiculos_options: null,
+        colores_vehiculos_options: null,
+        linea_cabezotes_options: null,
+        lineaVehiculoListLoading: false,
+        coloresVehiculoListLoading: false,
+        marcasVehiculoListLoading: false,
     },
 
     actions: {
+        searchMarcasVehiculosList({state, commit, dispatch}, keyword){
+            commit('setMarcasVehiculoListLoading', true)
+            HTTP().local.post('api/marcas-vehiculos',{keyword})
+            .then(d => {
+                commit('setMarcasVehiculosList', d.data)
+                commit('setMarcasVehiculoListLoading', false)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
+        searchColoresVehiculosList({state, commit, dispatch}, keyword){
+            commit('setColoresVehiculoListLoading', true)
+            HTTP().local.post('api/colores-vehiculos', {keyword})
+            .then(d => {
+                commit('setColoresVehiculosList', d.data)
+                commit('setColoresVehiculoListLoading', false)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
+        searchLineaVehiculosList({state, commit, dispatch}, keyword){
+            commit('setLineaVehiculoListLoading', true)
+            HTTP().local.post('api/lineas-vehiculos',{keyword})
+            .then(d => {
+                commit('setLineaVehiculosList', d.data)
+                commit('setLineaVehiculoListLoading', false)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
     },
     mutations: {
+        setLineaVehiculoListLoading(state, value){
+            state.lineaVehiculoListLoading = value
+        },
+        setColoresVehiculoListLoading(state, value){
+            state.coloresVehiculoListLoading = value
+        },
+        setMarcasVehiculoListLoading(state, value){
+            state.marcasVehiculoListLoading = value
+        },
+        setMarcasVehiculosList(state, value){
+            state.marcas_vehiculos_options = value
+        },
+        setColoresVehiculosList(state, value){
+            state.colores_vehiculos_options = value
+        },
+        setLineaVehiculosList(state, value){
+            state.linea_cabezotes_options = value
+        },
     },
 
 };

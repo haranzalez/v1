@@ -1,7 +1,7 @@
 <template>
 <div>
 	<!--Edit dialog form -->
-	<el-dialog center fullscreen width="60%" top="10vh" :visible.sync="editFormVisible">
+	<el-dialog center fullscreen width="40%" top="10vh" :visible.sync="editFormVisible">
 		<div slot="title">
 			<h2>{{vehiculo.placa}}</h2>
 		</div>
@@ -270,12 +270,12 @@ export default {
 			'setFullVehiculo',
 		]),
 		
-        title(field){
-            field = field.split('_').join(' ')
-            field = field.charAt(0).toUpperCase() + field.slice(1)
-            return field
-        },
-        ...mapActions('vehiculos',[
+		title(field){
+				field = field.split('_').join(' ')
+				field = field.charAt(0).toUpperCase() + field.slice(1)
+				return field
+		},
+    ...mapActions('vehiculos',[
 			'fetchVehiculosList',
 			'fetchVehiculo',
       'assignConductor',
@@ -285,18 +285,18 @@ export default {
 			'createVehiculo',
 		]),
 		...mapMutations('vehiculos',[
-           'resetVehicleVariables',
-				]),
+				'resetVehicleVariables',
+		]),
 				
-        ...mapActions('conductores',[
+    ...mapActions('conductores',[
 			'fetchConductoresList',
-        ]),
-        ...mapActions('trailers',[
+    ]),
+    ...mapActions('trailers',[
 			'fetchTrailersList',
-				]),
-			...mapActions('documentosVehiculos',[
+		]),
+		...mapActions('documentosVehiculos',[
 			'fetchDocumentosList',
-      ]),
+    ]),
 		pushToEdit(row){
 			this.setFullVehiculo(row)
 			this.editFormVisible = true

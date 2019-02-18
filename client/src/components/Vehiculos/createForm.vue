@@ -23,18 +23,63 @@
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Marca cabezote">
-                        <el-input size="mini"
-                        @input="setMarcaCabezote"
-                        placeholder="">
-                        </el-input>
+                        <el-select 
+                        size="mini" 
+                        filterable 
+                        remote
+                        width="100%"
+                        clearable
+                        :loading="marcasVehiculoListLoading"
+                        :remote-method="searchMarcasVehiculosList"
+                        v-model="marca_cabezote_selected"
+                        placeholder="Porfavor escriba palabra clave">
+                            <el-option
+                            v-for="item in marcas_vehiculos_options"
+                            :key="item.id"
+                            :label="item.descripcion"
+                            :value="item.descripcion">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+				</el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Linea cabezote">
+                        <el-select 
+                        size="mini" 
+                        filterable 
+                        remote
+                        clearable
+                        :loading="lineaVehiculoListLoading"
+                        :remote-method="searchLineaVehiculosList"
+                        v-model="linea_cabezote_selected"
+                        placeholder="Porfavor escriba palabra clave">
+                            <el-option
+                            v-for="item in linea_cabezotes_options"
+                            :key="item.id"
+                            :label="item.descripcion"
+                            :value="item.descripcion">
+                            </el-option>
+                        </el-select>
                     </el-form-item>
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Color">
-                        <el-input size="mini"
-                        @input="setColor"
-                        >
-                        </el-input>
+                        <el-select 
+                        size="mini" 
+                        filterable 
+                        remote
+                        clearable
+                        :loading="coloresVehiculoListLoading"
+                        :remote-method="searchColoresVehiculosList"
+                        v-model="color_selected"
+                        placeholder="Porfavor escriba palabra clave">
+                            <el-option
+                            v-for="item in colores_vehiculos_options"
+                            :key="item.id"
+                            :label="item.nombrecolor"
+                            :value="item.nombrecolor">
+                            </el-option>
+                        </el-select>
                     </el-form-item>
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
@@ -127,14 +172,7 @@
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <h3>Informacion adicional</h3>
                 </el-col>
-                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Linea cabezote">
-                        <el-input size="mini"
-                        @input="setLineaCabezote"
-                        >
-                        </el-input>
-                    </el-form-item>
-				</el-col>
+                
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Numero Motor">
                         <el-input size="mini"
@@ -280,6 +318,30 @@ export default {
 		}
 	},
 	computed: {
+        linea_cabezote_selected: {
+            get(){
+                return this.vehiculo.linea_cabezote
+            },
+            set(value){
+                this.setLineaCabezote(value)
+            }
+        },
+        color_selected: {
+            get(){
+                return this.vehiculo.color
+            },
+            set(value){
+                this.setColor(value)
+            }
+        },
+        marca_cabezote_selected: {
+            get(){
+                return this.vehiculo.marca_cabezote
+            },
+            set(value){
+                this.setMarcaCabezote(value)
+            }
+        },
         trailer_selected: {
             get(){
                 return this.selectedTrailer
@@ -359,6 +421,12 @@ export default {
             'estado_options',
             'corroceria_options',
             'full_loading',
+            'marcas_vehiculos_options',
+            'colores_vehiculos_options',
+            'linea_cabezotes_options',
+            'lineaVehiculoListLoading',
+            'coloresVehiculoListLoading',
+            'marcasVehiculoListLoading',
         ]),
         ...mapState('vehiculos', [
             'vehiculo',
@@ -415,6 +483,11 @@ export default {
             field = field.charAt(0).toUpperCase() + field.slice(1)
             return field
         },
+        ...mapActions('sharedValues',[
+            'searchMarcasVehiculosList',
+            'searchColoresVehiculosList',
+            'searchLineaVehiculosList',
+        ]),
         ...mapActions('vehiculos',[
             'fetchVehiculosList',
             'assignConductor',
@@ -443,7 +516,9 @@ export default {
 <style lang="scss" scoped>
 @import '../../assets/scss/_variables';
 
-
+.el-select{
+    width: 100%;
+}
 .el-input-number{
     width: 120px;
 }

@@ -161,9 +161,10 @@ Route.group(() => {
   Route.get('vehiculos/:id', 'VehiculoController.get_vehicle').middleware('auth')
   Route.get('vehiculos/:vehiculo_id/assign/trailer/:trailer_id', 'VehiculoController.assign_trailer').middleware('auth')
   Route.get('vehiculos/:vehiculo_id/assign/conductor/:conductor_id', 'VehiculoController.assign_conductor').middleware('auth')
-
-  
   //POST
+  Route.post('marcas-vehiculos', 'VehiculoController.get_marcas_vehiculos').middleware('auth')
+  Route.post('colores-vehiculos', 'VehiculoController.get_colores_vehiculos').middleware('auth')
+  Route.post('lineas-vehiculos', 'VehiculoController.get_lineas_vehiculos').middleware('auth')
   Route.post('vehiculos/crear', 'VehiculoController.create_vehicle').middleware('auth')
   //PUT
   Route.put('vehiculos/:id/update', 'VehiculoController.update_vehicle').middleware('auth')
@@ -182,6 +183,18 @@ Route.group(() => {
   //DELETE
   Route.delete('documentos-vehiculo/:id/delete', 'DocumentosVehiculoController.delete_documento').middleware('auth')
   //======================================================================================================================================
+  //Tecnicomecanica vehiculos
+  //======================================================================================================================================
+  //GET
+  Route.get('tecnomecanica-vehiculo/:vehiculo_id', 'TecnomecanicaController.get_tecnomecanica_list').middleware('auth')
+  Route.get('tecnomecanica/:id', 'TecnomecanicaController.get_tecnomecanica').middleware('auth')
+  //POST
+  Route.post('tecnomecanica-vehiculo/create', 'TecnomecanicaController.create_tecnomecanica').middleware('auth')
+  //PUT
+  Route.put('tecnomecanica-vehiculo/:id/update', 'TecnomecanicaController.update_tecnomecanica').middleware('auth')
+  //DELETE
+  Route.delete('tecnomecanica-vehiculo/:id/delete', 'TecnomecanicaController.delete_tecnomecanica').middleware('auth')
+  //======================================================================================================================================
   //Trailers
   //======================================================================================================================================
   //GET
@@ -194,6 +207,18 @@ Route.group(() => {
   Route.put('trailers/:id/update', 'TrailerController.update_trailer').middleware('auth')
   //DELETE
   Route.delete('trailers/:id/delete', 'TrailerController.delete_trailer').middleware('auth')
+  //======================================================================================================================================
+  //Tecnicomecanica trailers
+  //======================================================================================================================================
+  //GET
+  Route.get('tecnomecanica-trailer/:trailer_id', 'TecnomecanicaTrailersController.get_tecnomecanica_list').middleware('auth')
+  Route.get('tecnomecanica-trailer-record-by-id/:id', 'TecnomecanicaTrailersController.get_tecnomecanica').middleware('auth')
+  //POST
+  Route.post('tecnomecanica-trailer/create', 'TecnomecanicaTrailersController.create_tecnomecanica').middleware('auth')
+  //PUT
+  Route.put('tecnomecanica-trailer/:id/update', 'TecnomecanicaTrailersController.update_tecnomecanica').middleware('auth')
+  //DELETE
+  Route.delete('tecnomecanica-trailer/:id/delete', 'TecnomecanicaTrailersController.delete_tecnomecanica').middleware('auth')
   //======================================================================================================================================
   //Conductores
   //======================================================================================================================================

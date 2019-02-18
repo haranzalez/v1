@@ -27,6 +27,8 @@ import sharedValues from './sharedValues'
 import reportes from './reportes'
 import aseguradoras from './aseguradoras';
 import documentosVehiculos from './documentosVehiculos';
+import tecnomecanicaVehiculos from './tecnomecanicaVehiculos';
+import tecnomecanicaTrailers from './tecnomecanicaTrailers';
 
 
 Vue.use(Vuex)
@@ -62,6 +64,8 @@ export default new Vuex.Store({
 		reportes,
 		aseguradoras,
 		documentosVehiculos,
+		tecnomecanicaVehiculos,
+		tecnomecanicaTrailers,
 	},
 	mutations: {
 	},

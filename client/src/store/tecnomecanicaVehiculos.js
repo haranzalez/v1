@@ -7,28 +7,25 @@ import { Notification, Message, Loading } from 'element-ui'
 export default {
     namespaced: true,
     state: {
-        documento:{
+        tecnomecanica:{
             id: null,
-            aseguradora_id: null,
-            tipo_de_poliza: null,
-            numero_de_poliza: null,
+            numero_tecnomecanica: null,
             fecha_de_vencimiento: null,
             vehiculo_id: null,
         },
-        loadingDocumentosVehiculoTable: false,
-        documentosList: null,
+        loadingTecnomecanicaVehiculoTable: false,
+        tecnomecanicaList: null,
         headings: [],   
     },
 
     actions: {
-        fetchDocumentosList({state, commit, dispatch, rootState}){
-            commit('setLoadingDocumentosVehiculoTable', true)
-            HTTP().local.get('api/documentos-vehiculo/'+rootState.vehiculos.vehiculo.id)
+        fetchTecnomecanicaList({state, commit, dispatch, rootState}){
+            commit('setLoadingTecnomecanicaVehiculoTable', true)
+            HTTP().local.get('api/tecnomecanica-vehiculo/'+rootState.vehiculos.vehiculo.id)
             .then(d => {
-                console.log(d.data)
-                commit('setDocumentosList', d.data)
+                commit('setTecnomecanicaList', d.data)
                 dispatch('renderTableHeadings')
-                commit('setLoadingDocumentosVehiculoTable', false)
+                commit('setLoadingTecnomecanicaVehiculoTable', false)
             })
             .catch(err => {
                 console.log(err)
@@ -37,14 +34,14 @@ export default {
                     message: 'Se a producido un error. Porfavor notifique al administrador',
                     position: 'bottom-right',
                 });
-                commit('setLoadingDocumentosVehiculoTable', false)
+                commit('setLoadingTecnomecanicaVehiculoTable', false)
             })
         },
-        fetchDocumento({commit, dispatch}, id){
-            HTTP().local.get('api/documento/'+id)
+        fetchTecnomecanica({commit, dispatch}, id){
+            HTTP().local.get('api/tecnomecanica/'+id)
             .then(d => {
                 console.log(d.data)
-                commit('setFullDocumento', d.data[0])
+                commit('setFullTecnomecanica', d.data[0])
             })
             .catch(err => {
                 console.log(err)
@@ -55,18 +52,18 @@ export default {
                 });
             })
         },
-        createDocumento({state, commit, dispatch, rootState}){
+        createTecnomecanica({state, commit, dispatch, rootState}){
             var load = Loading.service(rootState.sharedValues.loading_options)
             commit('setVehiculoId', rootState.vehiculos.vehiculo.id)
-            HTTP().local.post('api/documentos-vehiculo/create', state.documento)
+            HTTP().local.post('api/tecnomecanica-vehiculo/create', state.tecnomecanica)
             .then(d => {
                 if(d.data.message == 'success'){
                     Message({
                         type: 'success',
                         showClose: true,
-                        message: 'Documento creado.'
+                        message: 'Tecnomecanica creada.'
                     })
-                    dispatch('fetchDocumentosList')
+                    dispatch('fetchTecnomecanicaList')
                     load.close()
                 }else{
                     Notification.warning({
@@ -87,17 +84,17 @@ export default {
                 load.close()
             })
         },
-        editDocumento({state, dispatch, rootState}){
+        editTecnomecanica({state, dispatch, rootState}){
             var load = Loading.service(rootState.sharedValues.loading_options)
-            HTTP().local.put('api/documentos-vehiculo/'+state.documento.id+'/update', state.documento)
+            HTTP().local.put('api/tecnomecanica-vehiculo/'+state.tecnomecanica.id+'/update', state.tecnomecanica)
             .then(d => {
                 if(d.data.message == 'success'){
                     Message({
                         type: 'success',
                         showClose: true,
-                        message: 'Documento actualizado.'
+                        message: 'Tecnicomecanica actualizada.'
                     })
-                    dispatch('fetchDocumentosList')
+                    dispatch('fetchTecnomecanicaList')
                     load.close()
                 }
             })
@@ -111,17 +108,17 @@ export default {
                 load.close()
             })
         },
-        delDocumento({state, dispatch, rootState}){
+        delTecnomecanica({state, dispatch, rootState}){
             var load = Loading.service(rootState.sharedValues.loading_options)
-            HTTP().local.delete('api/documentos-vehiculo/'+state.documento.id+'/delete')
+            HTTP().local.delete('api/tecnomecanica-vehiculo/'+state.tecnomecanica.id+'/delete')
             .then(d => {
                 if(d.data.message == 'success'){
                     Message({
                         type: 'success',
                         showClose: true,
-                        message: 'Documento eliminado exitosamente'
+                        message: 'Tecnicomecanica eliminada exitosamente'
                     })
-                    dispatch('fetchDocumentosList')
+                    dispatch('fetchTecnomecanicaList')
                 }
                 load.close()
             })
@@ -139,7 +136,7 @@ export default {
         renderTableHeadings({state, commit}){
             let pkg = []
            
-            for(let prop2 in state.documentosList[0]){
+            for(let prop2 in state.tecnomecanicaList[0]){
                 if(prop2 !== 'created_at' || prop2 !== 'updated_at'){
                     prop2 = prop2.split('_').join(' ')
                     prop2 = prop2.charAt(0).toUpperCase() + prop2.slice(1)
@@ -153,39 +150,31 @@ export default {
 
     },
     mutations: {
-        setLoadingDocumentosVehiculoTable(state, value){
-            state.loadingDocumentosVehiculoTable = value
+        setLoadingTecnomecanicaVehiculoTable(state, value){
+            state.loadingTecnomecanicaVehiculoTable = value
         },
-        setFullDocumento(state, value){
-            state.documento = value
+        setFullTecnomecanica(state, value){
+            state.tecnomecanica = value
         },
-        setDocumentosList(state, list){
-            state.documentosList = list
+        setTecnomecanicaList(state, list){
+            state.tecnomecanicaList = list
         },
         setTableHeadings(state, headings){
             state.headings = headings;
         },
-        setAseguradoraId(state, value){
-            state.documento.aseguradora_id = value
-        },
-        setTipoDePoliza(state, value){
-            state.documento.tipo_de_poliza = value
-        },
-        setNumeroDePoliza(state, value){
-            state.documento.numero_de_poliza = value
+        setNumeroTecnomecanica(state, value){
+            state.tecnomecanica.numero_tecnomecanica = value
         },
         setFechaDeVencimiento(state, value){
-            state.documento.fecha_de_vencimiento = value
+            state.tecnomecanica.fecha_de_vencimiento = value
         },
         setVehiculoId(state, value){
-            state.documento.vehiculo_id = value
+            state.tecnomecanica.vehiculo_id = value
         },
-        documentoFormReset(state){
-            state.documento = {
+        tecnomecanicaFormReset(state){
+            state.tecnomecanica = {
                 id: null,
-                aseguradora_id: null,
-                tipo_de_poliza: null,
-                numero_de_poliza: null,
+                numero_tecnomecanica: null,
                 fecha_de_vencimiento: null,
                 vehiculo_id: null,
             }

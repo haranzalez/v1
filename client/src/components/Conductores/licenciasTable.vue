@@ -1,29 +1,29 @@
 <template>
 		<div>
-			<!-- create Tecnomecanica form -->
+			<!-- create licencia form -->
 			<el-dialog
-			title="Nueva tecnicomecanica"
-			:visible.sync="tecnomecanicaTrailerCreateFormDialogVisible"
+			title="Nueva licencia"
+			:visible.sync="licenciaConductorCreateFormDialogVisible"
 			width="30%"
 			:append-to-body="true"
 			>
-			<tecnomecanicaTrailersCreateForm></tecnomecanicaTrailersCreateForm>
+			<licenciaConductorCreateForm></licenciaConductorCreateForm>
 			<span slot="footer" class="dialog-footer">
-				<el-button @click="tecnomecanicaTrailerCreateFormDialogVisible = false">Cerrar</el-button>
-				<el-button type="primary" @click="createTecnomecanica(); tecnomecanicaTrailerCreateFormDialogVisible = false">Crear</el-button>
+				<el-button @click="licenciaConductorCreateFormDialogVisible = false">Cerrar</el-button>
+				<el-button type="primary" @click="createLicencia(); licenciaConductorCreateFormDialogVisible = false">Crear</el-button>
 			</span>
 		</el-dialog>
-		<!--edit Tecnomecanica form -->
+		<!--edit licencia form -->
 			<el-dialog
-			title="Nueva poliza"
-			:visible.sync="tecnomecanicaTrailerEditFormDialogVisible"
+			title="Licencia"
+			:visible.sync="licenciaConductorEditFormDialogVisible"
 			width="30%"
 			:append-to-body="true"
 			>
-			<tecnomecanicaTrailersEditForm></tecnomecanicaTrailersEditForm>
+			<licenciaConductorEditForm></licenciaConductorEditForm>
 			<span slot="footer" class="dialog-footer">
-				<el-button @click="tecnomecanicaTrailerEditFormDialogVisible = false">Cerrar</el-button>
-				<el-button type="primary" @click="editTecnomecanica(); tecnomecanicaTrailerEditFormDialogVisible = false">Actualizar</el-button>
+				<el-button @click="licenciaConductorEditFormDialogVisible = false">Cerrar</el-button>
+				<el-button type="primary" @click="editLicencia(); licenciaConductorEditFormDialogVisible = false">Actualizar</el-button>
 			</span>
 		</el-dialog>
 
@@ -36,9 +36,9 @@
 					<i class="mdi mdi-settings"></i>
 				</el-button>
 				<el-dropdown-menu slot="dropdown">
-				<el-dropdown-item :disabled="(permisos['Trailers'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Crear</el-dropdown-item>
-                <el-dropdown-item :disabled="(permisos['Trailers'].editar)? false:true" command="edit"><i class="mdi mdi-pencil mr-10"></i> Editar</el-dropdown-item>
-                <el-dropdown-item :disabled="(permisos['Trailers'].eliminar)? false:true" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
+				<el-dropdown-item :disabled="(permisos['Conductores'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Crear</el-dropdown-item>
+                <el-dropdown-item :disabled="(permisos['Conductores'].editar)? false:true" command="edit"><i class="mdi mdi-pencil mr-10"></i> Editar</el-dropdown-item>
+                <el-dropdown-item :disabled="(permisos['Conductores'].eliminar)? false:true" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
 				</el-dropdown-menu>
     		</el-dropdown>
 			</div>
@@ -46,13 +46,17 @@
     <el-table
 		highlight-current-row
 		@current-change="handleCurrentTableChange"
-		ref="tecnomecanicaTrailersTable"
+		ref="licenciaConductorTable"
 		size="mini"
-    :data="tecnomecanicaList"
+    :data="licenciasList"
     style="width: 100%">
     <el-table-column
-      label="Numero tecnicomecanica"
-      prop="numero_tecnomecanica">
+      label="Numero licencia"
+      prop="numero_de_licencia">
+    </el-table-column>
+    <el-table-column
+      label="Categoria"
+      prop="categoria">
     </el-table-column>
     <el-table-column
       label="Fecha de vencimiento"
@@ -70,15 +74,15 @@ import router from '../../router'
 //servicios
 import exportService from '../../services/exportService'
 //componentes
-import tecnomecanicaTrailersCreateForm from '@/components/Trailers/tecnomecanicaCreateForm'
-import tecnomecanicaTrailersEditForm from '@/components/Trailers/tecnomecanicaEditForm'
+import licenciaConductorCreateForm from '@/components/Conductores/licenciasCreateForm'
+import licenciaConductorEditForm from '@/components/Conductores/licenciasEditForm'
 
 export default {
-	name: 'tecnomecanicaTrailerTable',
+	name: 'licenciasConductorTable',
 	data () {
     return {
-			tecnomecanicaTrailerCreateFormDialogVisible: false,
-			tecnomecanicaTrailerEditFormDialogVisible: false,
+			licenciaConductorCreateFormDialogVisible: false,
+			licenciaConductorEditFormDialogVisible: false,
 		}
 	},
 	computed: {
@@ -86,94 +90,94 @@ export default {
     ...mapState('authentication', [
 		'permisos',
 	]),
-    ...mapState('tecnomecanicaTrailers', [
-		'tecnomecanica',
-        'tecnomecanicaList',
+    ...mapState('licenciasConductores', [
+        'licencia',
+        'licenciasList',
     ]),
     filtered(){
-			if(this.filter !== ''){
-				let type = this.selectTypeOfSearch.toLowerCase()
-				type = type.replace(' ', '_')
-				type = type.replace(' ', '_')
-				return this.tecnomecanicaList.filter(item => {
-					if(isNaN(item[type])){
-						return item[type].toLowerCase().includes(this.filter.toLowerCase())
-					}
-						return item[type].toString().includes(this.filter.toString())
-					})
-				}
-			return this.tecnomecanicaList
+        if(this.filter !== ''){
+            let type = this.selectTypeOfSearch.toLowerCase()
+            type = type.replace(' ', '_')
+            type = type.replace(' ', '_')
+            return this.licenciaList.filter(item => {
+                if(isNaN(item[type])){
+                    return item[type].toLowerCase().includes(this.filter.toLowerCase())
+                }
+                    return item[type].toString().includes(this.filter.toString())
+            })
+        }
+        return this.licenciaList
     },
 	},
 	components: {
-		tecnomecanicaTrailersCreateForm,
-		tecnomecanicaTrailersEditForm,
+		licenciaConductorCreateForm,
+        licenciaConductorEditForm
 	},
     methods: {
-    reloadTable(){
-        this.fetchTecnomecanicaList()
-    },
-    exportTable(){
-        exportService.toXLS(this.tecnomecanicaList, 'Trailers', true)
-    },
-    handleAction(e, row){
-    if(e == 'create'){
-                this.tecnomecanicaTrailerFormReset()
-                this.tecnomecanicaTrailerCreateFormDialogVisible = true;
-            }
-            if(e == 'edit'){ 
-                this.tecnomecanicaTrailerEditFormDialogVisible = true;
-            } 
-            if(e == 'del'){
-                    this.pushToDel(row)
-            }
+		reloadTable(){
+			this.fetchLicenciasList()
+		},
+		exportTable(){
+			exportService.toXLS(this.licenciasList, 'Licencias conductor', true)
+		},
+		handleAction(e, row){
+        if(e == 'create'){
+            this.licenciaConductorFormReset()
+            this.licenciaConductorCreateFormDialogVisible = true;
+        }
+        if(e == 'edit'){ 
+            this.licenciaConductorEditFormDialogVisible = true;
+        } 
+        if(e == 'del'){
+            this.pushToDel(row)
+        }
     },
     handleCurrentTableChange(val) {
-			if(val == null){
-				this.$refs.tecnomecanicaTrailersTable.setCurrentRow(val);
-				return
-			}
-			this.fetchTecnomecanica(val.id)
-			this.$refs.tecnomecanicaTrailersTable.setCurrentRow(val);
-		},
+        if(val == null){
+            this.$refs.licenciaConductorTable.setCurrentRow(val);
+            return
+        }
+        this.fetchLicencia(val.id)
+        this.$refs.licenciaConductorTable.setCurrentRow(val);
+	},
 		
-    ...mapMutations('tecnomecanicaTrailers', [
-			'setFullTecnomecanica',
-			'tecnomecanicaTrailerFormReset',
-		]),
-		
+    ...mapMutations('licenciasConductores', [
+        'setFullLicencia',
+        'licenciaConductorFormReset',
+    ]),
+    
     title(field){
-            field = field.split('_').join(' ')
-            field = field.charAt(0).toUpperCase() + field.slice(1)
-            return field
+        field = field.split('_').join(' ')
+        field = field.charAt(0).toUpperCase() + field.slice(1)
+        return field
     },
-    ...mapActions('tecnomecanicaTrailers',[
-			'fetchTecnomecanicaList',
-			'fetchTecnomecanica',
-			'createTecnomecanica',
-			'editTecnomecanica',
-			'delTecnomecanica',
+    ...mapActions('licenciasConductores',[
+			'fetchLicenciasList',
+			'fetchLicencia',
+			'createLicencia',
+			'editLicencia',
+			'delLicencia',
 		]),
 	
 	
-    pushToDel(row){
-        this.$confirm('Esta operacion eliminara permanentemente este registro. Continuar?', 'Atencion!', {
-            confirmButtonText: 'OK',
-            cancelButtonText: 'Cancelar',
-            type: 'warning'
-        }).then(() => {
-            this.delTecnomecanica()
-        }).catch(() => {
-            this.$message({
-                type: 'warning',
-                message: 'Cancelado'
-            });          
-        });
-        
-    }
+		pushToDel(row){
+			this.$confirm('Esta operacion eliminara permanentemente este registro. Continuar?', 'Atencion!', {
+                confirmButtonText: 'OK',
+                cancelButtonText: 'Cancelar',
+                type: 'warning'
+            }).then(() => {
+				this.delLicencia()
+            }).catch(() => {
+                this.$message({
+                    type: 'warning',
+                    message: 'Cancelado'
+                });          
+            });
+			
+		}
     },
     created: function(){
-		this.fetchTecnomecanicaList()
+		this.fetchLicenciasList()
 	}
 }
 </script>

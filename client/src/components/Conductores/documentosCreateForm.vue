@@ -3,22 +3,19 @@
        <el-form label-position="top" label-width="120px">
         <el-row>
             <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                <el-form-item label="Aseguradora">
-                    <el-select size="mini" v-model="aseguradora" placeholder="Select">
-                        <el-option
-                        v-for="item in aseguradorasList"
-                        :key="item.id"
-                        :label="item.nombre"
-                        :value="item.id">
-                        </el-option>
-                    </el-select>
+                <el-form-item label="Institucion">
+                    <el-input 
+                        size="mini" 
+                        @input="setInstitucion"
+                        placeholder="">
+                    </el-input>
                 </el-form-item>
             </el-col>
             <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                <el-form-item label="Tipo de poliza">
-                   <el-select size="mini" v-model="tipo_de_poliza" placeholder="Select">
+                <el-form-item label="Tipo de documento">
+                   <el-select size="mini" v-model="tipo_de_documento_conductor" placeholder="Select">
                         <el-option
-                        v-for="item in tipo_de_poliza_options"
+                        v-for="item in tipo_de_documento_conductor_options"
                         :key="item.value"
                         :label="item.label"
                         :value="item.value">
@@ -27,17 +24,19 @@
                 </el-form-item>
             </el-col>
             <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                <el-form-item label="Numero de poliza">
-                    <el-input size="mini"
-                    @input="setNumeroDePoliza"
-                    >
-                    </el-input>
+                <el-form-item label="Fecha inicio">
+                    <el-date-picker
+                    v-model="fecha_inicio"
+                    type="date"
+                    size="mini"
+                    placeholder="Seleccione fecha">
+                    </el-date-picker>
                 </el-form-item>
             </el-col>
-            <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                <el-form-item label="Fecha de vencimiento">
+             <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                <el-form-item label="Fecha fin">
                     <el-date-picker
-                    v-model="fecha_de_vencimiento"
+                    v-model="fecha_fin"
                     type="date"
                     size="mini"
                     placeholder="Seleccione fecha">
@@ -56,44 +55,41 @@ import moment from 'moment-timezone'
 import router from '../../router'
 
 export default {
-	name: 'DocumentosVehiculoCreateForm',
+	name: 'DocumentosTrailerEditForm',
 	data () {
       	return {
            
 		}
 	},
 	computed: {
-        aseguradora: {
+        tipo_de_documento_conductor: {
              get(){
-                return this.documento.aseguradora_id
+                return this.documento.tipo_de_documento
             },
             set(value){
-                this.setAseguradoraId(value)
+                this.setTipoDeDocumento(value)
             }
         },
-        tipo_de_poliza: {
-             get(){
-                return this.documento.tipo_de_poliza
-            },
-            set(value){
-                this.setTipoDePoliza(value)
-            }
-        },
-        fecha_de_vencimiento: {
+        fecha_inicio: {
             get(){
-                return this.documento.fecha_de_vencimiento
+                return this.documento.fecha_inicio
             },
             set(value){
-                this.setFechaDeVencimiento(value)
+                this.setFechaInicio(value)
+            }
+        },
+        fecha_fin: {
+            get(){
+                return this.documento.fecha_fin
+            },
+            set(value){
+                this.setFechaFin(value)
             }
         },
         ...mapState('authentication', [
 			'permisos',
         ]),
-        ...mapState('aseguradoras', [
-			'aseguradorasList',
-        ]),
-        ...mapState('documentosVehiculos', [
+        ...mapState('documentosConductor', [
 			'documento',
         ]),
         ...mapState('sharedValues', [
@@ -105,23 +101,20 @@ export default {
             'corroceria_options',
             'full_loading',
             'tipo_de_poliza_options',
+            'tipo_de_documento_conductor_options'
         ]),
-
 	},
 	components: {
 	},
     methods: {
+        ...mapMutations('documentosConductor', [
+            'setTipoDeDocumento',
+            'setFechaInicio',
+            'setFechaFin',
+            'setConductorId',
+            'setInstitucion',
+        ]),
        
-        ...mapMutations('documentosVehiculos', [
-            'setAseguradoraId',
-            'setTipoDePoliza',
-            'setNumeroDePoliza',
-            'setFechaDeVencimiento',
-            'setVehiculoId',
-        ]),
-        ...mapActions('aseguradoras', [
-            'fetchAseguradorasList'
-        ]),
         title(field){
             field = field.split('_').join(' ')
             field = field.charAt(0).toUpperCase() + field.slice(1)
@@ -131,7 +124,7 @@ export default {
        
     },
     created: function(){
-        this.fetchAseguradorasList()
+       
 	}
 
 }

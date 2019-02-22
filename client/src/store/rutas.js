@@ -83,6 +83,7 @@ export default {
                         showClose: true,
                         message: 'Ruta creada.'
                     })
+                    load.close()
                     return true
                 }
                 load.close()
@@ -91,6 +92,7 @@ export default {
                 
             })
             .catch(err => {
+                load.close()
                 console.log(err)
             })
         },

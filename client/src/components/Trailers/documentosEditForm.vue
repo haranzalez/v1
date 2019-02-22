@@ -30,6 +30,7 @@
                 <el-form-item label="Numero de poliza">
                     <el-input size="mini"
                     @input="setNumeroDePoliza"
+                    :value="documento.numero_de_poliza"
                     >
                     </el-input>
                 </el-form-item>
@@ -56,7 +57,7 @@ import moment from 'moment-timezone'
 import router from '../../router'
 
 export default {
-	name: 'DocumentosVehiculoCreateForm',
+	name: 'DocumentosTrailerEditForm',
 	data () {
       	return {
            
@@ -93,7 +94,7 @@ export default {
         ...mapState('aseguradoras', [
 			'aseguradorasList',
         ]),
-        ...mapState('documentosVehiculos', [
+        ...mapState('documentosTrailers', [
 			'documento',
         ]),
         ...mapState('sharedValues', [
@@ -106,18 +107,16 @@ export default {
             'full_loading',
             'tipo_de_poliza_options',
         ]),
-
 	},
 	components: {
 	},
     methods: {
-       
-        ...mapMutations('documentosVehiculos', [
+        ...mapMutations('documentosTrailers', [
             'setAseguradoraId',
             'setTipoDePoliza',
             'setNumeroDePoliza',
             'setFechaDeVencimiento',
-            'setVehiculoId',
+            'setTrailerId',
         ]),
         ...mapActions('aseguradoras', [
             'fetchAseguradorasList'

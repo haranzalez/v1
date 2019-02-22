@@ -7,28 +7,27 @@ import { Notification, Message, Loading } from 'element-ui'
 export default {
     namespaced: true,
     state: {
-        documento:{
-            id: null,
-            aseguradora_id: null,
-            tipo_de_poliza: null,
-            numero_de_poliza: null,
-            fecha_de_vencimiento: null,
-            vehiculo_id: null,
+        licencia:{
+           id: null,
+           conductor_id: null,
+           numero_de_licencia: null,
+           categoria: null,
+           fecha_de_vencimiento: null
         },
-        loadingDocumentosVehiculoTable: false,
-        documentosList: null,
+        loadingLicenciasConductoresTable: false,
+        licenciasList: null,
         headings: [],   
     },
 
     actions: {
-        fetchDocumentosList({state, commit, dispatch, rootState}){
-            commit('setLoadingDocumentosVehiculoTable', true)
-            HTTP().local.get('api/documentos-vehiculo/'+rootState.vehiculos.vehiculo.id)
+        fetchLicenciasList({state, commit, dispatch, rootState}){
+            commit('setLoadingLicenciasConductorTable', true)
+            HTTP().local.get('api/licencias-conductor/'+rootState.conductores.conductor.id)
             .then(d => {
                 console.log(d.data)
-                commit('setDocumentosList', d.data)
+                commit('setLicenciasList', d.data)
                 dispatch('renderTableHeadings')
-                commit('setLoadingDocumentosVehiculoTable', false)
+                commit('setLoadingLicenciasConductorTable', false)
             })
             .catch(err => {
                 console.log(err)
@@ -37,14 +36,14 @@ export default {
                     message: 'Se a producido un error. Porfavor notifique al administrador',
                     position: 'bottom-right',
                 });
-                commit('setLoadingDocumentosVehiculoTable', false)
+                commit('setLoadingLicenciasConductorTable', false)
             })
         },
-        fetchDocumento({commit, dispatch}, id){
-            HTTP().local.get('api/documento-vehiculo-by-id/'+id)
+        fetchLicencia({commit, dispatch}, id){
+            HTTP().local.get('api/licencia-conductor-by-id/'+id)
             .then(d => {
                 console.log(d.data)
-                commit('setFullDocumento', d.data[0])
+                commit('setFullLicencia', d.data[0])
             })
             .catch(err => {
                 console.log(err)
@@ -55,18 +54,18 @@ export default {
                 });
             })
         },
-        createDocumento({state, commit, dispatch, rootState}){
+        createLicencia({state, commit, dispatch, rootState}){
             var load = Loading.service(rootState.sharedValues.loading_options)
-            commit('setVehiculoId', rootState.vehiculos.vehiculo.id)
-            HTTP().local.post('api/documentos-vehiculo/create', state.documento)
+            commit('setConductorId', rootState.conductores.conductor.id)
+            HTTP().local.post('api/licencias-conductor/create', state.licencia)
             .then(d => {
                 if(d.data.message == 'success'){
                     Message({
                         type: 'success',
                         showClose: true,
-                        message: 'Documento creado.'
+                        message: 'licencia creada.'
                     })
-                    dispatch('fetchDocumentosList')
+                    dispatch('fetchLicenciasList')
                     load.close()
                 }else{
                     Notification.warning({
@@ -87,17 +86,17 @@ export default {
                 load.close()
             })
         },
-        editDocumento({state, dispatch, rootState}){
+        editLicencia({state, dispatch, rootState}){
             var load = Loading.service(rootState.sharedValues.loading_options)
-            HTTP().local.put('api/documentos-vehiculo/'+state.documento.id+'/update', state.documento)
+            HTTP().local.put('api/licencias-conductor/'+state.licencia.id+'/update', state.licencia)
             .then(d => {
                 if(d.data.message == 'success'){
                     Message({
                         type: 'success',
                         showClose: true,
-                        message: 'Documento actualizado.'
+                        message: 'Licencia actualizada.'
                     })
-                    dispatch('fetchDocumentosList')
+                    dispatch('fetchLicenciasList')
                     load.close()
                 }
             })
@@ -111,17 +110,17 @@ export default {
                 load.close()
             })
         },
-        delDocumento({state, dispatch, rootState}){
+        delLicencia({state, dispatch, rootState}){
             var load = Loading.service(rootState.sharedValues.loading_options)
-            HTTP().local.delete('api/documentos-vehiculo/'+state.documento.id+'/delete')
+            HTTP().local.delete('api/licencias-conductor/'+state.licencia.id+'/delete')
             .then(d => {
                 if(d.data.message == 'success'){
                     Message({
                         type: 'success',
                         showClose: true,
-                        message: 'Documento eliminado exitosamente'
+                        message: 'Licencia eliminada exitosamente'
                     })
-                    dispatch('fetchDocumentosList')
+                    dispatch('fetchLicenciasList')
                 }
                 load.close()
             })
@@ -139,7 +138,7 @@ export default {
         renderTableHeadings({state, commit}){
             let pkg = []
            
-            for(let prop2 in state.documentosList[0]){
+            for(let prop2 in state.licenciasList[0]){
                 if(prop2 !== 'created_at' || prop2 !== 'updated_at'){
                     prop2 = prop2.split('_').join(' ')
                     prop2 = prop2.charAt(0).toUpperCase() + prop2.slice(1)
@@ -153,41 +152,37 @@ export default {
 
     },
     mutations: {
-        setLoadingDocumentosVehiculoTable(state, value){
-            state.loadingDocumentosVehiculoTable = value
+        setLoadingLicenciasConductorTable(state, value){
+            state.loadingLicenciasConductorTable = value
         },
-        setFullDocumento(state, value){
-            state.documento = value
+        setFullLicencia(state, value){
+            state.licencia = value
         },
-        setDocumentosList(state, list){
-            state.documentosList = list
+        setLicenciasList(state, list){
+            state.licenciasList = list
         },
         setTableHeadings(state, headings){
             state.headings = headings;
         },
-        setAseguradoraId(state, value){
-            state.documento.aseguradora_id = value
+        setNumeroDeLicencia(state, value){
+            state.licencia.numero_de_licencia = value
         },
-        setTipoDePoliza(state, value){
-            state.documento.tipo_de_poliza = value
-        },
-        setNumeroDePoliza(state, value){
-            state.documento.numero_de_poliza = value
+        setCategoria(state, value){
+            state.licencia.categoria = value
         },
         setFechaDeVencimiento(state, value){
-            state.documento.fecha_de_vencimiento = value
+            state.licencia.fecha_de_vencimiento = value
         },
-        setVehiculoId(state, value){
-            state.documento.vehiculo_id = value
+        setConductorId(state, value){
+            state.licencia.conductor_id = value
         },
-        documentoFormReset(state){
-            state.documento = {
+        licenciaConductorFormReset(state){
+            state.licencia = {
                 id: null,
-                aseguradora_id: null,
-                tipo_de_poliza: null,
-                numero_de_poliza: null,
-                fecha_de_vencimiento: null,
-                vehiculo_id: null,
+                conductor_id: null,
+                numero_de_licencia: null,
+                categoria: null,
+                fecha_de_vencimiento: null
             }
         }
     },

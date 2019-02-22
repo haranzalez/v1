@@ -24,6 +24,15 @@
                     </el-form-item>
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Digito de verificacion">
+                        <el-input size="mini" 
+                        @input="setDigitoDeVerificacion"
+                        :value="cliente.digito_de_verificacion"
+                        placeholder="">
+                        </el-input>
+                    </el-form-item>
+				</el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Direccion">
                         <el-input size="mini" 
                         :value="cliente.direccion"
@@ -224,6 +233,7 @@ export default {
             'setSelectedDias',
             'setCupo',
             'setRadicaRndc',
+            'setDigitoDeVerificacion',
         ]),
         title(field){
             field = field.split('_').join(' ')

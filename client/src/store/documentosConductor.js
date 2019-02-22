@@ -9,26 +9,25 @@ export default {
     state: {
         documento:{
             id: null,
-            aseguradora_id: null,
-            tipo_de_poliza: null,
-            numero_de_poliza: null,
-            fecha_de_vencimiento: null,
-            vehiculo_id: null,
+            institucion: null,
+            tipo_de_documento: null,
+            fecha_inicio: null,
+            fecha_fin: null,
+            conductor_id: null,
         },
-        loadingDocumentosVehiculoTable: false,
+        loadingDocumentosConductorTable: false,
         documentosList: null,
         headings: [],   
     },
 
     actions: {
         fetchDocumentosList({state, commit, dispatch, rootState}){
-            commit('setLoadingDocumentosVehiculoTable', true)
-            HTTP().local.get('api/documentos-vehiculo/'+rootState.vehiculos.vehiculo.id)
+            commit('setLoadingDocumentosConductorTable', true)
+            HTTP().local.get('api/documentos-Conductor/'+rootState.conductores.conductor.id)
             .then(d => {
-                console.log(d.data)
                 commit('setDocumentosList', d.data)
                 dispatch('renderTableHeadings')
-                commit('setLoadingDocumentosVehiculoTable', false)
+                commit('setLoadingDocumentosConductorTable', false)
             })
             .catch(err => {
                 console.log(err)
@@ -37,11 +36,11 @@ export default {
                     message: 'Se a producido un error. Porfavor notifique al administrador',
                     position: 'bottom-right',
                 });
-                commit('setLoadingDocumentosVehiculoTable', false)
+                commit('setLoadingDocumentosConductorTable', false)
             })
         },
         fetchDocumento({commit, dispatch}, id){
-            HTTP().local.get('api/documento-vehiculo-by-id/'+id)
+            HTTP().local.get('api/documento-conductor-by-id/'+id)
             .then(d => {
                 console.log(d.data)
                 commit('setFullDocumento', d.data[0])
@@ -57,8 +56,8 @@ export default {
         },
         createDocumento({state, commit, dispatch, rootState}){
             var load = Loading.service(rootState.sharedValues.loading_options)
-            commit('setVehiculoId', rootState.vehiculos.vehiculo.id)
-            HTTP().local.post('api/documentos-vehiculo/create', state.documento)
+            commit('setConductorId', rootState.conductores.conductor.id)
+            HTTP().local.post('api/documentos-conductor/create', state.documento)
             .then(d => {
                 if(d.data.message == 'success'){
                     Message({
@@ -89,7 +88,7 @@ export default {
         },
         editDocumento({state, dispatch, rootState}){
             var load = Loading.service(rootState.sharedValues.loading_options)
-            HTTP().local.put('api/documentos-vehiculo/'+state.documento.id+'/update', state.documento)
+            HTTP().local.put('api/documentos-conductor/'+state.documento.id+'/update', state.documento)
             .then(d => {
                 if(d.data.message == 'success'){
                     Message({
@@ -113,7 +112,7 @@ export default {
         },
         delDocumento({state, dispatch, rootState}){
             var load = Loading.service(rootState.sharedValues.loading_options)
-            HTTP().local.delete('api/documentos-vehiculo/'+state.documento.id+'/delete')
+            HTTP().local.delete('api/documentos-conductor/'+state.documento.id+'/delete')
             .then(d => {
                 if(d.data.message == 'success'){
                     Message({
@@ -153,8 +152,8 @@ export default {
 
     },
     mutations: {
-        setLoadingDocumentosVehiculoTable(state, value){
-            state.loadingDocumentosVehiculoTable = value
+        setLoadingDocumentosConductorTable(state, value){
+            state.loadingDocumentosConductorTable = value
         },
         setFullDocumento(state, value){
             state.documento = value
@@ -165,29 +164,29 @@ export default {
         setTableHeadings(state, headings){
             state.headings = headings;
         },
-        setAseguradoraId(state, value){
-            state.documento.aseguradora_id = value
+        setTipoDeDocumento(state, value){
+            state.documento.tipo_de_documento = value
         },
-        setTipoDePoliza(state, value){
-            state.documento.tipo_de_poliza = value
+        setFechaInicio(state, value){
+            state.documento.fecha_inicio = value
         },
-        setNumeroDePoliza(state, value){
-            state.documento.numero_de_poliza = value
+        setFechaFin(state, value){
+            state.documento.fecha_fin = value
         },
-        setFechaDeVencimiento(state, value){
-            state.documento.fecha_de_vencimiento = value
+        setInstitucion(state, value){
+            state.documento.institucion = value
         },
-        setVehiculoId(state, value){
-            state.documento.vehiculo_id = value
+        setConductorId(state, value){
+            state.documento.conductor_id = value
         },
-        documentoFormReset(state){
+        documentoConductorFormReset(state){
             state.documento = {
                 id: null,
-                aseguradora_id: null,
-                tipo_de_poliza: null,
-                numero_de_poliza: null,
-                fecha_de_vencimiento: null,
-                vehiculo_id: null,
+                institucion: null,
+                tipo_de_documento: null,
+                fecha_inicio: null,
+                fecha_fin: null,
+                conductor_id: null,
             }
         }
     },

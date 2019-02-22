@@ -9,6 +9,8 @@ import logs from './userLogs'
 import roles from './roles'
 
 import conductores from './conductores'
+import licenciasConductores from './licenciasConductores';
+import documentosConductor from './documentosConductor';
 import vehiculos from './vehiculos'
 import trailers from './trailers'
 import rutas from './rutas'
@@ -28,7 +30,8 @@ import reportes from './reportes'
 import aseguradoras from './aseguradoras';
 import documentosVehiculos from './documentosVehiculos';
 import tecnomecanicaVehiculos from './tecnomecanicaVehiculos';
-import tecnomecanicaTrailers from './tecnomecanicaTrailers';
+import documentosTrailers from './documentosTrailers';
+
 
 
 Vue.use(Vuex)
@@ -47,6 +50,7 @@ export default new Vuex.Store({
 		roles,
 		logs,
 		conductores,
+		licenciasConductores,
 		vehiculos,
 		trailers,
 		rutas,
@@ -65,7 +69,8 @@ export default new Vuex.Store({
 		aseguradoras,
 		documentosVehiculos,
 		tecnomecanicaVehiculos,
-		tecnomecanicaTrailers,
+		documentosTrailers,
+		documentosConductor,
 	},
 	mutations: {
 	},

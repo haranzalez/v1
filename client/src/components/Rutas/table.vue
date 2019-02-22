@@ -368,9 +368,9 @@ export default {
 		...mapMutations('rutas', [
 			'setFullRuta',
 			'setKilometros',
-            'setAnticipoSugerido',
-            'setValorflete',
-            'setComentario',
+			'setAnticipoSugerido',
+			'setValorflete',
+			'setComentario',
 			'setMunicipioId',
 			'rutaReset',
 			'setMunicipioName',
@@ -487,8 +487,6 @@ export default {
 			if(this.createRuta()){
 				this.fetchRutasList()
 				this.dialogFormVisible = false
-				setAnticipoSugerido(0); 
-				setValorflete(0);
 			}
 		},
 		createMunicipio(){

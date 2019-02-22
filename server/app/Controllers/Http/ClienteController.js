@@ -75,6 +75,7 @@ class ClienteController {
             cupo,
             dias,
             radica_rndc,
+            digito_de_verificacion,
         } = request.all()
             
         const cliente = await Cliente.create({
@@ -91,6 +92,7 @@ class ClienteController {
             contrato,
             cupo,
             dias,
+            digito_de_verificacion,
         })
 
         /*await TipoNegociacion.create({
@@ -124,6 +126,7 @@ class ClienteController {
             cupo,
             dias,
             radica_rndc,
+            digito_de_verificacion,
         } = request.all()
 
         cliente.nombre_razon_social = nombre_razon_social 
@@ -138,6 +141,7 @@ class ClienteController {
         cliente.contrato = contrato
         cliente.dias = dias
         cliente.radica_rndc = radica_rndc
+        cliente.digito_de_verificacion = digito_de_verificacion
         cliente.save()
 
         const neg = await cliente.tipo_negociacion().fetch()

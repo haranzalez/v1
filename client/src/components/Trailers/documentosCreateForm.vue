@@ -3,10 +3,33 @@
        <el-form label-position="top" label-width="120px">
         <el-row>
             <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                <el-form-item label="Numero de tecnicomecanica">
+                <el-form-item label="Aseguradora">
+                    <el-select size="mini" v-model="aseguradora" placeholder="Select">
+                        <el-option
+                        v-for="item in aseguradorasList"
+                        :key="item.id"
+                        :label="item.nombre"
+                        :value="item.id">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+            </el-col>
+            <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                <el-form-item label="Tipo de poliza">
+                   <el-select size="mini" v-model="tipo_de_poliza" placeholder="Select">
+                        <el-option
+                        v-for="item in tipo_de_poliza_options"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+            </el-col>
+            <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                <el-form-item label="Numero de poliza">
                     <el-input size="mini"
-                    @input="setNumeroTecnomecanica"
-                    :value="tecnomecanica.numero_tecnomecanica"
+                    @input="setNumeroDePoliza"
                     >
                     </el-input>
                 </el-form-item>
@@ -16,6 +39,7 @@
                     <el-date-picker
                     v-model="fecha_de_vencimiento"
                     type="date"
+                    size="mini"
                     placeholder="Seleccione fecha">
                     </el-date-picker>
                 </el-form-item>
@@ -32,16 +56,32 @@ import moment from 'moment-timezone'
 import router from '../../router'
 
 export default {
-	name: 'TecnicomecanicasVehiculoCreateForm',
+	name: 'DocumentosTrailerCreateForm',
 	data () {
       	return {
            
 		}
 	},
 	computed: {
+        aseguradora: {
+             get(){
+                return this.documento.aseguradora_id
+            },
+            set(value){
+                this.setAseguradoraId(value)
+            }
+        },
+        tipo_de_poliza: {
+             get(){
+                return this.documento.tipo_de_poliza
+            },
+            set(value){
+                this.setTipoDePoliza(value)
+            }
+        },
         fecha_de_vencimiento: {
             get(){
-                return this.tecnomecanica.fecha_de_vencimiento
+                return this.documento.fecha_de_vencimiento
             },
             set(value){
                 this.setFechaDeVencimiento(value)
@@ -50,8 +90,11 @@ export default {
         ...mapState('authentication', [
 			'permisos',
         ]),
-        ...mapState('tecnomecanicaTrailers', [
-			'tecnomecanica',
+        ...mapState('aseguradoras', [
+			'aseguradorasList',
+        ]),
+        ...mapState('documentosTrailers', [
+			'documento',
         ]),
         ...mapState('sharedValues', [
 			'tipo_de_vehiculo_options',
@@ -63,23 +106,30 @@ export default {
             'full_loading',
             'tipo_de_poliza_options',
         ]),
-
 	},
 	components: {
 	},
     methods: {
-        ...mapMutations('tecnomecanicaTrailers', [
-            'setNumeroTecnomecanica',
+        ...mapMutations('documentosTrailers', [
+            'setAseguradoraId',
+            'setTipoDePoliza',
+            'setNumeroDePoliza',
             'setFechaDeVencimiento',
-            'setVehiculoId',
+            'setTrailerId',
+        ]),
+        ...mapActions('aseguradoras', [
+            'fetchAseguradorasList'
         ]),
         title(field){
             field = field.split('_').join(' ')
             field = field.charAt(0).toUpperCase() + field.slice(1)
             return field
         },
+      
+       
     },
     created: function(){
+        this.fetchAseguradorasList()
 	}
 
 }

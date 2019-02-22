@@ -30,26 +30,32 @@ class TransportadorasController {
             tipo_de_cuenta,
             radica_rndc
         } = request.all()
+        const checkDuplicate = await Database.from('transportadoras').where('nit', nit)
+        if(checkDuplicate.length == 0){
+            await Database
+            .table('transportadoras')
+            .insert({
+                nit,
+                razon_social,
+                direccion,
+                telefono,
+                contacto,
+                banco,
+                numero_de_cuenta,
+                pagos,
+                anticipo,
+                tipo_de_cuenta,
+                radica_rndc
+            })
 
-        await Database
-        .table('transportadoras')
-        .insert({
-            nit,
-            razon_social,
-            direccion,
-            telefono,
-            contacto,
-            banco,
-            numero_de_cuenta,
-            pagos,
-            anticipo,
-            tipo_de_cuenta,
-            radica_rndc
-        })
-
-        return {
-            message: 'success'
+            return {
+                message: 'success'
+            }
         }
+        return {
+            message: 'Ya existe una transportadora con el NIT: '+nit+' en los registros.'
+        }
+        
 
     }
     //UPDATE

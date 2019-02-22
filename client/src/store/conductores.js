@@ -35,12 +35,6 @@ export default {
             cuenta_propia: null,
             radica_rndc: null,
         },
-        licencia: {
-            id: null,
-            numero_de_licencia: null,
-            categoria: null,
-            fecha_de_vencimiento: null,
-        },
         cuentaPropiaSwitchCreate: null,
         radicaRndcSwitchCreate: null,
         cuentaPropiaSwitchEdit: null,
@@ -152,11 +146,9 @@ export default {
                if(d.data.length > 0){
                 commit('setDatosBancarios', d.data[0])
                 commit('setCuenta_propia', {value:d.data[0].cuenta_propia, op:'edit'})
-                commit('setRadica_rndc', {value:d.data[0].radica_rndc, op:'edit'})
                }else{
                 commit('setDatosBancarios', [])
                }
-               dispatch('fetchLicencias')
             })
             .catch(err => {
                 console.log(err)
@@ -192,56 +184,6 @@ export default {
                 console.log(err)
             })
         },
-//=======================================================================================//
-//========================== LICENCIAS ==================================================//
-//=======================================================================================//
-        fetchLicencias({ state, commit }){
-            HTTP().local.get('api/conductores/'+state.conductor.id+'/licencias')
-            .then(d => {
-                console.log(d.data)
-                if(d.data.length > 0){
-                    commit('setLicencia', d.data[0])
-                }else{
-                    commit('setLicencia', [])
-                }
-                
-                console.log(state.licencia)
-            })
-            .catch(err => {
-                console.log(err)
-            })
-        },
-        create_licencia({ state, commit }){
-            HTTP().local.post('api/conductores/'+state.conductor.id+'/licencia/crear', state.licencia)
-            .then(d => {
-                if(d.data.message == 'success'){
-                    Message({
-                        type: 'success',
-                        showClose: true,
-                        message: 'Licencia registrada'
-                    })
-                }
-            })
-            .catch(err => {
-                console.log(err)
-            })
-        },
-        update_licencia({ state, commit }, conductor_id){
-            HTTP().local.put('api/conductores/licencia/'+state.licencia.id+'/update',state.licencia)
-            .then(d => {
-                console.log(d.data)
-                if(d.data.message == 'success'){
-                    Message({
-                        type: 'success',
-                        showClose: true,
-                        message: 'Licencia actualizada'
-                    })
-                }
-            })
-            .catch(err => {
-                console.log(err)
-            })
-        }
 
     },
     mutations: {
@@ -384,28 +326,7 @@ export default {
                 radica_rndc: null,
             }
         },
-        //LICENCIAS MUTATIONS
-        setLicencia(state, value){
-            state.licencia = value
-        },
-        setNumeroLicencia(state, value){
-            state.licencia.numero_de_licencia = value
-        },
-        setCategoria(state, value){
-            state.licencia.categoria = value
-        },
-        setFechaVencimiento(state, value){
-            state.licencia.fecha_de_vencimiento = value
-        },
-
-        resetLicencia(state){
-            state.licencia = {
-                id: null,
-                numero_de_licencia: null,
-                categoria: null,
-                fecha_de_vencimiento: null,
-            }
-        }
+      
         
     },
 

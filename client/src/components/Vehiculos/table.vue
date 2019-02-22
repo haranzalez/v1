@@ -96,7 +96,7 @@
 				</div>
            </el-popover>
 		   <el-button type="text" :disabled="scope.row.conductor === null" size="mini" v-popover="scope.row.placa+'-conductor'">
-			   {{(scope.row.conductor)?scope.row.conductor.nombres:'N/A'}}
+			   {{(scope.row.conductor)?scope.row.conductor.nombres+' '+scope.row.conductor.primer_apellido+' '+scope.row.conductor.segundo_apellido:'N/A'}}
 		   </el-button>
       	</template>
     </el-table-column>

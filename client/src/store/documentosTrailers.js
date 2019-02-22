@@ -7,41 +7,44 @@ import { Notification, Message, Loading } from 'element-ui'
 export default {
     namespaced: true,
     state: {
-        tecnomecanica:{
+        documento:{
             id: null,
-            numero_tecnomecanica: null,
+            aseguradora_id: null,
+            tipo_de_poliza: null,
+            numero_de_poliza: null,
             fecha_de_vencimiento: null,
             trailer_id: null,
         },
-        loadingTecnomecanicaTrailerTable: false,
-        tecnomecanicaList: null,
+        loadingDocumentosTrailerTable: false,
+        documentosList: null,
         headings: [],   
     },
 
     actions: {
-        fetchTecnomecanicaList({state, commit, dispatch, rootState}){
-            commit('setLoadingTecnomecanicaTrailerTable', true)
-            HTTP().local.get('api/tecnomecanica-trailer/'+rootState.trailers.trailer.id)
-            .then(d => {
-                commit('setTecnomecanicaList', d.data)
-                dispatch('renderTableHeadings')
-                commit('setLoadingTecnomecanicaTrailerTable', false)
-            })
-            .catch(err => {
-                console.log(err)
-                Notification.warning({
-                    title: 'Atencion!',
-                    message: 'Se a producido un error. Porfavor notifique al administrador',
-                    position: 'bottom-right',
-                });
-                commit('setLoadingTecnomecanicaTrailerTable', false)
-            })
-        },
-        fetchTecnomecanica({commit, dispatch}, id){
-            HTTP().local.get('api/tecnomecanica-trailer-record-by-id/'+id)
+        fetchDocumentosList({state, commit, dispatch, rootState}){
+            commit('setLoadingDocumentosTrailerTable', true)
+            HTTP().local.get('api/documentos-trailer/'+rootState.trailers.trailer.id)
             .then(d => {
                 console.log(d.data)
-                commit('setFullTecnomecanica', d.data[0])
+                commit('setDocumentosList', d.data)
+                dispatch('renderTableHeadings')
+                commit('setLoadingDocumentosTrailerTable', false)
+            })
+            .catch(err => {
+                console.log(err)
+                Notification.warning({
+                    title: 'Atencion!',
+                    message: 'Se a producido un error. Porfavor notifique al administrador',
+                    position: 'bottom-right',
+                });
+                commit('setLoadingDocumentosTrailerTable', false)
+            })
+        },
+        fetchDocumento({commit, dispatch}, id){
+            HTTP().local.get('api/documento-trailer-by-id/'+id)
+            .then(d => {
+                console.log(d.data)
+                commit('setFullDocumento', d.data[0])
             })
             .catch(err => {
                 console.log(err)
@@ -52,18 +55,18 @@ export default {
                 });
             })
         },
-        createTecnomecanica({state, commit, dispatch, rootState}){
+        createDocumento({state, commit, dispatch, rootState}){
             var load = Loading.service(rootState.sharedValues.loading_options)
-            commit('setTrailerId', rootState.trailers.trailer.id)
-            HTTP().local.post('api/tecnomecanica-trailer/create', state.tecnomecanica)
+            commit('settrailerId', rootState.trailers.trailer.id)
+            HTTP().local.post('api/documentos-trailer/create', state.documento)
             .then(d => {
                 if(d.data.message == 'success'){
                     Message({
                         type: 'success',
                         showClose: true,
-                        message: 'Tecnomecanica creada.'
+                        message: 'Documento creado.'
                     })
-                    dispatch('fetchTecnomecanicaList')
+                    dispatch('fetchDocumentosList')
                     load.close()
                 }else{
                     Notification.warning({
@@ -84,17 +87,17 @@ export default {
                 load.close()
             })
         },
-        editTecnomecanica({state, dispatch, rootState}){
+        editDocumento({state, dispatch, rootState}){
             var load = Loading.service(rootState.sharedValues.loading_options)
-            HTTP().local.put('api/tecnomecanica-trailer/'+state.tecnomecanica.id+'/update', state.tecnomecanica)
+            HTTP().local.put('api/documentos-trailer/'+state.documento.id+'/update', state.documento)
             .then(d => {
                 if(d.data.message == 'success'){
                     Message({
                         type: 'success',
                         showClose: true,
-                        message: 'Tecnicomecanica actualizada.'
+                        message: 'Documento actualizado.'
                     })
-                    dispatch('fetchTecnomecanicaList')
+                    dispatch('fetchDocumentosList')
                     load.close()
                 }
             })
@@ -108,17 +111,17 @@ export default {
                 load.close()
             })
         },
-        delTecnomecanica({state, dispatch, rootState}){
+        delDocumento({state, dispatch, rootState}){
             var load = Loading.service(rootState.sharedValues.loading_options)
-            HTTP().local.delete('api/tecnomecanica-trailer/'+state.tecnomecanica.id+'/delete')
+            HTTP().local.delete('api/documentos-trailer/'+state.documento.id+'/delete')
             .then(d => {
                 if(d.data.message == 'success'){
                     Message({
                         type: 'success',
                         showClose: true,
-                        message: 'Tecnicomecanica eliminada exitosamente'
+                        message: 'Documento eliminado exitosamente'
                     })
-                    dispatch('fetchTecnomecanicaList')
+                    dispatch('fetchDocumentosList')
                 }
                 load.close()
             })
@@ -136,7 +139,7 @@ export default {
         renderTableHeadings({state, commit}){
             let pkg = []
            
-            for(let prop2 in state.tecnomecanicaList[0]){
+            for(let prop2 in state.documentosList[0]){
                 if(prop2 !== 'created_at' || prop2 !== 'updated_at'){
                     prop2 = prop2.split('_').join(' ')
                     prop2 = prop2.charAt(0).toUpperCase() + prop2.slice(1)
@@ -150,31 +153,39 @@ export default {
 
     },
     mutations: {
-        setLoadingTecnomecanicaTrailerTable(state, value){
-            state.loadingTecnomecanicaTrailerTable = value
+        setLoadingDocumentosTrailerTable(state, value){
+            state.loadingDocumentostrailerTable = value
         },
-        setFullTecnomecanica(state, value){
-            state.tecnomecanica = value
+        setFullDocumento(state, value){
+            state.documento = value
         },
-        setTecnomecanicaList(state, list){
-            state.tecnomecanicaList = list
+        setDocumentosList(state, list){
+            state.documentosList = list
         },
         setTableHeadings(state, headings){
             state.headings = headings;
         },
-        setNumeroTecnomecanica(state, value){
-            state.tecnomecanica.numero_tecnomecanica = value
+        setAseguradoraId(state, value){
+            state.documento.aseguradora_id = value
+        },
+        setTipoDePoliza(state, value){
+            state.documento.tipo_de_poliza = value
+        },
+        setNumeroDePoliza(state, value){
+            state.documento.numero_de_poliza = value
         },
         setFechaDeVencimiento(state, value){
-            state.tecnomecanica.fecha_de_vencimiento = value
+            state.documento.fecha_de_vencimiento = value
         },
-        setTrailerId(state, value){
-            state.tecnomecanica.trailer_id = value
+        settrailerId(state, value){
+            state.documento.trailer_id = value
         },
-        tecnomecanicaTrailerFormReset(state){
-            state.tecnomecanica = {
+        documentoTrailerFormReset(state){
+            state.documento = {
                 id: null,
-                numero_tecnomecanica: null,
+                aseguradora_id: null,
+                tipo_de_poliza: null,
+                numero_de_poliza: null,
                 fecha_de_vencimiento: null,
                 trailer_id: null,
             }

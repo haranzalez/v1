@@ -231,7 +231,7 @@
                             <el-option
                             v-for="item in conductoresList"
                             :key="item.id"
-                            :label="item.nombres"
+                            :label="item.nombres+' '+item.primer_apellido+' '+item.segundo_apellido"
                             :value="item.id">
                             </el-option>
                         </el-select>
@@ -475,6 +475,9 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../assets/scss/_variables';
+.el-select{
+    width: 100%;
+}
 .page-vehiculos-create {
 	.label-switch-box {
 		display: block;

@@ -229,11 +229,11 @@
                         </el-switch>
                     </el-form-item>
 				</el-col>
-                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                    <h3>Tecnicomecanicas</h3>
+                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                <h3>Polizas</h3>
                 </el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                    <tecnomecanicaTable></tecnomecanicaTable>
+                    <documentosTable></documentosTable>
                 </el-col>
         </el-row>
         
@@ -248,7 +248,7 @@ import HTTP from '../../http';
 import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
 import moment from 'moment-timezone'
 import router from '../../router'
-import tecnomecanicaTable from './tecnomecanicaTable.vue'
+import documentosTable from './documentosTable.vue'
 
 export default {
 	name: 'TrailersEditForm',
@@ -330,7 +330,7 @@ export default {
 
 	},
 	components: {
-        tecnomecanicaTable,
+        documentosTable,
 	},
     methods: {
         radicaChange(e){

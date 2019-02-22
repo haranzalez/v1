@@ -189,6 +189,30 @@ export default {
                 label: 'Hidrocarburos'
             }, 
         ],
+        tipo_de_conductor_options: [
+            {
+                value: 'Propio',
+                label: 'Propio'
+            }, 
+            {
+                value: 'Tercero',
+                label: 'Tercero'
+            },
+        ],
+        tipo_de_documento_conductor_options: [
+            {
+                value: 'Curso de alturas',
+                label: 'Curso de alturas'
+            }, 
+            {
+                value: 'Curso de sustancias peligrosas',
+                label: 'Curso de sustancias peligrosas'
+            },
+            {
+                value: 'Curso HSE',
+                label: 'Curso HSE'
+            },
+        ],
         marcas_vehiculos_options: null,
         colores_vehiculos_options: null,
         linea_cabezotes_options: null,
@@ -199,37 +223,51 @@ export default {
 
     actions: {
         searchMarcasVehiculosList({state, commit, dispatch}, keyword){
-            commit('setMarcasVehiculoListLoading', true)
-            HTTP().local.post('api/marcas-vehiculos',{keyword})
-            .then(d => {
-                commit('setMarcasVehiculosList', d.data)
-                commit('setMarcasVehiculoListLoading', false)
-            })
-            .catch(err => {
-                console.log(err)
-            })
+            
+            if(keyword !== ''){
+                commit('setMarcasVehiculoListLoading', true)
+                HTTP().local.post('api/marcas-vehiculos',{keyword})
+                .then(d => {
+                    commit('setMarcasVehiculosList', d.data)
+                    commit('setMarcasVehiculoListLoading', false)
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+            }else{
+                commit('setMarcasVehiculosList', null)
+            }
+            
         },
         searchColoresVehiculosList({state, commit, dispatch}, keyword){
-            commit('setColoresVehiculoListLoading', true)
-            HTTP().local.post('api/colores-vehiculos', {keyword})
-            .then(d => {
-                commit('setColoresVehiculosList', d.data)
-                commit('setColoresVehiculoListLoading', false)
-            })
-            .catch(err => {
-                console.log(err)
-            })
+            if(keyword !== ''){
+                commit('setColoresVehiculoListLoading', true)
+                HTTP().local.post('api/colores-vehiculos', {keyword})
+                .then(d => {
+                    commit('setColoresVehiculosList', d.data)
+                    commit('setColoresVehiculoListLoading', false)
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+            }else{
+                commit('setColoresVehiculosList', null)
+            }
         },
         searchLineaVehiculosList({state, commit, dispatch}, keyword){
-            commit('setLineaVehiculoListLoading', true)
-            HTTP().local.post('api/lineas-vehiculos',{keyword})
-            .then(d => {
-                commit('setLineaVehiculosList', d.data)
-                commit('setLineaVehiculoListLoading', false)
-            })
-            .catch(err => {
-                console.log(err)
-            })
+            if(keyword !== ''){
+                commit('setLineaVehiculoListLoading', true)
+                HTTP().local.post('api/lineas-vehiculos',{keyword})
+                .then(d => {
+                    commit('setLineaVehiculosList', d.data)
+                    commit('setLineaVehiculoListLoading', false)
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+            }else{
+                commit('setLineaVehiculosList', null)
+            }
         },
     },
     mutations: {

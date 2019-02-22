@@ -22,6 +22,14 @@
                     </el-form-item>
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Digito de verificacion">
+                        <el-input size="mini" 
+                        @input="setDigitoDeVerificacion"
+                        placeholder="">
+                        </el-input>
+                    </el-form-item>
+				</el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Direccion">
                         <el-input size="mini" 
                         @input="setDireccion"
@@ -195,6 +203,7 @@ export default {
             'setSelectedDias',
             'setCupo',
             'setRadicaRndc',
+            'setDigitoDeVerificacion',
         ]),
        
     },
@@ -208,6 +217,9 @@ export default {
 @import '../../assets/scss/_variables';
 .padding{
     padding:0px 5px;
+}
+.el-select{
+    width: 100%;
 }
 .page-vehiculos-create {
 	.label-switch-box {

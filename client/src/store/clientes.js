@@ -22,6 +22,7 @@ export default {
            dias: null,
            created_at: null,
            radica_rndc: false,
+           digito_de_verificacion: null,
         },
         deposito: {
             cliente_id: null,
@@ -394,6 +395,9 @@ export default {
         setCelular(state, value){
             state.cliente.celular = value
         },
+        setDigitoDeVerificacion(state, value){
+            state.cliente.digito_de_verificacion = value
+        },
         setCurrentCuadresTab(state, value){
             state.currentCuadresTab = value
         },
@@ -413,6 +417,7 @@ export default {
                 dias: null,
                 created_at: null,
                 radica_rndc: false,
+                digito_de_verificacion: null,
             }
         },
         setFullCLienteConsolidacion(state, value){

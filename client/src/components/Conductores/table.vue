@@ -1,21 +1,19 @@
 <template>
 <div>
-	<!-- licencia create form -->
-	<el-dialog width="30%" top="5vh" :visible.sync="LicenciaCreateFormVisible">
-		<h3 style="text-align:center;" slot="title">{{conductor.nombres + ' ' + conductor.primer_apellido}}</h3>
-		<LicenciaCreateForm></LicenciaCreateForm>
+	<!--Licencias table -->
+	<el-dialog  width="50%" top="5vh" :visible.sync="licenciasTableVisible">
+		<h3 style="text-align:center;" slot="title">Licencias de {{conductor.nombres + ' ' + conductor.primer_apellido + ' ' + conductor.segundo_apellido}}</h3>
+		<LicenciasTable></LicenciasTable>
 		<span slot="footer" class="dialog-footer">
-			<el-button size="mini" @click="LicenciaCreateFormVisible = false">Cerrar</el-button>
-			<el-button size="mini" type="primary" @click="create_licencia">Crear</el-button>
+			<el-button size="mini" @click="licenciasTableVisible = false">Cerrar</el-button>
 		</span>
 	</el-dialog>
-	<!-- licencia edit form -->
-	<el-dialog width="30%" top="5vh" :visible.sync="LicenciaEditFormVisible">
-		<h3 style="text-align:center;" slot="title">{{conductor.nombres + ' ' + conductor.primer_apellido}}</h3>
-		<LicenciaEditForm></LicenciaEditForm>
+	<!--Documentos table -->
+	<el-dialog  width="50%" top="5vh" :visible.sync="documentosTableVisible">
+		<h3 style="text-align:center;" slot="title">Certificaciones de {{conductor.nombres + ' ' + conductor.primer_apellido + ' ' + conductor.segundo_apellido}}</h3>
+		<DocumentosTable></DocumentosTable>
 		<span slot="footer" class="dialog-footer">
-			<el-button size="mini" @click="LicenciaEditFormVisible = false">Cerrar</el-button>
-			<el-button size="mini" type="primary" @click="update_licencia">Actualizar</el-button>
+			<el-button size="mini" @click="documentosTableVisible = false">Cerrar</el-button>
 		</span>
 	</el-dialog>
 	<!--datos bancarios create form -->
@@ -76,10 +74,11 @@
 				</el-button>
 				<el-dropdown-menu slot="dropdown">
 					<el-dropdown-item :disabled="(permisos['Conductores'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Crear</el-dropdown-item>
-                    <el-dropdown-item :disabled="(permisos['Conductores'].editar)? false:true" command="edit"><i class="mdi mdi-pencil mr-10"></i> Editar</el-dropdown-item>
-                    <el-dropdown-item :disabled="(permisos['Conductores'].eliminar)? false:true" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
+						<el-dropdown-item :disabled="(permisos['Conductores'].editar)? false:true" command="edit"><i class="mdi mdi-pencil mr-10"></i> Editar</el-dropdown-item>
+						<el-dropdown-item :disabled="(permisos['Conductores'].eliminar)? false:true" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
 					<el-dropdown-item :disabled="(permisos['Conductores'].eliminar)? false:true" command="registrarCuentaBancaria" divided><i class="mdi mdi-bank mr-10"></i> Datos bancarios</el-dropdown-item>
-					<el-dropdown-item :disabled="(permisos['Conductores'].eliminar)? false:true" command="registrarLicencia" ><i class="mdi mdi-account-card-details mr-10"></i> Licencias</el-dropdown-item>
+					<el-dropdown-item :disabled="(permisos['Conductores'].eliminar)? false:true" command="licenciasTable" ><i class="mdi mdi-account-card-details mr-10"></i> Licencias</el-dropdown-item>
+					<el-dropdown-item :disabled="(permisos['Conductores'].eliminar)? false:true" command="documentosTable" ><i class="mdi mdi-school mr-10"></i> Certificaciones</el-dropdown-item>
 				</el-dropdown-menu>
     		</el-dropdown>
 			</div>
@@ -175,15 +174,15 @@ import ConductoresEditForm from '@/components/Conductores/editForm'
 import ConductoresCreateForm from '@/components/Conductores/createForm'
 import DatosBancariosCreateForm from '@/components/Conductores/datosBancariosCreateForm'
 import DatosBancariosEditForm from '@/components/Conductores/datosBancariosEditForm'
-import LicenciaCreateForm from '@/components/Conductores/licenciasCreateForm'
-import LicenciaEditForm from '@/components/Conductores/licenciasEditForm'
+import LicenciasTable from '@/components/Conductores/licenciasTable'
+import DocumentosTable from '@/components/Conductores/documentosTable'
 
 export default {
 	name: 'ConductorTable',
 	data () {
-      	return {
-			LicenciaCreateFormVisible: false,
-			LicenciaEditFormVisible: false,
+    return {
+			licenciasTableVisible: false,
+			documentosTableVisible: false,
 			editFormVisible: false,
 			createFormVisible: false,
 			selectTypeOfSearch: 'Nombre',
@@ -208,15 +207,15 @@ export default {
 				this.setDatosBancariosEditFormVisible(value)
 			}
 		},
-        ...mapState('authentication', [
+    ...mapState('authentication', [
 			'permisos',
-        ]),
-        ...mapState('conductores', [
+    ]),
+    ...mapState('conductores', [
 			'conductor',
 			'datosBancarios',
 			'licencia',
 			'headings',
-            'conductoresList',
+      'conductoresList',
 			'conductoresDataReady',
 			'loadingConductoresTable',
 			'datosBancariosCreateFormVisible',
@@ -242,10 +241,13 @@ export default {
 		ConductoresCreateForm,
 		DatosBancariosCreateForm,
 		DatosBancariosEditForm,
-		LicenciaCreateForm,
-		LicenciaEditForm,
+		LicenciasTable,
+		DocumentosTable,
 	},
     methods: {
+		filterTag(value, row) {
+			return row.estado === value;
+		},
 		determineEstado(row){
 			if(row == false){
 				return 'danger'
@@ -258,7 +260,7 @@ export default {
 			this.fetchConductoresList() 
         },
         exportTable(){
-			exportService.toXLS(this.conductoresList, 'Vehiculos', true)
+			exportService.toXLS(this.conductoresList, 'Conductores', true)
 		},
 		handleAction(e, row){
 			if(e == 'registrarCuentaBancaria'){
@@ -280,39 +282,27 @@ export default {
 					this.DatosBancariosEditFormVisible = true
 				}
 			}
-			if(e == 'registrarLicencia'){
-				if(this.licencia.length == 0){
-					this.resetLicencia()
-					this.$confirm(this.conductor.nombres + ' ' + this.conductor.primer_apellido + ' aun no tiene licencias registradas en el sistema. Desea crear un nuevo registro para este conductor?', 'Atencion!', {
-						confirmButtonText: 'Si',
-						cancelButtonText: 'No',
-						type: 'warning'
-					}).then(() => {
-						this.LicenciaCreateFormVisible = true
-					}).catch(() => {
-						this.$message({
-							type: 'warning',
-							message: 'Operacion cancelada'
-						});          
-					});
-					
-				}else{
-					this.LicenciaEditFormVisible = true
+			if(e == 'licenciasTable'){
+				this.fetchLicenciasList()
+				this.licenciasTableVisible = true
+			}
+			if(e == 'documentosTable'){
+				this.fetchDocumentosList()
+				this.documentosTableVisible = true
+			}
+        if(e == 'create'){
+					this.resetConductoresVars()
+					this.resetDatosBancarios()
+					this.createFormVisible = true;
+        }
+				if(e == 'edit'){
+					this.editFormVisible = true;
 				}
-			}
-            if(e == 'create'){
-				this.resetConductoresVars()
-				this.resetDatosBancarios()
-				this.createFormVisible = true;
-            }
-             if(e == 'edit'){
-				this.editFormVisible = true;
-            }
-             if(e == 'del'){
-                 this.pushToDel(row)
-			}
-        },
-        handleCurrentTableChange(val) {
+				if(e == 'del'){
+						this.pushToDel(row)
+				}
+      },
+      handleCurrentTableChange(val) {
 			if(val == null){
 				this.$refs.conductoresTable.setCurrentRow(val);
 				return
@@ -330,7 +320,7 @@ export default {
 			'setDatosBancariosCreateFormVisible',
 			'setDatosBancariosEditFormVisible',
 		]),
-        ...mapActions('conductores',[
+    ...mapActions('conductores',[
 			'fetchConductor',
 			'fetchConductoresList',
 			'createConductor',
@@ -341,6 +331,12 @@ export default {
 			'fetchDatosBancarios',
 			'create_licencia',
 			'update_licencia',
+		]),
+		...mapActions('licenciasConductores',[
+			 'fetchLicenciasList',
+		]),
+		...mapActions('documentosConductor',[
+			 'fetchDocumentosList',
 		]),
 		create(){
 			this.createConductor()

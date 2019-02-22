@@ -8,7 +8,7 @@
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Numero licencia" >
                         <el-input size="mini" 
-                        @input="setNumeroLicencia"
+                        @input="setNumeroDeLicencia"
                         placeholder="">
                         </el-input>
                     </el-form-item>
@@ -59,8 +59,7 @@ export default {
                 return this.licencia.fecha_de_vencimiento
             },
             set(value){
-                console.log(value)
-                this.setFechaVencimiento(value)
+                this.setFechaDeVencimiento(value)
             }
         },
         tipo_de_licencia_selected: {
@@ -74,8 +73,7 @@ export default {
         ...mapState('authentication', [
 			'permisos',
         ]),
-        ...mapState('conductores', [
-            'conductor',
+        ...mapState('licenciasConductores', [
             'licencia',
         ]),
         ...mapState('sharedValues', [
@@ -86,27 +84,16 @@ export default {
 	components: {
 	},
     methods: {
-         handleAction(e){
-            if(e == 'create'){
-                this.createConductor()
-            }
-            if(e == 'back'){
-                this.back()
-            }
-        },
-        ...mapMutations('conductores', [
-            'setNumeroLicencia',
+        ...mapMutations('licenciasConductores', [
+            'setNumeroDeLicencia',
             'setCategoria',
-            'setFechaVencimiento',
+            'setFechaDeVencimiento',
         ]),
         title(field){
             field = field.split('_').join(' ')
             field = field.charAt(0).toUpperCase() + field.slice(1)
             return field
         },
-        ...mapActions('conductores',[
-            'create_datos_bancarios',
-        ]),
     },
     created: function(){
        

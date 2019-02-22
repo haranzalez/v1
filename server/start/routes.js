@@ -175,7 +175,7 @@ Route.group(() => {
   //======================================================================================================================================
   //GET
   Route.get('documentos-vehiculo/:vehiculo_id', 'DocumentosVehiculoController.get_documentos_list').middleware('auth')
-  Route.get('documento/:id', 'DocumentosVehiculoController.get_documento').middleware('auth')
+  Route.get('documento-vehiculo-by-id/:id', 'DocumentosVehiculoController.get_documento').middleware('auth')
   //POST
   Route.post('documentos-vehiculo/create', 'DocumentosVehiculoController.create_documento').middleware('auth')
   //PUT
@@ -208,17 +208,17 @@ Route.group(() => {
   //DELETE
   Route.delete('trailers/:id/delete', 'TrailerController.delete_trailer').middleware('auth')
   //======================================================================================================================================
-  //Tecnicomecanica trailers
+  //Documentos trailers
   //======================================================================================================================================
   //GET
-  Route.get('tecnomecanica-trailer/:trailer_id', 'TecnomecanicaTrailersController.get_tecnomecanica_list').middleware('auth')
-  Route.get('tecnomecanica-trailer-record-by-id/:id', 'TecnomecanicaTrailersController.get_tecnomecanica').middleware('auth')
+  Route.get('documentos-trailer/:trailer_id', 'DocumentosTrailersController.get_documentos_list').middleware('auth')
+  Route.get('documento-trailer-by-id/:id', 'DocumentosTrailersController.get_documento').middleware('auth')
   //POST
-  Route.post('tecnomecanica-trailer/create', 'TecnomecanicaTrailersController.create_tecnomecanica').middleware('auth')
+  Route.post('documentos-trailer/create', 'DocumentosTrailersController.create_documento').middleware('auth')
   //PUT
-  Route.put('tecnomecanica-trailer/:id/update', 'TecnomecanicaTrailersController.update_tecnomecanica').middleware('auth')
+  Route.put('documentos-trailer/:id/update', 'DocumentosTrailersController.update_documento').middleware('auth')
   //DELETE
-  Route.delete('tecnomecanica-trailer/:id/delete', 'TecnomecanicaTrailersController.delete_tecnomecanica').middleware('auth')
+  Route.delete('documentos-trailer/:id/delete', 'DocumentosTrailersController.delete_documento').middleware('auth')
   //======================================================================================================================================
   //Conductores
   //======================================================================================================================================
@@ -226,20 +226,40 @@ Route.group(() => {
   Route.get('conductores', 'ConductorController.get_all_conductores').middleware('auth')
   Route.get('conductores/:id', 'ConductorController.get_conductor').middleware('auth')
   Route.get('conductores/:id/datos-bancarios', 'ConductorController.get_datos_bancarios').middleware('auth')
-  Route.get('conductores/:id/licencias', 'ConductorController.get_licencias').middleware('auth')
   Route.get('conductores/:conductor_id/assign/:vehicle_id', 'ConductorController.assign_vehicle').middleware('auth')
   //POST
   Route.post('conductores/crear', 'ConductorController.create_conductor').middleware('auth')
-  Route.post('conductores/:id/licencia/crear', 'ConductorController.create_licence').middleware('auth')
   Route.post('conductores/:id/datos-bancarios/crear', 'ConductorController.create_datos_bancarios').middleware('auth')
   //PUT
   Route.put('conductores/:id/update', 'ConductorController.update_conductor').middleware('auth')
-  Route.put('conductores/licencia/:id/update', 'ConductorController.update_licence').middleware('auth')
   Route.put('conductores/:id/datos-bancarios/update', 'ConductorController.update_datos_bancarios').middleware('auth')
   //DELETE
   Route.delete('conductores/:id/delete', 'ConductorController.delete_conductor').middleware('auth')
   Route.delete('conductores/datos-bancarios/:id/delete', 'ConductorController.delete_conductor_bank_account').middleware('auth')
-  Route.delete('conductores/licencia/:id/delete', 'ConductorController.delete_conductor_licence').middleware('auth')
+  //======================================================================================================================================
+  //Documentos conductores
+  //======================================================================================================================================
+  //GET
+  Route.get('documentos-conductor/:conductor_id', 'DocumentosConductoresController.get_documentos_list').middleware('auth')
+  Route.get('documento-conductor-by-id/:id', 'DocumentosConductoresController.get_documento').middleware('auth')
+  //POST
+  Route.post('documentos-conductor/create', 'DocumentosConductoresController.create_documento').middleware('auth')
+  //PUT
+  Route.put('documentos-conductor/:id/update', 'DocumentosConductoresController.update_documento').middleware('auth')
+  //DELETE
+  Route.delete('documentos-conductor/:id/delete', 'DocumentosConductoresController.delete_documento').middleware('auth')
+  //======================================================================================================================================
+  //Licencias conductores
+  //======================================================================================================================================
+  //GET
+  Route.get('licencias-conductor/:conductor_id', 'LicenciasConductoresController.get_licencias_list').middleware('auth')
+  Route.get('licencia-conductor-by-id/:id', 'LicenciasConductoresController.get_licencia').middleware('auth')
+  //POST
+  Route.post('licencias-conductor/create', 'LicenciasConductoresController.create_licencia').middleware('auth')
+  //PUT
+  Route.put('licencias-conductor/:id/update', 'LicenciasConductoresController.update_licencia').middleware('auth')
+  //DELETE
+  Route.delete('licencias-conductor/:id/delete', 'LicenciasConductoresController.delete_licencia').middleware('auth')
   //======================================================================================================================================
   //Transportadoras
   //======================================================================================================================================

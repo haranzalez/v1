@@ -29,12 +29,22 @@ export default {
             var load = Loading.service(rootState.sharedValues.loading_options)
             HTTP().local.post('api/transportadoras/crear', state.transportadora)
             .then(d => {
-                Message({
-                    type: 'success',
-                    showClose: true,
-                    message: 'Transportadora creada.'
-                })
-                load.close()
+                if(d.data.message == 'success'){
+                    Message({
+                        type: 'success',
+                        showClose: true,
+                        message: 'Transportadora creada.'
+                    })
+                    load.close()
+                }else{
+                    Notification.warning({
+                        title: 'Atencion!',
+                        message: d.data.message,
+                        position: 'bottom-right',
+                    });
+                    load.close()
+                }
+                
             })
             .catch(err => {
                 console.log(err)

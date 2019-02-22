@@ -56,31 +56,21 @@ export default {
                 return this.licencia.fecha_de_vencimiento
             },
             set(value){
-                console.log(value)
                 this.setFechaVencimiento(value)
             }
         },
         ...mapState('authentication', [
 			'permisos',
         ]),
-        ...mapState('conductores', [
+        ...mapState('licenciasConductores', [
             'conductor',
             'licencia',
         ]),
-       
 	},
 	components: {
 	},
     methods: {
-         handleAction(e){
-            if(e == 'create'){
-                this.createConductor()
-            }
-            if(e == 'back'){
-                this.back()
-            }
-        },
-        ...mapMutations('conductores', [
+        ...mapMutations('licenciasConductores', [
             'setNumeroLicencia',
             'setCategoria',
             'setFechaVencimiento',
@@ -90,9 +80,6 @@ export default {
             field = field.charAt(0).toUpperCase() + field.slice(1)
             return field
         },
-        ...mapActions('conductores',[
-            'create_datos_bancarios',
-        ]),
     },
     created: function(){
        

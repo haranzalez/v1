@@ -184,20 +184,19 @@ export default {
 			exportService.toXLS(this.trailersList, 'Vehiculos', true)
 		},
 		handleAction(e, row){
-            if(e == 'create'){
+      if(e == 'create'){
 				this.resetTrailerVars()
-        		
 				this.createFormVisible = true;
-            }
-        if(e == 'edit'){
-				this.fetchTecnomecanicaList()
+      }
+			if(e == 'edit'){
+				this.fetchDocumentosList()
 				this.editFormVisible = true;
-            }
-             if(e == 'del'){
-                 this.pushToDel(row)
 			}
-        },
-        handleCurrentTableChange(val) {
+			if(e == 'del'){
+					this.pushToDel(row)
+			}
+    },
+    handleCurrentTableChange(val) {
 			if(val == null){
 				this.$refs.trailersTable.setCurrentRow(val);
 				return
@@ -215,8 +214,8 @@ export default {
 			'createTrailer',
 			'delTrailer',
 		]),
-		...mapActions('tecnomecanicaTrailers',[
-			'fetchTecnomecanicaList',
+		...mapActions('documentosTrailers',[
+			'fetchDocumentosList',
 		]),
         pushToEdit(row){
 			this.setFullTrailer(row)

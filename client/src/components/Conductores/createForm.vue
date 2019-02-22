@@ -72,13 +72,20 @@
 				</el-col>
 				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Tipo de conductor" prop="tipo_conductor">
-                        <el-input size="mini" 
-                        @input="setTipoDeConductor"
-                        placeholder="">
-                        </el-input>
+                        <el-select 
+                        size="mini" 
+                        filterable 
+                        v-model="tipo_conductor_selected"
+                        placeholder="Seleccione">
+                            <el-option
+                            v-for="item in tipo_de_conductor_options"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                            </el-option>
+                        </el-select>
                     </el-form-item>
 				</el-col>
-		
 				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Direccion" prop="direccion">
                         <el-input size="mini" 
@@ -205,6 +212,14 @@ export default {
         }
 	},
 	computed: {
+        tipo_conductor_selected: {
+            get(){
+                return this.conductor.tipo_de_conductor
+            },
+            set(value){
+                this.setTipoDeConductor(value)
+            }
+        },
         estado: {
             get(){
                 return this.conductor.estado
@@ -245,6 +260,9 @@ export default {
         ]),
         ...mapState('transportadoras', [
 			'transportadorasList',
+        ]),
+        ...mapState('sharedValues', [
+			'tipo_de_conductor_options',
         ]),
 
 	},
@@ -300,6 +318,9 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../assets/scss/_variables';
+.el-select{
+    width: 100%;
+}
 .page-conductores-create {
 	.label-switch-box {
 		display: block;

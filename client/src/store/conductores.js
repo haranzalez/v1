@@ -25,27 +25,13 @@ export default {
             anticipo: false,
             estado: false,
         },
-        datosBancarios:{
-            id: null,
-            titular: null,
-            tipo_de_id: null,
-            numero_cuenta_bancaria: null,
-            tipo_cuenta_bancaria: null,
-            banco: null,
-            cuenta_propia: null,
-            radica_rndc: null,
-        },
-        cuentaPropiaSwitchCreate: null,
         radicaRndcSwitchCreate: null,
-        cuentaPropiaSwitchEdit: null,
         radicaRndcSwitchEdit: null,
         conductoresList: null,
         dataReady: false,
         conductoresDataReady: false,
         headings: [],
         loadingConductoresTable: false,
-        datosBancariosCreateFormVisible: false,
-        datosBancariosEditFormVisible: false,
     },
 
     actions: {
@@ -53,7 +39,6 @@ export default {
             HTTP().local.get('api/conductores/'+id)
             .then(d => {
                 commit('setFullConductor', d.data)
-                dispatch('fetchDatosBancarios')
             })
             .catch(err => {
                 console.log(err)
@@ -135,54 +120,6 @@ export default {
             }
             commit('setTableHeadings', pkg)
             
-        },
-//=======================================================================================//
-//==================== DATOS BANCARIOS ==================================================//
-//=======================================================================================//
-        fetchDatosBancarios({ state, commit, dispatch }){
-            HTTP().local.get('api/conductores/'+state.conductor.id+'/datos-bancarios')
-            .then(d => {
-               console.log(d.data)
-               if(d.data.length > 0){
-                commit('setDatosBancarios', d.data[0])
-                commit('setCuenta_propia', {value:d.data[0].cuenta_propia, op:'edit'})
-               }else{
-                commit('setDatosBancarios', [])
-               }
-            })
-            .catch(err => {
-                console.log(err)
-            })
-        },
-        create_datos_bancarios({ state, commit }){
-            HTTP().local.post('api/conductores/'+state.conductor.id+'/datos-bancarios/crear', state.datosBancarios)
-            .then(d => {
-                if(d.data.message == 'success'){
-                    Message({
-                        type: 'success',
-                        showClose: true,
-                        message: 'Cuenta bancaria registrada'
-                    })
-                }
-            })
-            .catch(err => {
-                console.log(err)
-            })
-        },
-        update_datos_bancarios({ state, commit }, conductor_id){
-            HTTP().local.put('api/conductores/'+(conductor_id)?conductor_id:state.conductor.id+'/datos-bancarios/update',state.datosBancarios)
-            .then(d => {
-                if(d.data.message == 'success'){
-                    Message({
-                        type: 'success',
-                        showClose: true,
-                        message: 'Cuenta bancaria actualizada'
-                    })
-                }
-            })
-            .catch(err => {
-                console.log(err)
-            })
         },
 
     },
@@ -285,47 +222,6 @@ export default {
             }
         },
 
-        //DATOS BANCARIOS MUTATIONS
-        setDatosBancarios(state, value){
-            state.datosBancarios = value
-        },
-        setTitular(state, value){
-            state.datosBancarios.titular = value
-        },
-        setTipo_de_id(state, value){
-            state.datosBancarios.tipo_de_id = value
-        },
-        setNumero_cuenta_bancaria(state, value){
-            state.datosBancarios.numero_cuenta_bancaria = value
-        },
-        setTipo_cuenta_bancaria(state, value){
-            state.datosBancarios.tipo_cuenta_bancaria = value
-        },
-        setBanco(state, value){
-            state.datosBancarios.banco = value
-        },
-        setCuenta_propia(state, pkg){
-            if(pkg.op == 'create'){
-                state.cuentaPropiaSwitchCreate = pkg.value
-            }else{
-                state.cuentaPropiaSwitchEdit = pkg.value
-            }
-            
-            state.datosBancarios.cuenta_propia = pkg.value
-        },
-       
-        resetDatosBancarios(state){
-            state.datosBancarios = {
-                id: null,
-                titular: null,
-                tipo_de_id: null,
-                numero_cuenta_bancaria: null,
-                tipo_cuenta_bancaria: null,
-                banco: null,
-                cuenta_propia: null,
-                radica_rndc: null,
-            }
-        },
       
         
     },

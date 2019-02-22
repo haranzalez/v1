@@ -1,5 +1,13 @@
 <template>
 <div>
+	<!--Datos bancarios table -->
+	<el-dialog  width="50%" top="5vh" :visible.sync="datosBancariosTableVisible">
+		<h3 style="text-align:center;" slot="title">Datos bancarios de {{conductor.nombres + ' ' + conductor.primer_apellido + ' ' + conductor.segundo_apellido}}</h3>
+		<DatosBancariosTable></DatosBancariosTable>
+		<span slot="footer" class="dialog-footer">
+			<el-button size="mini" @click="datosBancariosTableVisible = false">Cerrar</el-button>
+		</span>
+	</el-dialog>
 	<!--Licencias table -->
 	<el-dialog  width="50%" top="5vh" :visible.sync="licenciasTableVisible">
 		<h3 style="text-align:center;" slot="title">Licencias de {{conductor.nombres + ' ' + conductor.primer_apellido + ' ' + conductor.segundo_apellido}}</h3>
@@ -14,24 +22,6 @@
 		<DocumentosTable></DocumentosTable>
 		<span slot="footer" class="dialog-footer">
 			<el-button size="mini" @click="documentosTableVisible = false">Cerrar</el-button>
-		</span>
-	</el-dialog>
-	<!--datos bancarios create form -->
-	<el-dialog fullscreen width="30%" top="5vh" :visible.sync="_datosBancariosCreateFormVisible">
-		<h3 style="text-align:center;" slot="title">{{conductor.nombres + ' ' + conductor.primer_apellido}}</h3>
-		<DatosBancariosCreateForm></DatosBancariosCreateForm>
-		<span slot="footer" class="dialog-footer">
-			<el-button size="mini" @click="_datosBancariosCreateFormVisible = false">Cerrar</el-button>
-			<el-button size="mini" type="primary" @click="create_datos_bancarios">Crear</el-button>
-		</span>
-	</el-dialog>
-	<!--datos bancarios edit form -->
-	<el-dialog fullscreen width="30%" top="5vh"  :visible.sync="_datosBancariosEditFormVisible">
-		<h3 style="text-align:center;" slot="title">{{conductor.nombres + ' ' + conductor.primer_apellido + ' ' + conductor.segundo_apellido}}</h3>
-		<DatosBancariosEditForm></DatosBancariosEditForm>
-		<span slot="footer" class="dialog-footer">
-			<el-button @click="_datosBancariosEditFormVisible = false">Cerrar</el-button>
-			<el-button type="primary" @click="update_datos_bancarios">Actualizar</el-button>
 		</span>
 	</el-dialog>
 	<!--Edit dialog form -->
@@ -76,7 +66,7 @@
 					<el-dropdown-item :disabled="(permisos['Conductores'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Crear</el-dropdown-item>
 						<el-dropdown-item :disabled="(permisos['Conductores'].editar)? false:true" command="edit"><i class="mdi mdi-pencil mr-10"></i> Editar</el-dropdown-item>
 						<el-dropdown-item :disabled="(permisos['Conductores'].eliminar)? false:true" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
-					<el-dropdown-item :disabled="(permisos['Conductores'].eliminar)? false:true" command="registrarCuentaBancaria" divided><i class="mdi mdi-bank mr-10"></i> Datos bancarios</el-dropdown-item>
+					<el-dropdown-item :disabled="(permisos['Conductores'].eliminar)? false:true" command="datosBancariosTable" divided><i class="mdi mdi-bank mr-10"></i> Datos bancarios</el-dropdown-item>
 					<el-dropdown-item :disabled="(permisos['Conductores'].eliminar)? false:true" command="licenciasTable" ><i class="mdi mdi-account-card-details mr-10"></i> Licencias</el-dropdown-item>
 					<el-dropdown-item :disabled="(permisos['Conductores'].eliminar)? false:true" command="documentosTable" ><i class="mdi mdi-school mr-10"></i> Certificaciones</el-dropdown-item>
 				</el-dropdown-menu>
@@ -176,12 +166,14 @@ import DatosBancariosCreateForm from '@/components/Conductores/datosBancariosCre
 import DatosBancariosEditForm from '@/components/Conductores/datosBancariosEditForm'
 import LicenciasTable from '@/components/Conductores/licenciasTable'
 import DocumentosTable from '@/components/Conductores/documentosTable'
+import DatosBancariosTable from '@/components/Conductores/datosBancariosTable'
 
 export default {
 	name: 'ConductorTable',
 	data () {
     return {
 			licenciasTableVisible: false,
+			datosBancariosTableVisible: false,
 			documentosTableVisible: false,
 			editFormVisible: false,
 			createFormVisible: false,
@@ -191,29 +183,11 @@ export default {
 		}
 	},
 	computed: {
-		_datosBancariosCreateFormVisible: {
-			get(){
-				return this.datosBancariosCreateFormVisible
-			},
-			set(value){
-				this.setDatosBancariosCreateFormVisible(value)
-			}
-		},
-		_datosBancariosEditFormVisible: {
-			get(){
-				return this.datosBancariosEditFormVisible
-			},
-			set(value){
-				this.setDatosBancariosEditFormVisible(value)
-			}
-		},
     ...mapState('authentication', [
 			'permisos',
     ]),
     ...mapState('conductores', [
 			'conductor',
-			'datosBancarios',
-			'licencia',
 			'headings',
       'conductoresList',
 			'conductoresDataReady',
@@ -243,6 +217,7 @@ export default {
 		DatosBancariosEditForm,
 		LicenciasTable,
 		DocumentosTable,
+		DatosBancariosTable,
 	},
     methods: {
 		filterTag(value, row) {
@@ -263,24 +238,9 @@ export default {
 			exportService.toXLS(this.conductoresList, 'Conductores', true)
 		},
 		handleAction(e, row){
-			if(e == 'registrarCuentaBancaria'){
-				if(this.datosBancarios.length == 0){
-					this.$confirm(this.conductor.nombres + ' ' + this.conductor.primer_apellido + ' aun no tiene datos bancarios registrados en el sistema. Desea crear un nuevo registro para este conductor?', 'Atencion!', {
-						confirmButtonText: 'Si',
-						cancelButtonText: 'No',
-						type: 'warning'
-					}).then(() => {
-						this.DatosBancariosCreateFormVisible = true
-					}).catch(() => {
-						this.$message({
-							type: 'warning',
-							message: 'Operacion cancelada'
-						});          
-					});
-					
-				}else{
-					this.DatosBancariosEditFormVisible = true
-				}
+			if(e == 'datosBancariosTable'){
+				this.fetchDatosBancariosList()
+				this.datosBancariosTableVisible = true
 			}
 			if(e == 'licenciasTable'){
 				this.fetchLicenciasList()
@@ -307,7 +267,6 @@ export default {
 				this.$refs.conductoresTable.setCurrentRow(val);
 				return
 			}
-			console.log(val.id)
 			this.fetchConductor(val.id)
 			this.$refs.conductoresTable.setCurrentRow(val);
 		},
@@ -326,17 +285,15 @@ export default {
 			'createConductor',
 			'editConductor',
 			'delConductor',
-			'create_datos_bancarios',
-			'update_datos_bancarios',
-			'fetchDatosBancarios',
-			'create_licencia',
-			'update_licencia',
 		]),
 		...mapActions('licenciasConductores',[
 			 'fetchLicenciasList',
 		]),
 		...mapActions('documentosConductor',[
 			 'fetchDocumentosList',
+		]),
+		...mapActions('datosBancariosConductor',[
+			 'fetchDatosBancariosList',
 		]),
 		create(){
 			this.createConductor()

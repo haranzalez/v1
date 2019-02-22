@@ -11,6 +11,7 @@ import roles from './roles'
 import conductores from './conductores'
 import licenciasConductores from './licenciasConductores';
 import documentosConductor from './documentosConductor';
+import datosBancariosConductor from './datosBancariosConductor';
 import vehiculos from './vehiculos'
 import trailers from './trailers'
 import rutas from './rutas'
@@ -71,6 +72,7 @@ export default new Vuex.Store({
 		tecnomecanicaVehiculos,
 		documentosTrailers,
 		documentosConductor,
+		datosBancariosConductor,
 	},
 	mutations: {
 	},

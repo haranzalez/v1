@@ -3,14 +3,15 @@
    <vue-scroll class="page-conductores-create">
        <el-form label-position="top" ref="form" :status-icon="true" :show-message="false" label-width="120px" clearValidate> 
         <el-row>
+               
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <h3>Datos bancarios</h3>
                 </el-col>
 				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Titular" >
                         <el-input size="mini" 
-                        :value="datosBancarios.titular"
                         @input="setTitular"
+                        :value="datosBancarios.titular"
                         placeholder="">
                         </el-input>
                     </el-form-item>
@@ -18,17 +19,17 @@
 				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Tipo de ID">
                         <el-input size="mini" 
+                        @input="setTipoDeId"
                         :value="datosBancarios.tipo_de_id"
-                        @input="setTipo_de_id"
                         placeholder="">
                         </el-input>
                     </el-form-item>
 				</el-col>
 				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Numero cuneta bancaria">
+                    <el-form-item label="Numero cuenta bancaria">
                         <el-input size="mini" 
-                        :value="datosBancarios.numbero_cuenta_bancaria"
-                        @input="setNumero_cuenta_bancaria"
+                        :value="datosBancarios.numero_cuenta_bancaria"
+                        @input="setNumeroCuentaBancaria"
                         placeholder="">
                         </el-input>
                     </el-form-item>
@@ -38,7 +39,7 @@
                     <el-form-item label="Tipo cuenta bancaria">
                         <el-input size="mini" 
                         :value="datosBancarios.tipo_cuenta_bancaria"
-                        @input="setTipo_cuenta_bancaria"
+                        @input="setTipoCuentaBancaria"
                         placeholder="">
                         </el-input>
                     </el-form-item>
@@ -54,7 +55,7 @@
 				</el-col>
 		
 				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Cuenta propia"> 
+                    <el-form-item label="Cuanta propia"> 
                         <el-switch
                         v-model="cuentaPropiaSwitch"
                         active-text="Si"
@@ -81,7 +82,7 @@ import moment from 'moment-timezone'
 import router from '../../router'
 
 export default {
-	name: 'conductorDatosBancariosEditar',
+	name: 'conductorDatosBancariosCrear',
 	data () {
       	return {
             
@@ -92,51 +93,35 @@ export default {
         ...mapState('authentication', [
 			'permisos',
         ]),
-        ...mapState('conductores', [
-            'conductor',
+        ...mapState('datosBancariosConductor', [
             'datosBancarios',
-            'cuentaPropiaSwitchEdit',
-            'radicaRndcSwitchEdit',
         ]),
         cuentaPropiaSwitch: {
             get(value){
-                return this.cuentaPropiaSwitchEdit
+                return this.datosBancarios.cuenta_propia
             },
             set(value){
-                console.log(value)
-                this.setCuenta_propia({value: value, op:'edit'})
+                this.setCuentaPropia(value)
             }
         },
-        radicaRndcSwitch: {
-            get(value){
-                return this.radicaRndcSwitchEdit
-            },
-            set(value){
-                this.setRadica_rndc({value: value, op:'edit'})
-            }
-        }
 	},
 	components: {
 	},
     methods: {
-       
-        ...mapMutations('conductores', [
+        ...mapMutations('datosBancariosConductor', [
             'setTitular',
-            'setTipo_de_id',
-            'setNumero_cuenta_bancaria',
-            'setTipo_cuenta_bancaria',
+            'setTipoDeId',
+            'setNumeroCuentaBancaria',
+            'setTipoCuentaBancaria',
             'setBanco',
-            'setCuenta_propia',
-            'setRadica_rndc',
+            'setCuentaPropia',
+            'datosBancariosConductorFormReset',
         ]),
         title(field){
             field = field.split('_').join(' ')
             field = field.charAt(0).toUpperCase() + field.slice(1)
             return field
         },
-        ...mapActions('conductores',[
-            'update_datos_bancarios',
-        ]),
     },
     created: function(){
        

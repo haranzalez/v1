@@ -249,6 +249,18 @@ Route.group(() => {
   //DELETE
   Route.delete('documentos-conductor/:id/delete', 'DocumentosConductoresController.delete_documento').middleware('auth')
   //======================================================================================================================================
+  //Datos bancarios conductores
+  //======================================================================================================================================
+  //GET
+  Route.get('datos-bancarios-conductor/:conductor_id', 'DatosBancariosConductorController.get_datos_bancarios_list').middleware('auth')
+  Route.get('datos-bancarios-conductor-by-id/:id', 'DatosBancariosConductorController.get_datos_bancarios').middleware('auth')
+  //POST
+  Route.post('datos-bancarios-conductor/create', 'DatosBancariosConductorController.create_datos_bancarios').middleware('auth')
+  //PUT
+  Route.put('datos-bancarios-conductor/:id/update', 'DatosBancariosConductorController.update_datos_bancarios').middleware('auth')
+  //DELETE
+  Route.delete('datos-bancarios-conductor/:id/delete', 'DatosBancariosConductorController.delete_documento').middleware('auth')
+  //======================================================================================================================================
   //Licencias conductores
   //======================================================================================================================================
   //GET

@@ -1,15 +1,13 @@
 <template>
 
   <vue-scroll class="page-conductores-edit">
-       <el-form label-position="top" ref="form" label-width="120px">
+       <el-form :disabled="(permisos['Conductores'].editar)? false:true" label-position="top" ref="form" label-width="120px">
         <el-row>
             
             <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                 <el-form-item label="Codigo">
                     <el-input size="mini" 
                     :value="conductor.codigo"
-                    :disabled="(permisos['Conductores'].editar)? false:true"
-                    
                     @input="setCodigo"
                     placeholder="">
                     </el-input>
@@ -19,8 +17,6 @@
                 <el-form-item label="Tipo de identificacion">
                     <el-select size="mini" 
                     :value="conductor.tipo_de_identificacion"
-                    :disabled="(permisos['Conductores'].editar)? false:true"
-                    
                     placeholder="Select"
                     @change="setTipoDeiIdentificacion">
                         <el-option
@@ -37,8 +33,6 @@
                 <el-form-item label="Cedula">
                     <el-input size="mini"
                     :value="conductor.cedula"
-                    :disabled="(permisos['Conductores'].editar)? false:true"
-                    
                     @input="setCedula"
                     placeholder="">
                     </el-input>
@@ -48,8 +42,6 @@
                 <el-form-item label="Municipio documento">
                     <el-input size="mini" 
                     :value="conductor.municipio_documento"
-                    :disabled="(permisos['Conductores'].editar)? false:true"
-                    
                     @input="setMunicipioDocumento"
                     placeholder="">
                     </el-input>
@@ -60,8 +52,6 @@
                 <el-form-item label="Nombres">
                     <el-input size="mini" 
                     :value="conductor.nombres"
-                    :disabled="(permisos['Conductores'].editar)? false:true"
-                    
                     @input="setNombres"
                     placeholder="">
                     </el-input>
@@ -71,8 +61,6 @@
                 <el-form-item label="Primer apellido">
                     <el-input size="mini" 
                     :value="conductor.primer_apellido"
-                    :disabled="(permisos['Conductores'].editar)? false:true"
-                    
                     @input="setPrimerApellido"
                     placeholder="">
                     </el-input>
@@ -83,8 +71,6 @@
                 <el-form-item label="Segundo apellido">
                     <el-input size="mini" 
                     :value="conductor.segundo_apellido"
-                    :disabled="(permisos['Conductores'].editar)? false:true"
-                    
                     @input="setSegundoApellido"
                     placeholder="">
                     </el-input>
@@ -111,8 +97,6 @@
                 <el-form-item label="Direccion">
                     <el-input size="mini" 
                     :value="conductor.direccion"
-                    :disabled="(permisos['Conductores'].editar)? false:true"
-                    
                     @input="setDireccion"
                     placeholder="">
                     </el-input>
@@ -122,8 +106,6 @@
                 <el-form-item label="Municipio">
                     <el-input size="mini" 
                     :value="conductor.municipio"
-                    :disabled="(permisos['Conductores'].editar)? false:true"
-                    
                     @input="setMunicipio"
                     placeholder="">
                     </el-input>
@@ -134,8 +116,6 @@
                 <el-form-item label="Telefono 1">
                     <el-input size="mini" 
                     :value="conductor.telefono_1"
-                    :disabled="(permisos['Conductores'].editar)? false:true"
-                    
                     @input="setTelefono1"
                     placeholder="">
                     </el-input>
@@ -145,8 +125,6 @@
                 <el-form-item label="Telefono 2">
                     <el-input size="mini" 
                     :value="conductor.telefono_2"
-                    :disabled="(permisos['Conductores'].editar)? false:true"
-                    
                     @input="setTelefono2"
                     placeholder="">
                     </el-input>
@@ -157,8 +135,6 @@
                 <el-form-item label="Celular">
                     <el-input size="mini" 
                     :value="conductor.celular"
-                    :disabled="(permisos['Conductores'].editar)? false:true"
-                    
                     @input="setCelular"
                     placeholder="">
                     </el-input>

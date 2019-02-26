@@ -35,7 +35,17 @@
                 </el-form-item>
             </el-col>
             <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                <el-form-item label="Fecha de vencimiento">
+                <el-form-item label="Fecha de expedicion">
+                    <el-date-picker
+                    v-model="fecha_de_expedicion"
+                    type="date"
+                    size="mini"
+                    placeholder="Seleccione fecha">
+                    </el-date-picker>
+                </el-form-item>
+            </el-col>
+            <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                <el-form-item label="Fecha de vigencia">
                     <el-date-picker
                     v-model="fecha_de_vencimiento"
                     type="date"
@@ -85,6 +95,17 @@ export default {
             },
             set(value){
                 this.setFechaDeVencimiento(value)
+                console.log(this.documento.fecha_de_vencimiento)
+            }
+        },
+        fecha_de_expedicion: {
+            get(){
+                return this.documento.fecha_de_expedicion
+            },
+            set(value){
+                
+                this.setFechaDeExpedicion(value)
+                console.log(this.documento.fecha_de_expedicion)
             }
         },
         ...mapState('authentication', [
@@ -117,6 +138,7 @@ export default {
             'setTipoDePoliza',
             'setNumeroDePoliza',
             'setFechaDeVencimiento',
+            'setFechaDeExpedicion',
             'setVehiculoId',
         ]),
         ...mapActions('aseguradoras', [

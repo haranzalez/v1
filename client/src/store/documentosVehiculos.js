@@ -13,6 +13,7 @@ export default {
             tipo_de_poliza: null,
             numero_de_poliza: null,
             fecha_de_vencimiento: null,
+            fecha_de_expedicion: null,
             vehiculo_id: null,
         },
         loadingDocumentosVehiculoTable: false,
@@ -176,6 +177,9 @@ export default {
         },
         setFechaDeVencimiento(state, value){
             state.documento.fecha_de_vencimiento = value
+        },
+        setFechaDeExpedicion(state, value){
+            state.documento.fecha_de_expedicion = value
         },
         setVehiculoId(state, value){
             state.documento.vehiculo_id = value

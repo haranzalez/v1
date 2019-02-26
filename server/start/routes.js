@@ -52,7 +52,7 @@ Route.group(() => {
   //======================================================================================================================================
   Route.get('reports/tables', 'ReportsController.tables_names').middleware('auth');
   Route.get('reports/fields/:tname', 'ReportsController.table_fields').middleware('auth');
-  Route.get('reports/table/:table/field/:field', 'ReportsController.table_field_data').middleware('auth');
+  Route.post('reports-field-data', 'ReportsController.table_field_data').middleware('auth');
   //======================================================================================================================================
   //Logger
   //======================================================================================================================================

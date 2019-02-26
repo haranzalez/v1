@@ -1,6 +1,6 @@
 <template>
    <vue-scroll class="page-vehiculos-create">
-       <el-form label-position="top" ref="form" label-width="120px">
+       <el-form :disabled="(permisos['Vehiculos'].editar)?false:true" label-position="top" ref="form" label-width="120px">
          <el-row>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <h3>Informacion basica</h3>

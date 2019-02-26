@@ -1,7 +1,7 @@
 <template>
 <div>
 	<!--Datos bancarios table -->
-	<el-dialog  width="50%" top="5vh" :visible.sync="datosBancariosTableVisible">
+	<el-dialog  width="65%" top="5vh" :visible.sync="datosBancariosTableVisible">
 		<h3 style="text-align:center;" slot="title">Datos bancarios de {{conductor.nombres + ' ' + conductor.primer_apellido + ' ' + conductor.segundo_apellido}}</h3>
 		<DatosBancariosTable></DatosBancariosTable>
 		<span slot="footer" class="dialog-footer">
@@ -9,7 +9,7 @@
 		</span>
 	</el-dialog>
 	<!--Licencias table -->
-	<el-dialog  width="50%" top="5vh" :visible.sync="licenciasTableVisible">
+	<el-dialog  width="65%" top="5vh" :visible.sync="licenciasTableVisible">
 		<h3 style="text-align:center;" slot="title">Licencias de {{conductor.nombres + ' ' + conductor.primer_apellido + ' ' + conductor.segundo_apellido}}</h3>
 		<LicenciasTable></LicenciasTable>
 		<span slot="footer" class="dialog-footer">
@@ -17,7 +17,7 @@
 		</span>
 	</el-dialog>
 	<!--Documentos table -->
-	<el-dialog  width="50%" top="5vh" :visible.sync="documentosTableVisible">
+	<el-dialog  width="65%" top="5vh" :visible.sync="documentosTableVisible">
 		<h3 style="text-align:center;" slot="title">Certificaciones de {{conductor.nombres + ' ' + conductor.primer_apellido + ' ' + conductor.segundo_apellido}}</h3>
 		<DocumentosTable></DocumentosTable>
 		<span slot="footer" class="dialog-footer">
@@ -30,7 +30,7 @@
 		<ConductoresEditForm></ConductoresEditForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button @click="editFormVisible = false">Cancelar</el-button>
-			<el-button type="primary" @click="editConductor">Actualizar</el-button>
+			<el-button :disabled="(permisos['Conductores'].editar)? false:true" type="primary" @click="editConductor">Actualizar</el-button>
 		</span>
 	</el-dialog>
 	<!--Create dialog form -->
@@ -63,12 +63,12 @@
 					<i class="mdi mdi-settings"></i>
 				</el-button>
 				<el-dropdown-menu slot="dropdown">
-					<el-dropdown-item :disabled="(permisos['Conductores'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Crear</el-dropdown-item>
-						<el-dropdown-item :disabled="(permisos['Conductores'].editar)? false:true" command="edit"><i class="mdi mdi-pencil mr-10"></i> Editar</el-dropdown-item>
-						<el-dropdown-item :disabled="(permisos['Conductores'].eliminar)? false:true" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
-					<el-dropdown-item :disabled="(permisos['Conductores'].eliminar)? false:true" command="datosBancariosTable" divided><i class="mdi mdi-bank mr-10"></i> Datos bancarios</el-dropdown-item>
-					<el-dropdown-item :disabled="(permisos['Conductores'].eliminar)? false:true" command="licenciasTable" ><i class="mdi mdi-account-card-details mr-10"></i> Licencias</el-dropdown-item>
-					<el-dropdown-item :disabled="(permisos['Conductores'].eliminar)? false:true" command="documentosTable" ><i class="mdi mdi-school mr-10"></i> Certificaciones</el-dropdown-item>
+					<el-dropdown-item command="create"><i class="mdi mdi-plus mr-10"></i> Crear</el-dropdown-item>
+						<el-dropdown-item :disabled="disabledBtn" command="edit"><i class="mdi mdi-pencil mr-10"></i> Editar</el-dropdown-item>
+						<el-dropdown-item :disabled="disabledBtn" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
+					<el-dropdown-item :disabled="disabledBtn" command="datosBancariosTable" divided><i class="mdi mdi-bank mr-10"></i> Datos bancarios</el-dropdown-item>
+					<el-dropdown-item :disabled="disabledBtn" command="licenciasTable" ><i class="mdi mdi-account-card-details mr-10"></i> Licencias</el-dropdown-item>
+					<el-dropdown-item :disabled="disabledBtn" command="documentosTable" ><i class="mdi mdi-school mr-10"></i> Certificaciones</el-dropdown-item>
 				</el-dropdown-menu>
     		</el-dropdown>
 			</div>
@@ -179,7 +179,8 @@ export default {
 			createFormVisible: false,
 			selectTypeOfSearch: 'Nombre',
 			tableData: [],
-            filter: '',
+			filter: '',
+			disabledBtn: true,
 		}
 	},
 	computed: {
@@ -251,22 +252,47 @@ export default {
 				this.documentosTableVisible = true
 			}
         if(e == 'create'){
+					if(!this.permisos['Conductores'].crear){
+							Notification.warning({
+									title: 'Atencion!',
+									message: 'Usted no tiene permisos para crear registros en este modulo.',
+									position: 'bottom-right',
+							});
+							return
+					}
 					this.resetConductoresVars()
 					this.resetDatosBancarios()
 					this.createFormVisible = true;
         }
 				if(e == 'edit'){
 					this.editFormVisible = true;
+					if(!this.permisos['Conductores'].editar){
+						Notification.warning({
+								title: 'Atencion!',
+								message: 'Usted no tiene permisos para modificar registros en este modulo.',
+								position: 'bottom-right',
+						});
+					}
 				}
 				if(e == 'del'){
+						if(!this.permisos['Conductores'].eliminar){
+							Notification.warning({
+									title: 'Atencion!',
+									message: 'Usted no tiene permisos para eliminar registros en este modulo.',
+									position: 'bottom-right',
+							});
+							return
+						}
 						this.pushToDel(row)
 				}
       },
       handleCurrentTableChange(val) {
 			if(val == null){
 				this.$refs.conductoresTable.setCurrentRow(val);
+				this.disabledBtn = true
 				return
 			}
+			this.disabledBtn = false
 			this.fetchConductor(val.id)
 			this.$refs.conductoresTable.setCurrentRow(val);
 		},

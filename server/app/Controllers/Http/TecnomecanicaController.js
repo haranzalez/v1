@@ -17,6 +17,8 @@ class TecnomacanicaVehiculoController {
         const { 
             numero_tecnomecanica,
             fecha_de_vencimiento,
+            centro_de_diagnostico,
+            fecha_de_expedicion,
             vehiculo_id,
         } = request.all()
         const tecnoComparison = await Database.from('tecnomcanicas_vehiculos').where({
@@ -27,6 +29,8 @@ class TecnomacanicaVehiculoController {
         if(tecnoComparison.length == 0){
             const res = await Database.table('tecnomcanicas_vehiculos').insert({
                 numero_tecnomecanica,
+                centro_de_diagnostico,
+                fecha_de_expedicion,
                 fecha_de_vencimiento,
                 vehiculo_id,
             })
@@ -51,6 +55,8 @@ class TecnomacanicaVehiculoController {
         const { 
             numero_tecnomecanica,
             fecha_de_vencimiento,
+            centro_de_diagnostico,
+            fecha_de_expedicion,
             vehiculo_id, 
         } = request.all()
         const { id } = params
@@ -58,6 +64,8 @@ class TecnomacanicaVehiculoController {
         .update({
             numero_tecnomecanica,
             fecha_de_vencimiento,
+            centro_de_diagnostico,
+            fecha_de_expedicion,
             vehiculo_id,
         })
 

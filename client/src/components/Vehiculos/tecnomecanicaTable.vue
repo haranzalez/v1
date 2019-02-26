@@ -15,7 +15,7 @@
 		</el-dialog>
 		<!--edit Tecnomecanica form -->
 			<el-dialog
-			title="Nueva poliza"
+			title="Actualizando tecnicomecanica"
 			:visible.sync="tecnomecanicaVehiculoEditFormDialogVisible"
 			width="30%"
 			:append-to-body="true"
@@ -50,13 +50,19 @@
 		size="mini"
     :data="tecnomecanicaList"
     style="width: 100%">
+		<el-table-column
+      label="Centro de diagnostico"
+      prop="centro_de_diagnostico">
+    </el-table-column>
     <el-table-column
       label="Numero tecnicomecanica"
       prop="numero_tecnomecanica">
     </el-table-column>
-    <el-table-column
-      label="Fecha de vencimiento"
-      prop="fecha_de_vencimiento">
+    <el-table-column type="expand">
+      <template slot-scope="props">
+        <p>Fecha de expedicion: {{ props.row.fecha_de_expedicion }}</p>
+				<p>Fecha de vigencia: {{ props.row.fecha_de_vencimiento }}</p>
+      </template>
     </el-table-column>
   	</el-table>
 		</div>

@@ -22,6 +22,7 @@ class DocumentosVehiculoController {
             tipo_de_poliza, 
             numero_de_poliza, 
             fecha_de_vencimiento, 
+            fecha_de_expedicion,
             vehiculo_id 
         } = request.all()
         const polizaComparison = await Database.from('documentos_vehiculos').where({
@@ -35,6 +36,7 @@ class DocumentosVehiculoController {
                 tipo_de_poliza, 
                 numero_de_poliza, 
                 fecha_de_vencimiento, 
+                fecha_de_expedicion,
                 vehiculo_id
             })
     
@@ -59,7 +61,8 @@ class DocumentosVehiculoController {
             aseguradora_id, 
             tipo_de_poliza, 
             numero_de_poliza, 
-            fecha_de_vencimiento, 
+            fecha_de_vencimiento,
+            fecha_de_expedicion, 
             vehiculo_id 
         } = request.all()
         const { id } = params
@@ -68,7 +71,8 @@ class DocumentosVehiculoController {
             aseguradora_id, 
             tipo_de_poliza, 
             numero_de_poliza, 
-            fecha_de_vencimiento, 
+            fecha_de_vencimiento,
+            fecha_de_expedicion,  
             vehiculo_id
         })
 

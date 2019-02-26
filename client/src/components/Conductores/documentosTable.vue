@@ -10,7 +10,7 @@
 			<DocumentosConductoresCreateForm></DocumentosConductoresCreateForm>
 			<span slot="footer" class="dialog-footer">
 				<el-button @click="documentosConductorCreateFormDialogVisible = false">Cerrar</el-button>
-				<el-button type="primary" @click="createDocumento(); documentosConductorCreateFormDialogVisible = false">Crear</el-button>
+				<el-button type="primary" :disabled="(permisos['Conductores'].crear)?false:true" @click="createDocumento(); documentosConductorCreateFormDialogVisible = false">Crear</el-button>
 			</span>
 		</el-dialog>
 		<!--edit documento form -->
@@ -23,7 +23,7 @@
 			<DocumentosConductoresEditForm></DocumentosConductoresEditForm>
 			<span slot="footer" class="dialog-footer">
 				<el-button @click="documentosConductorEditFormDialogVisible = false">Cerrar</el-button>
-				<el-button type="primary" @click="editDocumento(); documentosConductorEditFormDialogVisible = false">Actualizar</el-button>
+				<el-button :disabled="(permisos['Conductores'].editar)?false:true" type="primary" @click="editDocumento(); documentosConductorEditFormDialogVisible = false">Actualizar</el-button>
 			</span>
 		</el-dialog>
 
@@ -36,9 +36,9 @@
 					<i class="mdi mdi-settings"></i>
 				</el-button>
 				<el-dropdown-menu slot="dropdown">
-				<el-dropdown-item :disabled="(permisos['Conductores'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Crear</el-dropdown-item>
-                <el-dropdown-item :disabled="(permisos['Conductores'].editar)? false:true" command="edit"><i class="mdi mdi-pencil mr-10"></i> Editar</el-dropdown-item>
-                <el-dropdown-item :disabled="(permisos['Conductores'].eliminar)? false:true" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
+				<el-dropdown-item command="create"><i class="mdi mdi-plus mr-10"></i> Crear</el-dropdown-item>
+                <el-dropdown-item :disabled="disabledBtn" command="edit"><i class="mdi mdi-pencil mr-10"></i> Editar</el-dropdown-item>
+                <el-dropdown-item :disabled="disabledBtn" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
 				</el-dropdown-menu>
     		</el-dropdown>
 			</div>
@@ -61,10 +61,16 @@
     <el-table-column
       label="Fecha inicio"
       prop="fecha_inicio">
+			<template slot-scope="scope">
+				{{formatDate(scope.row.fecha_inicio)}}
+			</template>
     </el-table-column>
     <el-table-column
       label="Fecha fin"
       prop="fecha_fin">
+			<template slot-scope="scope">
+				{{formatDate(scope.row.fecha_fin)}}
+			</template>
     </el-table-column>
   	</el-table>
 		</div>
@@ -75,8 +81,10 @@ import HTTP from '../../http';
 import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
 import moment from 'moment-timezone'
 import router from '../../router'
+import { Notification, Message } from 'element-ui'
 //servicios
 import exportService from '../../services/exportService'
+import dateService from '../../services/DateFormatService'
 //componentes
 import DocumentosConductoresCreateForm from '@/components/Conductores/documentosCreateForm'
 import DocumentosConductoresEditForm from '@/components/Conductores/documentosEditForm'
@@ -87,6 +95,7 @@ export default {
     return {
 			documentosConductorCreateFormDialogVisible: false,
 			documentosConductorEditFormDialogVisible: false,
+			disabledBtn: true,
 		}
 	},
 	computed: {
@@ -115,9 +124,12 @@ export default {
 	},
 	components: {
 		DocumentosConductoresCreateForm,
-        DocumentosConductoresEditForm,
+    DocumentosConductoresEditForm,
 	},
     methods: {
+		formatDate(date){
+			return dateService.fecha(date)
+		},
 		reloadTable(){
 			this.fetchDocumentosList()
 		},
@@ -126,21 +138,46 @@ export default {
 		},
 		handleAction(e, row){
         if(e == 'create'){
+						if(!this.permisos['Conductores'].crear){
+							Notification.warning({
+									title: 'Atencion!',
+									message: 'Usted no tiene permisos para crear registros en este modulo.',
+									position: 'bottom-right',
+							});
+							return
+					}
 					this.documentoConductorFormReset()
 					this.documentosConductorCreateFormDialogVisible = true;
 				}
-				if(e == 'edit'){ 
+				if(e == 'edit'){
+					if(!this.permisos['Conductores'].editar){
+							Notification.warning({
+									title: 'Atencion!',
+									message: 'Usted no tiene permisos para modificar registros en este modulo.',
+									position: 'bottom-right',
+							});
+					}
 					this.documentosConductorEditFormDialogVisible = true;
 				} 
 				if(e == 'del'){
+						if(!this.permisos['Conductores'].eliminar){
+								Notification.warning({
+										title: 'Atencion!',
+										message: 'Usted no tiene permisos para eliminar registros en este modulo.',
+										position: 'bottom-right',
+								});
+								return
+						}
 						this.pushToDel(row)
 				}
     },
     handleCurrentTableChange(val) {
 			if(val == null){
 				this.$refs.documentosConductorTable.setCurrentRow(val);
+				this.disabledBtn = true
 				return
 			}
+			this.disabledBtn = false
 			this.fetchDocumento(val.id)
 			this.$refs.documentosConductorTable.setCurrentRow(val);
 		},

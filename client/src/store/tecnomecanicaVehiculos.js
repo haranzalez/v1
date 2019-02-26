@@ -9,7 +9,9 @@ export default {
     state: {
         tecnomecanica:{
             id: null,
+            centro_de_diagnostico: null,
             numero_tecnomecanica: null,
+            fecha_de_expedicion: null,
             fecha_de_vencimiento: null,
             vehiculo_id: null,
         },
@@ -165,8 +167,14 @@ export default {
         setNumeroTecnomecanica(state, value){
             state.tecnomecanica.numero_tecnomecanica = value
         },
+        setCentroDeDiagnostico(state, value){
+            state.tecnomecanica.centro_de_diagnostico = value
+        },
         setFechaDeVencimiento(state, value){
             state.tecnomecanica.fecha_de_vencimiento = value
+        },
+        setFechaDeExpedicion(state, value){
+            state.tecnomecanica.fecha_de_expedicion = value
         },
         setVehiculoId(state, value){
             state.tecnomecanica.vehiculo_id = value

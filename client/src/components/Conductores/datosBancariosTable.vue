@@ -1,6 +1,6 @@
 <template>
 		<div>
-			<!-- create datos bancarios form -->
+		<!-- create datos bancarios form -->
 		<el-dialog
 		title="Nuevos datos bancarios"
 		:visible.sync="datosBancariosConductorCreateFormDialogVisible"
@@ -10,7 +10,7 @@
 		<datosBancariosConductorCreateForm></datosBancariosConductorCreateForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button @click="datosBancariosConductorCreateFormDialogVisible = false">Cerrar</el-button>
-			<el-button type="primary" @click="createLicencia(); datosBancariosConductorCreateFormDialogVisible = false">Crear</el-button>
+			<el-button :disabled="(permisos['Conductores'].crear)?false:true" type="primary" @click="createDatosBancarios(); datosBancariosConductorCreateFormDialogVisible = false">Crear</el-button>
 		</span>
 		</el-dialog>
 		<!--edit datos bancarios form -->
@@ -23,7 +23,7 @@
 		<datosBancariosConductorEditForm></datosBancariosConductorEditForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button @click="datosBancariosConductorEditFormDialogVisible = false">Cerrar</el-button>
-			<el-button type="primary" @click="editLicencia(); datosBancariosConductorEditFormDialogVisible = false">Actualizar</el-button>
+			<el-button :disabled="(permisos['Conductores'].editar)?false:true" type="primary" @click="editDatosBancarios(); datosBancariosConductorEditFormDialogVisible = false">Actualizar</el-button>
 		</span>
 		</el-dialog>
 
@@ -33,12 +33,12 @@
 			<el-button type="default" size="mini" @click="exportTable" style="margin-right:5px;"><i class="mdi mdi-file-excel"></i></el-button>
 			<el-dropdown  trigger="click" @command="handleAction">  
 			<el-button size="mini">
-				<i class="mdi mdi-settings"></i>
+			<i class="mdi mdi-settings"></i>
 			</el-button>
 			<el-dropdown-menu slot="dropdown">
-			<el-dropdown-item :disabled="(permisos['Conductores'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Crear</el-dropdown-item>
-			<el-dropdown-item :disabled="(permisos['Conductores'].editar)? false:true" command="edit"><i class="mdi mdi-pencil mr-10"></i> Editar</el-dropdown-item>
-			<el-dropdown-item :disabled="(permisos['Conductores'].eliminar)? false:true" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
+			<el-dropdown-item command="create"><i class="mdi mdi-plus mr-10"></i> Crear</el-dropdown-item>
+			<el-dropdown-item :disabled="disabledBtn" command="edit"><i class="mdi mdi-pencil mr-10"></i> Editar</el-dropdown-item>
+			<el-dropdown-item :disabled="disabledBtn" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
 			</el-dropdown-menu>
 		</el-dropdown>
 		</div>
@@ -83,8 +83,10 @@ import HTTP from '../../http';
 import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
 import moment from 'moment-timezone'
 import router from '../../router'
+import { Notification, Message } from 'element-ui'
 //servicios
 import exportService from '../../services/exportService'
+import dateService from '../../services/DateFormatService'
 //componentes
 import datosBancariosConductorCreateForm from '@/components/Conductores/datosBancariosCreateForm'
 import datosBancariosConductorEditForm from '@/components/Conductores/datosBancariosEditForm'
@@ -95,6 +97,7 @@ export default {
     return {
 			datosBancariosConductorCreateFormDialogVisible: false,
 			datosBancariosConductorEditFormDialogVisible: false,
+			disabledBtn: true,
 		}
 	},
 	computed: {
@@ -126,6 +129,9 @@ export default {
         datosBancariosConductorEditForm
 	},
     methods: {
+		formatDate(date){
+			return dateService.fechav2(date)
+		},
 		reloadTable(){
 			this.fetchDatosBancariosList()
 		},
@@ -134,21 +140,46 @@ export default {
 		},
 		handleAction(e, row){
         if(e == 'create'){
+			if(!this.permisos['Conductores'].crear){
+				Notification.warning({
+					title: 'Atencion!',
+					message: 'Usted no tiene permisos para crear registros en este modulo.',
+					position: 'bottom-right',
+				});
+				return;
+			}
             this.datosBancariosConductorFormReset()
             this.datosBancariosConductorCreateFormDialogVisible = true;
         }
         if(e == 'edit'){ 
+			if(!this.permisos['Conductores'].editar){
+				Notification.warning({
+					title: 'Atencion!',
+					message: 'Usted no tiene permisos para modificar registros en este modulo.',
+					position: 'bottom-right',
+				});
+			}
             this.datosBancariosConductorEditFormDialogVisible = true;
         } 
         if(e == 'del'){
+			if(!this.permisos['Conductores'].eliminar){
+				Notification.warning({
+					title: 'Atencion!',
+					message: 'Usted no tiene permisos para eliminar registros en este modulo.',
+					position: 'bottom-right',
+				});
+				return;
+			}
             this.pushToDel(row)
         }
     },
     handleCurrentTableChange(val) {
         if(val == null){
-            this.$refs.datosBancariosConductorTable.setCurrentRow(val);
+			this.$refs.datosBancariosConductorTable.setCurrentRow(val);
+			this.disabledBtn = true
             return
-        }
+		}
+		this.disabledBtn = false
         this.fetchDatosBancarios(val.id)
         this.$refs.datosBancariosConductorTable.setCurrentRow(val);
 	},
@@ -170,8 +201,6 @@ export default {
 			'editDatosBancarios',
 			'delDatosBancarios',
 		]),
-	
-	
 		pushToDel(row){
 			this.$confirm('Esta operacion eliminara permanentemente este registro. Continuar?', 'Atencion!', {
                 confirmButtonText: 'OK',
@@ -185,7 +214,6 @@ export default {
                     message: 'Cancelado'
                 });          
             });
-			
 		}
     },
     created: function(){

@@ -184,6 +184,9 @@ export default {
         setCuentaPropia(state, value){
             state.datosBancarios.cuenta_propia = value
         },
+        setConductorId(state, value){
+            state.datosBancarios.conductor_id = value
+        },
         datosBancariosConductorFormReset(state){
             state.datosBancarios = {
                 id: null,

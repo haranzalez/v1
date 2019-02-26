@@ -1,32 +1,42 @@
 <template>
 
-   <el-row>
-       <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
-            <h3>Tablas</h3>
-            <el-select v-model="selected_table" placeholder="Tabla..">
-                <el-option
-                v-for="(item, key) in tablesList"
-                :key="key"
-                :label="item"
-                :value="key">
-                </el-option>
-            </el-select>
-       </el-col>
-       <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
-           <h3>Campos</h3>
-           <el-select v-model="selected_field" placeholder="Campo..">
-                <el-option
-                v-for="(item, key) in fieldsList"
-                :key="key"
-                :label="item"
-                :value="key">
-                </el-option>
-            </el-select>
-       </el-col>
-       <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
-
-       </el-col>
+	   <el-row>
+	 
+		<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+			<h3>Tablas</h3>
+			<el-select size="mini" v-model="selected_table" placeholder="Tabla..">
+				<el-option
+				v-for="(item, key) in tablesList"
+				:key="key"
+				:label="item"
+				:value="key">
+				</el-option>
+			</el-select>
+		</el-col>
+		<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+			<h3>Campos</h3>
+			<el-select size="mini" v-model="selected_field" placeholder="Campo..">
+				<el-option
+				v-for="(item, key) in fieldsList"
+				:key="key"
+				:label="item"
+				:value="item">
+				</el-option>
+				</el-select>
+		</el-col>
+		<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+			<h3>Filtro</h3>
+			<el-input
+				size="mini"
+				@input="setFiltro"
+				placeholder="Separe filtros con comas">
+				</el-input>
+		</el-col>
+		<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+			<el-button @click="aplicar">Aplicar</el-button>
+		</el-col>
    </el-row>
+   
 	
 </template>
 
@@ -53,13 +63,15 @@ export default {
         ...mapState('reportes', [
             'tablesList',
             'fieldsList',
-            'selectedTable',
+			'selectedTable',
+			'selectedField',
         ]),
         selected_table:{
             get(){
                 return this.selectedTable
             },
             set(value){
+				this.setSelectedField(null)
 				this.setSelectedTable(value)
 				this.fetchFields()
             }
@@ -69,21 +81,29 @@ export default {
                 return this.selectedField
             },
             set(value){
-                this.setSelectedField(value)
+				this.setSelectedField(value)
             }
         }
        
 	},
 	components: {
-       
 	},
     methods: {
+	aplicar(){
+		this.setCurrentReportFields()
+		this.fetchTableFieldsData()
+
+	},
     ...mapActions('reportes', [
 		'fetchTables',
 		'fetchFields',
+		'fetchTableFieldsData'
     ]),
     ...mapMutations('reportes', [
-        'setSelectedTable',
+		'setSelectedTable',
+		'setSelectedField',
+		'setFiltro',
+		'setCurrentReportFields',
     ]),
       handleOpen(key, keyPath) {
         console.log(key, keyPath);

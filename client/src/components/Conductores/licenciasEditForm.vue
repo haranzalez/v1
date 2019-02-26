@@ -1,6 +1,6 @@
 <template>
     <vue-scroll>
-        <el-form label-position="top" :status-icon="true" :show-message="false" label-width="120px" clearValidate> 
+        <el-form :disabled="(permisos['Conductores'].editar)?false:true" label-position="top" :status-icon="true" :show-message="false" label-width="120px" clearValidate> 
             <el-row>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <h3>Datos de licencia</h3>

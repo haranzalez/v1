@@ -8,7 +8,7 @@
 		<VehiculosEditForm></VehiculosEditForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button size="mini" @click="editFormVisible = false">Cancelar</el-button>
-			<el-button size="mini" type="primary" @click="editVehiculo">Actualizar</el-button>
+			<el-button :disabled="(permisos['Vehiculos'].editar)?false:true" size="mini" type="primary" @click="editVehiculo">Actualizar</el-button>
 		</span>
 	</el-dialog>
 	<!--Create dialog form -->
@@ -40,9 +40,9 @@
 					<i class="mdi mdi-settings"></i>
 				</el-button>
 				<el-dropdown-menu slot="dropdown">
-					<el-dropdown-item :disabled="(permisos['Vehiculos'].crear)? false:true" command="create"><i class="mdi mdi-plus mr-10"></i> Crear</el-dropdown-item>
-                    <el-dropdown-item :disabled="(permisos['Vehiculos'].editar)? false:true" command="edit"><i class="mdi mdi-pencil mr-10"></i> Editar</el-dropdown-item>
-                    <el-dropdown-item :disabled="(permisos['Vehiculos'].eliminar)? false:true" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
+					<el-dropdown-item command="create"><i class="mdi mdi-plus mr-10"></i> Crear</el-dropdown-item>
+					<el-dropdown-item :disabled="disabledBtn" command="edit"><i class="mdi mdi-pencil mr-10"></i> Editar</el-dropdown-item>
+					<el-dropdown-item :disabled="disabledBtn" command="del"><i class="mdi mdi-delete mr-10"></i> Eliminar</el-dropdown-item>
 				</el-dropdown-menu>
     		</el-dropdown>
 			</div>
@@ -156,6 +156,7 @@ import HTTP from '../../http';
 import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
 import moment from 'moment-timezone'
 import router from '../../router'
+import { Notification, Message } from 'element-ui'
 //servicios
 import exportService from '../../services/exportService'
 //componentes
@@ -166,36 +167,35 @@ import VehiculosCreateForm from '@/components/Vehiculos/createForm'
 export default {
 	name: 'VehiculoTable',
 	data () {
-      	return {
+    return {
 			editFormVisible: false,
 			createFormVisible: false,
-		
 			selectTypeOfSearch: 'ID',
 			filter: '',
+			disabledBtn: true,
 		}
 	},
 	computed: {
-        
-        ...mapState('authentication', [
+    ...mapState('authentication', [
 			'permisos',
 		]),
-        ...mapState('vehiculos', [
-			'loadingVehiculosTable',
-			'vehiculo',
+    ...mapState('vehiculos', [
+						'loadingVehiculosTable',
+						'vehiculo',
             'headings',
             'vehiculosList',
             'vehiculosDataReady',
             'selectedConductor',
             'selectedTrailer',
-        ]),
-        ...mapState('trailers', [
+    ]),
+    ...mapState('trailers', [
 			'trailersList',
 			'trailersDataReady',
             
-        ]),
-        ...mapState('conductores', [
-            'conductoresList',
-            'conductoresDataReady',
+    ]),
+    ...mapState('conductores', [
+			'conductoresList',
+			'conductoresDataReady',
 		]),
 		tableDdataReady: () => {
 			if(this.vehiculosDataReady){
@@ -203,7 +203,7 @@ export default {
 			}
 			return []
 		},
-        filtered(){
+    filtered(){
 			if(this.filter !== ''){
 				let type = this.selectTypeOfSearch.toLowerCase()
 				type = type.replace(' ', '_')
@@ -216,7 +216,7 @@ export default {
 				})
 			}
 			return this.vehiculosList
-        },
+    },
 
         
 	},
@@ -233,23 +233,48 @@ export default {
 			exportService.toXLS(this.vehiculosList, 'Vehiculos', true)
 		},
 		handleAction(e, row){
-            if(e == 'create'){
+      if(e == 'create'){
+				if(!this.permisos['Vehiculos'].crear){
+					Notification.warning({
+							title: 'Atencion!',
+							message: 'Usted no tiene permisos para crear registros en este modulo.',
+							position: 'bottom-right',
+					});
+					return
+				}
 				this.resetVehicleVariables()
 				this.createFormVisible = true;
-            }
+        }
         if(e == 'edit'){
+				if(!this.permisos['Vehiculos'].editar){
+					Notification.warning({
+							title: 'Atencion!',
+							message: 'Usted no tiene permisos para modificar registros en este modulo.',
+							position: 'bottom-right',
+					});
+				}
 				this.fetchDocumentosList()
 				this.editFormVisible = true;
         }
 				if(e == 'del'){
-						this.pushToDel(row)
+					if(!this.permisos['Vehiculos'].eliminar){
+						Notification.warning({
+								title: 'Atencion!',
+								message: 'Usted no tiene permisos para eliminar registros en este modulo.',
+								position: 'bottom-right',
+						});
+						return
+					}
+					this.pushToDel(row)
 			}
         },
-        handleCurrentTableChange(val) {
+    handleCurrentTableChange(val) {
 			if(val == null){
 				this.$refs.vehiculosTable.setCurrentRow(val);
+				this.disabledBtn = true
 				return
 			}
+			this.disabledBtn = false
 			this.fetchVehiculo(val.id)
 			this.$refs.vehiculosTable.setCurrentRow(val);
 		},
@@ -265,7 +290,7 @@ export default {
 		filterTag(value, row) {
         	return row.estado === value;
       	},
-        ...mapMutations('vehiculos', [
+    ...mapMutations('vehiculos', [
 			'setVehicleId',
 			'setFullVehiculo',
 		]),

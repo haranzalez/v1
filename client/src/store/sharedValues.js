@@ -213,6 +213,16 @@ export default {
                 label: 'Curso HSE'
             },
         ],
+        tipo_de_cuenta_options: [
+            {
+                value: 'Ahorros',
+                label: 'Ahorros'
+            }, 
+            {
+                value: 'Corriente',
+                label: 'Corriente'
+            },
+        ],
         marcas_vehiculos_options: null,
         colores_vehiculos_options: null,
         linea_cabezotes_options: null,

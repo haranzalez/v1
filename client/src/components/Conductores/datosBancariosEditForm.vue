@@ -1,7 +1,7 @@
 <template>
 
    <vue-scroll class="page-conductores-create">
-       <el-form label-position="top" ref="form" :status-icon="true" :show-message="false" label-width="120px" clearValidate> 
+       <el-form :disabled="(permisos['Conductores'].editar)?false:true" label-position="top" ref="form" :status-icon="true" :show-message="false" label-width="120px" clearValidate> 
         <el-row>
                
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
@@ -36,12 +36,15 @@
 				</el-col>
 		
 				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Tipo cuenta bancaria">
-                        <el-input size="mini" 
-                        :value="datosBancarios.tipo_cuenta_bancaria"
-                        @input="setTipoCuentaBancaria"
-                        placeholder="">
-                        </el-input>
+                    <el-form-item label="Tipo de cuenta">
+                        <el-select size="mini" v-model="tipo_de_cuenta" placeholder="Select">
+                            <el-option
+                            v-for="item in tipo_de_cuenta_options"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                            </el-option>
+                        </el-select>
                     </el-form-item>
 				</el-col>
 				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
@@ -96,6 +99,17 @@ export default {
         ...mapState('datosBancariosConductor', [
             'datosBancarios',
         ]),
+        ...mapState('sharedValues', [
+            'tipo_de_cuenta_options',
+        ]),
+        tipo_de_cuenta: {
+            get(value){
+                return this.datosBancarios.tipo_cuenta_bancaria
+            },
+            set(value){
+                this.setTipoCuentaBancaria(value)
+            }
+        },
         cuentaPropiaSwitch: {
             get(value){
                 return this.datosBancarios.cuenta_propia

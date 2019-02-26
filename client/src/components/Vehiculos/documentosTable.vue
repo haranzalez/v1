@@ -53,7 +53,8 @@
     <el-table-column type="expand">
       <template slot-scope="props">
         <p>Numero de poliza: {{ props.row.numero_de_poliza }}</p>
-        <p>Fecha de vencimiento: {{ props.row.fecha_de_vencimiento }}</p>
+        <p>Fecha de expedicion: {{ props.row.fecha_de_expedicion }}</p>
+				<p>Fecha de vigencia: {{ props.row.fecha_de_vencimiento }}</p>
       </template>
     </el-table-column>
     <el-table-column

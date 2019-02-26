@@ -3,6 +3,15 @@
        <el-form label-position="top" label-width="120px">
         <el-row>
             <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                <el-form-item label="Centro de diagnostico">
+                    <el-input size="mini"
+                    @input="setCentroDeDiagnostico"
+                    :value="tecnomecanica.centro_de_diagnostico"
+                    >
+                    </el-input>
+                </el-form-item>
+            </el-col>
+            <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                 <el-form-item label="Numero de tecnicomecanica">
                     <el-input size="mini"
                     @input="setNumeroTecnomecanica"
@@ -12,7 +21,16 @@
                 </el-form-item>
             </el-col>
             <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                <el-form-item label="Fecha de vencimiento">
+                <el-form-item label="Fecha de expedicion">
+                    <el-date-picker
+                    v-model="fecha_de_expedicion"
+                    type="date"
+                    placeholder="Seleccione fecha">
+                    </el-date-picker>
+                </el-form-item>
+            </el-col>
+            <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                <el-form-item label="Fecha de vigencia">
                     <el-date-picker
                     v-model="fecha_de_vencimiento"
                     type="date"
@@ -39,6 +57,14 @@ export default {
 		}
 	},
 	computed: {
+        fecha_de_expedicion: {
+            get(){
+                return this.tecnomecanica.fecha_de_expedicion
+            },
+            set(value){
+                this.setFechaDeExpedicion(value)
+            }
+        },
         fecha_de_vencimiento: {
             get(){
                 return this.tecnomecanica.fecha_de_vencimiento
@@ -72,6 +98,8 @@ export default {
         ...mapMutations('tecnomecanicaVehiculos', [
             'setNumeroTecnomecanica',
             'setFechaDeVencimiento',
+            'setFechaDeExpedicion',
+            'setCentroDeDiagnostico',
             'setVehiculoId',
         ]),
         title(field){

@@ -38,10 +38,22 @@
 				</el-col>
 				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Municipio documento" prop="municipio_documento">
-                        <el-input size="mini" 
-                        @input="setMunicipioDocumento"
-                        placeholder="">
-                        </el-input>
+                        <el-select 
+                        size="mini" 
+                        filterable 
+                        remote
+                        clearable
+                        :loading="municipiosListLoading"
+                        :remote-method="searchMunicipios"
+                        v-model="municipio_documento_selected"
+                        placeholder="Porfavor escriba palabra clave">
+                            <el-option
+                            v-for="item in municipios_options"
+                            :key="item.id"
+                            :label="item.nombre_municipio"
+                            :value="item.nombre_municipio">
+                            </el-option>
+                        </el-select>
                     </el-form-item>
 				</el-col>
 		
@@ -96,10 +108,22 @@
 				</el-col>
 				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Municipio" prop="municipio">
-                        <el-input size="mini" 
-                        @input="setMunicipio"
-                        placeholder="">
-                        </el-input>
+                        <el-select 
+                        size="mini" 
+                        filterable 
+                        remote
+                        clearable
+                        :loading="municipiosListLoading"
+                        :remote-method="searchMunicipios"
+                        v-model="municipio_selected"
+                        placeholder="Porfavor escriba palabra clave">
+                            <el-option
+                            v-for="item in municipios_options"
+                            :key="item.id"
+                            :label="item.nombre_municipio"
+                            :value="item.nombre_municipio">
+                            </el-option>
+                        </el-select>
                     </el-form-item>
 				</el-col>
 		
@@ -212,6 +236,22 @@ export default {
         }
 	},
 	computed: {
+        municipio_selected: {
+            get(){
+                return this.conductor.municipio
+            },
+            set(value){
+                this.setMunicipio(value)
+            }
+        },
+        municipio_documento_selected: {
+            get(){
+                return this.conductor.municipio_documento
+            },
+            set(value){
+                this.setMunicipioDocumento(value)
+            }
+        },
         tipo_conductor_selected: {
             get(){
                 return this.conductor.tipo_de_conductor
@@ -262,7 +302,9 @@ export default {
 			'transportadorasList',
         ]),
         ...mapState('sharedValues', [
-			'tipo_de_conductor_options',
+            'tipo_de_conductor_options',
+            'municipios_options',
+            'municipiosListLoading',
         ]),
 
 	},
@@ -307,6 +349,9 @@ export default {
         ]),
         ...mapActions('transportadoras',[
             'fetchTransportadorasList',
+        ]),
+        ...mapActions('sharedValues',[
+            'searchMunicipios',
         ]),
     },
     created: function(){

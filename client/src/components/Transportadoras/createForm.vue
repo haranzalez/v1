@@ -5,19 +5,37 @@
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <h3>Informacion basica</h3>
                 </el-col>
-				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="NIT">
-                        <el-input 
-                        size="mini"
+				<el-col :span="6" :md="6" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Tipo">
+                        <el-select size="mini" v-model="tipo_de_id" placeholder="">
+                            <el-option
+                            v-for="item in tipo_de_id_options"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+				</el-col>
+                <el-col :span="14" :md="14" :sm="24" :xs="24" class="col-p">
+                    <el-form-item :label="transportadora.tipo_de_id">
+                        <el-input size="mini" 
                         @input="setNit"
                         placeholder="">
                         </el-input>
                     </el-form-item>
 				</el-col>
+                <el-col :span="4" :md="4" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="DV">
+                        <el-input :disabled="(transportadora.tipo_de_id == 'Cedula')?true:false" size="mini" 
+                        @input="setDigitoDeVerificacion"
+                        placeholder="">
+                        </el-input>
+                    </el-form-item>
+				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Razon social">
-                        <el-input 
-                        size="mini"
+                    <el-form-item :label="(transportadora.tipo_de_id == 'NIT')?'Nombre razon social':'Nombre y apellidos'">
+                        <el-input size="mini" 
                         @input="setRazonSocial"
                         placeholder="">
                         </el-input>
@@ -144,6 +162,14 @@ export default {
 		}
 	},
 	computed: {
+        tipo_de_id: {
+            get(){
+                return this.transportadora.tipo_de_id
+            },
+            set(value){
+                this.setTipoDeId(value)
+            }   
+        },
         radica_rndc: {
             get(){
                 return this.transportadora.radica_rndc
@@ -183,6 +209,11 @@ export default {
         ...mapState('transportadoras', [
 			'transportadora',
         ]),
+        ...mapState('sharedValues', [
+            'municipios_options',
+            'municipiosListLoading',
+            'tipo_de_id_options',
+        ]),
 
 	},
 	components: {
@@ -204,6 +235,8 @@ export default {
             'setAnticipo',
             'setTipoDeCuenta',
             'setRadicaRndc',
+            'setDigitoDeVerificacion',
+            'setTipoDeId',
         ]),
         title(field){
             field = field.split('_').join(' ')

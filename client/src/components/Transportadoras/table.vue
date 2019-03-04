@@ -1,7 +1,7 @@
 <template>
 <div>
 	<!--Edit dialog form -->
-	<el-dialog fullscreen center width="30%" top="5vh" :title="transportadora.razon_social" :visible.sync="editFormVisible">
+	<el-dialog fullscreen center width="35%" top="5vh" :title="transportadora.razon_social" :visible.sync="editFormVisible">
 		<TransportadorasEditForm></TransportadorasEditForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button size="mini" @click="editFormVisible = false">Cancelar</el-button>
@@ -9,7 +9,7 @@
 		</span>
 	</el-dialog>
 	<!--Create dialog form -->
-	<el-dialog fullscreen center width="30%" top="5vh" :visible.sync="createFormVisible">
+	<el-dialog fullscreen center width="35%" top="5vh" :visible.sync="createFormVisible">
 		<div slot="title">
 			<h2>Nueva Transportadora</h2>
 		</div>

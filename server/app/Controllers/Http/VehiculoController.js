@@ -24,6 +24,12 @@ class VehiculoController {
         const res = await Database.raw("SELECT * FROM linea_vehiculos WHERE descripcion LIKE '"+keytrans+"%'")
         return res.rows
     }
+    async get_tipo_carroceria({ request }){
+        const { keyword } = request.all()
+        var keytrans = keyword.toUpperCase()
+        const res = await Database.raw("SELECT * FROM tipo_de_carroceria WHERE descripcion LIKE '"+keytrans+"%'")
+        return res.rows
+    }
     async assign_conductor({ params }){
         const { conductor_id, vehiculo_id } = params
         if(conductor_id == 'null'){
@@ -91,6 +97,12 @@ class VehiculoController {
             numero_chasis,
             tipo_de_vehiculo,
             tipo_configuracion,
+            tipo_de_carroceria,
+            digito_de_verificacion_tenedor,
+            digito_de_verificacion_propietario,
+            tipo_de_id_tenedor,
+            tipo_de_id_propietario,
+            numero_de_ejes,
             modelo,
             numero_motor,
             tipo_de_flota,
@@ -104,9 +116,7 @@ class VehiculoController {
             transportadora_id,
             estado,
             propietario,
-            poseedor,
             tenedor,
-            cedula_poseedor,
             cedula_propietario,
             cedula_tenedor,
         } = request.all()
@@ -116,6 +126,12 @@ class VehiculoController {
             numero_chasis,
             tipo_de_vehiculo,
             tipo_configuracion,
+            tipo_de_carroceria,
+            digito_de_verificacion_tenedor,
+            digito_de_verificacion_propietario,
+            tipo_de_id_tenedor,
+            tipo_de_id_propietario,
+            numero_de_ejes,
             modelo,
             numero_motor,
             tipo_de_flota,
@@ -129,9 +145,7 @@ class VehiculoController {
             transportadora_id,
             estado,
             propietario,
-            poseedor,
             tenedor,
-            cedula_poseedor,
             cedula_propietario,
             cedula_tenedor,
         })
@@ -153,6 +167,12 @@ class VehiculoController {
             numero_chasis,
             tipo_de_vehiculo,
             tipo_configuracion,
+            tipo_de_carroceria,
+            digito_de_verificacion_tenedor,
+            digito_de_verificacion_propietario,
+            tipo_de_id_tenedor,
+            tipo_de_id_propietario,
+            numero_de_ejes,
             modelo,
             numero_motor,
             tipo_de_flota,
@@ -166,9 +186,7 @@ class VehiculoController {
             transportadora_id,
             estado,
             propietario,
-            poseedor,
             tenedor,
-            cedula_poseedor,
             cedula_propietario,
             cedula_tenedor,
         } = request.all()
@@ -190,11 +208,15 @@ class VehiculoController {
         vehiculo.transportadora_id = transportadora_id
         vehiculo.estado = estado
         vehiculo.propietario = propietario
-        vehiculo.poseedor = poseedor
         vehiculo.tenedor = tenedor
-        vehiculo.cedula_poseedor = cedula_poseedor
         vehiculo.cedula_propietario = cedula_propietario
         vehiculo.cedula_tenedor = cedula_tenedor
+        vehiculo.tipo_de_carroceria = tipo_de_carroceria
+        vehiculo.numero_de_ejes = numero_de_ejes
+        vehiculo.digito_de_verificacion_tenedor = digito_de_verificacion_tenedor
+        vehiculo.digito_de_verificacion_propietario = digito_de_verificacion_propietario
+        vehiculo.tipo_de_id_tenedor = tipo_de_id_tenedor
+        vehiculo.tipo_de_id_propietario = tipo_de_id_propietario
         vehiculo.save()
 
         return {

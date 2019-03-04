@@ -7,7 +7,12 @@ class MunicipioController {
      async get_all_municipios({ params }){
         return await Municipio.all()
     }
-
+    async get_municipio_by_keyword({ request }){
+        const { keyword } = request.all()
+        var keytrans = keyword.toUpperCase()
+        const res = await Database.raw("SELECT * FROM municipios WHERE nombre_municipio LIKE '"+keytrans+"%'")
+        return res.rows
+    }
     async get_municipio({ params }){
         const { id } = params;
         return await Municipio.query()

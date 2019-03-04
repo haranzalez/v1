@@ -11,6 +11,8 @@ export default {
             numero_chasis: null,
             tipo_de_vehiculo: null,
             tipo_configuracion: null,
+            tipo_de_carroceria: null,
+            numero_de_ejes: null,
             modelo: null,
             numero_motor: null,
             tipo_de_flota: null,
@@ -22,11 +24,13 @@ export default {
             capasidad_carga: null,
             radica_rndc: false,
             propietario: null,
-            poseedor: null,
             tenedor: null,
-            cedula_poseedor: null,
             cedula_propietario: null,
             cedula_tenedor: null,
+            digito_de_verificacion_tenedor: null,
+            digito_de_verificacion_propietario: null,
+            tipo_de_id_propietario: 'NIT',
+            tipo_de_id_tenedor: 'NIT',
             transportadora_id: null,
             estado: null,
         },
@@ -221,17 +225,20 @@ export default {
         setCedulaPropietario(state, value){
             state.vehiculo.cedula_propietario = value
         },
-        setCedulaPoseedor(state, value){
-            state.vehiculo.cedula_poseedor = value
-        },
         setCedulaTenedor(state, value){
             state.vehiculo.cedula_tenedor = value
         },
         setTransportadora(state, value){
             state.vehiculo.transportadora_id = value
         },
+        setTipoDeCarroceria(state, value){
+            state.vehiculo.tipo_de_carroceria = value
+        },
         setEstado(state, value){
             state.vehiculo.estado = value
+        },
+        setNumeroDeEjes(state, value){
+            state.vehiculo.numero_de_ejes = value
         },
         setSelectedTrailer(state, value){
             state.selectedTrailer = value
@@ -239,12 +246,26 @@ export default {
         setSelectedConductor(state, value){
             state.selectedConductor = value
         },
+        setDigitoDeVerificacionTenedor(state, value){
+            state.vehiculo.digito_de_verificacion_tenedor = value
+        },
+        setDigitoDeVerificacionPropietario(state, value){
+            state.vehiculo.digito_de_verificacion_propietario = value
+        },
+        setTipoDeIdPropietario(state, value){
+            state.vehiculo.tipo_de_id_propietario = value
+        },
+        setTipoDeIdTenedor(state, value){
+            state.vehiculo.tipo_de_id_tenedor = value
+        },
         resetVehicleVariables(state){
             state.vehiculo = {
                 placa: null,
                 numero_chasis: null,
                 tipo_de_vehiculo: null,
                 tipo_configuracion: null,
+                tipo_de_carroceria: null,
+                numero_de_ejes: null,
                 modelo: null,
                 numero_motor: null,
                 tipo_de_flota: null,
@@ -256,11 +277,13 @@ export default {
                 capasidad_carga: null,
                 radica_rndc: false,
                 propietario: null,
-                poseedor: null,
                 tenedor: null,
-                cedula_poseedor: null,
                 cedula_propietario: null,
                 cedula_tenedor: null,
+                digito_de_verificacion_tenedor: null,
+                digito_de_verificacion_propietario: null,
+                tipo_de_id_propietario: 'NIT',
+                tipo_de_id_tenedor: 'NIT',
                 transportadora_id: null,
                 estado: null,
             }

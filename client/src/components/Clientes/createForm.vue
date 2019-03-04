@@ -5,26 +5,39 @@
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <h3>Info</h3>
                 </el-col>
-				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Nombre razon social">
-                        <el-input size="mini" 
-                        @input="setNombreRazonSocial"
-                        placeholder="">
-                        </el-input>
+				
+                <el-col :span="6" :md="6" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Tipo">
+                        <el-select size="mini" v-model="tipo_de_id" placeholder="">
+                            <el-option
+                            v-for="item in tipo_de_id_options"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                            </el-option>
+                        </el-select>
                     </el-form-item>
 				</el-col>
-                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="NIT">
+                <el-col :span="14" :md="14" :sm="24" :xs="24" class="col-p">
+                    <el-form-item :label="cliente.tipo_de_id">
                         <el-input size="mini" 
                         @input="setNit"
                         placeholder="">
                         </el-input>
                     </el-form-item>
 				</el-col>
-                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Digito de verificacion">
-                        <el-input size="mini" 
+                <el-col :span="4" :md="4" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="DV">
+                        <el-input :disabled="(cliente.tipo_de_id == 'Cedula')?true:false" size="mini" 
                         @input="setDigitoDeVerificacion"
+                        placeholder="">
+                        </el-input>
+                    </el-form-item>
+				</el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item :label="(cliente.tipo_de_id == 'NIT')?'Nombre razon social':'Nombre y apellidos'">
+                        <el-input size="mini" 
+                        @input="setNombreRazonSocial"
                         placeholder="">
                         </el-input>
                     </el-form-item>
@@ -39,8 +52,28 @@
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Ciudad">
+                        <el-select 
+                        size="mini" 
+                        filterable 
+                        remote
+                        clearable
+                        :loading="municipiosListLoading"
+                        :remote-method="searchMunicipios"
+                        v-model="municipio_selected"
+                        placeholder="Porfavor escriba palabra clave">
+                            <el-option
+                            v-for="item in municipios_options"
+                            :key="item.id"
+                            :label="item.nombre_municipio"
+                            :value="item.nombre_municipio">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+				</el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Sede">
                         <el-input size="mini" 
-                        @input="setCiudad"
+                        @input="setSede"
                         placeholder="">
                         </el-input>
                     </el-form-item>
@@ -65,14 +98,6 @@
                     <el-form-item label="Celular">
                         <el-input size="mini" 
                         @input="setCelular"
-                        placeholder="">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
-                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Persona de contacto">
-                        <el-input size="mini" 
-                        @input="setPersonaDeContacto"
                         placeholder="">
                         </el-input>
                     </el-form-item>
@@ -150,6 +175,22 @@ export default {
 		}
 	},
 	computed: {
+        tipo_de_id: {
+            get(){
+                return this.cliente.tipo_de_id
+            },
+            set(value){
+                this.setTipoDeId(value)
+            }   
+        },
+        municipio_selected: {
+            get(){
+                return this.cliente.ciudad
+            },
+            set(value){
+                this.setCiudad(value)
+            }
+        },
         selectedContrato: {
             get(){
                 return this.cliente.contrato
@@ -182,11 +223,19 @@ export default {
             'contratoOptions',
             'diasOptions',
         ]),
+        ...mapState('sharedValues', [
+            'municipios_options',
+            'municipiosListLoading',
+            'tipo_de_id_options',
+        ]),
 
     },
 	components: {
 	},
     methods: {
+        ...mapActions('sharedValues',[
+            'searchMunicipios',
+        ]),
         ...mapMutations('clientes', [
             'setNombreRazonSocial',
             'setNit',
@@ -204,6 +253,8 @@ export default {
             'setCupo',
             'setRadicaRndc',
             'setDigitoDeVerificacion',
+            'setSede',
+            'setTipoDeId',
         ]),
        
     },

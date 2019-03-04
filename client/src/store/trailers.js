@@ -15,16 +15,18 @@ export default {
             modelo: null,
             propietario: null,
             tipo_de_flota: null,
-            poseedor: null,
             color: null,
             marca_trailer: null,
             peso: null,
             tipo_carroceria: null,
             estado: null,
             radica_rndc: false,
-            cedula_poseedor: null,
             cedula_propietario: null,
             cedula_tenedor: null,
+            tipo_de_id_tenedor: 'NIT',
+            tipo_de_id_propietario: 'NIT',
+            digito_de_verificacion_propietario: null,
+            digito_de_verificacion_tenedor: null,
             transportadora_id: null,
         },
         trailersList: null,
@@ -72,7 +74,6 @@ export default {
                         showClose: true,
                         message: 'Trailer eliminado exitosamente'
                     })
-                    router.push('/Trailers')
                 }
                 load.close()
             })
@@ -141,9 +142,6 @@ export default {
         setTipoDeFlota(state, value){
             state.trailer.tipo_de_flota = value
         },
-        setPoseedor(state, value){
-            state.trailer.poseedor = value
-        },
         setColor(state, value){
             state.trailer.color = value
         },
@@ -168,14 +166,23 @@ export default {
         setCedulaPropietario(state, value){
             state.trailer.cedula_propietario = value
         },
-        setCedulaPoseedor(state, value){
-            state.trailer.cedula_poseedor = value
-        },
         setCedulaTenedor(state, value){
             state.trailer.cedula_tenedor = value
         },
+        setTipoDeIdTenedor(state, value){
+            state.trailer.tipo_de_id_tenedor = value
+        },
+        setTipoDeIdPropietario(state, value){
+            state.trailer.tipo_de_id_propietario = value
+        },
         setTransportadora(state, value){
             state.trailer.transportadora_id = value
+        },
+        setDigitoDeVerificacionTenedor(state, value){
+            state.trailer.digito_de_verificacion_tenedor = value
+        },
+        setDigitoDeVerificacionPropietario(state, value){
+            state.trailer.digito_de_verificacion_propietario = value
         },
         resetTrailerVars(state, value){
             state.trailer = {
@@ -186,16 +193,18 @@ export default {
                 modelo: null,
                 propietario: null,
                 tipo_de_flota: null,
-                poseedor: null,
                 color: null,
                 marca_trailer: null,
                 peso: null,
                 tipo_carroceria: null,
                 estado: null,
                 radica_rndc: false,
-                cedula_poseedor: null,
                 cedula_propietario: null,
                 cedula_tenedor: null,
+                tipo_de_id_tenedor: 'NIT',
+                tipo_de_id_propietario: 'NIT',
+                digito_de_verificacion_propietario: null,
+                digito_de_verificacion_tenedor: null,
                 transportadora_id: null,
             }
         }

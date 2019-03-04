@@ -64,7 +64,9 @@ class ClienteController {
         const { 
             nombre_razon_social, 
             nit, 
+            tipo_de_id,
             direccion, 
+            sede,
             ciudad,
             email,
             telefono,
@@ -81,7 +83,9 @@ class ClienteController {
         const cliente = await Cliente.create({
             nombre_razon_social, 
             nit, 
+            tipo_de_id,
             direccion, 
+            sede,
             ciudad,
             email,
             telefono,
@@ -103,7 +107,8 @@ class ClienteController {
         })*/
 
         return {
-            message: "success"
+            message: "success",
+            cliente_id: cliente.id,
         }
     }
     //UPDATE
@@ -115,7 +120,9 @@ class ClienteController {
         const {
             nombre_razon_social, 
             nit, 
-            direccion, 
+            tipo_de_id,
+            direccion,
+            sede, 
             ciudad,
             email,
             telefono,
@@ -131,6 +138,7 @@ class ClienteController {
 
         cliente.nombre_razon_social = nombre_razon_social 
         cliente.nit = nit 
+        cliente.tipo_de_id = tipo_de_id
         cliente.direccion = direccion 
         cliente.ciudad = ciudad
         cliente.email = email
@@ -142,6 +150,7 @@ class ClienteController {
         cliente.dias = dias
         cliente.radica_rndc = radica_rndc
         cliente.digito_de_verificacion = digito_de_verificacion
+        cliente.sede = sede
         cliente.save()
 
         const neg = await cliente.tipo_negociacion().fetch()

@@ -32,6 +32,7 @@ import aseguradoras from './aseguradoras';
 import documentosVehiculos from './documentosVehiculos';
 import tecnomecanicaVehiculos from './tecnomecanicaVehiculos';
 import documentosTrailers from './documentosTrailers';
+import personaDeContactoClientes from './personaDeContactoClientes';
 
 
 
@@ -73,6 +74,7 @@ export default new Vuex.Store({
 		documentosTrailers,
 		documentosConductor,
 		datosBancariosConductor,
+		personaDeContactoClientes,
 	},
 	mutations: {
 	},

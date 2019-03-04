@@ -19,6 +19,8 @@ class TransportadorasController {
         await Database.raw('SET hq.usuario = ' + user.nombre)
         const {
             nit,
+            digito_de_verificacion,
+            tipo_de_id,
             razon_social,
             direccion,
             telefono,
@@ -36,6 +38,8 @@ class TransportadorasController {
             .table('transportadoras')
             .insert({
                 nit,
+                digito_de_verificacion,
+                tipo_de_id,
                 razon_social,
                 direccion,
                 telefono,
@@ -65,6 +69,8 @@ class TransportadorasController {
         const { id } = params;
         const {
             nit,
+            digito_de_verificacion,
+            tipo_de_id,
             razon_social,
             direccion,
             telefono,
@@ -82,6 +88,8 @@ class TransportadorasController {
         .where('id', id)
         .update({ 
             nit,
+            digito_de_verificacion,
+            tipo_de_id,
             razon_social,
             direccion,
             telefono,

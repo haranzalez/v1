@@ -223,15 +223,65 @@ export default {
                 label: 'Corriente'
             },
         ],
+        tipo_de_id_options: [
+            {
+                value: 'NIT',
+                label: 'NIT'
+            }, 
+            {
+                value: 'Cedula',
+                label: 'Cedula'
+            },
+        ],
         marcas_vehiculos_options: null,
+        marcas_semiremolques_options: null,
         colores_vehiculos_options: null,
         linea_cabezotes_options: null,
+        municipios_options: null,
+        tipo_carroceria_options: null,
+        tipoCarroceriaListLoading: false,
         lineaVehiculoListLoading: false,
         coloresVehiculoListLoading: false,
         marcasVehiculoListLoading: false,
+        marcasSemiRemolquesListLoading: false,
+        municipiosListLoading: false,
     },
 
     actions: {
+        searchMarcasSemiRemolquesList({state, commit, dispatch}, keyword){
+            
+            if(keyword !== ''){
+                commit('setMarcasSemiRemolquesListLoading', true)
+                HTTP().local.post('api/marcas-semiremolques',{keyword})
+                .then(d => {
+                    commit('setMarcasSemiRemolquesList', d.data)
+                    commit('setMarcasSemiRemolquesListLoading', false)
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+            }else{
+                commit('setMarcasSemiRemolquesList', null)
+            }
+            
+        },
+        searchMunicipios({state, commit, dispatch}, keyword){
+            
+            if(keyword !== ''){
+                commit('setMunicipiosListLoading', true)
+                HTTP().local.post('api/municipios-by-keyword',{keyword})
+                .then(d => {
+                    commit('setMunicipiosList', d.data)
+                    commit('setMunicipiosListLoading', false)
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+            }else{
+                commit('setMarcasVehiculosList', null)
+            }
+            
+        },
         searchMarcasVehiculosList({state, commit, dispatch}, keyword){
             
             if(keyword !== ''){
@@ -279,8 +329,29 @@ export default {
                 commit('setLineaVehiculosList', null)
             }
         },
+        searchTipoCarroceria({state, commit, dispatch}, keyword){
+            if(keyword !== ''){
+                commit('setTipoCarroceriaListLoading', true)
+                HTTP().local.post('api/tipo-carroceria',{keyword})
+                .then(d => {
+                    commit('setTipoCarroceriaList', d.data)
+                    commit('setTipoCarroceriaListLoading', false)
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+            }else{
+                commit('setTipoCarroceriaList', null)
+            }
+        },
     },
     mutations: {
+        setMunicipiosList(state, value){
+            state.municipios_options = value
+        },
+        setMunicipiosListLoading(state, value){
+            state.municipiosListLoading = value
+        },
         setLineaVehiculoListLoading(state, value){
             state.lineaVehiculoListLoading = value
         },
@@ -290,8 +361,20 @@ export default {
         setMarcasVehiculoListLoading(state, value){
             state.marcasVehiculoListLoading = value
         },
+        setMarcasSemiRemolquesListLoading(state, value){
+            state.marcasSemiRemolquesListLoading = value
+        },
+        setTipoCarroceriaListLoading(state, value){
+            state.tipoCarroceriaListLoading = value
+        },
         setMarcasVehiculosList(state, value){
             state.marcas_vehiculos_options = value
+        },
+        setMarcasSemiRemolquesList(state, value){
+            state.marcas_semiremolques_options = value
+        },
+        setTipoCarroceriaList(state, value){
+            state.tipo_carroceria_options = value
         },
         setColoresVehiculosList(state, value){
             state.colores_vehiculos_options = value

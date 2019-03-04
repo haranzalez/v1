@@ -7,6 +7,12 @@ class TrailerController {
     
 
     //READ
+    async get_marcas_semiremolques({ request }){
+        const { keyword } = request.all()
+        var keytrans = keyword.toUpperCase()
+        const res = await Database.raw("SELECT * FROM marcas_semiremolques WHERE descripcion LIKE '"+keytrans+"%'")
+        return res.rows
+    }
     async get_all_trailers({ params }){
         return await Trailer.all()
     }
@@ -29,16 +35,18 @@ class TrailerController {
             modelo,
             propietario,
             tipo_de_flota,
-            poseedor,
             color,
             marca_trailer,
             peso,
             tipo_carroceria,
             estado,
             radica_rndc,
-            cedula_poseedor,
             cedula_propietario,
             cedula_tenedor,
+            tipo_de_id_tenedor,
+            tipo_de_id_propietario,
+            digito_de_verificacion_propietario,
+            digito_de_verificacion_tenedor,
             transportadora_id,
         } = request.all();
 
@@ -50,16 +58,18 @@ class TrailerController {
             modelo,
             propietario,
             tipo_de_flota,
-            poseedor,
             color,
             marca_trailer,
             peso,
             tipo_carroceria,
             estado,
             radica_rndc,
-            cedula_poseedor,
             cedula_propietario,
             cedula_tenedor,
+            tipo_de_id_tenedor,
+            tipo_de_id_propietario,
+            digito_de_verificacion_propietario,
+            digito_de_verificacion_tenedor,
             transportadora_id,
         });
 
@@ -78,16 +88,18 @@ class TrailerController {
             modelo,
             propietario,
             tipo_de_flota,
-            poseedor,
             color,
             marca_trailer,
             peso,
             tipo_carroceria,
             estado,
             radica_rndc,
-            cedula_poseedor,
             cedula_propietario,
             cedula_tenedor,
+            tipo_de_id_tenedor,
+            tipo_de_id_propietario,
+            digito_de_verificacion_propietario,
+            digito_de_verificacion_tenedor,
             transportadora_id,
         } = request.all()
 
@@ -98,7 +110,6 @@ class TrailerController {
         trailer.modelo = modelo
         trailer.propietario = propietario
         trailer.tipo_de_flota = tipo_de_flota
-        trailer.poseedor = poseedor
         trailer.color = color
         trailer.marca_trailer = marca_trailer
         trailer.peso = peso
@@ -106,9 +117,12 @@ class TrailerController {
         trailer.estado = estado
         trailer.radica_rndc = radica_rndc
         trailer.transportadora_id = transportadora_id
-        trailer.cedula_poseedor = cedula_poseedor
         trailer.cedula_propietario = cedula_propietario
         trailer.cedula_tenedor = cedula_tenedor
+        trailer.tipo_de_id_tenedor = tipo_de_id_tenedor
+        trailer.tipo_de_id_propietario = tipo_de_id_propietario
+        trailer.digito_de_verificacion_propietario = digito_de_verificacion_propietario
+        trailer.digito_de_verificacion_tenedor = digito_de_verificacion_tenedor
         trailer.save()
         return trailer
     }

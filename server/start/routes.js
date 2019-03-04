@@ -149,6 +149,7 @@ Route.group(() => {
   Route.get('municipios/:id', 'MunicipioController.get_municipio').middleware('auth')
   //POST
   Route.post('municipios/crear', 'MunicipioController.create_municipio').middleware('auth')
+  Route.post('municipios-by-keyword', 'MunicipioController.get_municipio_by_keyword').middleware('auth')
   //PUT
   Route.put('municipios/:id/update', 'MunicipioController.update_municipio').middleware('auth')
   //DELETE
@@ -165,6 +166,7 @@ Route.group(() => {
   Route.post('marcas-vehiculos', 'VehiculoController.get_marcas_vehiculos').middleware('auth')
   Route.post('colores-vehiculos', 'VehiculoController.get_colores_vehiculos').middleware('auth')
   Route.post('lineas-vehiculos', 'VehiculoController.get_lineas_vehiculos').middleware('auth')
+  Route.post('tipo-carroceria', 'VehiculoController.get_tipo_carroceria').middleware('auth')
   Route.post('vehiculos/crear', 'VehiculoController.create_vehicle').middleware('auth')
   //PUT
   Route.put('vehiculos/:id/update', 'VehiculoController.update_vehicle').middleware('auth')
@@ -203,6 +205,7 @@ Route.group(() => {
   Route.get('trailers/:trailer_id/assign/:vehicle_id', 'TrailerController.assign_vehicle').middleware('auth')
   //POST
   Route.post('trailers/crear', 'TrailerController.create_trailer').middleware('auth')
+  Route.post('marcas-semiremolques', 'TrailerController.get_marcas_semiremolques').middleware('auth')
   //PUT
   Route.put('trailers/:id/update', 'TrailerController.update_trailer').middleware('auth')
   //DELETE
@@ -304,6 +307,18 @@ Route.group(() => {
   Route.get('clientes/:id/depositos/:deposito_id', 'ClienteController.fetch_deposito').middleware('auth')
   Route.post('clientes/:id/createDeposito', 'ClienteController.create_deposito').middleware('auth')
   Route.put('clientes/:id/updateDeposito/:deposito_id', 'ClienteController.update_deposito').middleware('auth')
+  //======================================================================================================================================
+  //Personas de contacto clientes
+  //======================================================================================================================================
+  //GET
+  Route.get('contacto-clientes/:cliente_id', 'PersonaDeContactoClientesController.get_contactos_list').middleware('auth')
+  Route.get('contacto-clientes-by-id/:id', 'PersonaDeContactoClientesController.get_contacto').middleware('auth')
+  //POST
+  Route.post('contacto-clientes/create', 'PersonaDeContactoClientesController.create_contacto').middleware('auth')
+  //PUT
+  Route.put('contacto-clientes/:id/update', 'PersonaDeContactoClientesController.update_contacto').middleware('auth')
+  //DELETE
+  Route.delete('contacto-clientes/:id/delete', 'PersonaDeContactoClientesController.delete_contacto').middleware('auth')
 
   //======================================================================================================================================
   //Consolidaciones

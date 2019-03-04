@@ -10,8 +10,10 @@ export default {
         cliente:{
            nombre_razon_social: null,
            nit: null,
+           tipo_de_id: 'NIT',
            direccion: null,
            ciudad: null,
+           sede: null,
            email: null,
            telefono: null,
            celular: null,
@@ -162,7 +164,10 @@ export default {
                         showClose: true,
                         message: 'Cliente creado.'
                     })
+                    dispatch('fetchCliente', d.data.cliente_id)
                     dispatch('fetchClientesList')
+                    load.close()
+                    return true
                 }
                 load.close()
                 return false
@@ -362,11 +367,17 @@ export default {
         setNit(state, value){
             state.cliente.nit = value
         },
+        setTipoDeId(state, value){
+            state.cliente.tipo_de_id = value
+        },
         setDireccion(state, value){
             state.cliente.direccion = value
         },
         setCiudad(state, value){
             state.cliente.ciudad = value
+        },
+        setSede(state, value){
+            state.cliente.sede = value
         },
         setEmail(state, value){
             state.cliente.email = value
@@ -405,8 +416,10 @@ export default {
             state.cliente = {
                 nombre_razon_social: null,
                 nit: null,
+                tipo_de_id: 'NIT',
                 direccion: null,
                 ciudad: null,
+                sede: null,
                 email: null,
                 telefono: null,
                 celular: null,

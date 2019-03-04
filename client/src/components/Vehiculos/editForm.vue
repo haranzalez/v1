@@ -25,96 +25,154 @@
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Marca cabezote">
-                        <el-input size="mini"
-                        :value="vehiculo.marca_cabezote"
-                        @input="setMarcaCabezote"
+                        <el-select 
+                        size="mini" 
+                        filterable 
+                        remote
+                        width="100%"
+                        clearable
+                        :loading="marcasVehiculoListLoading"
+                        :remote-method="searchMarcasVehiculosList"
+                        v-model="marca_cabezote_selected"
+                        placeholder="Porfavor escriba palabra clave">
+                            <el-option
+                            v-for="item in marcas_vehiculos_options"
+                            :key="item.id"
+                            :label="item.descripcion"
+                            :value="item.descripcion">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+				</el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Linea cabezote">
+                        <el-select 
+                        size="mini" 
+                        filterable 
+                        remote
+                        clearable
+                        :loading="lineaVehiculoListLoading"
+                        :remote-method="searchLineaVehiculosList"
+                        v-model="linea_cabezote_selected"
+                        placeholder="Porfavor escriba palabra clave">
+                            <el-option
+                            v-for="item in linea_cabezotes_options"
+                            :key="item.id"
+                            :label="item.descripcion"
+                            :value="item.descripcion">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+				</el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Color">
+                        <el-select 
+                        size="mini" 
+                        filterable 
+                        remote
+                        clearable
+                        :loading="coloresVehiculoListLoading"
+                        :remote-method="searchColoresVehiculosList"
+                        v-model="color_selected"
+                        placeholder="Porfavor escriba palabra clave">
+                            <el-option
+                            v-for="item in colores_vehiculos_options"
+                            :key="item.id"
+                            :label="item.nombrecolor"
+                            :value="item.nombrecolor">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+				</el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <h3>Propietario</h3>
+                </el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item :label="(vehiculo.tipo_de_id_propietario == 'Cedula')?'Nombres y apellidos':'Nombre razon social'">
+                        <el-input 
+                        size="mini"
+                        @input="setPropietario"
+                        :value="vehiculo.propietario"
+                        placeholder="">
+                        </el-input>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="6" :md="6" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Tipo id">
+                        <el-select size="mini" v-model="tipo_de_id_propietario" placeholder="">
+                            <el-option
+                            v-for="item in tipo_de_id_options"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+				</el-col>
+                <el-col :span="14" :md="14" :sm="24" :xs="24" class="col-p">
+                    <el-form-item :label="vehiculo.tipo_de_id_propietario">
+                        <el-input size="mini" 
+                        @input="setCedulaPropietario"
+                        :value="vehiculo.cedula_propietario"
+                        placeholder="">
+                        </el-input>
+                    </el-form-item>
+				</el-col>
+                <el-col :span="4" :md="4" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="DV">
+                        <el-input :disabled="(vehiculo.tipo_de_id_propietario == 'Cedula')?true:false" size="mini" 
+                        @input="setDigitoDeVerificacionPropietario"
+                        :value="vehiculo.digito_de_verificacion_propietario"
                         placeholder="">
                         </el-input>
                     </el-form-item>
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Color">
-                        <el-input size="mini"
-                        :value="vehiculo.color"
-                        @input="setColor"
-                        placeholder="Negro..">
+                    <h3>Tenedor</h3>
+                </el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item :label="(vehiculo.tipo_de_id_tenedor == 'Cedula')?'Nombres y apellidos':'Nombre razon social'">
+                        <el-input 
+                        size="mini"
+                        @input="setTenedor"
+                        :value="vehiculo.tenedor"
+                        placeholder="">
+                        </el-input>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="6" :md="6" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Tipo id">
+                        <el-select size="mini" v-model="tipo_de_id_tenedor" placeholder="">
+                            <el-option
+                            v-for="item in tipo_de_id_options"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+				</el-col>
+                <el-col :span="14" :md="14" :sm="24" :xs="24" class="col-p">
+                    <el-form-item :label="vehiculo.tipo_de_id_tenedor">
+                        <el-input size="mini" 
+                        @input="setCedulaTenedor"
+                        :value="vehiculo.cedula_tenedor"
+                        placeholder="">
                         </el-input>
                     </el-form-item>
 				</el-col>
-                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Propietario">
-                        <el-row>
-                            <el-col :span="11" :md="11" :sm="24" :xs="24">
-                                <el-input 
-                                size="mini"
-                                :value="vehiculo.propietario"
-                                @input="setPropietario"
-                                placeholder="Nombre">
-                                </el-input>
-                            </el-col>
-                            <el-col style="text-align: center;" :span="2" :md="2" :sm="24" :xs="24">
-                                |
-                            </el-col>
-                            <el-col :span="11" :md="11" :sm="24" :xs="24">
-                                <el-input 
-                                size="mini"
-                                :value="vehiculo.cedula_propietario"
-                                @input="setCedulaPropietario"
-                                placeholder="Nit/Cedula">
-                                </el-input>
-                            </el-col>
-                        </el-row>
+                <el-col :span="4" :md="4" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="DV">
+                        <el-input :disabled="(vehiculo.tipo_de_id_tenedor == 'Cedula')?true:false" size="mini" 
+                        @input="setDigitoDeVerificacionTenedor"
+                        :value="vehiculo.digito_de_verificacion_tenedor"
+                        placeholder="">
+                        </el-input>
                     </el-form-item>
-                </el-col>
+				</el-col>
+                
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Poseedor">
-                        <el-row>
-                            <el-col :span="11" :md="11" :sm="24" :xs="24">
-                                <el-input 
-                                size="mini"
-                                @input="setPoseedor"
-                                :value="vehiculo.poseedor"
-                                placeholder="Nombre">
-                                </el-input>
-                            </el-col>
-                            <el-col style="text-align: center;" :span="2" :md="2" :sm="24" :xs="24">
-                                |
-                            </el-col>
-                            <el-col :span="11" :md="11" :sm="24" :xs="24">
-                                <el-input 
-                                size="mini"
-                                :value="vehiculo.cedula_poseedor"
-                                @input="setCedulaPoseedor"
-                                placeholder="Nit/Cedula">
-                                </el-input>
-                            </el-col>
-                        </el-row>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Tenedor">
-                        <el-row>
-                            <el-col :span="11" :md="11" :sm="24" :xs="24">
-                                <el-input 
-                                size="mini"
-                                @input="setTenedor"
-                                :value="vehiculo.tenedor"
-                                placeholder="Nombre">
-                                </el-input>
-                            </el-col>
-                            <el-col style="text-align: center;" :span="2" :md="2" :sm="24" :xs="24">
-                                |
-                            </el-col>
-                            <el-col :span="11" :md="11" :sm="24" :xs="24">
-                                <el-input 
-                                size="mini"
-                                @input="setCedulaTenedor"
-                                :value="vehiculo.cedula_tenedor"
-                                placeholder="Nit/Cedula">
-                                </el-input>
-                            </el-col>
-                        </el-row>
-                    </el-form-item>
+                    <h3>Informacion adicional</h3>
                 </el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Transportadora" prop="transportadora">
@@ -134,18 +192,6 @@
                         </el-select>
                     </el-form-item>
                 </el-col>
-                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                    <h3>Informacion adicional</h3>
-                </el-col>
-                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Linea cabezote">
-                        <el-input size="mini"
-                        :value="vehiculo.linea_cabezote"
-                        @input="setLineaCabezote"
-                        placeholder="">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Numero Motor">
                         <el-input size="mini"
@@ -175,6 +221,11 @@
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Capasidad de carga">
                     <el-input-number :value="vehiculo.capasidad_carga" size="mini" v-model="capacidadNum" controls-position="right" @change="setCapasidadCarga" :min="1" :max="1000"></el-input-number>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Numero de ejes">
+                    <el-input-number size="mini" v-model="ejesNum" controls-position="right" @change="setNumeroDeEjes" :min="1" :max="1000"></el-input-number>
                     </el-form-item>
                 </el-col>
                  <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
@@ -209,6 +260,26 @@
                             :key="item.value"
                             :label="item.label"
                             :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+				</el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Tipo de carroceria">
+                        <el-select 
+                        size="mini" 
+                        filterable 
+                        remote
+                        clearable
+                        :loading="tipoCarroceriaListLoading"
+                        :remote-method="searchTipoCarroceria"
+                        v-model="tipo_carroceria_selected"
+                        placeholder="Porfavor escriba palabra clave">
+                            <el-option
+                            v-for="item in tipo_carroceria_options"
+                            :key="item.id"
+                            :label="item.descripcion"
+                            :value="item.descripcion">
                             </el-option>
                         </el-select>
                     </el-form-item>
@@ -309,9 +380,58 @@ export default {
       	return {
               capacidadNum: 1,
               pesoNum: 1,
+              ejesNum: 1,
 		}
 	},
 	computed: {
+        tipo_de_id_propietario: {
+            get(){
+                return this.vehiculo.tipo_de_id_propietario
+            },
+            set(value){
+                this.setTipoDeIdPropietario(value)
+            }   
+        },
+        tipo_de_id_tenedor: {
+            get(){
+                return this.vehiculo.tipo_de_id_tenedor
+            },
+            set(value){
+                this.setTipoDeIdTenedor(value)
+            }   
+        },
+        tipo_carroceria_selected: {
+            get(){
+                return this.vehiculo.tipo_de_carroceria
+            },
+            set(value){
+                this.setTipoDeCarroceria(value)
+            }
+        },
+        linea_cabezote_selected: {
+            get(){
+                return this.vehiculo.linea_cabezote
+            },
+            set(value){
+                this.setLineaCabezote(value)
+            }
+        },
+        color_selected: {
+            get(){
+                return this.vehiculo.color
+            },
+            set(value){
+                this.setColor(value)
+            }
+        },
+        marca_cabezote_selected: {
+            get(){
+                return this.vehiculo.marca_cabezote
+            },
+            set(value){
+                this.setMarcaCabezote(value)
+            }
+        },
         trailer_selected: {
             get(){
                 return this.selectedTrailer
@@ -390,6 +510,16 @@ export default {
             'tipo_de_combustible_options',
             'estado_options',
             'corroceria_options',
+            'full_loading',
+            'marcas_vehiculos_options',
+            'colores_vehiculos_options',
+            'linea_cabezotes_options',
+            'lineaVehiculoListLoading',
+            'coloresVehiculoListLoading',
+            'marcasVehiculoListLoading',
+            'tipo_carroceria_options',
+            'tipoCarroceriaListLoading',
+            'tipo_de_id_options',
         ]),
         ...mapState('vehiculos', [
             'vehiculo',
@@ -442,6 +572,12 @@ export default {
             'setSelectedTrailer',
             'setSelectedConductor',
             'resetVehicleVariables',
+            'setTipoDeCarroceria',
+            'setNumeroDeEjes',
+            'setDigitoDeVerificacionTenedor',
+            'setDigitoDeVerificacionPropietario',
+            'setTipoDeIdPropietario',
+            'setTipoDeIdTenedor',
         ]),
         title(field){
             field = field.split('_').join(' ')
@@ -462,6 +598,12 @@ export default {
         ]),
         ...mapActions('transportadoras',[
             'fetchTransportadorasList',
+        ]),
+        ...mapActions('sharedValues',[
+            'searchMarcasVehiculosList',
+            'searchColoresVehiculosList',
+            'searchLineaVehiculosList',
+            'searchTipoCarroceria',
         ]),
     },
     created: function(){

@@ -1,5 +1,18 @@
 <template>
 <div>
+	<!-- create contacto form -->
+	<el-dialog
+	title="Contactos"
+	:visible.sync="personaDeContactoClienteCreateFormDialogVisible"
+	width="30%"
+	:append-to-body="true"
+	>
+			<contactosCreateForm></contactosCreateForm>
+		<span slot="footer" class="dialog-footer">
+			<el-button @click="personaDeContactoClienteCreateFormDialogVisible = false">Cerrar</el-button>
+			<el-button type="primary" :disabled="(permisos['Clientes'].crear)?false:true" @click="createContacto();">Crear</el-button>
+		</span>
+	</el-dialog>
 	<!--report -->
 	<el-dialog width="45%" :center="true" top="5vh" :visible.sync="reportDialogVisible">
 		<el-form size="mini" label-position="left" ref="form" label-width="120px">
@@ -151,7 +164,7 @@
 	</el-dialog>
 
 	<!--Edit cliente dialog form -->
-	<el-dialog fullscreen width="30%" top="5vh" :visible.sync="editFormVisible">
+	<el-dialog fullscreen width="40%" top="5vh" :visible.sync="editFormVisible">
 		<ClientesEditForm></ClientesEditForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button size="mini" @click="editFormVisible = false;">Cancelar</el-button>
@@ -159,7 +172,7 @@
 		</span>
 	</el-dialog>
 	<!--Create cliente dialog form -->
-	<el-dialog fullscreen width="30%" top="5vh" :visible.sync="createFormVisible">
+	<el-dialog fullscreen width="40%" top="5vh" :visible.sync="createFormVisible">
 		<ClientesCreateForm></ClientesCreateForm>
 		<span slot="footer" class="dialog-footer">
 			<el-button size="mini" @click="createFormVisible = false; paramsReset(); setDataReady(false);">Cancelar</el-button>
@@ -243,12 +256,7 @@
       label="Celular"
       min-width="130">
     </el-table-column>
-	<el-table-column
-	  sortable
-      prop="persona_de_contacto"
-      label="Persona de contacto"
-      min-width="200">
-    </el-table-column>
+	
   </el-table>
 
   </el-col>
@@ -286,6 +294,7 @@ import DepositosEditForm from './depositosEditForm'
 import CuadreRutasHistoryTable from './cuadreRutaHistoryTable'
 import CuadreProductosHistoryTable from './cuadreProductosHistoryTable'
 import CuadreServiciosHistoryTable from './cuadreServicioHistoryTable'
+import contactosCreateForm from './contactosCreateForm'
 
 export default {
 	name: 'ClientesTable',
@@ -312,6 +321,7 @@ export default {
 			cuadresTableVisible: false,
             selectTypeOfSearch: '',
 			filter: '',
+			personaDeContactoClienteCreateFormDialogVisible: false,
 
 			
 		}
@@ -403,6 +413,7 @@ export default {
 		CuadreRutasHistoryTable,
 		CuadreProductosHistoryTable,
 		CuadreServiciosHistoryTable,
+		contactosCreateForm,
 	},
     methods: {
 //=============================//
@@ -434,6 +445,9 @@ export default {
 //=============================//
 
 //ACTIONS====================================
+		...mapActions('personaDeContactoClientes',[
+			'createContacto',
+		]),
 		...mapActions('cuadreViajes',[
 			'createCuadreRuta',
 			'editCuadreRuta',
@@ -619,8 +633,10 @@ export default {
 //=============================//
 		
 		create_client(){
-			this.createCliente()
-			this.createFormVisible = false
+			if(this.createCliente()){
+				this.createFormVisible = false
+				this.personaDeContactoClienteCreateFormDialogVisible = true
+			}
 		},
 		create_cuadre_viaje(id){
 			if(this.createCuadreRuta(id)){

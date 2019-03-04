@@ -9,6 +9,8 @@ export default {
     state: {
         transportadora:{
             nit: null,
+            tipo_de_id: 'NIT',
+            digito_de_verificacion: null,
             razon_social: null,
             direccion: null,
             telefono: null,
@@ -153,12 +155,20 @@ export default {
         setRadicaRndc(state, value){
             state.transportadora.radica_rndc = value
         },
+        setDigitoDeVerificacion(state, value){
+            state.transportadora.digito_de_verificacion = value
+        },
+        setTipoDeId(state, value){
+            state.transportadora.tipo_de_id = value
+        },
         setLoadingTransportadorasTable(state, value){
             state.loadingTransportadorasTable = value
         },
         resetTransportadoraVars(state){
             state.transportadora = {
                 nit: null,
+                tipo_de_id: 'NIT',
+                digito_de_verificacion: null,
                 razon_social: null,
                 direccion: null,
                 telefono: null,

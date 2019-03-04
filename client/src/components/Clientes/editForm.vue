@@ -5,17 +5,20 @@
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <h3>Info</h3>
                 </el-col>
-				<el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Nombre razon social">
-                        <el-input size="mini" 
-                        :value="cliente.nombre_razon_social"
-                        @input="setNombreRazonSocial"
-                        placeholder="">
-                        </el-input>
+                <el-col :span="6" :md="6" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Tipo">
+                        <el-select size="mini" v-model="tipo_de_id" placeholder="">
+                            <el-option
+                            v-for="item in tipo_de_id_options"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                            </el-option>
+                        </el-select>
                     </el-form-item>
 				</el-col>
-                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="NIT">
+                <el-col :span="14" :md="14" :sm="24" :xs="24" class="col-p">
+                    <el-form-item :label="cliente.tipo_de_id">
                         <el-input size="mini" 
                         :value="cliente.nit"
                         @input="setNit"
@@ -23,11 +26,20 @@
                         </el-input>
                     </el-form-item>
 				</el-col>
-                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Digito de verificacion">
-                        <el-input size="mini" 
+                <el-col :span="4" :md="4" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="DV">
+                        <el-input :disabled="(cliente.tipo_de_id == 'Cedula')?true:false" size="mini" 
                         @input="setDigitoDeVerificacion"
                         :value="cliente.digito_de_verificacion"
+                        placeholder="">
+                        </el-input>
+                    </el-form-item>
+				</el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item :label="(cliente.tipo_de_id == 'NIT')?'Nombre razon social':'Nombre y apellidos'">
+                        <el-input size="mini" 
+                        :value="cliente.nombre_razon_social"
+                        @input="setNombreRazonSocial"
                         placeholder="">
                         </el-input>
                     </el-form-item>
@@ -46,6 +58,15 @@
                         <el-input size="mini" 
                         :value="cliente.ciudad"
                         @input="setCiudad"
+                        placeholder="">
+                        </el-input>
+                    </el-form-item>
+				</el-col>
+                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Sede">
+                        <el-input size="mini" 
+                        @input="setSede"
+                        :value="cliente.sede"
                         placeholder="">
                         </el-input>
                     </el-form-item>
@@ -78,15 +99,6 @@
                     </el-form-item>
 				</el-col>
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                    <el-form-item label="Persona de contacto">
-                        <el-input size="mini" 
-                        :value="cliente.persona_de_contacto"
-                        @input="setPersonaDeContacto"
-                        placeholder="">
-                        </el-input>
-                    </el-form-item>
-				</el-col>
-                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <el-form-item label="Direccion envio de factura">
                         <el-input size="mini" 
                         :value="cliente.direccion_envio_de_factura"
@@ -98,50 +110,56 @@
                 <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
                     <h3>Tipo de contrato</h3>
                 </el-col>
-                   <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                        <el-form-item label="Contrato">
-                            <el-select v-model="selectedContrato" placeholder="Select">
-                                <el-option
-                                v-for="item in contratoOptions"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
-                                </el-option>
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                        <el-form-item label="Dias">
-                            <el-select v-model="selectedDias" placeholder="Select">
-                                <el-option
-                                v-for="item in diasOptions"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
-                                </el-option>
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                        <el-form-item label="Cupo">
-                            <el-input size="mini" 
-                            :value="(cliente.tipo_negociacion !== null)?cliente.tipo_negociacion.cupo:0"
-                            @input="setCupo"
-                            placeholder="">
-                            </el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
-                        <el-form-item label="Radica RNDC">
-                            <el-switch
-                            v-model="radicaRn"
-                            active-color="#13ce66"
-                            inactive-color="#ff4949"
-                            active-text="Si"
-                            inactive-text="No">
-                            </el-switch>
-                        </el-form-item>
-                    </el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Contrato">
+                        <el-select v-model="selectedContrato" placeholder="Select">
+                            <el-option
+                            v-for="item in contratoOptions"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Dias">
+                        <el-select v-model="selectedDias" placeholder="Select">
+                            <el-option
+                            v-for="item in diasOptions"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Cupo">
+                        <el-input size="mini" 
+                        :value="(cliente.tipo_negociacion !== null)?cliente.tipo_negociacion.cupo:0"
+                        @input="setCupo"
+                        placeholder="">
+                        </el-input>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <el-form-item label="Radica RNDC">
+                        <el-switch
+                        v-model="radicaRn"
+                        active-color="#13ce66"
+                        inactive-color="#ff4949"
+                        active-text="Si"
+                        inactive-text="No">
+                        </el-switch>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <h3>Personas de contacto</h3>
+                </el-col>
+                <el-col :span="24" :md="24" :sm="24" :xs="24" class="col-p">
+                    <personaDeContactoTable></personaDeContactoTable>
+                </el-col>
       
 
         </el-row>
@@ -157,15 +175,25 @@ import HTTP from '../../http';
 import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
 import moment from 'moment-timezone'
 import router from '../../router'
+//components
+import personaDeContactoTable from './personaDeContactoTable'
 
 export default {
-	name: 'RutasEditForm',
+	name: 'ClientesEditForm',
 	data () {
       	return {
 
 		}
     },
 	computed: {
+        tipo_de_id: {
+            get(){
+                return this.cliente.tipo_de_id
+            },
+            set(value){
+                this.setTipoDeId(value)
+            }   
+        },
         selectedContrato: {
             get(){
                 return this.cliente.contrato
@@ -198,9 +226,13 @@ export default {
             'contratoOptions',
             'diasOptions',
         ]),
+        ...mapState('sharedValues', [
+            'tipo_de_id_options',
+        ]),
 
 	},
 	components: {
+        personaDeContactoTable,
 	},
     methods: {
         del(){
@@ -217,6 +249,9 @@ export default {
                 });          
             });
         },
+        ...mapActions('personaDeContactoClientes',[
+			'fetchContactosList',
+		]),
         ...mapMutations('clientes', [
             'setNombreRazonSocial',
             'setNit',
@@ -234,6 +269,8 @@ export default {
             'setCupo',
             'setRadicaRndc',
             'setDigitoDeVerificacion',
+            'setSede',
+            'setTipoDeId',
         ]),
         title(field){
             field = field.split('_').join(' ')
@@ -243,6 +280,7 @@ export default {
        
     },
     created(){
+        this.fetchContactosList()
     }
 
 

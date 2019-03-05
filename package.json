@@ -1,0 +1,19 @@
+{
+  "name": "v1",
+  "version": "1.0.0",
+  "description": "HQ sistem",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/haranzalez/v1.git"
+  },
+  "author": "Hans Aranzalez",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/haranzalez/v1/issues"
+  },
+  "homepage": "https://github.com/haranzalez/v1#readme"
+}

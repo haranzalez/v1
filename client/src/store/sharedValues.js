@@ -233,6 +233,12 @@ export default {
                 label: 'Cedula'
             },
         ],
+        hq_info: {
+            tipo_de_id: 'NIT',
+            numero_de_id: '123456789',
+            codigo_sede: 'BA',
+        },
+        codigo_producto: '002714',
         marcas_vehiculos_options: null,
         marcas_semiremolques_options: null,
         colores_vehiculos_options: null,

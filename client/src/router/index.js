@@ -571,7 +571,6 @@ router.beforeEach((to, from, next) => {
 		}
 	} else {
 		if(auth.loggedIn() && to.name === 'login'){
-			
 			window.location.href = '/'
 			return false
 		} else {

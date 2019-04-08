@@ -1,38 +1,38 @@
 <template>
    <vue-scroll class="page-vehiculos-create">
        <el-form :inline="true" label-position="top" ref="form" label-width="120px">
-                    <el-form-item label="Ruta">
-                        <el-select :value.sync="selectedCreateRuta" placeholder="Seleccione.." @change="setSelectedCreateRuta">
-                            <el-option
-                            v-for="item in rutasList"
-                            :key="item.id"
-                            :label="item.nombre_municipio"
-                            :value="item.id">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="Vehiculo">
-                        <el-select :value.sync="selectedCreateVehiculo" placeholder="Seleccione.." @change="setSelectedCreateVehiculo">
-                            <el-option
-                            v-for="item in vehiculosList"
-                            :key="item.id"
-                            :label="item.placa"
-                            :value="item.id">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="Valor flete">
-                        <el-input size="mini" 
-                        @input="setFlete"
-                        placeholder="">
-                        </el-input>
-                    </el-form-item>
-                    <el-form-item label="Anticipo">
-                        <el-input size="mini" 
-                        @input="setAnticipo"
-                        placeholder="">
-                        </el-input>
-                    </el-form-item>
+            <el-form-item label="Ruta">
+                <el-select :value.sync="selectedCreateRuta" placeholder="Seleccione.." @change="setSelectedCreateRuta">
+                    <el-option
+                    v-for="item in rutasList"
+                    :key="item.id"
+                    :label="item.nombre_municipio"
+                    :value="item.id">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="Vehiculo">
+                <el-select :value.sync="selectedCreateVehiculo" placeholder="Seleccione.." @change="setSelectedCreateVehiculo">
+                    <el-option
+                    v-for="item in vehiculosList"
+                    :key="item.id"
+                    :label="item.placa"
+                    :value="item.id">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="Valor flete">
+                <el-input size="mini" 
+                @input="setFlete"
+                placeholder="">
+                </el-input>
+            </el-form-item>
+            <el-form-item label="Anticipo">
+                <el-input size="mini" 
+                @input="setAnticipo"
+                placeholder="">
+                </el-input>
+            </el-form-item>
         </el-form>
    </vue-scroll>
 </template>
@@ -52,7 +52,6 @@ export default {
 		}
 	},
 	computed: {
-        
         ...mapState('authentication', [
 			'permisos',
         ]),
@@ -68,7 +67,6 @@ export default {
         ...mapState('vehiculos', [
             'vehiculosList',
         ]),
-
 	},
 	components: {
 	},
@@ -82,7 +80,7 @@ export default {
             'setFlete',
             'setAnticipo',
             'setSelectedCreateVehiculo',
-            'setSelectedCreateRuta'
+            'setSelectedCreateRuta',
         ]),
         ...mapActions('rutas', [
             'fetchRutasList',

@@ -48,6 +48,19 @@ Route.group(() => {
   Route.post('roles/:role_id/subModulo/:sub_modulo_id/setPermisos', 'RoleController.setPermisosV2').middleware('auth');
   Route.patch('roles/:id/modulos/updatePermisos', 'RoleController.updatePermisos').middleware('auth');
   //======================================================================================================================================
+  //Programacion de pedidos
+  //======================================================================================================================================
+  //GET
+  Route.get('programacion-pedidos', 'ProgramacionDePedidoController.get_programaciones').middleware('auth')
+  Route.get('programacion-pedidos-by-id/:id', 'ProgramacionDePedidoController.get_programacion').middleware('auth')
+  Route.get('programacion-pedidos-by-client/:client_id', 'ProgramacionDePedidoController.get_programacion_by_client').middleware('auth')
+  //POST
+  Route.post('programacion-pedidos/create', 'ProgramacionDePedidoController.create_documento').middleware('auth')
+  //PUT
+  Route.put('programacion-pedidos/:id/update', 'ProgramacionDePedidoController.update_documento').middleware('auth')
+  //DELETE
+  Route.delete('programacion-pedidos/:id/delete', 'ProgramacionDePedidoController.delete_documento').middleware('auth')
+  //======================================================================================================================================
   //Reports
   //======================================================================================================================================
   Route.get('reports/tables', 'ReportsController.tables_names').middleware('auth');
@@ -239,18 +252,7 @@ Route.group(() => {
   //DELETE
   Route.delete('conductores/:id/delete', 'ConductorController.delete_conductor').middleware('auth')
   Route.delete('conductores/datos-bancarios/:id/delete', 'ConductorController.delete_conductor_bank_account').middleware('auth')
-  //======================================================================================================================================
-  //Documentos conductores
-  //======================================================================================================================================
-  //GET
-  Route.get('documentos-conductor/:conductor_id', 'DocumentosConductoresController.get_documentos_list').middleware('auth')
-  Route.get('documento-conductor-by-id/:id', 'DocumentosConductoresController.get_documento').middleware('auth')
-  //POST
-  Route.post('documentos-conductor/create', 'DocumentosConductoresController.create_documento').middleware('auth')
-  //PUT
-  Route.put('documentos-conductor/:id/update', 'DocumentosConductoresController.update_documento').middleware('auth')
-  //DELETE
-  Route.delete('documentos-conductor/:id/delete', 'DocumentosConductoresController.delete_documento').middleware('auth')
+   
   //======================================================================================================================================
   //Datos bancarios conductores
   //======================================================================================================================================

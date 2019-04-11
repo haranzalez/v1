@@ -1,0 +1,61 @@
+Arguments: 
+  /usr/bin/node /usr/share/yarn/bin/yarn.js install
+
+PATH: 
+  ~/.npm-global/bin:~/.npm-global/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+
+Yarn version: 
+  1.15.2
+
+Node version: 
+  8.11.4
+
+Platform: 
+  linux x64
+
+Trace: 
+  Error: ENOSPC: no space left on device, mkdir '/home/hans/.cache/yarn/v4/npm-cli-table-0.3.1-f53b05266a8b1a0b934b3d0821e6e2dc5914ae23'
+
+npm manifest: 
+  {
+    "name": "serverCST",
+    "version": "0",
+    "adonis-version": "4.1.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+      "start": "node server.js",
+      "test": "node ace test"
+    },
+    "keywords": [
+      "adonisjs",
+      "adonis-app"
+    ],
+    "author": "Hans Aranzalez",
+    "license": "UNLICENSED",
+    "private": true,
+    "dependencies": {
+      "@adonisjs/ace": "^5.0.2",
+      "@adonisjs/auth": "^3.0.5",
+      "@adonisjs/bodyparser": "^2.0.3",
+      "@adonisjs/cors": "^1.0.6",
+      "@adonisjs/fold": "^4.0.8",
+      "@adonisjs/framework": "^5.0.7",
+      "@adonisjs/ignitor": "^2.0.6",
+      "@adonisjs/lucid": "^6.1.3",
+      "cron": "^1.6.0",
+      "moment": "^2.22.2",
+      "nodemailer": "^4.6.7",
+      "pg": "^7.4.3"
+    },
+    "devDependencies": {},
+    "autoload": {
+      "App": "./app"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
